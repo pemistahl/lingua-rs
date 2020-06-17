@@ -18,5 +18,6 @@
 mod macros;
 
 mod alphabet;
+mod fraction;
 mod isocode;
 mod language;

@@ -48,3 +48,5 @@ $RECYCLE.BIN/
 *.lnk
 Desktop.ini
 ehthumbs.db
+
+src/main.rs

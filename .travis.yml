@@ -16,8 +16,6 @@ language: rust
 
 rust: stable
 
-sudo: required
-
 cache: cargo
 
 before_cache:

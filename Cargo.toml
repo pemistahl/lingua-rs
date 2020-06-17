@@ -26,9 +26,9 @@ readme = "README.md"
 edition = "2018"
 categories = ["text-processing"]
 keywords = [
-    "natural-language-processing",
-    "natural-language-detection",
-    "natural-language-identification",
-    "natural-language-recognition"
+    "language-processing",
+    "language-detection",
+    "language-recognition",
+    "nlp"
 ]
 

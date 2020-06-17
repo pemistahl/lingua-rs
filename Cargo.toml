@@ -21,6 +21,7 @@ An accurate natural language detection library, suitable for long and short text
 """
 homepage = "https://github.com/pemistahl/lingua-rs"
 repository = "https://github.com/pemistahl/lingua-rs"
+documentation = "https://docs.rs/lingua"
 license = "Apache-2.0"
 readme = "README.md"
 edition = "2018"

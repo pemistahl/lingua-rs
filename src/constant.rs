@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-#[macro_use]
-mod macros;
+use include_dir::{include_dir, Dir};
+use lazy_static::lazy_static;
+use regex::Regex;
 
-mod alphabet;
-mod constant;
-mod fraction;
-mod isocode;
-mod language;
+lazy_static! {
+    pub static ref JAPANESE_CHARACTER_SET: Regex =
+        Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap();
+    pub static ref MULTIPLE_WHITESPACE: Regex = Regex::new("\\s+").unwrap();
+    pub static ref NO_LETTER: Regex = Regex::new("^[^\\p{L}]+$").unwrap();
+    pub static ref NUMBERS: Regex = Regex::new("\\p{N}").unwrap();
+    pub static ref PUNCTUATION: Regex = Regex::new("\\p{P}").unwrap();
+}

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-#[macro_use]
-mod macros;
-
-mod alphabet;
-mod isocode;
-mod language;
+macro_rules! hashset {
+    ( $( $value: expr ),* ) => {{
+        let mut set = std::collections::HashSet::new();
+        $( set.insert($value); )*
+        set
+    }};
+}

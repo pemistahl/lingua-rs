@@ -15,10 +15,11 @@
  */
 
 #[macro_use]
-mod macros;
+extern crate maplit;
 
 mod alphabet;
 mod constant;
+mod detector;
 mod fraction;
 mod isocode;
 mod language;

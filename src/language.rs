@@ -33,6 +33,7 @@ pub enum Language {
     Basque,
     Belarusian,
     Bengali,
+    Bokmal,
     Bosnian,
     Bulgarian,
     Catalan,
@@ -46,6 +47,7 @@ pub enum Language {
     Estonian,
     Finnish,
     French,
+    Ganda,
     Georgian,
     German,
     Greek,
@@ -67,7 +69,7 @@ pub enum Language {
     Malay,
     Marathi,
     Mongolian,
-    Norwegian,
+    Nynorsk,
     Persian,
     Polish,
     Portuguese,
@@ -75,9 +77,11 @@ pub enum Language {
     Romanian,
     Russian,
     Serbian,
+    Shona,
     Slovak,
     Slovene,
     Somali,
+    Sotho,
     Spanish,
     Swahili,
     Swedish,
@@ -85,11 +89,14 @@ pub enum Language {
     Tamil,
     Telugu,
     Thai,
+    Tsonga,
+    Tswana,
     Turkish,
     Ukrainian,
     Urdu,
     Vietnamese,
     Welsh,
+    Xhosa,
     Yoruba,
     Zulu,
 }
@@ -105,6 +112,7 @@ impl Language {
             Language::Basque => IsoCode639_1::EU,
             Language::Belarusian => IsoCode639_1::BE,
             Language::Bengali => IsoCode639_1::BN,
+            Language::Bokmal => IsoCode639_1::NB,
             Language::Bosnian => IsoCode639_1::BS,
             Language::Bulgarian => IsoCode639_1::BG,
             Language::Catalan => IsoCode639_1::CA,
@@ -118,6 +126,7 @@ impl Language {
             Language::Estonian => IsoCode639_1::ET,
             Language::Finnish => IsoCode639_1::FI,
             Language::French => IsoCode639_1::FR,
+            Language::Ganda => IsoCode639_1::LG,
             Language::Georgian => IsoCode639_1::KA,
             Language::German => IsoCode639_1::DE,
             Language::Greek => IsoCode639_1::EL,
@@ -139,7 +148,7 @@ impl Language {
             Language::Malay => IsoCode639_1::MS,
             Language::Marathi => IsoCode639_1::MR,
             Language::Mongolian => IsoCode639_1::MN,
-            Language::Norwegian => IsoCode639_1::NO,
+            Language::Nynorsk => IsoCode639_1::NN,
             Language::Persian => IsoCode639_1::FA,
             Language::Polish => IsoCode639_1::PL,
             Language::Portuguese => IsoCode639_1::PT,
@@ -147,9 +156,11 @@ impl Language {
             Language::Romanian => IsoCode639_1::RO,
             Language::Russian => IsoCode639_1::RU,
             Language::Serbian => IsoCode639_1::SR,
+            Language::Shona => IsoCode639_1::SN,
             Language::Slovak => IsoCode639_1::SK,
             Language::Slovene => IsoCode639_1::SL,
             Language::Somali => IsoCode639_1::SO,
+            Language::Sotho => IsoCode639_1::ST,
             Language::Spanish => IsoCode639_1::ES,
             Language::Swahili => IsoCode639_1::SW,
             Language::Swedish => IsoCode639_1::SV,
@@ -157,11 +168,14 @@ impl Language {
             Language::Tamil => IsoCode639_1::TA,
             Language::Telugu => IsoCode639_1::TE,
             Language::Thai => IsoCode639_1::TH,
+            Language::Tsonga => IsoCode639_1::TS,
+            Language::Tswana => IsoCode639_1::TN,
             Language::Turkish => IsoCode639_1::TR,
             Language::Ukrainian => IsoCode639_1::UK,
             Language::Urdu => IsoCode639_1::UR,
             Language::Vietnamese => IsoCode639_1::VI,
             Language::Welsh => IsoCode639_1::CY,
+            Language::Xhosa => IsoCode639_1::XH,
             Language::Yoruba => IsoCode639_1::YO,
             Language::Zulu => IsoCode639_1::ZU,
         }
@@ -177,6 +191,7 @@ impl Language {
             Language::Basque => IsoCode639_3::EUS,
             Language::Belarusian => IsoCode639_3::BEL,
             Language::Bengali => IsoCode639_3::BEN,
+            Language::Bokmal => IsoCode639_3::NOB,
             Language::Bosnian => IsoCode639_3::BOS,
             Language::Bulgarian => IsoCode639_3::BUL,
             Language::Catalan => IsoCode639_3::CAT,
@@ -190,6 +205,7 @@ impl Language {
             Language::Estonian => IsoCode639_3::EST,
             Language::Finnish => IsoCode639_3::FIN,
             Language::French => IsoCode639_3::FRA,
+            Language::Ganda => IsoCode639_3::LUG,
             Language::Georgian => IsoCode639_3::KAT,
             Language::German => IsoCode639_3::DEU,
             Language::Greek => IsoCode639_3::ELL,
@@ -211,7 +227,7 @@ impl Language {
             Language::Malay => IsoCode639_3::MSA,
             Language::Marathi => IsoCode639_3::MAR,
             Language::Mongolian => IsoCode639_3::MON,
-            Language::Norwegian => IsoCode639_3::NOR,
+            Language::Nynorsk => IsoCode639_3::NNO,
             Language::Persian => IsoCode639_3::FAS,
             Language::Polish => IsoCode639_3::POL,
             Language::Portuguese => IsoCode639_3::POR,
@@ -219,9 +235,11 @@ impl Language {
             Language::Romanian => IsoCode639_3::RON,
             Language::Russian => IsoCode639_3::RUS,
             Language::Serbian => IsoCode639_3::SRP,
+            Language::Shona => IsoCode639_3::SNA,
             Language::Slovak => IsoCode639_3::SLK,
             Language::Slovene => IsoCode639_3::SLV,
             Language::Somali => IsoCode639_3::SOM,
+            Language::Sotho => IsoCode639_3::SOT,
             Language::Spanish => IsoCode639_3::SPA,
             Language::Swahili => IsoCode639_3::SWA,
             Language::Swedish => IsoCode639_3::SWE,
@@ -229,11 +247,14 @@ impl Language {
             Language::Tamil => IsoCode639_3::TAM,
             Language::Telugu => IsoCode639_3::TEL,
             Language::Thai => IsoCode639_3::THA,
+            Language::Tsonga => IsoCode639_3::TSO,
+            Language::Tswana => IsoCode639_3::TSN,
             Language::Turkish => IsoCode639_3::TUR,
             Language::Ukrainian => IsoCode639_3::UKR,
             Language::Urdu => IsoCode639_3::URD,
             Language::Vietnamese => IsoCode639_3::VIE,
             Language::Welsh => IsoCode639_3::CYM,
+            Language::Xhosa => IsoCode639_3::XHO,
             Language::Yoruba => IsoCode639_3::YOR,
             Language::Zulu => IsoCode639_3::ZUL,
         }
@@ -245,6 +266,7 @@ impl Language {
             | Language::Albanian
             | Language::Azerbaijani
             | Language::Basque
+            | Language::Bokmal
             | Language::Bosnian
             | Language::Catalan
             | Language::Croatian
@@ -256,6 +278,7 @@ impl Language {
             | Language::Estonian
             | Language::Finnish
             | Language::French
+            | Language::Ganda
             | Language::German
             | Language::Hungarian
             | Language::Icelandic
@@ -266,20 +289,25 @@ impl Language {
             | Language::Latvian
             | Language::Lithuanian
             | Language::Malay
-            | Language::Norwegian
+            | Language::Nynorsk
             | Language::Polish
             | Language::Portuguese
             | Language::Romanian
+            | Language::Shona
             | Language::Slovak
             | Language::Slovene
             | Language::Somali
+            | Language::Sotho
             | Language::Spanish
             | Language::Swahili
             | Language::Swedish
             | Language::Tagalog
+            | Language::Tsonga
+            | Language::Tswana
             | Language::Turkish
             | Language::Vietnamese
             | Language::Welsh
+            | Language::Xhosa
             | Language::Yoruba
             | Language::Zulu => hashset!(Alphabet::Latin),
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+use crate::constant::alphabet::*;
 use crate::language::Language;
-use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use strum::IntoEnumIterator;
@@ -45,27 +45,6 @@ pub enum Alphabet {
 
 impl Alphabet {
     pub fn matches(&self, text: &str) -> bool {
-        lazy_static! {
-            static ref ARABIC: Regex = Regex::new("^\\p{Arabic}+$").unwrap();
-            static ref ARMENIAN: Regex = Regex::new("^\\p{Armenian}+$").unwrap();
-            static ref BENGALI: Regex = Regex::new("^\\p{Bengali}+$").unwrap();
-            static ref CYRILLIC: Regex = Regex::new("^\\p{Cyrillic}+$").unwrap();
-            static ref DEVANAGARI: Regex = Regex::new("^\\p{Devanagari}+$").unwrap();
-            static ref GEORGIAN: Regex = Regex::new("^\\p{Georgian}+$").unwrap();
-            static ref GREEK: Regex = Regex::new("^\\p{Greek}+$").unwrap();
-            static ref GUJARATI: Regex = Regex::new("^\\p{Gujarati}+$").unwrap();
-            static ref GURMUKHI: Regex = Regex::new("^\\p{Gurmukhi}+$").unwrap();
-            static ref HAN: Regex = Regex::new("^\\p{Han}+$").unwrap();
-            static ref HANGUL: Regex = Regex::new("^\\p{Hangul}+$").unwrap();
-            static ref HEBREW: Regex = Regex::new("^\\p{Hebrew}+$").unwrap();
-            static ref HIRAGANA: Regex = Regex::new("^\\p{Hiragana}+$").unwrap();
-            static ref KATAKANA: Regex = Regex::new("^\\p{Katakana}+$").unwrap();
-            static ref LATIN: Regex = Regex::new("^\\p{Latin}+$").unwrap();
-            static ref TAMIL: Regex = Regex::new("^\\p{Tamil}+$").unwrap();
-            static ref TELUGU: Regex = Regex::new("^\\p{Telugu}+$").unwrap();
-            static ref THAI: Regex = Regex::new("^\\p{THAI}+$").unwrap();
-        }
-
         match self {
             Alphabet::Arabic => ARABIC.is_match(text),
             Alphabet::Armenian => ARMENIAN.is_match(text),

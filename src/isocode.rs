@@ -126,6 +126,9 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Latin`](./enum.Language.html#variant.Latin)
     LA,
 
+    /// The ISO 639-1 code for [`Ganda`](./enum.Language.html#variant.Ganda)
+    LG,
+
     /// The ISO 639-1 code for [`Lithuanian`](./enum.Language.html#variant.Lithuanian)
     LT,
 
@@ -144,11 +147,14 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Malay`](./enum.Language.html#variant.Malay)
     MS,
 
+    /// The ISO 639-1 code for [`Norwegian Bokmal`](./enum.Language.html#variant.Bokmal)
+    NB,
+
     /// The ISO 639-1 code for [`Dutch`](./enum.Language.html#variant.Dutch)
     NL,
 
-    /// The ISO 639-1 code for [`Norwegian`](./enum.Language.html#variant.Norwegian)
-    NO,
+    /// The ISO 639-1 code for [`Norwegian Nynorsk`](./enum.Language.html#variant.Nynorsk)
+    NN,
 
     /// The ISO 639-1 code for [`Punjabi`](./enum.Language.html#variant.Punjabi)
     PA,
@@ -171,6 +177,9 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Slovene`](./enum.Language.html#variant.Slovene)
     SL,
 
+    /// The ISO 639-1 code for [`Shona`](./enum.Language.html#variant.Shona)
+    SN,
+
     /// The ISO 639-1 code for [`Somali`](./enum.Language.html#variant.Somali)
     SO,
 
@@ -179,6 +188,9 @@ pub enum IsoCode639_1 {
 
     /// The ISO 639-1 code for [`Serbian`](./enum.Language.html#variant.Serbian)
     SR,
+
+    /// The ISO 639-1 code for [`Sotho`](./enum.Language.html#variant.Sotho)
+    ST,
 
     /// The ISO 639-1 code for [`Swedish`](./enum.Language.html#variant.Swedish)
     SV,
@@ -198,8 +210,14 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Tagalog`](./enum.Language.html#variant.Tagalog)
     TL,
 
+    /// The ISO 639-1 code for [`Tswana`](./enum.Language.html#variant.Tswana)
+    TN,
+
     /// The ISO 639-1 code for [`Turkish`](./enum.Language.html#variant.Turkish)
     TR,
+
+    /// The ISO 639-1 code for [`Tsonga`](./enum.Language.html#variant.Tsonga)
+    TS,
 
     /// The ISO 639-1 code for [`Ukrainian`](./enum.Language.html#variant.Ukrainian)
     UK,
@@ -209,6 +227,9 @@ pub enum IsoCode639_1 {
 
     /// The ISO 639-1 code for [`Vietnamese`](./enum.Language.html#variant.Vietnamese)
     VI,
+
+    /// The ISO 639-1 code for [`Xhosa`](./enum.Language.html#variant.Xhosa)
+    XH,
 
     /// The ISO 639-1 code for [`Yoruba`](./enum.Language.html#variant.Yoruba)
     YO,
@@ -333,6 +354,9 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Lithuanian`](./enum.Language.html#variant.Lithuanian)
     LIT,
 
+    /// The ISO 639-3 code for [`Ganda`](./enum.Language.html#variant.Ganda)
+    LUG,
+
     /// The ISO 639-3 code for [`Marathi`](./enum.Language.html#variant.Marathi)
     MAR,
 
@@ -348,8 +372,11 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Dutch`](./enum.Language.html#variant.Dutch)
     NLD,
 
-    /// The ISO 639-3 code for [`Norwegian`](./enum.Language.html#variant.Norwegian)
-    NOR,
+    /// The ISO 639-3 code for [`Norwegian Nynorsk`](./enum.Language.html#variant.Nynorsk)
+    NNO,
+
+    /// The ISO 639-3 code for [`Norwegian Bokmal`](./enum.Language.html#variant.Bokmal)
+    NOB,
 
     /// The ISO 639-3 code for [`Punjabi`](./enum.Language.html#variant.Punjabi)
     PAN,
@@ -372,8 +399,14 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Slovene`](./enum.Language.html#variant.Slovene)
     SLV,
 
+    /// The ISO 639-3 code for [`Shona`](./enum.Language.html#variant.Shona)
+    SNA,
+
     /// The ISO 639-3 code for [`Somali`](./enum.Language.html#variant.Somali)
     SOM,
+
+    /// The ISO 639-3 code for [`Sotho`](./enum.Language.html#variant.Sotho)
+    SOT,
 
     /// The ISO 639-3 code for [`Spanish`](./enum.Language.html#variant.Spanish)
     SPA,
@@ -402,6 +435,12 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Thai`](./enum.Language.html#variant.Thai)
     THA,
 
+    /// The ISO 639-3 code for [`Tswana`](./enum.Language.html#variant.Tswana)
+    TSN,
+
+    /// The ISO 639-3 code for [`Tsonga`](./enum.Language.html#variant.Tsonga)
+    TSO,
+
     /// The ISO 639-3 code for [`Turkish`](./enum.Language.html#variant.Turkish)
     TUR,
 
@@ -413,6 +452,9 @@ pub enum IsoCode639_3 {
 
     /// The ISO 639-3 code for [`Vietnamese`](./enum.Language.html#variant.Vietnamese)
     VIE,
+
+    /// The ISO 639-3 code for [`Xhosa`](./enum.Language.html#variant.Xhosa)
+    XHO,
 
     /// The ISO 639-3 code for [`Yoruba`](./enum.Language.html#variant.Yoruba)
     YOR,

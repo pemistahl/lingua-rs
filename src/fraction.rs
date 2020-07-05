@@ -56,10 +56,7 @@ impl<'de> Visitor<'de> for FractionVisitor {
         formatter.write_str("a rational number of the format 'numerator/denominator'")
     }
 
-    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-    where
-        E: Error,
-    {
+    fn visit_str<E: Error>(self, v: &str) -> Result<Self::Value, E> {
         let (numerator, denominator): (&str, &str) = v.split('/').collect_tuple().unwrap();
         let parsed_numerator = numerator.parse::<u32>().unwrap();
         let parsed_denominator = denominator.parse::<u32>().unwrap();
@@ -68,10 +65,7 @@ impl<'de> Visitor<'de> for FractionVisitor {
 }
 
 impl<'de> Deserialize<'de> for Fraction {
-    fn deserialize<D>(deserializer: D) -> Result<Self, <D as Deserializer<'de>>::Error>
-    where
-        D: Deserializer<'de>,
-    {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         deserializer.deserialize_str(FractionVisitor)
     }
 }
@@ -81,7 +75,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_fraction_deserialization() {
+    fn test_fraction_deserializer() {
         let fraction = serde_json::from_str::<Fraction>("\"3/5\"").unwrap();
         assert_eq!(fraction, Fraction::new(3, 5));
     }

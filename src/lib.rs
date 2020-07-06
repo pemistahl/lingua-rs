@@ -23,4 +23,5 @@ mod detector;
 mod fraction;
 mod isocode;
 mod language;
+mod model;
 mod ngram;

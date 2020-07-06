@@ -16,14 +16,14 @@
 
 use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::path::Display;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-#[derive(Clone, Debug, Deserialize, EnumIter, Eq, PartialEq, Hash)]
-#[serde(rename_all(deserialize = "UPPERCASE"))]
+#[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash)]
+#[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 pub enum Language {
     Afrikaans,
     Albanian,
@@ -365,5 +365,22 @@ impl Language {
             Language::Yoruba => "ŌōṢṣ",
             _ => "",
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_language_serializer() {
+        let serialized = serde_json::to_string(&Language::English).unwrap();
+        assert_eq!(serialized, "\"ENGLISH\"");
+    }
+
+    #[test]
+    fn test_language_deserializer() {
+        let deserialized = serde_json::from_str::<Language>("\"ENGLISH\"").unwrap();
+        assert_eq!(deserialized, Language::English);
     }
 }

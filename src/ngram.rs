@@ -20,9 +20,9 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::fmt::Display;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Ngram {
-    value: String,
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+pub(crate) struct Ngram {
+    pub(crate) value: String,
 }
 
 impl Ngram {
@@ -85,7 +85,7 @@ impl<'de> Deserialize<'de> for Ngram {
     }
 }
 
-pub struct NgramRange {
+pub(crate) struct NgramRange {
     start: Ngram,
 }
 

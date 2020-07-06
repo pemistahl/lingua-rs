@@ -24,6 +24,7 @@ pub mod charclass {
     lazy_static! {
         pub static ref JAPANESE_CHARACTER_SET: Regex =
             Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap();
+        pub static ref LETTER: Regex = Regex::new("^\\p{L}+$").unwrap();
         pub static ref MULTIPLE_WHITESPACE: Regex = Regex::new("\\s+").unwrap();
         pub static ref NO_LETTER: Regex = Regex::new("^[^\\p{L}]+$").unwrap();
         pub static ref NUMBERS: Regex = Regex::new("\\p{N}").unwrap();

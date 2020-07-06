@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
+use fraction::GenericFraction;
 use itertools::Itertools;
 use serde::de::{Error, Visitor};
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::cmp::min;
+use std::convert::TryInto;
 use std::fmt;
 use std::fmt::{Debug, Display};
 
-#[derive(Eq, PartialEq, Hash)]
-pub struct Fraction {
+#[derive(Clone, Eq, PartialEq, Hash)]
+pub(crate) struct Fraction {
     numerator: u32,
     denominator: u32,
 }
 
 impl Fraction {
-    pub fn new(numerator: u32, denominator: u32) -> Self {
+    pub(crate) fn new(numerator: u32, denominator: u32) -> Self {
+        let fraction = GenericFraction::<u32>::new(numerator, denominator);
         Self {
-            numerator,
-            denominator,
+            numerator: *fraction.numer().unwrap(),
+            denominator: *fraction.denom().unwrap(),
         }
+    }
+
+    pub(crate) fn to_f64(&self) -> f64 {
+        self.numerator as f64 / self.denominator as f64
     }
 }
 
@@ -44,6 +52,12 @@ impl Debug for Fraction {
 impl Display for Fraction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}/{}", self.numerator, self.denominator)
+    }
+}
+
+impl Serialize for Fraction {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&format!("{}/{}", self.numerator, self.denominator))
     }
 }
 
@@ -73,6 +87,18 @@ impl<'de> Deserialize<'de> for Fraction {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_fraction_reduction() {
+        assert_eq!(Fraction::new(12, 144), Fraction::new(1, 12));
+    }
+
+    #[test]
+    fn test_fraction_serializer() {
+        let fraction = Fraction::new(3, 5);
+        let serialized = serde_json::to_string(&fraction).unwrap();
+        assert_eq!(serialized, "\"3/5\"");
+    }
 
     #[test]
     fn test_fraction_deserializer() {

@@ -34,6 +34,7 @@ keywords = [
 ]
 
 [dependencies]
+fraction = { version = "0.6.3", default-features = false }
 include_dir = "0.6.0"
 itertools = "0.9.0"
 lazy_static = "1.4.0"

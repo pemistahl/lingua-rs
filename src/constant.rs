@@ -14,58 +14,30 @@
  * limitations under the License.
  */
 
-//use include_dir::{include_dir, Dir};
-use lazy_static::lazy_static;
+use crate::language::Language;
+use crate::language::Language::*;
+use crate::model::TrainingDataLanguageModel;
+use crate::ngram::Ngram;
+use include_dir::{include_dir, Dir};
+use once_cell::sync::Lazy;
+use regex::Regex;
+use std::collections::{HashMap, HashSet};
+use std::io::{Cursor, Read};
+use zip::ZipArchive;
 
-pub mod charclass {
-    use super::*;
-    use regex::Regex;
+pub(crate) const LANGUAGE_MODELS_DIRECTORY: Dir = include_dir!("assets/main/language-models");
 
-    lazy_static! {
-        pub static ref JAPANESE_CHARACTER_SET: Regex =
-            Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap();
-        pub static ref LETTER: Regex = Regex::new("^\\p{L}+$").unwrap();
-        pub static ref MULTIPLE_WHITESPACE: Regex = Regex::new("\\s+").unwrap();
-        pub static ref NO_LETTER: Regex = Regex::new("^[^\\p{L}]+$").unwrap();
-        pub static ref NUMBERS: Regex = Regex::new("\\p{N}").unwrap();
-        pub static ref PUNCTUATION: Regex = Regex::new("\\p{P}").unwrap();
-    }
-}
+pub(crate) static JAPANESE_CHARACTER_SET: Lazy<Regex> =
+    Lazy::new(|| Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap());
+pub(crate) static LETTER: Lazy<Regex> = Lazy::new(|| Regex::new("^\\p{L}+$").unwrap());
+pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\s+").unwrap());
+pub(crate) static NO_LETTER: Lazy<Regex> = Lazy::new(|| Regex::new("^[^\\p{L}]+$").unwrap());
+pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
+pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());
 
-pub mod alphabet {
-    use super::*;
-    use regex::Regex;
-
-    lazy_static! {
-        pub static ref ARABIC: Regex = Regex::new("^\\p{Arabic}+$").unwrap();
-        pub static ref ARMENIAN: Regex = Regex::new("^\\p{Armenian}+$").unwrap();
-        pub static ref BENGALI: Regex = Regex::new("^\\p{Bengali}+$").unwrap();
-        pub static ref CYRILLIC: Regex = Regex::new("^\\p{Cyrillic}+$").unwrap();
-        pub static ref DEVANAGARI: Regex = Regex::new("^\\p{Devanagari}+$").unwrap();
-        pub static ref GEORGIAN: Regex = Regex::new("^\\p{Georgian}+$").unwrap();
-        pub static ref GREEK: Regex = Regex::new("^\\p{Greek}+$").unwrap();
-        pub static ref GUJARATI: Regex = Regex::new("^\\p{Gujarati}+$").unwrap();
-        pub static ref GURMUKHI: Regex = Regex::new("^\\p{Gurmukhi}+$").unwrap();
-        pub static ref HAN: Regex = Regex::new("^\\p{Han}+$").unwrap();
-        pub static ref HANGUL: Regex = Regex::new("^\\p{Hangul}+$").unwrap();
-        pub static ref HEBREW: Regex = Regex::new("^\\p{Hebrew}+$").unwrap();
-        pub static ref HIRAGANA: Regex = Regex::new("^\\p{Hiragana}+$").unwrap();
-        pub static ref KATAKANA: Regex = Regex::new("^\\p{Katakana}+$").unwrap();
-        pub static ref LATIN: Regex = Regex::new("^\\p{Latin}+$").unwrap();
-        pub static ref TAMIL: Regex = Regex::new("^\\p{Tamil}+$").unwrap();
-        pub static ref TELUGU: Regex = Regex::new("^\\p{Telugu}+$").unwrap();
-        pub static ref THAI: Regex = Regex::new("^\\p{Thai}+$").unwrap();
-    }
-}
-
-pub mod charmapping {
-    use super::*;
-    use crate::language::Language;
-    use crate::language::Language::*;
-    use std::collections::{HashMap, HashSet};
-
-    lazy_static! {
-        pub static ref CHARS_TO_LANGUAGES_MAPPING: HashMap<&'static str, HashSet<Language>> = hashmap!(
+pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet<Language>>> =
+    Lazy::new(|| {
+        hashmap!(
             "Ãã" => hashset!(Portuguese, Vietnamese),
             "ĄąĘę" => hashset!(Lithuanian, Polish),
             "Żż" => hashset!(Polish, Romanian),
@@ -127,6 +99,5 @@ pub mod charmapping {
                 Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
                 Vietnamese, Yoruba
             )
-        );
-    }
-}
+        )
+    });

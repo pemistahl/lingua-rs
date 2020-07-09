@@ -15,14 +15,23 @@
  */
 
 use crate::alphabet::Alphabet;
-use crate::constant::charclass::*;
-use crate::constant::charmapping::CHARS_TO_LANGUAGES_MAPPING;
+use crate::constant::{
+    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, LANGUAGE_MODELS_DIRECTORY,
+    MULTIPLE_WHITESPACE, NO_LETTER, NUMBERS, PUNCTUATION,
+};
 use crate::language::Language;
 use crate::language::Language::*;
+use crate::model::TrainingDataLanguageModel;
+use crate::ngram::Ngram;
+use include_dir::Dir;
 use itertools::Itertools;
+use once_cell::sync::Lazy;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::hash::Hash;
+use std::io::{Cursor, Read};
+use strum::IntoEnumIterator;
+use zip::ZipArchive;
 
 pub struct LanguageDetector {
     languages: HashSet<Language>,
@@ -281,5 +290,35 @@ impl LanguageDetector {
     fn increment_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T) {
         let counter = counts.entry(key).or_insert(0);
         *counter += 1;
+    }
+}
+
+fn load_json(directory: &Dir, language: Language, ngram_length: u32) -> std::io::Result<String> {
+    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
+    let file_path = format!("{}/{}s.json.zip", language.iso_code_639_1(), ngram_name);
+    let zip_file = directory.get_file(file_path).unwrap();
+    let zip_file_reader = Cursor::new(zip_file.contents());
+    let mut archive = ZipArchive::new(zip_file_reader).unwrap();
+    let mut json_file = archive.by_index(0).unwrap();
+    let mut json = String::new();
+    json_file.read_to_string(&mut json)?;
+    Ok(json)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use include_dir::include_dir;
+
+    const LANGUAGE_MODELS_TEST_DIRECTORY: Dir = include_dir!("assets/test/language-models");
+
+    #[test]
+    fn test_load_json() {
+        let result = load_json(&LANGUAGE_MODELS_TEST_DIRECTORY, Language::English, 1);
+        assert!(result.is_ok());
+        assert_eq!(
+            result.unwrap(),
+            r#"{"language":"ENGLISH","ngrams":{"2/93616591":"ﬀ ċ ė ĩ ȼ ɔ ţ ũ ʔ ơ ả ộ ù"}}"#
+        );
     }
 }

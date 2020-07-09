@@ -23,7 +23,7 @@ use std::convert::TryInto;
 use std::fmt;
 use std::fmt::{Debug, Display};
 
-#[derive(Clone, Eq, PartialEq, Hash)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
 pub(crate) struct Fraction {
     numerator: u32,
     denominator: u32,

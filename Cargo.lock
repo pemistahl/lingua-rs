@@ -169,8 +169,8 @@ dependencies = [
  "fraction",
  "include_dir",
  "itertools",
- "lazy_static",
  "maplit",
+ "once_cell",
  "regex",
  "serde",
  "serde_json",
@@ -263,6 +263,12 @@ checksum = "ac267bcc07f48ee5f8935ab0d24f316fb722d7a1292e2913f0cc196b29ffd611"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b631f7e854af39a1739f401cf34a8a013dfe09eac4fa4dba91e9768bd28168d"
 
 [[package]]
 name = "pkg-config"

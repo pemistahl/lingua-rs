@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::constant::charclass::LETTER;
+use crate::constant::LETTER;
 use crate::fraction::Fraction;
 use crate::language::Language;
 use crate::ngram::Ngram;
@@ -89,10 +89,8 @@ impl TrainingDataLanguageModel {
 
         let mut fractions_to_joined_ngrams = hashmap!();
         for (fraction, ngrams) in fractions_to_ngrams {
-            fractions_to_joined_ngrams.insert(
-                fraction.clone(),
-                ngrams.iter().map(|&it| &it.value).join(" "),
-            );
+            fractions_to_joined_ngrams
+                .insert(*fraction, ngrams.iter().map(|&it| &it.value).join(" "));
         }
 
         let model = JsonLanguageModel {

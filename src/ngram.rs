@@ -26,7 +26,7 @@ pub(crate) struct Ngram {
 }
 
 impl Ngram {
-    pub fn new(value: &str) -> Self {
+    pub(crate) fn new(value: &str) -> Self {
         if !(0..6).contains(&value.len()) {
             panic!("length of ngram '{}' is not in range 0..6", value);
         }
@@ -35,7 +35,7 @@ impl Ngram {
         }
     }
 
-    pub fn get_ngram_name_by_length(ngram_length: u32) -> &'static str {
+    pub(crate) fn get_ngram_name_by_length(ngram_length: u32) -> &'static str {
         match ngram_length {
             1 => "unigram",
             2 => "bigram",
@@ -46,7 +46,7 @@ impl Ngram {
         }
     }
 
-    pub fn range_of_lower_order_ngrams(&self) -> NgramRange {
+    pub(crate) fn range_of_lower_order_ngrams(&self) -> NgramRange {
         NgramRange {
             start: self.clone(),
         }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-use crate::constant::alphabet::*;
 use crate::language::Language;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use strum::IntoEnumIterator;
@@ -87,4 +87,27 @@ impl Alphabet {
         }
         languages
     }
+}
+
+static ARABIC: Lazy<Regex> = Lazy::new(|| create_regex("Arabic"));
+static ARMENIAN: Lazy<Regex> = Lazy::new(|| create_regex("Armenian"));
+static BENGALI: Lazy<Regex> = Lazy::new(|| create_regex("Bengali"));
+static CYRILLIC: Lazy<Regex> = Lazy::new(|| create_regex("Cyrillic"));
+static DEVANAGARI: Lazy<Regex> = Lazy::new(|| create_regex("Devanagari"));
+static GEORGIAN: Lazy<Regex> = Lazy::new(|| create_regex("Georgian"));
+static GREEK: Lazy<Regex> = Lazy::new(|| create_regex("Greek"));
+static GUJARATI: Lazy<Regex> = Lazy::new(|| create_regex("Gujarati"));
+static GURMUKHI: Lazy<Regex> = Lazy::new(|| create_regex("Gurmukhi"));
+static HAN: Lazy<Regex> = Lazy::new(|| create_regex("Han"));
+static HANGUL: Lazy<Regex> = Lazy::new(|| create_regex("Hangul"));
+static HEBREW: Lazy<Regex> = Lazy::new(|| create_regex("Hebrew"));
+static HIRAGANA: Lazy<Regex> = Lazy::new(|| create_regex("Hiragana"));
+static KATAKANA: Lazy<Regex> = Lazy::new(|| create_regex("Katakana"));
+static LATIN: Lazy<Regex> = Lazy::new(|| create_regex("Latin"));
+static TAMIL: Lazy<Regex> = Lazy::new(|| create_regex("Tamil"));
+static TELUGU: Lazy<Regex> = Lazy::new(|| create_regex("Telugu"));
+static THAI: Lazy<Regex> = Lazy::new(|| create_regex("Thai"));
+
+fn create_regex(char_class: &str) -> Regex {
+    Regex::new(&format!("^\\p{{{}}}+$", char_class)).unwrap()
 }

@@ -25,7 +25,7 @@ use crate::model::TrainingDataLanguageModel;
 use crate::ngram::Ngram;
 use include_dir::Dir;
 use itertools::Itertools;
-use once_cell::sync::Lazy;
+use once_cell::sync::OnceCell;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::hash::Hash;
@@ -293,7 +293,50 @@ impl LanguageDetector {
     }
 }
 
-fn load_json(directory: &Dir, language: Language, ngram_length: u32) -> std::io::Result<String> {
+fn unigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
+    static UNIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
+        OnceCell::new();
+    UNIGRAM_MODELS.get_or_init(|| load_models(1))
+}
+
+fn bigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
+    static BIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
+        OnceCell::new();
+    BIGRAM_MODELS.get_or_init(|| load_models(2))
+}
+
+fn trigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
+    static TRIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
+        OnceCell::new();
+    TRIGRAM_MODELS.get_or_init(|| load_models(3))
+}
+
+fn quadrigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
+    static QUADRIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
+        OnceCell::new();
+    QUADRIGRAM_MODELS.get_or_init(|| load_models(4))
+}
+
+fn fivegram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
+    static FIVEGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
+        OnceCell::new();
+    FIVEGRAM_MODELS.get_or_init(|| load_models(5))
+}
+
+fn load_models(ngram_length: u32) -> HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
+    let mut map = hashmap!();
+    for language in Language::iter() {
+        let model = OnceCell::new();
+        model.get_or_init(|| {
+            let json = load_json(&LANGUAGE_MODELS_DIRECTORY, &language, ngram_length).unwrap();
+            TrainingDataLanguageModel::from_json(&json)
+        });
+        map.insert(language, model);
+    }
+    map
+}
+
+fn load_json(directory: &Dir, language: &Language, ngram_length: u32) -> std::io::Result<String> {
     let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
     let file_path = format!("{}/{}s.json.zip", language.iso_code_639_1(), ngram_name);
     let zip_file = directory.get_file(file_path).unwrap();
@@ -314,7 +357,7 @@ mod tests {
 
     #[test]
     fn test_load_json() {
-        let result = load_json(&LANGUAGE_MODELS_TEST_DIRECTORY, Language::English, 1);
+        let result = load_json(&LANGUAGE_MODELS_TEST_DIRECTORY, &Language::English, 1);
         assert!(result.is_ok());
         assert_eq!(
             result.unwrap(),

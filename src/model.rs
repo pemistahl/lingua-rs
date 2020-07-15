@@ -156,7 +156,7 @@ impl TrainingDataLanguageModel {
 }
 
 pub(crate) struct TestDataLanguageModel {
-    ngrams: HashSet<Ngram>,
+    pub(crate) ngrams: HashSet<Ngram>,
 }
 
 impl TestDataLanguageModel {

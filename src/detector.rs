@@ -21,7 +21,7 @@ use crate::constant::{
 };
 use crate::language::Language;
 use crate::language::Language::*;
-use crate::model::TrainingDataLanguageModel;
+use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
 use crate::ngram::Ngram;
 use include_dir::Dir;
 use itertools::Itertools;
@@ -89,9 +89,56 @@ impl LanguageDetector {
             return values;
         }
 
-        // TODO: ngram lookup section
+        let mut all_probabilities = Vec::<HashMap<Language, f64>>::new();
+        let mut unigram_counts = HashMap::<Language, u32>::new();
+        let mut filtered_languages = self.filter_languages_by_rules(words);
 
-        values
+        for i in 1..6 {
+            if cleaned_up_text.len() < i {
+                continue;
+            }
+            let test_data_model = TestDataLanguageModel::from(&cleaned_up_text, i);
+            let probabilities =
+                self.compute_language_probabilities(&test_data_model, &filtered_languages);
+            let languages = probabilities.keys().collect_vec();
+
+            if !languages.is_empty() {
+                filtered_languages = filtered_languages
+                    .into_iter()
+                    .filter(|it| languages.contains(&it))
+                    .collect();
+            }
+
+            if i == 1 {
+                self.count_unigrams(&mut unigram_counts, &test_data_model, &filtered_languages);
+            }
+
+            all_probabilities.push(probabilities);
+        }
+
+        let summed_up_probabilities =
+            self.sum_up_probabilities(all_probabilities, unigram_counts, filtered_languages);
+
+        if summed_up_probabilities.is_empty() {
+            return values;
+        }
+
+        let highest_probability = summed_up_probabilities
+            .iter()
+            .map(|(_, &probability)| probability)
+            .sorted_by(|&first, &second| second.partial_cmp(&first).unwrap())
+            .next()
+            .unwrap();
+
+        let confidence_values = summed_up_probabilities
+            .iter()
+            .map(|(language, &probability)| (language.clone(), highest_probability / probability))
+            .sorted_by(|(_, first_probability), (_, second_probability)| {
+                second_probability.partial_cmp(first_probability).unwrap()
+            })
+            .collect_vec();
+
+        confidence_values
     }
 
     fn clean_up_input_text(&self, text: String) -> String {
@@ -179,11 +226,7 @@ impl LanguageDetector {
             }
         }
 
-        let unknown_language_count = total_language_counts
-            .get(&None)
-            .or(Some(&0))
-            .unwrap()
-            .clone() as f64;
+        let unknown_language_count = *total_language_counts.get(&None).or(Some(&0)).unwrap() as f64;
 
         if unknown_language_count < half_word_count {
             total_language_counts.remove(&None);
@@ -194,13 +237,7 @@ impl LanguageDetector {
         }
 
         if total_language_counts.len() == 1 {
-            return total_language_counts
-                .iter()
-                .collect_vec()
-                .first()
-                .unwrap()
-                .0
-                .cloned();
+            return total_language_counts.iter().next().unwrap().0.cloned();
         }
 
         let sorted_total_language_counts = total_language_counts
@@ -244,8 +281,7 @@ impl LanguageDetector {
         let most_frequent_alphabet = detected_alphabets
             .into_iter()
             .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
-            .collect_vec()
-            .first()
+            .next()
             .unwrap()
             .0;
 
@@ -285,6 +321,101 @@ impl LanguageDetector {
         } else {
             filtered_languages
         }
+    }
+
+    fn compute_language_probabilities(
+        &self,
+        model: &TestDataLanguageModel,
+        languages: &HashSet<Language>,
+    ) -> HashMap<Language, f64> {
+        let mut probabilities = hashmap!();
+        for language in languages.iter() {
+            let sum = self.compute_sum_of_ngram_probabilities(language, &model.ngrams);
+            if sum < 0.0 {
+                probabilities.insert(language.clone(), sum);
+            }
+        }
+        probabilities
+    }
+
+    fn compute_sum_of_ngram_probabilities(
+        &self,
+        language: &Language,
+        ngrams: &HashSet<Ngram>,
+    ) -> f64 {
+        let mut probabilities = vec![];
+        for ngram in ngrams.iter() {
+            for elem in ngram.range_of_lower_order_ngrams() {
+                let probability = self.look_up_ngram_probability(language, &elem);
+                if probability > 0.0 {
+                    probabilities.push(probability);
+                    break;
+                }
+            }
+        }
+        probabilities.into_iter().map(|it| it.ln()).sum()
+    }
+
+    fn look_up_ngram_probability(&self, language: &Language, ngram: &Ngram) -> f64 {
+        let language_models = match ngram.value.len() {
+            5 => fivegram_models(),
+            4 => quadrigram_models(),
+            3 => trigram_models(),
+            2 => bigram_models(),
+            1 => unigram_models(),
+            0 => panic!("zerogram detected"),
+            _ => panic!("unsupported ngram length detected: {}", ngram.value.len()),
+        };
+
+        language_models
+            .get(language)
+            .unwrap()
+            .get()
+            .unwrap()
+            .get_relative_frequency(ngram)
+    }
+
+    fn count_unigrams(
+        &self,
+        unigram_counts: &mut HashMap<Language, u32>,
+        unigram_model: &TestDataLanguageModel,
+        filtered_languages: &HashSet<Language>,
+    ) {
+        for language in filtered_languages.iter() {
+            for unigram in unigram_model.ngrams.iter() {
+                if self.look_up_ngram_probability(language, unigram) > 0.0 {
+                    self.increment_counter(unigram_counts, language.clone());
+                }
+            }
+        }
+    }
+
+    fn sum_up_probabilities(
+        &self,
+        probabilities: Vec<HashMap<Language, f64>>,
+        unigram_counts: HashMap<Language, u32>,
+        filtered_languages: HashSet<Language>,
+    ) -> HashMap<Language, f64> {
+        let mut summed_up_probabilities = hashmap!();
+        for language in filtered_languages.iter() {
+            let mut sum = probabilities
+                .iter()
+                .map(|it| match it.get(language) {
+                    Some(probability) => *probability,
+                    None => 0.0,
+                })
+                .sum();
+
+            if unigram_counts.contains_key(language) {
+                sum /= *unigram_counts.get(language).unwrap() as f64;
+            }
+
+            if sum != 0.0 {
+                summed_up_probabilities.insert(language.clone(), sum);
+            }
+        }
+
+        summed_up_probabilities
     }
 
     fn increment_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T) {

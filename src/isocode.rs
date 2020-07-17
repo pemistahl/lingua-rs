@@ -16,7 +16,7 @@
 
 use std::fmt::{Debug, Display, Formatter, Result};
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AF,
@@ -241,7 +241,7 @@ pub enum IsoCode639_1 {
     ZU,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AFR,

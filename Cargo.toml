@@ -45,4 +45,4 @@ serde = { version = "1.0.114", features = ["derive"] }
 serde_json = "1.0.56"
 strum = "0.18.0"
 strum_macros = "0.18.0"
-zip = { version = "0.5.6", default-features = false }
+zip = "0.5.6"

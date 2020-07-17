@@ -16,8 +16,6 @@ language: rust
 
 rust: stable
 
-cache: cargo
-
 before_script: rustup target add $TARGET
 
 matrix:
@@ -45,6 +43,7 @@ matrix:
       env: TARGET=x86_64-pc-windows-msvc
 
 script:
+  - cargo clean
   - cargo build --target $TARGET --locked
   - cargo build --target $TARGET --locked --release
   - cargo test --target $TARGET

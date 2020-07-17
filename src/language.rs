@@ -102,6 +102,52 @@ pub enum Language {
 }
 
 impl Language {
+    pub fn all() -> HashSet<Language> {
+        Language::iter().collect()
+    }
+
+    pub fn all_spoken_ones() -> HashSet<Language> {
+        Language::iter()
+            .filter(|it| it != &Language::Latin)
+            .collect()
+    }
+
+    pub fn all_with_arabic_script() -> HashSet<Language> {
+        Language::iter()
+            .filter(|it| it.alphabets().contains(&Alphabet::Arabic))
+            .collect()
+    }
+
+    pub fn all_with_cyrillic_script() -> HashSet<Language> {
+        Language::iter()
+            .filter(|it| it.alphabets().contains(&Alphabet::Cyrillic))
+            .collect()
+    }
+
+    pub fn all_with_devanagari_script() -> HashSet<Language> {
+        Language::iter()
+            .filter(|it| it.alphabets().contains(&Alphabet::Devanagari))
+            .collect()
+    }
+
+    pub fn all_with_latin_script() -> HashSet<Language> {
+        Language::iter()
+            .filter(|it| it.alphabets().contains(&Alphabet::Latin))
+            .collect()
+    }
+
+    pub fn from_iso_code_639_1(iso_code: &IsoCode639_1) -> Language {
+        Language::iter()
+            .find(|it| &it.iso_code_639_1() == iso_code)
+            .unwrap()
+    }
+
+    pub fn from_iso_code_639_3(iso_code: &IsoCode639_3) -> Language {
+        Language::iter()
+            .find(|it| &it.iso_code_639_3() == iso_code)
+            .unwrap()
+    }
+
     pub fn iso_code_639_1(&self) -> IsoCode639_1 {
         match self {
             Language::Afrikaans => IsoCode639_1::AF,
@@ -260,7 +306,7 @@ impl Language {
         }
     }
 
-    pub fn alphabets(&self) -> HashSet<Alphabet> {
+    pub(crate) fn alphabets(&self) -> HashSet<Alphabet> {
         match self {
             Language::Afrikaans
             | Language::Albanian
@@ -340,7 +386,7 @@ impl Language {
         }
     }
 
-    pub fn unique_characters(&self) -> &str {
+    pub(crate) fn unique_characters(&self) -> &str {
         match self {
             Language::Albanian => "Ëë",
             Language::Azerbaijani => "Əə",

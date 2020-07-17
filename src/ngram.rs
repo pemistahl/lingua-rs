@@ -27,8 +27,12 @@ pub(crate) struct Ngram {
 
 impl Ngram {
     pub(crate) fn new(value: &str) -> Self {
-        if !(0..6).contains(&value.len()) {
-            panic!("length of ngram '{}' is not in range 0..6", value);
+        let char_count = value.chars().count();
+        if !(0..6).contains(&char_count) {
+            panic!(
+                "length {} of ngram '{}' is not in range 0..6",
+                char_count, value
+            );
         }
         Self {
             value: value.to_string(),

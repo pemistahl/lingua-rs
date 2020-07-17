@@ -20,6 +20,7 @@
 extern crate maplit;
 
 mod alphabet;
+mod builder;
 mod constant;
 mod detector;
 mod fraction;
@@ -27,3 +28,8 @@ mod isocode;
 mod language;
 mod model;
 mod ngram;
+
+pub use builder::LanguageDetectorBuilder;
+pub use detector::LanguageDetector;
+pub use isocode::{IsoCode639_1, IsoCode639_3};
+pub use language::Language;

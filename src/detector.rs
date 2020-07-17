@@ -35,12 +35,30 @@ use zip::ZipArchive;
 
 pub struct LanguageDetector {
     languages: HashSet<Language>,
+    minimum_relative_distance: f64,
     languages_with_unique_characters: HashSet<Language>,
     one_language_alphabets: HashMap<Alphabet, Language>,
-    minimum_relative_distance: f64,
 }
 
 impl LanguageDetector {
+    pub(crate) fn from(languages: HashSet<Language>, minimum_relative_distance: f64) -> Self {
+        let languages_with_unique_characters = languages
+            .iter()
+            .filter(|it| !it.unique_characters().is_empty())
+            .cloned()
+            .collect();
+        let one_language_alphabets = Alphabet::all_supporting_single_language()
+            .into_iter()
+            .filter(|(_, language)| languages.contains(language))
+            .collect();
+        Self {
+            languages,
+            minimum_relative_distance,
+            languages_with_unique_characters,
+            one_language_alphabets,
+        }
+    }
+
     pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {
         let confidence_values = self.compute_language_confidence_values(text);
 

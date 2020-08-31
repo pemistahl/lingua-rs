@@ -44,7 +44,7 @@ impl LanguageDetector {
     pub(crate) fn from(languages: HashSet<Language>, minimum_relative_distance: f64) -> Self {
         let languages_with_unique_characters = languages
             .iter()
-            .filter(|it| !it.unique_characters().is_empty())
+            .filter(|it| it.unique_characters().is_some())
             .cloned()
             .collect();
         let one_language_alphabets = Alphabet::all_supporting_single_language()
@@ -205,7 +205,7 @@ impl LanguageDetector {
                     {
                         self.languages_with_unique_characters
                             .iter()
-                            .filter(|it| it.unique_characters().contains(character))
+                            .filter(|it| it.unique_characters().unwrap().contains(character))
                             .for_each(|it| self.increment_counter(&mut word_language_counts, it));
                     }
                 }

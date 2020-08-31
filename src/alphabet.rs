@@ -22,7 +22,7 @@ use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 #[derive(EnumIter, Eq, PartialEq, Hash)]
-pub enum Alphabet {
+pub(crate) enum Alphabet {
     Arabic,
     Armenian,
     Bengali,

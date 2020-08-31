@@ -386,30 +386,30 @@ impl Language {
         }
     }
 
-    pub(crate) fn unique_characters(&self) -> &str {
+    pub(crate) fn unique_characters(&self) -> Option<&str> {
         match self {
-            Language::Albanian => "Ëë",
-            Language::Azerbaijani => "Əə",
-            Language::Catalan => "Ïï",
-            Language::Czech => "ĚěŘřŮů",
-            Language::Esperanto => "ĈĉĜĝĤĥĴĵŜŝŬŭ",
-            Language::German => "ß",
-            Language::Hungarian => "ŐőŰű",
-            Language::Kazakh => "ӘәҒғҚқҢңҰұ",
-            Language::Latvian => "ĢģĶķĻļŅņ",
-            Language::Lithuanian => "ĖėĮįŲų",
-            Language::Macedonian => "ЃѓЅѕЌќЏџ",
-            Language::Marathi => "ळ",
-            Language::Mongolian => "ӨөҮү",
-            Language::Polish => "ŁłŃńŚśŹź",
-            Language::Romanian => "Țţ",
-            Language::Serbian => "ЂђЋћ",
-            Language::Slovak => "ĹĺĽľŔŕ",
-            Language::Spanish => "¿¡",
-            Language::Ukrainian => "ҐґЄєЇї",
-            Language::Vietnamese => "ẰằẦầẲẳẨẩẴẵẪẫẮắẤấẠạẶặẬậỀềẺẻỂểẼẽỄễẾếỆệỈỉĨĩỊịƠơỒồỜờỎỏỔổỞởỖỗỠỡỐốỚớỘộỢợƯưỪừỦủỬửŨũỮữỨứỤụỰựỲỳỶỷỸỹỴỵ",
-            Language::Yoruba => "ŌōṢṣ",
-            _ => "",
+            Language::Albanian => Some("Ëë"),
+            Language::Azerbaijani => Some("Əə"),
+            Language::Catalan => Some("Ïï"),
+            Language::Czech => Some("ĚěŘřŮů"),
+            Language::Esperanto => Some("ĈĉĜĝĤĥĴĵŜŝŬŭ"),
+            Language::German => Some("ß"),
+            Language::Hungarian => Some("ŐőŰű"),
+            Language::Kazakh => Some("ӘәҒғҚқҢңҰұ"),
+            Language::Latvian => Some("ĢģĶķĻļŅņ"),
+            Language::Lithuanian => Some("ĖėĮįŲų"),
+            Language::Macedonian => Some("ЃѓЅѕЌќЏџ"),
+            Language::Marathi => Some("ळ"),
+            Language::Mongolian => Some("ӨөҮү"),
+            Language::Polish => Some("ŁłŃńŚśŹź"),
+            Language::Romanian => Some("Țţ"),
+            Language::Serbian => Some("ЂђЋћ"),
+            Language::Slovak => Some("ĹĺĽľŔŕ"),
+            Language::Spanish => Some("¿¡"),
+            Language::Ukrainian => Some("ҐґЄєЇї"),
+            Language::Vietnamese => Some("ẰằẦầẲẳẨẩẴẵẪẫẮắẤấẠạẶặẬậỀềẺẻỂểẼẽỄễẾếỆệỈỉĨĩỊịƠơỒồỜờỎỏỔổỞởỖỗỠỡỐốỚớỘộỢợƯưỪừỦủỬửŨũỮữỨứỤụỰựỲỳỶỷỸỹỴỵ"),
+            Language::Yoruba => Some("ŌōṢṣ"),
+            _ => None,
         }
     }
 }
@@ -417,6 +417,7 @@ impl Language {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::language::Language::*;
 
     #[test]
     fn test_language_serializer() {
@@ -428,5 +429,253 @@ mod tests {
     fn test_language_deserializer() {
         let deserialized = serde_json::from_str::<Language>("\"ENGLISH\"").unwrap();
         assert_eq!(deserialized, Language::English);
+    }
+
+    #[test]
+    fn assert_all_languages_are_available() {
+        assert_eq!(
+            Language::all(),
+            hashset!(
+                Afrikaans,
+                Albanian,
+                Arabic,
+                Armenian,
+                Azerbaijani,
+                Basque,
+                Belarusian,
+                Bengali,
+                Bokmal,
+                Bosnian,
+                Bulgarian,
+                Catalan,
+                Chinese,
+                Croatian,
+                Czech,
+                Danish,
+                Dutch,
+                English,
+                Esperanto,
+                Estonian,
+                Finnish,
+                French,
+                Ganda,
+                Georgian,
+                German,
+                Greek,
+                Gujarati,
+                Hebrew,
+                Hindi,
+                Hungarian,
+                Icelandic,
+                Indonesian,
+                Irish,
+                Italian,
+                Japanese,
+                Kazakh,
+                Korean,
+                Latin,
+                Latvian,
+                Lithuanian,
+                Macedonian,
+                Malay,
+                Marathi,
+                Mongolian,
+                Nynorsk,
+                Persian,
+                Polish,
+                Portuguese,
+                Punjabi,
+                Romanian,
+                Russian,
+                Serbian,
+                Shona,
+                Slovak,
+                Slovene,
+                Somali,
+                Sotho,
+                Spanish,
+                Swahili,
+                Swedish,
+                Tagalog,
+                Tamil,
+                Telugu,
+                Thai,
+                Tsonga,
+                Tswana,
+                Turkish,
+                Ukrainian,
+                Urdu,
+                Vietnamese,
+                Welsh,
+                Xhosa,
+                Yoruba,
+                Zulu
+            )
+        );
+    }
+
+    #[test]
+    fn assert_all_spoken_languages_are_available() {
+        assert_eq!(
+            Language::all_spoken_ones(),
+            hashset!(
+                Afrikaans,
+                Albanian,
+                Arabic,
+                Armenian,
+                Azerbaijani,
+                Basque,
+                Belarusian,
+                Bengali,
+                Bokmal,
+                Bosnian,
+                Bulgarian,
+                Catalan,
+                Chinese,
+                Croatian,
+                Czech,
+                Danish,
+                Dutch,
+                English,
+                Esperanto,
+                Estonian,
+                Finnish,
+                French,
+                Ganda,
+                Georgian,
+                German,
+                Greek,
+                Gujarati,
+                Hebrew,
+                Hindi,
+                Hungarian,
+                Icelandic,
+                Indonesian,
+                Irish,
+                Italian,
+                Japanese,
+                Kazakh,
+                Korean,
+                Latvian,
+                Lithuanian,
+                Macedonian,
+                Malay,
+                Marathi,
+                Mongolian,
+                Nynorsk,
+                Persian,
+                Polish,
+                Portuguese,
+                Punjabi,
+                Romanian,
+                Russian,
+                Serbian,
+                Shona,
+                Slovak,
+                Slovene,
+                Somali,
+                Sotho,
+                Spanish,
+                Swahili,
+                Swedish,
+                Tagalog,
+                Tamil,
+                Telugu,
+                Thai,
+                Tsonga,
+                Tswana,
+                Turkish,
+                Ukrainian,
+                Urdu,
+                Vietnamese,
+                Welsh,
+                Xhosa,
+                Yoruba,
+                Zulu
+            )
+        );
+    }
+
+    #[test]
+    fn assert_certain_languages_support_arabic_script() {
+        assert_eq!(
+            Language::all_with_arabic_script(),
+            hashset!(Arabic, Persian, Urdu)
+        );
+    }
+
+    #[test]
+    fn assert_certain_languages_support_cyrillic_script() {
+        assert_eq!(
+            Language::all_with_cyrillic_script(),
+            hashset!(
+                Belarusian, Bulgarian, Kazakh, Macedonian, Mongolian, Russian, Serbian, Ukrainian
+            )
+        );
+    }
+
+    #[test]
+    fn assert_certain_languages_support_devanagari_script() {
+        assert_eq!(
+            Language::all_with_devanagari_script(),
+            hashset!(Hindi, Marathi)
+        );
+    }
+
+    #[test]
+    fn assert_certain_languages_support_latin_script() {
+        assert_eq!(
+            Language::all_with_latin_script(),
+            hashset!(
+                Afrikaans,
+                Albanian,
+                Azerbaijani,
+                Basque,
+                Bokmal,
+                Bosnian,
+                Catalan,
+                Croatian,
+                Czech,
+                Danish,
+                Dutch,
+                English,
+                Esperanto,
+                Estonian,
+                Finnish,
+                French,
+                Ganda,
+                German,
+                Hungarian,
+                Icelandic,
+                Indonesian,
+                Irish,
+                Italian,
+                Latin,
+                Latvian,
+                Lithuanian,
+                Malay,
+                Nynorsk,
+                Polish,
+                Portuguese,
+                Romanian,
+                Shona,
+                Slovak,
+                Slovene,
+                Somali,
+                Sotho,
+                Spanish,
+                Swahili,
+                Swedish,
+                Tagalog,
+                Tsonga,
+                Tswana,
+                Turkish,
+                Vietnamese,
+                Welsh,
+                Xhosa,
+                Yoruba,
+                Zulu
+            )
+        );
     }
 }

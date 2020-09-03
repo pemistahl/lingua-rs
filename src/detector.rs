@@ -38,6 +38,11 @@ pub struct LanguageDetector {
     minimum_relative_distance: f64,
     languages_with_unique_characters: HashSet<Language>,
     one_language_alphabets: HashMap<Alphabet, Language>,
+    unigram_language_models: HashMap<Language, TrainingDataLanguageModel>,
+    bigram_language_models: HashMap<Language, TrainingDataLanguageModel>,
+    trigram_language_models: HashMap<Language, TrainingDataLanguageModel>,
+    quadrigram_language_models: HashMap<Language, TrainingDataLanguageModel>,
+    fivegram_language_models: HashMap<Language, TrainingDataLanguageModel>,
 }
 
 impl LanguageDetector {
@@ -56,10 +61,15 @@ impl LanguageDetector {
             minimum_relative_distance,
             languages_with_unique_characters,
             one_language_alphabets,
+            unigram_language_models: hashmap!(),
+            bigram_language_models: hashmap!(),
+            trigram_language_models: hashmap!(),
+            quadrigram_language_models: hashmap!(),
+            fivegram_language_models: hashmap!(),
         }
     }
 
-    pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {
+    pub fn detect_language_of<T: Into<String>>(&mut self, text: T) -> Option<Language> {
         let confidence_values = self.compute_language_confidence_values(text);
 
         if confidence_values.is_empty() {
@@ -89,7 +99,7 @@ impl LanguageDetector {
     }
 
     pub fn compute_language_confidence_values<T: Into<String>>(
-        &self,
+        &mut self,
         text: T,
     ) -> Vec<(Language, f64)> {
         let mut values = vec![];
@@ -107,12 +117,19 @@ impl LanguageDetector {
             return values;
         }
 
-        let mut all_probabilities = Vec::<HashMap<Language, f64>>::new();
-        let mut unigram_counts = HashMap::<Language, u32>::new();
         let mut filtered_languages = self.filter_languages_by_rules(words);
 
+        if filtered_languages.len() == 1 {
+            let filtered_language = filtered_languages.into_iter().next().unwrap();
+            values.push((filtered_language, 1.0));
+            return values;
+        }
+
+        let mut all_probabilities = Vec::<HashMap<Language, f64>>::new();
+        let mut unigram_counts = HashMap::<Language, u32>::new();
+
         for i in 1..6 {
-            if cleaned_up_text.len() < i {
+            if cleaned_up_text.chars().count() < i {
                 continue;
             }
             let test_data_model = TestDataLanguageModel::from(&cleaned_up_text, i);
@@ -342,13 +359,17 @@ impl LanguageDetector {
     }
 
     fn compute_language_probabilities(
-        &self,
+        &mut self,
         model: &TestDataLanguageModel,
-        languages: &HashSet<Language>,
+        filtered_languages: &HashSet<Language>,
     ) -> HashMap<Language, f64> {
         let mut probabilities = hashmap!();
-        for language in languages.iter() {
-            let sum = self.compute_sum_of_ngram_probabilities(language, &model.ngrams);
+        for language in filtered_languages.iter() {
+            let sum = self.compute_sum_of_ngram_probabilities(
+                language,
+                &model.ngrams,
+                filtered_languages,
+            );
             if sum < 0.0 {
                 probabilities.insert(language.clone(), sum);
             }
@@ -357,14 +378,17 @@ impl LanguageDetector {
     }
 
     fn compute_sum_of_ngram_probabilities(
-        &self,
+        &mut self,
         language: &Language,
         ngrams: &HashSet<Ngram>,
+        filtered_languages: &HashSet<Language>,
     ) -> f64 {
         let mut probabilities = vec![];
         for ngram in ngrams.iter() {
             for elem in ngram.range_of_lower_order_ngrams() {
-                let probability = self.look_up_ngram_probability(language, &elem);
+                let probability =
+                    self.look_up_ngram_probability(language, &elem, filtered_languages);
+
                 if probability > 0.0 {
                     probabilities.push(probability);
                     break;
@@ -374,34 +398,40 @@ impl LanguageDetector {
         probabilities.into_iter().map(|it| it.ln()).sum()
     }
 
-    fn look_up_ngram_probability(&self, language: &Language, ngram: &Ngram) -> f64 {
-        let language_models = match ngram.value.len() {
-            5 => fivegram_models(),
-            4 => quadrigram_models(),
-            3 => trigram_models(),
-            2 => bigram_models(),
-            1 => unigram_models(),
+    fn look_up_ngram_probability(
+        &mut self,
+        language: &Language,
+        ngram: &Ngram,
+        filtered_languages: &HashSet<Language>,
+    ) -> f64 {
+        let language_models = match ngram.value.chars().count() {
+            5 => self.load_language_models(5, filtered_languages),
+            4 => self.load_language_models(4, filtered_languages),
+            3 => self.load_language_models(3, filtered_languages),
+            2 => self.load_language_models(2, filtered_languages),
+            1 => self.load_language_models(1, filtered_languages),
             0 => panic!("zerogram detected"),
-            _ => panic!("unsupported ngram length detected: {}", ngram.value.len()),
+            _ => panic!(
+                "unsupported ngram length detected: {}",
+                ngram.value.chars().count()
+            ),
         };
 
         language_models
             .get(language)
             .unwrap()
-            .get()
-            .unwrap()
             .get_relative_frequency(ngram)
     }
 
     fn count_unigrams(
-        &self,
+        &mut self,
         unigram_counts: &mut HashMap<Language, u32>,
         unigram_model: &TestDataLanguageModel,
         filtered_languages: &HashSet<Language>,
     ) {
         for language in filtered_languages.iter() {
             for unigram in unigram_model.ngrams.iter() {
-                if self.look_up_ngram_probability(language, unigram) > 0.0 {
+                if self.look_up_ngram_probability(language, unigram, filtered_languages) > 0.0 {
                     self.increment_counter(unigram_counts, language.clone());
                 }
             }
@@ -436,53 +466,34 @@ impl LanguageDetector {
         summed_up_probabilities
     }
 
+    fn load_language_models(
+        &mut self,
+        ngram_length: u32,
+        filtered_languages: &HashSet<Language>,
+    ) -> &HashMap<Language, TrainingDataLanguageModel> {
+        let map = match ngram_length {
+            5 => &mut self.fivegram_language_models,
+            4 => &mut self.quadrigram_language_models,
+            3 => &mut self.trigram_language_models,
+            2 => &mut self.bigram_language_models,
+            1 => &mut self.unigram_language_models,
+            _ => panic!("unsupported ngram length detected: {}", ngram_length),
+        };
+        for language in filtered_languages {
+            if map.contains_key(language) {
+                continue;
+            }
+            let json = load_json(&LANGUAGE_MODELS_DIRECTORY, language, ngram_length).unwrap();
+            let model = TrainingDataLanguageModel::from_json(&json);
+            map.insert(language.clone(), model);
+        }
+        map
+    }
+
     fn increment_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T) {
         let counter = counts.entry(key).or_insert(0);
         *counter += 1;
     }
-}
-
-fn unigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
-    static UNIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
-        OnceCell::new();
-    UNIGRAM_MODELS.get_or_init(|| load_models(1))
-}
-
-fn bigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
-    static BIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
-        OnceCell::new();
-    BIGRAM_MODELS.get_or_init(|| load_models(2))
-}
-
-fn trigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
-    static TRIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
-        OnceCell::new();
-    TRIGRAM_MODELS.get_or_init(|| load_models(3))
-}
-
-fn quadrigram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
-    static QUADRIGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
-        OnceCell::new();
-    QUADRIGRAM_MODELS.get_or_init(|| load_models(4))
-}
-
-fn fivegram_models() -> &'static HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
-    static FIVEGRAM_MODELS: OnceCell<HashMap<Language, OnceCell<TrainingDataLanguageModel>>> =
-        OnceCell::new();
-    FIVEGRAM_MODELS.get_or_init(|| load_models(5))
-}
-
-fn load_models(ngram_length: u32) -> HashMap<Language, OnceCell<TrainingDataLanguageModel>> {
-    let mut map = hashmap!();
-    for language in Language::iter() {
-        let model = OnceCell::new();
-        model.get_or_init(|| {
-            let json = load_json(&LANGUAGE_MODELS_DIRECTORY, &language, ngram_length).unwrap();
-            TrainingDataLanguageModel::from_json(&json)
-        });
-        map.insert(language, model);
-    }
-    map
 }
 
 fn load_json(directory: &Dir, language: &Language, ngram_length: u32) -> std::io::Result<String> {

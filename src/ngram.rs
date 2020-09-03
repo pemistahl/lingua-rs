@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+use itertools::Itertools;
 use serde::de::{Error, Visitor};
 use serde::export::Formatter;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -98,12 +99,14 @@ impl Iterator for NgramRange {
 
     fn next(&mut self) -> Option<Self::Item> {
         let value = &self.start.value;
-        let length = value.len();
+        let length = value.chars().count();
         if length == 0 {
             None
         } else {
             let result = Some(self.start.clone());
-            self.start = Ngram::new(&value[0..length - 1]);
+            let chars = value.chars().collect_vec();
+            let new_value = &chars[0..length - 1].iter().collect::<String>();
+            self.start = Ngram::new(new_value);
             result
         }
     }
@@ -115,26 +118,26 @@ mod tests {
 
     #[test]
     fn test_ngram_serializer() {
-        let ngram = Ngram::new("abcde");
+        let ngram = Ngram::new("äbcde");
         let serialized = serde_json::to_string(&ngram).unwrap();
-        assert_eq!(serialized, "\"abcde\"");
+        assert_eq!(serialized, "\"äbcde\"");
     }
 
     #[test]
     fn test_ngram_deserializer() {
-        let ngram = serde_json::from_str::<Ngram>("\"abcde\"").unwrap();
-        assert_eq!(ngram, Ngram::new("abcde"));
+        let ngram = serde_json::from_str::<Ngram>("\"äbcde\"").unwrap();
+        assert_eq!(ngram, Ngram::new("äbcde"));
     }
 
     #[test]
     fn test_ngram_iterator() {
-        let ngram = Ngram::new("abcde");
+        let ngram = Ngram::new("äbcde");
         let mut range = ngram.range_of_lower_order_ngrams();
-        assert_eq!(range.next(), Some(Ngram::new("abcde")));
-        assert_eq!(range.next(), Some(Ngram::new("abcd")));
-        assert_eq!(range.next(), Some(Ngram::new("abc")));
-        assert_eq!(range.next(), Some(Ngram::new("ab")));
-        assert_eq!(range.next(), Some(Ngram::new("a")));
+        assert_eq!(range.next(), Some(Ngram::new("äbcde")));
+        assert_eq!(range.next(), Some(Ngram::new("äbcd")));
+        assert_eq!(range.next(), Some(Ngram::new("äbc")));
+        assert_eq!(range.next(), Some(Ngram::new("äb")));
+        assert_eq!(range.next(), Some(Ngram::new("ä")));
         assert_eq!(range.next(), None);
     }
 }

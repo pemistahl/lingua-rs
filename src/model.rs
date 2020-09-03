@@ -164,13 +164,19 @@ impl TestDataLanguageModel {
         if !(1..6).contains(&ngram_length) {
             panic!("ngram length {} is not in range 1..6", ngram_length);
         }
+
         let mut ngrams = hashset!();
-        for i in 0..=text.len() - ngram_length {
-            let slice = &text[i..i + ngram_length];
-            if LETTER.is_match(&slice) {
-                ngrams.insert(Ngram::new(slice));
+        let chars = text.chars().collect_vec();
+
+        if chars.len() >= ngram_length {
+            for i in 0..=chars.len() - ngram_length {
+                let slice = &chars[i..i + ngram_length].iter().collect::<String>();
+                if LETTER.is_match(slice) {
+                    ngrams.insert(Ngram::new(slice));
+                }
             }
         }
+
         Self { ngrams }
     }
 }

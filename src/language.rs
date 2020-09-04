@@ -388,7 +388,6 @@ impl Language {
 
     pub(crate) fn unique_characters(&self) -> Option<&str> {
         match self {
-            Language::Albanian => Some("Ëë"),
             Language::Azerbaijani => Some("Əə"),
             Language::Catalan => Some("Ïï"),
             Language::Czech => Some("ĚěŘřŮů"),

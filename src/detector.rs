@@ -184,7 +184,7 @@ impl LanguageDetector {
         normalized_whitespace.to_string()
     }
 
-    fn split_text_into_words<'a>(&self, text: &'a String) -> Vec<&'a str> {
+    fn split_text_into_words<'a>(&self, text: &'a str) -> Vec<&'a str> {
         if text.contains(' ') {
             text.split(' ').collect_vec()
         } else {
@@ -512,8 +512,14 @@ fn load_json(directory: &Dir, language: &Language, ngram_length: u32) -> std::io
 mod tests {
     use super::*;
     use include_dir::include_dir;
+    use rstest::*;
 
     const LANGUAGE_MODELS_TEST_DIRECTORY: Dir = include_dir!("assets/test/language-models");
+
+    #[fixture]
+    fn detector_for_all_languages() -> LanguageDetector {
+        LanguageDetector::from(Language::all(), 0.0)
+    }
 
     #[test]
     fn test_load_json() {
@@ -522,6 +528,165 @@ mod tests {
         assert_eq!(
             result.unwrap(),
             r#"{"language":"ENGLISH","ngrams":{"2/93616591":"ﬀ ċ ė ĩ ȼ ɔ ţ ũ ʔ ơ ả ộ ù"}}"#
+        );
+    }
+
+    #[rstest]
+    fn assert_text_is_cleaned_up_properly(detector_for_all_languages: LanguageDetector) {
+        let text = "Weltweit    gibt es ungefähr 6.000 Sprachen,
+        wobei laut Schätzungen zufolge ungefähr 90  Prozent davon
+        am Ende dieses Jahrhunderts verdrängt sein werden.";
+
+        let expected_cleaned_text =
+            "weltweit gibt es ungefähr sprachen wobei laut schätzungen zufolge ungefähr \
+            prozent davon am ende dieses jahrhunderts verdrängt sein werden";
+
+        assert_eq!(
+            detector_for_all_languages.clean_up_input_text(text.to_string()),
+            expected_cleaned_text
+        );
+    }
+
+    #[rstest]
+    fn assert_text_is_split_into_words_correctly(detector_for_all_languages: LanguageDetector) {
+        assert_eq!(
+            detector_for_all_languages.split_text_into_words("this is a sentence"),
+            vec!["this", "is", "a", "sentence"]
+        );
+        assert_eq!(
+            detector_for_all_languages.split_text_into_words("sentence"),
+            vec!["sentence"]
+        );
+    }
+
+    #[rstest(
+        word,
+        expected_language,
+        // words with unique characters
+        case("məhərrəm", Some(Language::Azerbaijani)),
+        case("substituïts", Some(Language::Catalan)),
+        case("rozdělit", Some(Language::Czech)),
+        case("tvořen", Some(Language::Czech)),
+        case("subjektů", Some(Language::Czech)),
+        case("nesufiĉecon", Some(Language::Esperanto)),
+        case("intermiksiĝis", Some(Language::Esperanto)),
+        case("monaĥinoj", Some(Language::Esperanto)),
+        case("kreitaĵoj", Some(Language::Esperanto)),
+        case("ŝpinante", Some(Language::Esperanto)),
+        case("apenaŭ", Some(Language::Esperanto)),
+        case("groß", Some(Language::German)),
+        case("σχέδια", Some(Language::Greek)),
+        case("fekvő", Some(Language::Hungarian)),
+        case("meggyűrűzni", Some(Language::Hungarian)),
+        case("ヴェダイヤモンド", Some(Language::Japanese)),
+        case("әлем", Some(Language::Kazakh)),
+        case("шаруашылығы", Some(Language::Kazakh)),
+        case("ақын", Some(Language::Kazakh)),
+        case("оның", Some(Language::Kazakh)),
+        case("шұрайлы", Some(Language::Kazakh)),
+        case("teoloģiska", Some(Language::Latvian)),
+        case("blaķene", Some(Language::Latvian)),
+        case("ceļojumiem", Some(Language::Latvian)),
+        case("numuriņu", Some(Language::Latvian)),
+        case("mergelės", Some(Language::Lithuanian)),
+        case("įrengus", Some(Language::Lithuanian)),
+        case("slegiamų", Some(Language::Lithuanian)),
+        case("припаѓа", Some(Language::Macedonian)),
+        case("ѕидови", Some(Language::Macedonian)),
+        case("ќерка", Some(Language::Macedonian)),
+        case("џамиите", Some(Language::Macedonian)),
+        case("मिळते", Some(Language::Marathi)),
+        case("үндсэн", Some(Language::Mongolian)),
+        case("дөхөж", Some(Language::Mongolian)),
+        case("zmieniły", Some(Language::Polish)),
+        case("państwowych", Some(Language::Polish)),
+        case("mniejszości", Some(Language::Polish)),
+        case("groźne", Some(Language::Polish)),
+        case("ialomiţa", Some(Language::Romanian)),
+        case("наслеђивања", Some(Language::Serbian)),
+        case("неисквареношћу", Some(Language::Serbian)),
+        case("podĺa", Some(Language::Slovak)),
+        case("pohľade", Some(Language::Slovak)),
+        case("mŕtvych", Some(Language::Slovak)),
+        case("ґрунтовому", Some(Language::Ukrainian)),
+        case("пропонує", Some(Language::Ukrainian)),
+        case("пристрої", Some(Language::Ukrainian)),
+        case("cằm", Some(Language::Vietnamese)),
+        case("thần", Some(Language::Vietnamese)),
+        case("chẳng", Some(Language::Vietnamese)),
+        case("quẩy", Some(Language::Vietnamese)),
+        case("sẵn", Some(Language::Vietnamese)),
+        case("nhẫn", Some(Language::Vietnamese)),
+        case("dắt", Some(Language::Vietnamese)),
+        case("chất", Some(Language::Vietnamese)),
+        case("đạp", Some(Language::Vietnamese)),
+        case("mặn", Some(Language::Vietnamese)),
+        case("hậu", Some(Language::Vietnamese)),
+        case("hiền", Some(Language::Vietnamese)),
+        case("lẻn", Some(Language::Vietnamese)),
+        case("biểu", Some(Language::Vietnamese)),
+        case("kẽm", Some(Language::Vietnamese)),
+        case("diễm", Some(Language::Vietnamese)),
+        case("phế", Some(Language::Vietnamese)),
+        case("việc", Some(Language::Vietnamese)),
+        case("chỉnh", Some(Language::Vietnamese)),
+        case("trĩ", Some(Language::Vietnamese)),
+        case("ravị", Some(Language::Vietnamese)),
+        case("thơ", Some(Language::Vietnamese)),
+        case("nguồn", Some(Language::Vietnamese)),
+        case("thờ", Some(Language::Vietnamese)),
+        case("sỏi", Some(Language::Vietnamese)),
+        case("tổng", Some(Language::Vietnamese)),
+        case("nhở", Some(Language::Vietnamese)),
+        case("mỗi", Some(Language::Vietnamese)),
+        case("bỡi", Some(Language::Vietnamese)),
+        case("tốt", Some(Language::Vietnamese)),
+        case("giới", Some(Language::Vietnamese)),
+        case("một", Some(Language::Vietnamese)),
+        case("hợp", Some(Language::Vietnamese)),
+        case("hưng", Some(Language::Vietnamese)),
+        case("từng", Some(Language::Vietnamese)),
+        case("của", Some(Language::Vietnamese)),
+        case("sử", Some(Language::Vietnamese)),
+        case("cũng", Some(Language::Vietnamese)),
+        case("những", Some(Language::Vietnamese)),
+        case("chức", Some(Language::Vietnamese)),
+        case("dụng", Some(Language::Vietnamese)),
+        case("thực", Some(Language::Vietnamese)),
+        case("kỳ", Some(Language::Vietnamese)),
+        case("kỷ", Some(Language::Vietnamese)),
+        case("mỹ", Some(Language::Vietnamese)),
+        case("mỵ", Some(Language::Vietnamese)),
+        case("kōnin", Some(Language::Yoruba)),
+        case("ṣaaju", Some(Language::Yoruba)),
+        case("والموضوع", None),
+        case("сопротивление", None),
+        case("house", None),
+
+        // words with unique alphabet
+        case("ունենա", Some(Language::Armenian)),
+        case("জানাতে", Some(Language::Bengali)),
+        case("გარეუბან", Some(Language::Georgian)),
+        case("σταμάτησε", Some(Language::Greek)),
+        case("ઉપકરણોની", Some(Language::Gujarati)),
+        case("בתחרויות", Some(Language::Hebrew)),
+        case("びさ", Some(Language::Japanese)),
+        case("대결구도가", Some(Language::Korean)),
+        case("ਮੋਟਰਸਾਈਕਲਾਂ", Some(Language::Punjabi)),
+        case("துன்பங்களை", Some(Language::Tamil)),
+        case("కృష్ణదేవరాయలు", Some(Language::Telugu)),
+        case("ในทางหลวงหมายเลข", Some(Language::Thai)),
+    )]
+    fn assert_language_detection_with_rules_works_correctly(
+        detector_for_all_languages: LanguageDetector,
+        word: &str,
+        expected_language: Option<Language>,
+    ) {
+        let detected_language = detector_for_all_languages.detect_language_with_rules(&vec![word]);
+        assert_eq!(
+            detected_language, expected_language,
+            "expected {:?} for word '{}', got {:?}",
+            expected_language, word, detected_language
         );
     }
 }

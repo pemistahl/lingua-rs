@@ -60,6 +60,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             "Іі" => hashset!(Belarusian, Kazakh, Ukrainian),
             "Ìì" => hashset!(Italian, Vietnamese, Yoruba),
 
+            "Ëë" => hashset!(Afrikaans, Albanian, Dutch, French),
             "ÈèÙù" => hashset!(French, Italian, Vietnamese, Yoruba),
             "Êê" => hashset!(Afrikaans, French, Portuguese, Vietnamese),
             "Õõ" => hashset!(Estonian, Hungarian, Portuguese, Vietnamese),

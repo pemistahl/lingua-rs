@@ -77,7 +77,6 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             "Ææ" => hashset!(Bokmal, Danish, Icelandic, Nynorsk),
             "Åå" => hashset!(Bokmal, Danish, Nynorsk, Swedish),
 
-            "ЙйЬьЮюЧчЯя" => hashset!(Belarusian, Bulgarian, Kazakh, Mongolian, Russian, Ukrainian),
             "Üü" => hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Turkish),
 
             "ČčŠšŽž" => hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene),

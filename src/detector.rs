@@ -331,13 +331,18 @@ impl LanguageDetector {
 
         for word in words.iter() {
             for (characters, languages) in CHARS_TO_LANGUAGES_MAPPING.iter() {
+                let mut word_contains_char = false;
                 for character in characters.chars() {
                     if word.contains(character) {
                         for language in languages.iter() {
                             self.increment_counter(&mut language_counts, language);
                         }
+                        word_contains_char = true;
                         break;
                     }
+                }
+                if word_contains_char {
+                    break;
                 }
             }
         }
@@ -512,9 +517,155 @@ fn load_json(directory: &Dir, language: &Language, ngram_length: u32) -> std::io
 mod tests {
     use super::*;
     use include_dir::include_dir;
+    use mockall::{predicate::*, *};
     use rstest::*;
 
     const LANGUAGE_MODELS_TEST_DIRECTORY: Dir = include_dir!("assets/test/language-models");
+
+    // ##############################
+    // MOCKS
+    // ##############################
+
+    mock! {
+        pub(crate) TrainingDataLanguageModel {
+            fn get_relative_frequency(&self, ngram: &Ngram) -> f64;
+        }
+    }
+
+    fn create_language_model_mock(
+        data: HashMap<&'static str, f64>,
+    ) -> MockTrainingDataLanguageModel {
+        let mut mock = MockTrainingDataLanguageModel::new();
+        for (ngram, probability) in data {
+            mock.expect_get_relative_frequency()
+                .withf(move |n| n == &Ngram::new(ngram))
+                .return_const(probability);
+        }
+        mock
+    }
+
+    // ##############################
+    // LANGUAGE MODELS FOR ENGLISH
+    // ##############################
+
+    #[fixture]
+    fn unigram_language_model_for_english() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "a" => 0.01,
+            "l" => 0.02,
+            "t" => 0.03,
+            "e" => 0.04,
+            "r" => 0.05,
+            // unknown unigrams
+            "w" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn bigram_language_model_for_english() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "al" => 0.11,
+            "lt" => 0.12,
+            "te" => 0.13,
+            "er" => 0.14,
+            // unknown bigrams
+            "aq" => 0.0,
+            "wx" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn trigram_language_model_for_english() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "alt" => 0.19,
+            "lte" => 0.2,
+            "ter" => 0.21,
+            // unknown trigrams
+            "aqu" => 0.0,
+            "tez" => 0.0,
+            "wxy" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn quadrigram_language_model_for_english() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "alte" => 0.25,
+            "lter" => 0.26,
+            // unknown quadrigrams
+            "aqua" => 0.0,
+            "wxyz" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn fivegram_language_model_for_english() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "alter" => 0.29,
+            // unknown fivegrams
+            "aquas" => 0.0
+        ))
+    }
+
+    // ##############################
+    // LANGUAGE MODELS FOR GERMAN
+    // ##############################
+
+    #[fixture]
+    fn unigram_language_model_for_german() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "a" => 0.06,
+            "l" => 0.07,
+            "t" => 0.08,
+            "e" => 0.09,
+            "r" => 0.1,
+            // unknown unigrams
+            "w" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn bigram_language_model_for_german() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "al" => 0.15,
+            "lt" => 0.16,
+            "te" => 0.17,
+            "er" => 0.18,
+            // unknown bigrams
+            "wx" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn trigram_language_model_for_german() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "alt" => 0.22,
+            "lte" => 0.23,
+            "ter" => 0.24,
+            // unknown trigrams
+            "wxy" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn quadrigram_language_model_for_german() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!(
+            "alte" => 0.27,
+            "lter" => 0.28,
+            // unknown quadrigrams
+            "wxyz" => 0.0
+        ))
+    }
+
+    #[fixture]
+    fn fivegram_language_model_for_german() -> MockTrainingDataLanguageModel {
+        create_language_model_mock(hashmap!("alter" => 0.3))
+    }
+
+    #[fixture]
+    fn detector_for_english_and_german() -> LanguageDetector {
+        LanguageDetector::from(hashset!(English, German), 0.0)
+    }
 
     #[fixture]
     fn detector_for_all_languages() -> LanguageDetector {
@@ -563,119 +714,119 @@ mod tests {
         word,
         expected_language,
         // words with unique characters
-        case("məhərrəm", Some(Language::Azerbaijani)),
-        case("substituïts", Some(Language::Catalan)),
-        case("rozdělit", Some(Language::Czech)),
-        case("tvořen", Some(Language::Czech)),
-        case("subjektů", Some(Language::Czech)),
-        case("nesufiĉecon", Some(Language::Esperanto)),
-        case("intermiksiĝis", Some(Language::Esperanto)),
-        case("monaĥinoj", Some(Language::Esperanto)),
-        case("kreitaĵoj", Some(Language::Esperanto)),
-        case("ŝpinante", Some(Language::Esperanto)),
-        case("apenaŭ", Some(Language::Esperanto)),
-        case("groß", Some(Language::German)),
-        case("σχέδια", Some(Language::Greek)),
-        case("fekvő", Some(Language::Hungarian)),
-        case("meggyűrűzni", Some(Language::Hungarian)),
-        case("ヴェダイヤモンド", Some(Language::Japanese)),
-        case("әлем", Some(Language::Kazakh)),
-        case("шаруашылығы", Some(Language::Kazakh)),
-        case("ақын", Some(Language::Kazakh)),
-        case("оның", Some(Language::Kazakh)),
-        case("шұрайлы", Some(Language::Kazakh)),
-        case("teoloģiska", Some(Language::Latvian)),
-        case("blaķene", Some(Language::Latvian)),
-        case("ceļojumiem", Some(Language::Latvian)),
-        case("numuriņu", Some(Language::Latvian)),
-        case("mergelės", Some(Language::Lithuanian)),
-        case("įrengus", Some(Language::Lithuanian)),
-        case("slegiamų", Some(Language::Lithuanian)),
-        case("припаѓа", Some(Language::Macedonian)),
-        case("ѕидови", Some(Language::Macedonian)),
-        case("ќерка", Some(Language::Macedonian)),
-        case("џамиите", Some(Language::Macedonian)),
-        case("मिळते", Some(Language::Marathi)),
-        case("үндсэн", Some(Language::Mongolian)),
-        case("дөхөж", Some(Language::Mongolian)),
-        case("zmieniły", Some(Language::Polish)),
-        case("państwowych", Some(Language::Polish)),
-        case("mniejszości", Some(Language::Polish)),
-        case("groźne", Some(Language::Polish)),
-        case("ialomiţa", Some(Language::Romanian)),
-        case("наслеђивања", Some(Language::Serbian)),
-        case("неисквареношћу", Some(Language::Serbian)),
-        case("podĺa", Some(Language::Slovak)),
-        case("pohľade", Some(Language::Slovak)),
-        case("mŕtvych", Some(Language::Slovak)),
-        case("ґрунтовому", Some(Language::Ukrainian)),
-        case("пропонує", Some(Language::Ukrainian)),
-        case("пристрої", Some(Language::Ukrainian)),
-        case("cằm", Some(Language::Vietnamese)),
-        case("thần", Some(Language::Vietnamese)),
-        case("chẳng", Some(Language::Vietnamese)),
-        case("quẩy", Some(Language::Vietnamese)),
-        case("sẵn", Some(Language::Vietnamese)),
-        case("nhẫn", Some(Language::Vietnamese)),
-        case("dắt", Some(Language::Vietnamese)),
-        case("chất", Some(Language::Vietnamese)),
-        case("đạp", Some(Language::Vietnamese)),
-        case("mặn", Some(Language::Vietnamese)),
-        case("hậu", Some(Language::Vietnamese)),
-        case("hiền", Some(Language::Vietnamese)),
-        case("lẻn", Some(Language::Vietnamese)),
-        case("biểu", Some(Language::Vietnamese)),
-        case("kẽm", Some(Language::Vietnamese)),
-        case("diễm", Some(Language::Vietnamese)),
-        case("phế", Some(Language::Vietnamese)),
-        case("việc", Some(Language::Vietnamese)),
-        case("chỉnh", Some(Language::Vietnamese)),
-        case("trĩ", Some(Language::Vietnamese)),
-        case("ravị", Some(Language::Vietnamese)),
-        case("thơ", Some(Language::Vietnamese)),
-        case("nguồn", Some(Language::Vietnamese)),
-        case("thờ", Some(Language::Vietnamese)),
-        case("sỏi", Some(Language::Vietnamese)),
-        case("tổng", Some(Language::Vietnamese)),
-        case("nhở", Some(Language::Vietnamese)),
-        case("mỗi", Some(Language::Vietnamese)),
-        case("bỡi", Some(Language::Vietnamese)),
-        case("tốt", Some(Language::Vietnamese)),
-        case("giới", Some(Language::Vietnamese)),
-        case("một", Some(Language::Vietnamese)),
-        case("hợp", Some(Language::Vietnamese)),
-        case("hưng", Some(Language::Vietnamese)),
-        case("từng", Some(Language::Vietnamese)),
-        case("của", Some(Language::Vietnamese)),
-        case("sử", Some(Language::Vietnamese)),
-        case("cũng", Some(Language::Vietnamese)),
-        case("những", Some(Language::Vietnamese)),
-        case("chức", Some(Language::Vietnamese)),
-        case("dụng", Some(Language::Vietnamese)),
-        case("thực", Some(Language::Vietnamese)),
-        case("kỳ", Some(Language::Vietnamese)),
-        case("kỷ", Some(Language::Vietnamese)),
-        case("mỹ", Some(Language::Vietnamese)),
-        case("mỵ", Some(Language::Vietnamese)),
-        case("kōnin", Some(Language::Yoruba)),
-        case("ṣaaju", Some(Language::Yoruba)),
+        case("məhərrəm", Some(Azerbaijani)),
+        case("substituïts", Some(Catalan)),
+        case("rozdělit", Some(Czech)),
+        case("tvořen", Some(Czech)),
+        case("subjektů", Some(Czech)),
+        case("nesufiĉecon", Some(Esperanto)),
+        case("intermiksiĝis", Some(Esperanto)),
+        case("monaĥinoj", Some(Esperanto)),
+        case("kreitaĵoj", Some(Esperanto)),
+        case("ŝpinante", Some(Esperanto)),
+        case("apenaŭ", Some(Esperanto)),
+        case("groß", Some(German)),
+        case("σχέδια", Some(Greek)),
+        case("fekvő", Some(Hungarian)),
+        case("meggyűrűzni", Some(Hungarian)),
+        case("ヴェダイヤモンド", Some(Japanese)),
+        case("әлем", Some(Kazakh)),
+        case("шаруашылығы", Some(Kazakh)),
+        case("ақын", Some(Kazakh)),
+        case("оның", Some(Kazakh)),
+        case("шұрайлы", Some(Kazakh)),
+        case("teoloģiska", Some(Latvian)),
+        case("blaķene", Some(Latvian)),
+        case("ceļojumiem", Some(Latvian)),
+        case("numuriņu", Some(Latvian)),
+        case("mergelės", Some(Lithuanian)),
+        case("įrengus", Some(Lithuanian)),
+        case("slegiamų", Some(Lithuanian)),
+        case("припаѓа", Some(Macedonian)),
+        case("ѕидови", Some(Macedonian)),
+        case("ќерка", Some(Macedonian)),
+        case("џамиите", Some(Macedonian)),
+        case("मिळते", Some(Marathi)),
+        case("үндсэн", Some(Mongolian)),
+        case("дөхөж", Some(Mongolian)),
+        case("zmieniły", Some(Polish)),
+        case("państwowych", Some(Polish)),
+        case("mniejszości", Some(Polish)),
+        case("groźne", Some(Polish)),
+        case("ialomiţa", Some(Romanian)),
+        case("наслеђивања", Some(Serbian)),
+        case("неисквареношћу", Some(Serbian)),
+        case("podĺa", Some(Slovak)),
+        case("pohľade", Some(Slovak)),
+        case("mŕtvych", Some(Slovak)),
+        case("ґрунтовому", Some(Ukrainian)),
+        case("пропонує", Some(Ukrainian)),
+        case("пристрої", Some(Ukrainian)),
+        case("cằm", Some(Vietnamese)),
+        case("thần", Some(Vietnamese)),
+        case("chẳng", Some(Vietnamese)),
+        case("quẩy", Some(Vietnamese)),
+        case("sẵn", Some(Vietnamese)),
+        case("nhẫn", Some(Vietnamese)),
+        case("dắt", Some(Vietnamese)),
+        case("chất", Some(Vietnamese)),
+        case("đạp", Some(Vietnamese)),
+        case("mặn", Some(Vietnamese)),
+        case("hậu", Some(Vietnamese)),
+        case("hiền", Some(Vietnamese)),
+        case("lẻn", Some(Vietnamese)),
+        case("biểu", Some(Vietnamese)),
+        case("kẽm", Some(Vietnamese)),
+        case("diễm", Some(Vietnamese)),
+        case("phế", Some(Vietnamese)),
+        case("việc", Some(Vietnamese)),
+        case("chỉnh", Some(Vietnamese)),
+        case("trĩ", Some(Vietnamese)),
+        case("ravị", Some(Vietnamese)),
+        case("thơ", Some(Vietnamese)),
+        case("nguồn", Some(Vietnamese)),
+        case("thờ", Some(Vietnamese)),
+        case("sỏi", Some(Vietnamese)),
+        case("tổng", Some(Vietnamese)),
+        case("nhở", Some(Vietnamese)),
+        case("mỗi", Some(Vietnamese)),
+        case("bỡi", Some(Vietnamese)),
+        case("tốt", Some(Vietnamese)),
+        case("giới", Some(Vietnamese)),
+        case("một", Some(Vietnamese)),
+        case("hợp", Some(Vietnamese)),
+        case("hưng", Some(Vietnamese)),
+        case("từng", Some(Vietnamese)),
+        case("của", Some(Vietnamese)),
+        case("sử", Some(Vietnamese)),
+        case("cũng", Some(Vietnamese)),
+        case("những", Some(Vietnamese)),
+        case("chức", Some(Vietnamese)),
+        case("dụng", Some(Vietnamese)),
+        case("thực", Some(Vietnamese)),
+        case("kỳ", Some(Vietnamese)),
+        case("kỷ", Some(Vietnamese)),
+        case("mỹ", Some(Vietnamese)),
+        case("mỵ", Some(Vietnamese)),
+        case("kōnin", Some(Yoruba)),
+        case("ṣaaju", Some(Yoruba)),
         case("والموضوع", None),
         case("сопротивление", None),
         case("house", None),
 
         // words with unique alphabet
-        case("ունենա", Some(Language::Armenian)),
-        case("জানাতে", Some(Language::Bengali)),
-        case("გარეუბან", Some(Language::Georgian)),
-        case("σταμάτησε", Some(Language::Greek)),
-        case("ઉપકરણોની", Some(Language::Gujarati)),
-        case("בתחרויות", Some(Language::Hebrew)),
-        case("びさ", Some(Language::Japanese)),
-        case("대결구도가", Some(Language::Korean)),
-        case("ਮੋਟਰਸਾਈਕਲਾਂ", Some(Language::Punjabi)),
-        case("துன்பங்களை", Some(Language::Tamil)),
-        case("కృష్ణదేవరాయలు", Some(Language::Telugu)),
-        case("ในทางหลวงหมายเลข", Some(Language::Thai)),
+        case("ունենա", Some(Armenian)),
+        case("জানাতে", Some(Bengali)),
+        case("გარეუბან", Some(Georgian)),
+        case("σταμάτησε", Some(Greek)),
+        case("ઉપકરણોની", Some(Gujarati)),
+        case("בתחרויות", Some(Hebrew)),
+        case("びさ", Some(Japanese)),
+        case("대결구도가", Some(Korean)),
+        case("ਮੋਟਰਸਾਈਕਲਾਂ", Some(Punjabi)),
+        case("துன்பங்களை", Some(Tamil)),
+        case("కృష్ణదేవరాయలు", Some(Telugu)),
+        case("ในทางหลวงหมายเลข", Some(Thai)),
     )]
     fn assert_language_detection_with_rules_works_correctly(
         detector_for_all_languages: LanguageDetector,
@@ -687,6 +838,138 @@ mod tests {
             detected_language, expected_language,
             "expected {:?} for word '{}', got {:?}",
             expected_language, word, detected_language
+        );
+    }
+
+    #[rstest(word, expected_languages,
+        case("والموضوع", hashset!(Arabic, Persian, Urdu)),
+        case(
+            "сопротивление",
+            hashset!(
+                Belarusian, Bulgarian, Kazakh, Macedonian, Mongolian, Russian, Serbian, Ukrainian
+            )
+        ),
+        case("раскрывае", hashset!(Belarusian, Kazakh, Mongolian, Russian)),
+        case("этот", hashset!(Belarusian, Kazakh, Mongolian, Russian)),
+        case("огнём", hashset!(Belarusian, Kazakh, Mongolian, Russian)),
+        case("плаваща", hashset!(Bulgarian, Kazakh, Mongolian, Russian)),
+        case("довършат", hashset!(Bulgarian, Kazakh, Mongolian, Russian)),
+        case("павінен", hashset!(Belarusian, Kazakh, Ukrainian)),
+        case("затоплување", hashset!(Macedonian, Serbian)),
+        case("ректасцензија", hashset!(Macedonian, Serbian)),
+        case("набљудувач", hashset!(Macedonian, Serbian)),
+        case("aizklātā", hashset!(Latvian, Yoruba)),
+        case("sistēmas", hashset!(Latvian, Yoruba)),
+        case("palīdzi", hashset!(Latvian, Yoruba)),
+        case("nhẹn", hashset!(Vietnamese, Yoruba)),
+        case("chọn", hashset!(Vietnamese, Yoruba)),
+        case("prihvaćanju", hashset!(Bosnian, Croatian, Polish)),
+        case("nađete", hashset!(Bosnian, Croatian, Vietnamese)),
+        case("visão", hashset!(Portuguese, Vietnamese)),
+        case("wystąpią", hashset!(Lithuanian, Polish)),
+        case("budowę", hashset!(Lithuanian, Polish)),
+        case("nebūsime", hashset!(Latvian, Lithuanian, Yoruba)),
+        case("afişate", hashset!(Azerbaijani, Romanian, Turkish)),
+        case("kradzieżami", hashset!(Polish, Romanian)),
+        case("înviat", hashset!(French, Romanian)),
+        case("venerdì", hashset!(Italian, Vietnamese, Yoruba)),
+        case("años", hashset!(Basque, Spanish)),
+        case("rozohňuje", hashset!(Czech, Slovak)),
+        case("rtuť", hashset!(Czech, Slovak)),
+        case("pregătire", hashset!(Romanian, Vietnamese)),
+        case("jeďte", hashset!(Czech, Romanian, Slovak)),
+        case("minjaverðir", hashset!(Icelandic, Latvian, Turkish)),
+        case("þagnarskyldu", hashset!(Icelandic, Latvian, Turkish)),
+        case("nebûtu", hashset!(French, Hungarian, Latvian)),
+        case("hashemidëve", hashset!(Afrikaans, Albanian, Dutch, French)),
+        case("forêt", hashset!(Afrikaans, French, Portuguese, Vietnamese)),
+        case("succèdent", hashset!(French, Italian, Vietnamese, Yoruba)),
+        case("où", hashset!(French, Italian, Vietnamese, Yoruba)),
+        case("tõeliseks", hashset!(Estonian, Hungarian, Portuguese, Vietnamese)),
+        case("viòiem", hashset!(Catalan, Italian, Latvian, Vietnamese, Yoruba)),
+        case("contrôle", hashset!(French, Portuguese, Slovak, Vietnamese)),
+        case("direktør", hashset!(Bokmal, Danish, Nynorsk)),
+        case("vývoj", hashset!(Czech, Icelandic, Slovak, Turkish, Vietnamese)),
+        case("päralt", hashset!(Estonian, Finnish, German, Slovak, Swedish)),
+        case("labâk", hashset!(Latvian, Portuguese, Romanian, Turkish, Vietnamese)),
+        case("pràctiques", hashset!(Catalan, French, Italian, Portuguese, Vietnamese)),
+        case("überrascht", hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Turkish)),
+        case("indebærer", hashset!(Bokmal, Danish, Icelandic, Nynorsk)),
+        case("måned", hashset!(Bokmal, Danish, Nynorsk, Swedish)),
+        case("zaručen", hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene)),
+        case("zkouškou", hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene)),
+        case("navržen", hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene)),
+        case(
+            "façonnage",
+            hashset!(Albanian, Azerbaijani, Basque, Catalan, French, Latvian, Portuguese, Turkish)
+        ),
+        case(
+            "höher",
+            hashset!(Azerbaijani, Estonian, Finnish, German, Hungarian, Icelandic, Swedish, Turkish)
+        ),
+        case(
+            "catedráticos",
+            hashset!(
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+            )
+        ),
+        case(
+            "política",
+            hashset!(
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+            )
+        ),
+        case(
+            "música",
+            hashset!(
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+            )
+        ),
+        case(
+            "contradicció",
+            hashset!(
+                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Vietnamese, Yoruba
+            )
+        ),
+        case(
+            "només",
+            hashset!(
+                Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
+                Vietnamese, Yoruba
+            )
+        ),
+        case(
+            "house",
+            hashset!(
+                Afrikaans, Albanian, Azerbaijani, Basque, Bokmal, Bosnian, Catalan, Croatian, Czech,
+                Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Ganda, German, Hungarian,
+                Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay, Nynorsk,
+                Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho, Spanish, Swahili,
+                Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
+            )
+        ),
+    )]
+    fn assert_language_filtering_with_rules_works_correctly(
+        detector_for_all_languages: LanguageDetector,
+        word: &str,
+        expected_languages: HashSet<Language>,
+    ) {
+        let filtered_languages = detector_for_all_languages.filter_languages_by_rules(vec![word]);
+        assert_eq!(
+            filtered_languages, expected_languages,
+            "expected {:?} for word '{}', got {:?}",
+            expected_languages, word, filtered_languages
+        );
+    }
+
+    #[rstest(invalid_str, case(""), case(" \n  \t;"), case("3<856%)§"))]
+    fn assert_strings_without_letters_return_no_language(
+        mut detector_for_all_languages: LanguageDetector,
+        invalid_str: &str,
+    ) {
+        assert_eq!(
+            detector_for_all_languages.detect_language_of(invalid_str),
+            None
         );
     }
 }

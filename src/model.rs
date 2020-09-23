@@ -23,6 +23,9 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 
+#[cfg(test)]
+use mockall::automock;
+
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 struct JsonLanguageModel {
     language: Language,
@@ -36,9 +39,10 @@ pub(crate) struct TrainingDataLanguageModel {
     json_relative_frequencies: Option<HashMap<Ngram, f64>>,
 }
 
+#[cfg_attr(test, automock)]
 impl TrainingDataLanguageModel {
-    pub(crate) fn from_text(
-        text: &Vec<&str>,
+    pub(crate) fn from_text<'a>(
+        text: &Vec<&'a str>,
         language: &Language,
         ngram_length: usize,
         char_class: &str,
@@ -108,8 +112,8 @@ impl TrainingDataLanguageModel {
         }
     }
 
-    fn compute_absolute_frequencies(
-        text: &Vec<&str>,
+    fn compute_absolute_frequencies<'a>(
+        text: &Vec<&'a str>,
         ngram_length: usize,
         char_class: &str,
     ) -> HashMap<Ngram, u32> {
@@ -156,9 +160,10 @@ impl TrainingDataLanguageModel {
 }
 
 pub(crate) struct TestDataLanguageModel {
-    pub(crate) ngrams: HashSet<Ngram>,
+    ngrams: HashSet<Ngram>,
 }
 
+#[cfg_attr(test, automock)]
 impl TestDataLanguageModel {
     pub(crate) fn from(text: &str, ngram_length: usize) -> Self {
         if !(1..6).contains(&ngram_length) {
@@ -178,6 +183,10 @@ impl TestDataLanguageModel {
         }
 
         Self { ngrams }
+    }
+
+    pub(crate) fn ngrams(&self) -> &HashSet<Ngram> {
+        &self.ngrams
     }
 }
 

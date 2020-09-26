@@ -194,6 +194,7 @@ impl TestDataLanguageModel {
 mod tests {
     use super::*;
     use itertools::Itertools;
+    use rstest::*;
     use std::collections::hash_map::Entry;
 
     const TEXT: &str = "
@@ -247,6 +248,7 @@ mod tests {
                 .collect()
         }
 
+        #[fixture]
         fn expected_unigram_absolute_frequencies() -> HashMap<Ngram, u32> {
             map_keys_to_ngrams(hashmap!(
                 "a" => 3, "b" => 1, "c" => 3, "d" => 5, "e" => 14,
@@ -256,6 +258,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_unigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
             map_keys_to_ngrams_and_values_to_fractions(hashmap!(
                 "a" => "3/100", "b" => "1/100", "c" => "3/100", "d" => "1/20",
@@ -273,6 +276,7 @@ mod tests {
                 .collect()
         }
 
+        #[fixture]
         fn expected_bigram_absolute_frequencies() -> HashMap<Ngram, u32> {
             map_keys_to_ngrams(hashmap!(
                 "de" => 1, "pr" => 1, "pu" => 1, "do" => 1, "uc" => 1, "ds" => 1,
@@ -287,6 +291,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_bigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
             map_keys_to_ngrams_and_values_to_fractions(hashmap!(
                 "de" => "1/5", "pr" => "1/3", "pu" => "1/3", "do" => "1/5",
@@ -306,6 +311,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_trigram_absolute_frequencies() -> HashMap<Ngram, u32> {
             map_keys_to_ngrams(hashmap!(
                 "rds" => 1, "ose" => 1, "ded" => 1, "con" => 1, "use" => 1,
@@ -322,6 +328,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_trigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
             map_keys_to_ngrams_and_values_to_fractions(hashmap!(
                 "rds" => "1/1", "ose" => "1/1", "ded" => "1/1", "con" => "1/1",
@@ -340,6 +347,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_quadrigram_absolute_frequencies() -> HashMap<Ngram, u32> {
             map_keys_to_ngrams(hashmap!(
                 "onsi" => 1, "sist" => 1, "ende" => 1, "ords" => 1, "esti" => 1,
@@ -353,6 +361,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_quadrigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
             map_keys_to_ngrams_and_values_to_fractions(hashmap!(
                 "onsi" => "1/1", "sist" => "1/1", "ende" => "1/1", "ords" => "1/1",
@@ -368,6 +377,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_fivegram_absolute_frequencies() -> HashMap<Ngram, u32> {
             map_keys_to_ngrams(hashmap!(
                 "testi" => 1, "sente" => 1, "ences" => 1, "tende" => 1,
@@ -380,6 +390,7 @@ mod tests {
             ))
         }
 
+        #[fixture]
         fn expected_fivegram_relative_frequencies() -> HashMap<Ngram, Fraction> {
             map_keys_to_ngrams_and_values_to_fractions(hashmap!(
                 "testi" => "1/1", "sente" => "1/1", "ences" => "1/1", "tende" => "1/1",
@@ -392,108 +403,64 @@ mod tests {
             ))
         }
 
-        #[test]
-        fn test_unigram_model_creation() {
-            let model = TrainingDataLanguageModel::from_text(
-                &TEXT.trim().to_lowercase().lines().collect::<Vec<_>>(),
-                &Language::English,
+        #[rstest(
+            ngram_length,
+            expected_absolute_frequencies,
+            expected_relative_frequencies,
+            lower_ngram_absolute_frequencies,
+            case::unigram_model(
                 1,
-                "\\p{L}&&\\p{Latin}",
-                &hashmap!(),
-            );
-
-            assert_eq!(model.language, Language::English);
-            assert_eq!(
-                model.absolute_frequencies,
-                Some(expected_unigram_absolute_frequencies())
-            );
-            assert_eq!(
-                model.relative_frequencies,
-                Some(expected_unigram_relative_frequencies())
-            );
-        }
-
-        #[test]
-        fn test_bigram_model_creation() {
-            let model = TrainingDataLanguageModel::from_text(
-                &TEXT.trim().to_lowercase().lines().collect::<Vec<_>>(),
-                &Language::English,
+                expected_unigram_absolute_frequencies(),
+                expected_unigram_relative_frequencies(),
+                hashmap!()
+            ),
+            case::bigram_model(
                 2,
-                "\\p{L}&&\\p{Latin}",
-                &expected_unigram_absolute_frequencies(),
-            );
-
-            assert_eq!(model.language, Language::English);
-            assert_eq!(
-                model.absolute_frequencies,
-                Some(expected_bigram_absolute_frequencies())
-            );
-            assert_eq!(
-                model.relative_frequencies,
-                Some(expected_bigram_relative_frequencies())
-            );
-        }
-
-        #[test]
-        fn test_trigram_model_creation() {
-            let model = TrainingDataLanguageModel::from_text(
-                &TEXT.trim().to_lowercase().lines().collect::<Vec<_>>(),
-                &Language::English,
+                expected_bigram_absolute_frequencies(),
+                expected_bigram_relative_frequencies(),
+                expected_unigram_absolute_frequencies()
+            ),
+            case::trigram_model(
                 3,
-                "\\p{L}&&\\p{Latin}",
-                &expected_bigram_absolute_frequencies(),
-            );
-
-            assert_eq!(model.language, Language::English);
-            assert_eq!(
-                model.absolute_frequencies,
-                Some(expected_trigram_absolute_frequencies())
-            );
-            assert_eq!(
-                model.relative_frequencies,
-                Some(expected_trigram_relative_frequencies())
-            );
-        }
-
-        #[test]
-        fn test_quadrigram_model_creation() {
-            let model = TrainingDataLanguageModel::from_text(
-                &TEXT.trim().to_lowercase().lines().collect::<Vec<_>>(),
-                &Language::English,
+                expected_trigram_absolute_frequencies(),
+                expected_trigram_relative_frequencies(),
+                expected_bigram_absolute_frequencies()
+            ),
+            case::quadrigram_model(
                 4,
-                "\\p{L}&&\\p{Latin}",
-                &expected_trigram_absolute_frequencies(),
-            );
-
-            assert_eq!(model.language, Language::English);
-            assert_eq!(
-                model.absolute_frequencies,
-                Some(expected_quadrigram_absolute_frequencies())
-            );
-            assert_eq!(
-                model.relative_frequencies,
-                Some(expected_quadrigram_relative_frequencies())
-            );
-        }
-
-        #[test]
-        fn test_fivegram_model_creation() {
+                expected_quadrigram_absolute_frequencies(),
+                expected_quadrigram_relative_frequencies(),
+                expected_trigram_absolute_frequencies()
+            ),
+            case::fivegram_model(
+                5,
+                expected_fivegram_absolute_frequencies(),
+                expected_fivegram_relative_frequencies(),
+                expected_quadrigram_absolute_frequencies()
+            ),
+        )]
+        fn test_ngram_model_creation(
+            ngram_length: usize,
+            expected_absolute_frequencies: HashMap<Ngram, u32>,
+            expected_relative_frequencies: HashMap<Ngram, Fraction>,
+            lower_ngram_absolute_frequencies: HashMap<Ngram, u32>,
+        ) {
             let model = TrainingDataLanguageModel::from_text(
                 &TEXT.trim().to_lowercase().lines().collect::<Vec<_>>(),
                 &Language::English,
-                5,
+                ngram_length,
                 "\\p{L}&&\\p{Latin}",
-                &expected_quadrigram_absolute_frequencies(),
+                &lower_ngram_absolute_frequencies,
             );
 
             assert_eq!(model.language, Language::English);
             assert_eq!(
                 model.absolute_frequencies,
-                Some(expected_fivegram_absolute_frequencies())
+                Some(expected_absolute_frequencies)
             );
             assert_eq!(
                 model.relative_frequencies,
-                Some(expected_fivegram_relative_frequencies())
+                Some(expected_relative_frequencies)
             );
         }
 
@@ -520,78 +487,71 @@ mod tests {
     mod test_data {
         use super::*;
 
-        #[test]
-        fn test_unigram_model_creation() {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), 1);
-            let expected_unigrams = hashset!(
-                "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "r", "s",
-                "t", "u", "w", "y"
-            )
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect();
-            assert_eq!(model.ngrams, expected_unigrams);
+        fn map_strs_to_ngrams(strs: HashSet<&'static str>) -> HashSet<Ngram> {
+            strs.iter().map(|&it| Ngram::new(it)).collect()
         }
 
-        #[test]
-        fn test_bigram_model_creation() {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), 2);
-            let expected_bigrams = hashset!(
+        #[fixture]
+        fn expected_unigrams() -> HashSet<Ngram> {
+            map_strs_to_ngrams(hashset!(
+                "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "r", "s",
+                "t", "u", "w", "y"
+            ))
+        }
+
+        #[fixture]
+        fn expected_bigrams() -> HashSet<Ngram> {
+            map_strs_to_ngrams(hashset!(
                 "de", "pr", "pu", "do", "uc", "ds", "du", "ur", "us", "ed", "in", "io", "em", "en",
                 "is", "al", "es", "ar", "rd", "re", "ey", "nc", "nd", "ay", "ng", "ro", "rp", "no",
                 "ns", "nt", "fo", "wa", "se", "od", "si", "by", "of", "wo", "on", "st", "ce", "or",
                 "os", "ot", "co", "ta", "te", "ct", "th", "ti", "to", "he", "po"
-            )
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect();
-            assert_eq!(model.ngrams, expected_bigrams);
+            ))
         }
 
-        #[test]
-        fn test_trigram_model_creation() {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), 3);
-            let expected_trigrams = hashset!(
+        #[fixture]
+        fn expected_trigrams() -> HashSet<Ngram> {
+            map_strs_to_ngrams(hashset!(
                 "rds", "ose", "ded", "con", "use", "est", "ion", "ist", "pur", "hem", "hes", "tin",
                 "cti", "tio", "wor", "ten", "hey", "ota", "tal", "tes", "uct", "sti", "pro", "odu",
                 "nsi", "rod", "for", "ces", "nce", "not", "are", "pos", "tot", "end", "enc", "sis",
                 "sen", "nte", "ses", "ord", "ing", "ent", "int", "nde", "way", "the", "rpo", "urp",
                 "duc", "ons", "ese"
-            )
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect();
-            assert_eq!(model.ngrams, expected_trigrams);
+            ))
         }
 
-        #[test]
-        fn test_quadrigram_model_creation() {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), 4);
-            let expected_quadrigrams = hashset!(
+        #[fixture]
+        fn expected_quadrigrams() -> HashSet<Ngram> {
+            map_strs_to_ngrams(hashset!(
                 "onsi", "sist", "ende", "ords", "esti", "tenc", "nces", "oduc", "tend", "thes",
                 "rpos", "ting", "nten", "nsis", "they", "tota", "cons", "tion", "prod", "ence",
                 "test", "otal", "pose", "nded", "oses", "inte", "urpo", "them", "sent", "duct",
                 "stin", "ente", "ucti", "purp", "ctio", "rodu", "word", "hese"
-            )
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect();
-            assert_eq!(model.ngrams, expected_quadrigrams);
+            ))
         }
 
-        #[test]
-        fn test_fivegram_model_creation() {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), 5);
-            let expected_fivegrams = hashset!(
+        #[fixture]
+        fn expected_fivegrams() -> HashSet<Ngram> {
+            map_strs_to_ngrams(hashset!(
                 "testi", "sente", "ences", "tende", "these", "ntenc", "ducti", "ntend", "onsis",
                 "total", "uctio", "enten", "poses", "ction", "produ", "inten", "nsist", "words",
                 "sting", "tence", "purpo", "estin", "roduc", "urpos", "ended", "rpose", "oduct",
                 "consi"
-            )
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect();
-            assert_eq!(model.ngrams, expected_fivegrams);
+            ))
+        }
+
+        #[rstest(
+            ngram_length,
+            expected_ngrams,
+            case::unigram_model(1, expected_unigrams()),
+            case::bigram_model(2, expected_bigrams()),
+            case::trigram_model(3, expected_trigrams()),
+            case::quadrigram_model(4, expected_quadrigrams()),
+            case::fivegram_model(5, expected_fivegrams())
+        )]
+        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: HashSet<Ngram>) {
+            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), ngram_length);
+            assert_eq!(model.ngrams, expected_ngrams);
         }
     }
 }

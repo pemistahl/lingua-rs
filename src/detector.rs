@@ -542,16 +542,6 @@ mod tests {
         mock
     }
 
-    fn create_test_model_mock(ngrams: HashSet<&'static str>) -> TestDataLanguageModel {
-        let mapped_ngrams = ngrams
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect::<HashSet<_>>();
-        let mut mock = TestDataLanguageModel::new();
-        mock.expect_ngrams().return_const(mapped_ngrams);
-        mock
-    }
-
     // ##############################
     // LANGUAGE MODELS FOR ENGLISH
     // ##############################
@@ -674,19 +664,15 @@ mod tests {
     // TEST DATA MODELS
     // ##############################
 
-    #[fixture]
-    fn unigram_test_data_model() -> TestDataLanguageModel {
-        create_test_model_mock(hashset!("a", "l", "t", "e", "r"))
-    }
-
-    #[fixture]
-    fn trigram_test_data_model() -> TestDataLanguageModel {
-        create_test_model_mock(hashset!("alt", "lte", "ter", "wxy"))
-    }
-
-    #[fixture]
-    fn quadrigram_test_data_model() -> TestDataLanguageModel {
-        create_test_model_mock(hashset!("alte", "lter", "wxyz"))
+    #[fixture(ngrams=hashset!())]
+    fn test_data_model(ngrams: HashSet<&'static str>) -> TestDataLanguageModel {
+        let mapped_ngrams = ngrams
+            .iter()
+            .map(|&it| Ngram::new(it))
+            .collect::<HashSet<_>>();
+        let mut mock = TestDataLanguageModel::new();
+        mock.expect_ngrams().return_const(mapped_ngrams);
+        mock
     }
 
     // ##############################
@@ -808,7 +794,7 @@ mod tests {
         let probability = detector_for_english_and_german.look_up_ngram_probability(
             &language,
             &Ngram::new(ngram),
-            &hashset!(),
+            &hashset!(English, German),
         );
         assert_eq!(
             probability, expected_probability,
@@ -845,7 +831,11 @@ mod tests {
             .collect::<HashSet<_>>();
 
         let sum_of_probabilities = detector_for_english_and_german
-            .compute_sum_of_ngram_probabilities(&English, &mapped_ngrams, &hashset!());
+            .compute_sum_of_ngram_probabilities(
+                &English,
+                &mapped_ngrams,
+                &hashset!(English, German),
+            );
 
         assert!(
             approx_eq!(
@@ -860,6 +850,52 @@ mod tests {
             ngrams,
             sum_of_probabilities
         );
+    }
+
+    #[rstest(
+        test_data_model,
+        expected_probabilities,
+        case::unigram_model(
+            test_data_model(hashset!("a", "l", "t", "e", "r")),
+            hashmap!(
+                English => 0.01_f64.ln() + 0.02_f64.ln() + 0.03_f64.ln() + 0.04_f64.ln() + 0.05_f64.ln(),
+                German => 0.06_f64.ln() + 0.07_f64.ln() + 0.08_f64.ln() + 0.09_f64.ln() + 0.1_f64.ln()
+            )
+        ),
+        case::trigram_model(
+            test_data_model(hashset!("alt", "lte", "ter", "wxy")),
+            hashmap!(
+                English => 0.19_f64.ln() + 0.2_f64.ln() + 0.21_f64.ln(),
+                German => 0.22_f64.ln() + 0.23_f64.ln() + 0.24_f64.ln()
+            )
+        ),
+        case::quadrigram_model(
+            test_data_model(hashset!("alte", "lter", "wxyz")),
+            hashmap!(
+                English => 0.25_f64.ln() + 0.26_f64.ln(),
+                German => 0.27_f64.ln() + 0.28_f64.ln()
+            )
+        )
+    )]
+    fn assert_computation_of_language_probabilities_works_correctly(
+        mut detector_for_english_and_german: LanguageDetector,
+        test_data_model: TestDataLanguageModel,
+        expected_probabilities: HashMap<Language, f64>,
+    ) {
+        let probabilities = detector_for_english_and_german
+            .compute_language_probabilities(&test_data_model, &hashset!(English, German));
+
+        for (language, probability) in probabilities {
+            let expected_probability = expected_probabilities[&language];
+
+            assert!(
+                approx_eq!(f64, probability, expected_probability, ulps = 1),
+                "expected probability {} for language '{:?}', got {}",
+                expected_probability,
+                language,
+                probability
+            );
+        }
     }
 
     #[rstest(

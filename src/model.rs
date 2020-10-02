@@ -160,10 +160,9 @@ impl TrainingDataLanguageModel {
 }
 
 pub(crate) struct TestDataLanguageModel {
-    ngrams: HashSet<Ngram>,
+    pub(crate) ngrams: HashSet<Ngram>,
 }
 
-#[cfg_attr(test, automock)]
 impl TestDataLanguageModel {
     pub(crate) fn from(text: &str, ngram_length: usize) -> Self {
         if !(1..6).contains(&ngram_length) {
@@ -183,10 +182,6 @@ impl TestDataLanguageModel {
         }
 
         Self { ngrams }
-    }
-
-    pub(crate) fn ngrams(&self) -> &HashSet<Ngram> {
-        &self.ngrams
     }
 }
 

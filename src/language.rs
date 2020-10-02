@@ -22,7 +22,7 @@ use std::path::Display;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-#[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash)]
+#[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 pub enum Language {
     Afrikaans,

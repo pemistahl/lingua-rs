@@ -21,6 +21,7 @@ use crate::constant::{
 };
 use crate::language::Language;
 use crate::language::Language::*;
+use crate::model::TestDataLanguageModel;
 use crate::ngram::Ngram;
 use cfg_if::cfg_if;
 use include_dir::Dir;
@@ -36,10 +37,8 @@ use zip::ZipArchive;
 cfg_if! {
     if #[cfg(test)] {
         use crate::model::MockTrainingDataLanguageModel as TrainingDataLanguageModel;
-        use crate::model::MockTestDataLanguageModel as TestDataLanguageModel;
     } else {
         use crate::model::TrainingDataLanguageModel;
-        use crate::model::TestDataLanguageModel;
     }
 }
 
@@ -176,11 +175,17 @@ impl LanguageDetector {
             .unwrap();
 
         let confidence_values = summed_up_probabilities
-            .iter()
-            .map(|(language, &probability)| (language.clone(), highest_probability / probability))
-            .sorted_by(|(_, first_probability), (_, second_probability)| {
-                second_probability.partial_cmp(first_probability).unwrap()
-            })
+            .into_iter()
+            .map(|(language, probability)| (language, highest_probability / probability))
+            .sorted_by(
+                |(first_language, first_probability), (second_language, second_probability)| {
+                    let sorted_by_probability =
+                        second_probability.partial_cmp(first_probability).unwrap();
+                    let sorted_by_language = first_language.partial_cmp(second_language).unwrap();
+
+                    sorted_by_probability.then(sorted_by_language)
+                },
+            )
             .collect_vec();
 
         confidence_values
@@ -382,7 +387,7 @@ impl LanguageDetector {
         for language in filtered_languages.iter() {
             let sum = self.compute_sum_of_ngram_probabilities(
                 language,
-                &model.ngrams(),
+                &model.ngrams,
                 filtered_languages,
             );
             if sum < 0.0 {
@@ -445,7 +450,7 @@ impl LanguageDetector {
         filtered_languages: &HashSet<Language>,
     ) {
         for language in filtered_languages.iter() {
-            for unigram in unigram_model.ngrams().iter() {
+            for unigram in unigram_model.ngrams.iter() {
                 if self.look_up_ngram_probability(language, unigram, filtered_languages) > 0.0 {
                     self.increment_counter(unigram_counts, language.clone());
                 }
@@ -664,15 +669,14 @@ mod tests {
     // TEST DATA MODELS
     // ##############################
 
-    #[fixture(ngrams=hashset!())]
-    fn test_data_model(ngrams: HashSet<&'static str>) -> TestDataLanguageModel {
-        let mapped_ngrams = ngrams
+    #[fixture(strs=hashset!())]
+    fn test_data_model(strs: HashSet<&'static str>) -> TestDataLanguageModel {
+        let ngrams = strs
             .iter()
             .map(|&it| Ngram::new(it))
             .collect::<HashSet<_>>();
-        let mut mock = TestDataLanguageModel::new();
-        mock.expect_ngrams().return_const(mapped_ngrams);
-        mock
+
+        TestDataLanguageModel { ngrams }
     }
 
     // ##############################
@@ -803,6 +807,18 @@ mod tests {
         );
     }
 
+    #[rstest]
+    #[should_panic(expected = "zerogram detected")]
+    fn assert_ngram_probability_lookup_does_not_work_for_zerogram(
+        mut detector_for_english_and_german: LanguageDetector,
+    ) {
+        detector_for_english_and_german.look_up_ngram_probability(
+            &English,
+            &Ngram::new(""),
+            &hashset!(English, German),
+        );
+    }
+
     #[rstest(
         ngrams, expected_sum_of_probabilities,
         case(
@@ -896,6 +912,84 @@ mod tests {
                 probability
             );
         }
+    }
+
+    #[rstest]
+    fn assert_computation_of_confidence_values_works_correctly(
+        mut detector_for_english_and_german: LanguageDetector,
+    ) {
+        let unigram_count_for_both_languages = 5.0;
+
+        let total_probability_for_german = (
+            // unigrams
+            0.06_f64.ln() + 0.07_f64.ln() + 0.08_f64.ln() + 0.09_f64.ln() + 0.1_f64.ln() +
+            // bigrams
+            0.15_f64.ln() + 0.16_f64.ln() + 0.17_f64.ln() + 0.18_f64.ln() +
+            // trigrams
+            0.22_f64.ln() + 0.23_f64.ln() + 0.24_f64.ln() +
+            // quadrigrams
+            0.27_f64.ln() + 0.28_f64.ln() +
+            // fivegrams
+            0.3_f64.ln()
+        ) / unigram_count_for_both_languages;
+
+        let total_probability_for_english = (
+            // unigrams
+            0.01_f64.ln() + 0.02_f64.ln() + 0.03_f64.ln() + 0.04_f64.ln() + 0.05_f64.ln() +
+            // bigrams
+            0.11_f64.ln() + 0.12_f64.ln() + 0.13_f64.ln() + 0.14_f64.ln() +
+            // trigrams
+            0.19_f64.ln() + 0.2_f64.ln() + 0.21_f64.ln() +
+            // quadrigrams
+            0.25_f64.ln() + 0.26_f64.ln() +
+            // fivegrams
+            0.29_f64.ln()
+        ) / unigram_count_for_both_languages;
+
+        let expected_confidence_for_german = 1.0;
+        let expected_confidence_for_english =
+            total_probability_for_german / total_probability_for_english;
+
+        let confidence_values =
+            detector_for_english_and_german.compute_language_confidence_values("Alter");
+
+        assert_eq!(
+            confidence_values[0],
+            (German, expected_confidence_for_german)
+        );
+        assert_eq!(confidence_values[1].0, English);
+        assert!(approx_eq!(
+            f64,
+            confidence_values[1].1,
+            expected_confidence_for_english,
+            ulps = 1
+        ));
+    }
+
+    #[rstest]
+    fn assert_language_of_german_noun_alter_is_detected_correctly(
+        mut detector_for_english_and_german: LanguageDetector,
+    ) {
+        let detected_language = detector_for_english_and_german.detect_language_of("Alter");
+        assert_eq!(detected_language, Some(German));
+    }
+
+    #[rstest]
+    fn assert_no_language_is_returned_when_no_ngram_probabilities_are_available(
+        mut detector_for_english_and_german: LanguageDetector,
+    ) {
+        let detected_language = detector_for_english_and_german.detect_language_of("проарплап");
+        assert_eq!(detected_language, None);
+    }
+
+    #[rstest]
+    fn assert_no_confidence_values_are_returned_when_no_ngram_probabilities_are_available(
+        mut detector_for_english_and_german: LanguageDetector,
+    ) {
+        let confidence_values =
+            detector_for_english_and_german.compute_language_confidence_values("проарплап");
+
+        assert_eq!(confidence_values, vec![]);
     }
 
     #[rstest(

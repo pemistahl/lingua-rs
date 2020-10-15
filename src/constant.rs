@@ -16,14 +16,10 @@
 
 use crate::language::Language;
 use crate::language::Language::*;
-use crate::model::TrainingDataLanguageModel;
-use crate::ngram::Ngram;
 use include_dir::{include_dir, Dir};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
-use std::io::{Cursor, Read};
-use zip::ZipArchive;
 
 pub(crate) const LANGUAGE_MODELS_DIRECTORY: Dir = include_dir!("assets/main/language-models");
 
@@ -77,7 +73,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             "Ææ" => hashset!(Bokmal, Danish, Icelandic, Nynorsk),
             "Åå" => hashset!(Bokmal, Danish, Nynorsk, Swedish),
 
-            "Üü" => hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Turkish),
+            "Üü" => hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish),
 
             "ČčŠšŽž" => hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene),
 
@@ -89,15 +85,17 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             ),
 
             "Óó" => hashset!(
-                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Vietnamese, Yoruba
+                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             ),
             "ÁáÍíÚú" => hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             ),
 
             "Éé" => hashset!(
                 Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
-                Vietnamese, Yoruba
+                Spanish, Vietnamese, Yoruba
             )
         )
     });

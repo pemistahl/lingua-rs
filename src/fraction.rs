@@ -18,8 +18,6 @@ use fraction::GenericFraction;
 use itertools::Itertools;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::cmp::min;
-use std::convert::TryInto;
 use std::fmt;
 use std::fmt::{Debug, Display};
 

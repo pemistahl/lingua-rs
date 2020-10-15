@@ -42,7 +42,7 @@ pub(crate) struct TrainingDataLanguageModel {
 #[cfg_attr(test, automock)]
 impl TrainingDataLanguageModel {
     pub(crate) fn from_text<'a>(
-        text: &Vec<&'a str>,
+        text: &[&'a str],
         language: &Language,
         ngram_length: usize,
         char_class: &str,
@@ -87,7 +87,7 @@ impl TrainingDataLanguageModel {
     pub(crate) fn to_json(&self) -> String {
         let mut fractions_to_ngrams = hashmap!();
         for (ngram, fraction) in self.relative_frequencies.as_ref().unwrap() {
-            let ngrams = fractions_to_ngrams.entry(fraction).or_insert(vec![]);
+            let ngrams = fractions_to_ngrams.entry(fraction).or_insert_with(Vec::new);
             ngrams.push(ngram);
         }
 
@@ -113,7 +113,7 @@ impl TrainingDataLanguageModel {
     }
 
     fn compute_absolute_frequencies<'a>(
-        text: &Vec<&'a str>,
+        text: &[&'a str],
         ngram_length: usize,
         char_class: &str,
     ) -> HashMap<Ngram, u32> {

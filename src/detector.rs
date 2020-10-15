@@ -26,9 +26,7 @@ use crate::ngram::Ngram;
 use cfg_if::cfg_if;
 use include_dir::Dir;
 use itertools::Itertools;
-use once_cell::sync::OnceCell;
-use std::cmp::Ordering;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use std::io::{Cursor, Read};
 use strum::IntoEnumIterator;
@@ -94,7 +92,9 @@ impl LanguageDetector {
 
         let (_, second_most_likely_language_probability) = &confidence_values.get(1).unwrap();
 
-        if most_likely_language_probability == second_most_likely_language_probability {
+        if (most_likely_language_probability - second_most_likely_language_probability).abs()
+            < f64::EPSILON
+        {
             return None;
         }
 
@@ -174,7 +174,7 @@ impl LanguageDetector {
             .next()
             .unwrap();
 
-        let confidence_values = summed_up_probabilities
+        summed_up_probabilities
             .into_iter()
             .map(|(language, probability)| (language, highest_probability / probability))
             .sorted_by(
@@ -186,9 +186,7 @@ impl LanguageDetector {
                     sorted_by_probability.then(sorted_by_language)
                 },
             )
-            .collect_vec();
-
-        confidence_values
+            .collect_vec()
     }
 
     fn clean_up_input_text(&self, text: String) -> String {
@@ -207,7 +205,7 @@ impl LanguageDetector {
         }
     }
 
-    fn detect_language_with_rules(&self, words: &Vec<&str>) -> Option<Language> {
+    fn detect_language_with_rules(&self, words: &[&str]) -> Option<Language> {
         let mut total_language_counts = HashMap::<Option<&Language>, u32>::new();
         let half_word_count = (words.len() as f64) * 0.5;
 
@@ -305,18 +303,11 @@ impl LanguageDetector {
     }
 
     fn filter_languages_by_rules(&self, words: Vec<&str>) -> HashSet<Language> {
-        let alphabets = vec![
-            Alphabet::Arabic,
-            Alphabet::Cyrillic,
-            Alphabet::Devanagari,
-            Alphabet::Han,
-            Alphabet::Latin,
-        ];
-        let mut detected_alphabets = HashMap::<&Alphabet, u32>::new();
+        let mut detected_alphabets = HashMap::<Alphabet, u32>::new();
         let half_word_count = (words.len() as f64) * 0.5;
 
         for word in words.iter() {
-            for alphabet in alphabets.iter() {
+            for alphabet in Alphabet::iter() {
                 if alphabet.matches(word) {
                     self.increment_counter(&mut detected_alphabets, alphabet);
                     break;
@@ -339,7 +330,7 @@ impl LanguageDetector {
             .languages
             .iter()
             .cloned()
-            .filter(|it| it.alphabets().contains(most_frequent_alphabet))
+            .filter(|it| it.alphabets().contains(&most_frequent_alphabet))
             .collect::<HashSet<_>>();
 
         let mut language_counts = HashMap::<&Language, u32>::new();
@@ -1175,7 +1166,10 @@ mod tests {
         case("päralt", hashset!(Estonian, Finnish, German, Slovak, Swedish)),
         case("labâk", hashset!(Latvian, Portuguese, Romanian, Turkish, Vietnamese)),
         case("pràctiques", hashset!(Catalan, French, Italian, Portuguese, Vietnamese)),
-        case("überrascht", hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Turkish)),
+        case(
+            "überrascht",
+            hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish)
+        ),
         case("indebærer", hashset!(Bokmal, Danish, Icelandic, Nynorsk)),
         case("måned", hashset!(Bokmal, Danish, Nynorsk, Swedish)),
         case("zaručen", hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene)),
@@ -1192,32 +1186,36 @@ mod tests {
         case(
             "catedráticos",
             hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             )
         ),
         case(
             "política",
             hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             )
         ),
         case(
             "música",
             hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Vietnamese, Yoruba
+                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             )
         ),
         case(
             "contradicció",
             hashset!(
-                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Vietnamese, Yoruba
+                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish,
+                Vietnamese, Yoruba
             )
         ),
         case(
             "només",
             hashset!(
                 Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
-                Vietnamese, Yoruba
+                Spanish, Vietnamese, Yoruba
             )
         ),
         case(

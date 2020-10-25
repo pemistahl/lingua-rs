@@ -190,7 +190,6 @@ mod tests {
     use super::*;
     use itertools::Itertools;
     use rstest::*;
-    use std::collections::hash_map::Entry;
 
     const TEXT: &str = "
         These sentences are intended for testing purposes.

@@ -25,6 +25,7 @@ mod fraction;
 mod isocode;
 mod language;
 mod model;
+mod models;
 mod ngram;
 
 pub use builder::LanguageDetectorBuilder;

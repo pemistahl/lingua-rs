@@ -33,7 +33,7 @@ keywords = [
     "nlp"
 ]
 include = ["/assets/main"]
-exclude = ["/assets/test", "/accuracy-reports"]
+exclude = ["/assets/test", "/accuracy-reports", "/images"]
 
 [dependencies]
 cfg-if = "0.1.10"

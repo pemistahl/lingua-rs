@@ -271,14 +271,14 @@ fn main() {
         fs::File::create(aggregated_report_file_path).expect("CSV file could not be created");
     let aggregated_report_columns = vec![
         "language",
-        "average-lingua",
-        "single-words-lingua",
-        "word-pairs-lingua",
-        "sentences-lingua",
         "average-whatlang",
         "single-words-whatlang",
         "word-pairs-whatlang",
-        "sentences-whatlang\n",
+        "sentences-whatlang",
+        "average-lingua",
+        "single-words-lingua",
+        "word-pairs-lingua",
+        "sentences-lingua\n",
     ];
 
     aggregated_report_file
@@ -340,7 +340,7 @@ fn main() {
             whatlang_statistics.create_aggregated_report_row(&language);
         let total_aggregated_report_row = format!(
             "{:?},{},{}\n",
-            &language, lingua_aggregated_report_row, whatlang_aggregated_report_row
+            &language, whatlang_aggregated_report_row, lingua_aggregated_report_row
         );
 
         aggregated_report_file

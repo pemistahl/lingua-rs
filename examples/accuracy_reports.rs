@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-use include_dir::{include_dir, Dir, File};
+use include_dir::{include_dir, Dir};
 use indoc::formatdoc;
 use itertools::Itertools;
-use lingua::{Language, LanguageDetector, LanguageDetectorBuilder};
+use lingua::{Language, LanguageDetectorBuilder};
 use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
 use titlecase::titlecase;
 use whatlang::{Detector, Lang};
 
@@ -185,7 +184,7 @@ impl Statistic {
     }
 
     fn add_entity_length_count(&mut self, entity: &str) {
-        self.entity_length_count += (entity.len() as u32);
+        self.entity_length_count += entity.len() as u32;
     }
 
     fn map_counts_to_accuracy_values(&mut self) {

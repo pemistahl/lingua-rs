@@ -21,7 +21,7 @@ use crate::ngram::Ngram;
 use itertools::Itertools;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 #[cfg(test)]
 use mockall::automock;
@@ -29,12 +29,12 @@ use mockall::automock;
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 struct JsonLanguageModel {
     language: Language,
-    ngrams: HashMap<Fraction, String>,
+    ngrams: BTreeMap<Fraction, String>,
 }
 
 pub(crate) struct TrainingDataLanguageModel {
     language: Language,
-    absolute_frequencies: Option<HashMap<Ngram, u32>>,
+    pub(crate) absolute_frequencies: Option<HashMap<Ngram, u32>>,
     relative_frequencies: Option<HashMap<Ngram, Fraction>>,
     json_relative_frequencies: Option<HashMap<Ngram, f64>>,
 }
@@ -91,10 +91,12 @@ impl TrainingDataLanguageModel {
             ngrams.push(ngram);
         }
 
-        let mut fractions_to_joined_ngrams = hashmap!();
+        let mut fractions_to_joined_ngrams = btreemap!();
         for (fraction, ngrams) in fractions_to_ngrams {
-            fractions_to_joined_ngrams
-                .insert(*fraction, ngrams.iter().map(|&it| &it.value).join(" "));
+            fractions_to_joined_ngrams.insert(
+                *fraction,
+                ngrams.iter().map(|&it| &it.value).sorted().join(" "),
+            );
         }
 
         let model = JsonLanguageModel {
@@ -204,7 +206,7 @@ mod tests {
         fn test_json_model_serializer_and_deserializer() {
             let model = JsonLanguageModel {
                 language: Language::English,
-                ngrams: hashmap!(Fraction::new(3, 5) => "a b c d e".to_string()),
+                ngrams: btreemap!(Fraction::new(3, 5) => "a b c d e".to_string()),
             };
 
             let serialized = serde_json::to_string(&model).unwrap();

@@ -27,8 +27,10 @@ mod language;
 mod model;
 mod models;
 mod ngram;
+mod writer;
 
 pub use builder::LanguageDetectorBuilder;
 pub use detector::LanguageDetector;
 pub use isocode::{IsoCode639_1, IsoCode639_3};
 pub use language::Language;
+pub use writer::LanguageModelFilesWriter;

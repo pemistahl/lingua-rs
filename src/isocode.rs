@@ -479,3 +479,18 @@ impl Display for IsoCode639_3 {
         write!(f, "{}", debug_repr.to_lowercase())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn assert_iso_code_639_1_string_representation_is_correct() {
+        assert_eq!(IsoCode639_1::EN.to_string(), "en");
+    }
+
+    #[test]
+    fn assert_iso_code_639_3_string_representation_is_correct() {
+        assert_eq!(IsoCode639_3::ENG.to_string(), "eng");
+    }
+}

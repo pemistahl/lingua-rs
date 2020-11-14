@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
+use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
 use crate::model::TrainingDataLanguageModel;
 use crate::ngram::Ngram;
 use crate::Language;
 use itertools::Itertools;
+use regex::Regex;
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{create_dir, remove_file, File};
 use std::io;
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
 use zip::write::FileOptions;
 use zip::ZipWriter;
 
 pub struct LanguageModelFilesWriter;
+pub struct TestDataFilesWriter;
 
 impl LanguageModelFilesWriter {
     pub fn create_and_write_language_model_files(
@@ -144,6 +147,182 @@ impl LanguageModelFilesWriter {
     }
 }
 
+impl TestDataFilesWriter {
+    pub fn create_and_write_test_data_files(
+        input_file_path: &Path,
+        output_directory_path: &Path,
+        language: &Language,
+        char_class: &str,
+        maximum_lines: u32,
+    ) -> io::Result<()> {
+        check_input_file_path(input_file_path);
+        check_output_directory_path(output_directory_path);
+
+        Self::create_and_write_sentences_file(
+            input_file_path,
+            output_directory_path,
+            language,
+            maximum_lines,
+        )?;
+
+        let single_words = Self::create_and_write_single_words_file(
+            input_file_path,
+            output_directory_path,
+            language,
+            char_class,
+            maximum_lines,
+        )?;
+
+        Self::create_and_write_word_pairs_file(
+            single_words,
+            output_directory_path,
+            language,
+            maximum_lines,
+        )?;
+
+        Ok(())
+    }
+
+    fn create_and_write_sentences_file(
+        input_file_path: &Path,
+        output_directory_path: &Path,
+        language: &Language,
+        maximum_lines: u32,
+    ) -> io::Result<()> {
+        let file_name = format!("{}.txt", language.iso_code_639_1());
+        let sentences_directory_path = output_directory_path.join("sentences");
+        let sentences_file_path = sentences_directory_path.join(file_name);
+
+        if !sentences_directory_path.is_dir() {
+            create_dir(sentences_directory_path)?;
+        }
+
+        if sentences_file_path.is_file() {
+            remove_file(&sentences_file_path)?;
+        }
+
+        let input_file = File::open(input_file_path)?;
+        let input_lines = BufReader::new(input_file).lines().map(|line| line.unwrap());
+
+        let sentences_file = File::create(sentences_file_path)?;
+        let mut sentences_writer = LineWriter::new(sentences_file);
+
+        let mut line_counter = 0;
+
+        for line in input_lines {
+            let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&line, " ");
+            let removed_quotes = normalized_whitespace.replace("\"", "");
+
+            if line_counter < maximum_lines {
+                sentences_writer.write_all(removed_quotes.as_bytes())?;
+                sentences_writer.write_all(b"\n")?;
+                line_counter += 1;
+            } else {
+                break;
+            }
+        }
+
+        Ok(())
+    }
+
+    fn create_and_write_single_words_file(
+        input_file_path: &Path,
+        output_directory_path: &Path,
+        language: &Language,
+        char_class: &str,
+        maximum_lines: u32,
+    ) -> io::Result<Vec<String>> {
+        let file_name = format!("{}.txt", language.iso_code_639_1());
+        let single_words_directory_path = output_directory_path.join("single-words");
+        let single_words_file_path = single_words_directory_path.join(file_name);
+        let word_regex = Regex::new(&format!("[{}]{{5,}}", char_class)).unwrap();
+        let mut words = vec![];
+
+        if !single_words_directory_path.is_dir() {
+            create_dir(single_words_directory_path)?;
+        }
+
+        if single_words_file_path.is_file() {
+            remove_file(&single_words_file_path)?;
+        }
+
+        let input_file = File::open(input_file_path)?;
+        let input_lines = BufReader::new(input_file).lines().map(|line| line.unwrap());
+
+        let single_words_file = File::create(single_words_file_path)?;
+        let mut single_words_writer = LineWriter::new(single_words_file);
+
+        let mut line_counter = 0;
+
+        for line in input_lines {
+            let removed_punctuation = PUNCTUATION.replace_all(&line, "");
+            let removed_numbers = NUMBERS.replace_all(&removed_punctuation, "");
+            let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&removed_numbers, " ");
+            let removed_quotes = normalized_whitespace.replace("\"", "");
+            let mut single_words = removed_quotes
+                .split(' ')
+                .map(|word| word.trim().to_lowercase())
+                .filter(|word| word_regex.is_match(word))
+                .collect_vec();
+
+            words.append(&mut single_words);
+        }
+
+        for word in words.iter() {
+            if line_counter < maximum_lines {
+                single_words_writer.write_all(word.as_bytes())?;
+                single_words_writer.write_all(b"\n")?;
+                line_counter += 1;
+            } else {
+                break;
+            }
+        }
+
+        Ok(words)
+    }
+
+    fn create_and_write_word_pairs_file(
+        words: Vec<String>,
+        output_directory_path: &Path,
+        language: &Language,
+        maximum_lines: u32,
+    ) -> io::Result<()> {
+        let file_name = format!("{}.txt", language.iso_code_639_1());
+        let word_pairs_directory_path = output_directory_path.join("word-pairs");
+        let word_pairs_file_path = word_pairs_directory_path.join(file_name);
+        let mut word_pairs = Vec::<String>::new();
+
+        if !word_pairs_directory_path.is_dir() {
+            create_dir(word_pairs_directory_path)?;
+        }
+
+        if word_pairs_file_path.is_file() {
+            remove_file(&word_pairs_file_path)?;
+        }
+
+        for i in (0..=(words.len() - 2)).step_by(2) {
+            let slice = &words[i..i + 2];
+            word_pairs.push(slice.join(" "));
+        }
+
+        let word_pairs_file = File::create(word_pairs_file_path)?;
+        let mut word_pairs_writer = LineWriter::new(word_pairs_file);
+        let mut line_counter = 0;
+
+        for word_pair in word_pairs {
+            if line_counter < maximum_lines {
+                word_pairs_writer.write_all(word_pair.as_bytes())?;
+                word_pairs_writer.write_all(b"\n")?;
+                line_counter += 1;
+            } else {
+                break;
+            }
+        }
+
+        Ok(())
+    }
+}
+
 fn check_input_file_path(input_file_path: &Path) {
     if !input_file_path.is_absolute() {
         panic!(
@@ -191,15 +370,36 @@ mod tests {
     use std::io::Read;
     use std::path::PathBuf;
     use tempfile::{tempdir, NamedTempFile};
-    use zip::ZipArchive;
 
-    const TEXT: &str = "
-        These sentences are intended for testing purposes.
-        Do not use them in production!
-        By the way, they consist of 23 words in total.
-    ";
+    fn create_temp_input_file(content: &str) -> NamedTempFile {
+        let mut input_file = NamedTempFile::new().unwrap();
+        input_file
+            .write_all(content.as_bytes())
+            .expect("Text could not be written to temporary input file");
+        input_file
+    }
 
-    const EXPECTED_UNIGRAM_MODEL: &str = r#"
+    fn read_directory_content(directory: &Path) -> Vec<PathBuf> {
+        let mut files = read_dir(directory)
+            .unwrap()
+            .map(|it| it.unwrap().path())
+            .collect_vec();
+
+        files.sort();
+        files
+    }
+
+    mod language_model_files {
+        use super::*;
+        use zip::ZipArchive;
+
+        const TEXT: &str = "
+            These sentences are intended for testing purposes.
+            Do not use them in production!
+            By the way, they consist of 23 words in total.
+        ";
+
+        const EXPECTED_UNIGRAM_MODEL: &str = r#"
         {
             "language":"ENGLISH",
             "ngrams":{
@@ -214,9 +414,9 @@ mod tests {
                 "13/100":"t"
             }
         }
-    "#;
+        "#;
 
-    const EXPECTED_BIGRAM_MODEL: &str = r#"
+        const EXPECTED_BIGRAM_MODEL: &str = r#"
         {
             "language":"ENGLISH",
             "ngrams":{
@@ -237,9 +437,9 @@ mod tests {
                 "4/13":"th"
             }
         }
-    "#;
+        "#;
 
-    const EXPECTED_TRIGRAM_MODEL: &str = r#"
+        const EXPECTED_TRIGRAM_MODEL: &str = r#"
         {
             "language":"ENGLISH",
             "ngrams":{
@@ -250,9 +450,9 @@ mod tests {
                 "2/3":"ten"
             }
         }
-    "#;
+        "#;
 
-    const EXPECTED_QUADRIGRAM_MODEL: &str = r#"
+        const EXPECTED_QUADRIGRAM_MODEL: &str = r#"
         {
             "language":"ENGLISH",
             "ngrams":{
@@ -261,9 +461,9 @@ mod tests {
                 "1/4":"them thes they"
             }
         }
-    "#;
+        "#;
 
-    const EXPECTED_FIVEGRAM_MODEL: &str = r#"
+        const EXPECTED_FIVEGRAM_MODEL: &str = r#"
         {
             "language":"ENGLISH",
             "ngrams":{
@@ -271,93 +471,175 @@ mod tests {
                 "1/2":"ntenc ntend"
             }
         }
-    "#;
+        "#;
 
-    #[test]
-    fn test_language_model_files_writer() {
-        let input_file = create_temp_input_file();
-        let output_directory = tempdir().expect("Temporary directory could not be created");
-        let result = LanguageModelFilesWriter::create_and_write_language_model_files(
-            input_file.path(),
-            output_directory.path(),
-            &Language::English,
-            "\\p{L}",
-        );
+        #[test]
+        fn test_language_model_files_writer() {
+            let input_file = create_temp_input_file(TEXT);
+            let output_directory = tempdir().expect("Temporary directory could not be created");
+            let result = LanguageModelFilesWriter::create_and_write_language_model_files(
+                input_file.path(),
+                output_directory.path(),
+                &Language::English,
+                "\\p{L}",
+            );
 
-        assert!(result.is_ok());
+            assert!(result.is_ok());
 
-        let files = read_files_from_directory(output_directory.path());
+            let files = read_directory_content(output_directory.path());
 
-        assert_eq!(files.len(), 5);
+            assert_eq!(files.len(), 5);
 
-        let unigrams_file_path = files.get(4).unwrap();
-        let bigrams_file_path = files.get(0).unwrap();
-        let trigrams_file_path = files.get(3).unwrap();
-        let quadrigrams_file_path = files.get(2).unwrap();
-        let fivegrams_file_path = files.get(1).unwrap();
+            let unigrams_file_path = files.get(4).unwrap();
+            let bigrams_file_path = files.get(0).unwrap();
+            let trigrams_file_path = files.get(3).unwrap();
+            let quadrigrams_file_path = files.get(2).unwrap();
+            let fivegrams_file_path = files.get(1).unwrap();
 
-        assert_file_names(unigrams_file_path, "unigrams.json.zip");
-        assert_file_names(bigrams_file_path, "bigrams.json.zip");
-        assert_file_names(trigrams_file_path, "trigrams.json.zip");
-        assert_file_names(quadrigrams_file_path, "quadrigrams.json.zip");
-        assert_file_names(fivegrams_file_path, "fivegrams.json.zip");
+            assert_file_names(unigrams_file_path, "unigrams.json.zip");
+            assert_file_names(bigrams_file_path, "bigrams.json.zip");
+            assert_file_names(trigrams_file_path, "trigrams.json.zip");
+            assert_file_names(quadrigrams_file_path, "quadrigrams.json.zip");
+            assert_file_names(fivegrams_file_path, "fivegrams.json.zip");
 
-        assert_file_content(unigrams_file_path, "unigrams.json", EXPECTED_UNIGRAM_MODEL);
-        assert_file_content(bigrams_file_path, "bigrams.json", EXPECTED_BIGRAM_MODEL);
-        assert_file_content(trigrams_file_path, "trigrams.json", EXPECTED_TRIGRAM_MODEL);
-        assert_file_content(
-            quadrigrams_file_path,
-            "quadrigrams.json",
-            EXPECTED_QUADRIGRAM_MODEL,
-        );
-        assert_file_content(
-            fivegrams_file_path,
-            "fivegrams.json",
-            EXPECTED_FIVEGRAM_MODEL,
-        );
+            assert_file_content(unigrams_file_path, "unigrams.json", EXPECTED_UNIGRAM_MODEL);
+            assert_file_content(bigrams_file_path, "bigrams.json", EXPECTED_BIGRAM_MODEL);
+            assert_file_content(trigrams_file_path, "trigrams.json", EXPECTED_TRIGRAM_MODEL);
+            assert_file_content(
+                quadrigrams_file_path,
+                "quadrigrams.json",
+                EXPECTED_QUADRIGRAM_MODEL,
+            );
+            assert_file_content(
+                fivegrams_file_path,
+                "fivegrams.json",
+                EXPECTED_FIVEGRAM_MODEL,
+            );
+        }
+
+        fn assert_file_names(file_path: &Path, expected_file_name: &str) {
+            assert_eq!(file_path.file_name().unwrap(), expected_file_name);
+        }
+
+        fn assert_file_content(
+            file_path: &Path,
+            expected_file_name: &str,
+            expected_file_content: &str,
+        ) {
+            let file = File::open(file_path).unwrap();
+            let mut archive = ZipArchive::new(file).unwrap();
+            let mut json_file = archive.by_index(0).unwrap();
+
+            assert_eq!(json_file.name(), expected_file_name);
+
+            let mut json = String::new();
+            json_file.read_to_string(&mut json).unwrap();
+
+            assert_eq!(json, minify(expected_file_content));
+        }
+
+        fn minify(json: &str) -> String {
+            let re = Regex::new("\n\\s*").unwrap();
+            re.replace_all(json, "").to_string()
+        }
     }
 
-    fn assert_file_names(file_path: &Path, expected_file_name: &str) {
-        assert_eq!(file_path.file_name().unwrap(), expected_file_name);
-    }
+    mod test_data_files {
+        use super::*;
+        use indoc::indoc;
 
-    fn assert_file_content(
-        file_path: &Path,
-        expected_file_name: &str,
-        expected_file_content: &str,
-    ) {
-        let file = File::open(file_path).unwrap();
-        let mut archive = ZipArchive::new(file).unwrap();
-        let mut json_file = archive.by_index(0).unwrap();
+        const TEXT: &str = indoc! {r#"
+            There are many attributes associated with good software.
+            Some of these can be mutually contradictory, and different customers and participants may have different priorities.
+            Weinberg provides an example of how different goals can have a dramatic effect on both effort required and efficiency.
+            Furthermore, he notes that programmers will generally aim to achieve any explicit goals which may be set, probably at the expense of any other quality attributes.
+            Sommerville has identified four generalised attributes which are not concerned with what a program does, but how well the program does it:
+            Maintainability, Dependability, Efficiency, Usability
+        "#};
 
-        assert_eq!(json_file.name(), expected_file_name);
+        const EXPECTED_SENTENCES_FILE_CONTENT: &str = indoc! {r#"
+            There are many attributes associated with good software.
+            Some of these can be mutually contradictory, and different customers and participants may have different priorities.
+            Weinberg provides an example of how different goals can have a dramatic effect on both effort required and efficiency.
+            Furthermore, he notes that programmers will generally aim to achieve any explicit goals which may be set, probably at the expense of any other quality attributes.
+        "#};
 
-        let mut json = String::new();
-        json_file.read_to_string(&mut json).unwrap();
+        const EXPECTED_SINGLE_WORDS_FILE_CONTENT: &str = indoc! {r#"
+            there
+            attributes
+            associated
+            software
+        "#};
 
-        assert_eq!(json, minify(expected_file_content));
-    }
+        const EXPECTED_WORD_PAIRS_FILE_CONTENT: &str = indoc! {r#"
+            there attributes
+            associated software
+            these mutually
+            contradictory different
+        "#};
 
-    fn create_temp_input_file() -> NamedTempFile {
-        let mut input_file = NamedTempFile::new().unwrap();
-        input_file
-            .write_all(TEXT.as_bytes())
-            .expect("Text could not be written to temporary input file");
-        input_file
-    }
+        #[test]
+        fn test_test_data_files_writer() {
+            let input_file = create_temp_input_file(TEXT);
+            let output_directory = tempdir().expect("Temporary directory could not be created");
+            let result = TestDataFilesWriter::create_and_write_test_data_files(
+                input_file.path(),
+                output_directory.path(),
+                &Language::English,
+                "\\p{L}",
+                4,
+            );
 
-    fn read_files_from_directory(directory: &Path) -> Vec<PathBuf> {
-        let mut files = read_dir(directory)
-            .unwrap()
-            .map(|it| it.unwrap().path())
-            .collect_vec();
+            assert!(result.is_ok());
 
-        files.sort();
-        files
-    }
+            let subdirectories = read_directory_content(output_directory.path());
 
-    fn minify(json: &str) -> String {
-        let re = Regex::new("\n\\s*").unwrap();
-        re.replace_all(json, "").to_string()
+            assert_eq!(subdirectories.len(), 3);
+
+            assert_directory_content(
+                &subdirectories[0],
+                "sentences",
+                EXPECTED_SENTENCES_FILE_CONTENT,
+            );
+
+            assert_directory_content(
+                &subdirectories[1],
+                "single-words",
+                EXPECTED_SINGLE_WORDS_FILE_CONTENT,
+            );
+
+            assert_directory_content(
+                &subdirectories[2],
+                "word-pairs",
+                EXPECTED_WORD_PAIRS_FILE_CONTENT,
+            );
+        }
+
+        fn assert_directory_content(
+            directory: &Path,
+            expected_directory_name: &str,
+            expected_file_content: &str,
+        ) {
+            assert!(directory.is_dir());
+
+            let directory_name = directory.file_name().unwrap();
+            assert_eq!(directory_name, expected_directory_name);
+
+            let directory_content = read_directory_content(directory);
+            assert_eq!(directory_content.len(), 1);
+
+            let test_data_file_path = &directory_content[0];
+            assert!(test_data_file_path.is_file());
+
+            let test_data_file_name = test_data_file_path.file_name().unwrap();
+            assert_eq!(test_data_file_name, "en.txt");
+
+            let mut test_data_file = File::open(test_data_file_path).unwrap();
+            let mut test_data_file_content = String::new();
+            test_data_file
+                .read_to_string(&mut test_data_file_content)
+                .unwrap();
+            assert_eq!(test_data_file_content, expected_file_content);
+        }
     }
 }

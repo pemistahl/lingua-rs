@@ -39,6 +39,7 @@ cfg_if! {
     if #[cfg(test)] {
         use crate::model::MockTrainingDataLanguageModel as TrainingDataLanguageModel;
     } else {
+        #[allow(unused_imports)]
         use crate::model::TrainingDataLanguageModel;
     }
 }

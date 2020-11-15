@@ -32,7 +32,6 @@ keywords = [
     "language-recognition",
     "nlp"
 ]
-include = ["/assets"]
 exclude = ["/accuracy-reports", "/images"]
 
 [dependencies]

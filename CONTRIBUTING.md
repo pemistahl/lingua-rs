@@ -21,8 +21,8 @@ language's iso codes. Among other sites, Wikipedia provides a [comprehensive lis
 with a script that is not yet supported by *Lingua's* [`Alphabet`][alphabet url] enum, then add a new entry
 for it there as well.
 4. If your language's script contains characters that are completely unique to it, then add them to the
-respective method in the [`Language`][language url] enum. However, if the characters occur in more than one
-language **but** not in all languages, then add them to the 
+respective method in the [`Language`][language method url] enum. However, if the characters occur in more 
+than one language **but** not in all languages, then add them to the 
 [`CHARS_TO_LANGUAGES_MAPPING`][chars to languages mapping url] constant instead.
 5. Use [`LanguageModelFilesWriter`][language model files writer url] to create the language model files.
 The training data file used for ngram probability estimation is not required to have a specific format
@@ -44,7 +44,8 @@ this library's fields of application.
 [isocode639_1 url]: https://github.com/pemistahl/lingua-rs/blob/master/src/isocode.rs#L23
 [isocode639_3 url]: https://github.com/pemistahl/lingua-rs/blob/master/src/isocode.rs#L251
 [wikipedia isocodes list]: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-[language url]: https://github.com/pemistahl/lingua-rs/blob/master/src/language.rs#L389
+[language url]: https://github.com/pemistahl/lingua-rs/blob/master/src/language.rs#L27
+[language method url]: https://github.com/pemistahl/lingua-rs/blob/master/src/language.rs#L389
 [alphabet url]: https://github.com/pemistahl/lingua-rs/blob/master/src/alphabet.rs#L25
 [chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/master/src/constant.rs#L34
 [language model files writer url]: https://github.com/pemistahl/lingua-rs/blob/master/src/writer.rs#L38

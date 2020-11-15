@@ -32,8 +32,8 @@ keywords = [
     "language-recognition",
     "nlp"
 ]
-include = ["/assets/main"]
-exclude = ["/assets/test", "/accuracy-reports", "/images"]
+include = ["/assets"]
+exclude = ["/accuracy-reports", "/images"]
 
 [dependencies]
 cfg-if = "0.1.10"
@@ -56,4 +56,4 @@ mockall = "0.8.3"
 rstest = "0.6.4"
 tempfile = "3.1.0"
 titlecase = "1.1.0"
-whatlang = "0.10.0"
+whatlang = "0.11.0"

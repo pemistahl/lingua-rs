@@ -386,7 +386,7 @@ fn format_accuracy(accuracy: f64) -> String {
 fn map_whatlang_to_lingua(language: Option<Lang>) -> Option<Language> {
     match language {
         Some(Lang::Afr) => Some(Language::Afrikaans),
-        Some(Lang::Arb) => Some(Language::Arabic),
+        Some(Lang::Ara) => Some(Language::Arabic),
         Some(Lang::Azj) => Some(Language::Azerbaijani),
         Some(Lang::Bel) => Some(Language::Belarusian),
         Some(Lang::Ben) => Some(Language::Bengali),

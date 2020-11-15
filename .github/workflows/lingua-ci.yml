@@ -59,7 +59,7 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
           brew install gnu-tar
-          echo "::add-path::/usr/local/opt/gnu-tar/libexec/gnubin"
+          echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Store or retrieve cargo caches
         uses: actions/cache@v2

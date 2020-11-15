@@ -56,6 +56,8 @@ It draws on both rule-based and statistical methods but does not use any diction
 It does not need a connection to any external API or service either.
 Once the library has been downloaded, it can be used completely offline.
 
+## 3. <a name="supported-languages"></a> Which languages are supported? <sup>[Top ▲](#table-of-contents)</sup>
+
 Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*, that is, 
 getting detection right for a small set of languages first before adding new ones. 
 Currently, the following 74 languages are supported:

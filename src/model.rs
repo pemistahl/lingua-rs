@@ -107,6 +107,7 @@ impl TrainingDataLanguageModel {
         serde_json::to_string(&model).unwrap()
     }
 
+    #[allow(dead_code)]
     pub(crate) fn get_relative_frequency(&self, ngram: &Ngram) -> f64 {
         match &self.json_relative_frequencies {
             Some(frequencies) => *frequencies.get(ngram).unwrap_or(&0.0),
@@ -120,7 +121,12 @@ impl TrainingDataLanguageModel {
         char_class: &str,
     ) -> HashMap<Ngram, u32> {
         let mut absolute_frequencies = hashmap!();
-        let regex = Regex::new(&format!("^[{}]+$", char_class)).unwrap();
+        let regex = Regex::new(&format!("^[{}]+$", char_class)).unwrap_or_else(|_| {
+            panic!(
+                "The character class '{}' cannot be compiled to a valid regular expression",
+                char_class
+            )
+        });
 
         for line in text.iter() {
             let lowercased_line = line.to_lowercase();

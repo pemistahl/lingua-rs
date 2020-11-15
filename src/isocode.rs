@@ -16,6 +16,9 @@
 
 use std::fmt::{Debug, Display, Formatter, Result};
 
+/// This enum specifies the ISO 639-1 code representations for the supported languages.
+///
+/// ISO 639 is a standardized nomenclature used to classify languages.
 #[derive(Debug, Eq, PartialEq)]
 pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
@@ -241,6 +244,9 @@ pub enum IsoCode639_1 {
     ZU,
 }
 
+/// This enum specifies the ISO 639-3 code representations for the supported languages.
+///
+/// ISO 639 is a standardized nomenclature used to classify languages.
 #[derive(Debug, Eq, PartialEq)]
 pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)

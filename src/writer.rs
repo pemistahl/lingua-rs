@@ -28,10 +28,32 @@ use std::path::Path;
 use zip::write::FileOptions;
 use zip::ZipWriter;
 
+/// This struct creates language model files and writes them to a directory.
 pub struct LanguageModelFilesWriter;
+
+/// This struct creates test data files for accuracy report generation
+/// and writes them to a directory.
 pub struct TestDataFilesWriter;
 
 impl LanguageModelFilesWriter {
+    /// Creates language model files for accuracy report generation and writes them to a directory.
+    ///
+    /// `input_file_path`: The path to a txt file used for language model creation.
+    /// The assumed encoding of the txt file is UTF-8.
+    ///
+    /// `output_directory_path`: The path to an existing directory where the language model files
+    /// are to be written.
+    ///
+    /// `language`: The language for which to create language models.
+    ///
+    /// `char_class`: A regex character class such as `\\p{L}` to restrict the set of characters
+    /// that the language models are built from.
+    ///
+    /// ⚠ Panics if:
+    /// - the input file path is not absolute or does not point to an existing txt file
+    /// - the input file's encoding is not UTF-8
+    /// - the output directory path is not absolute or does not point to an existing directory
+    /// - the character class cannot be compiled to a valid regular expression
     pub fn create_and_write_language_model_files(
         input_file_path: &Path,
         output_directory_path: &Path,
@@ -148,6 +170,26 @@ impl LanguageModelFilesWriter {
 }
 
 impl TestDataFilesWriter {
+    /// Creates test data files for accuracy report generation and writes them to a directory.
+    ///
+    /// `input_file_path`: The path to a txt file used for test data creation.
+    /// The assumed encoding of the txt file is UTF-8.
+    ///
+    /// `output_directory_path`: The path to an existing directory where the test data files
+    /// are to be written.
+    ///
+    /// `language`: The language for which to create test data.
+    ///
+    /// `char_class`: A regex character class such as `\\p{L}` to restrict the set of characters
+    /// that the test data are built from.
+    ///
+    /// `maximum_lines`: The maximum number of lines each test data file should have.
+    ///
+    /// ⚠ Panics if:
+    /// - the input file path is not absolute or does not point to an existing txt file
+    /// - the input file's encoding is not UTF-8
+    /// - the output directory path is not absolute or does not point to an existing directory
+    /// - the character class cannot be compiled to a valid regular expression
     pub fn create_and_write_test_data_files(
         input_file_path: &Path,
         output_directory_path: &Path,

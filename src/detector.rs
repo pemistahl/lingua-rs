@@ -44,6 +44,7 @@ cfg_if! {
     }
 }
 
+/// This struct detects the language of given input text.
 pub struct LanguageDetector {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,
@@ -80,6 +81,8 @@ impl LanguageDetector {
         }
     }
 
+    /// Detects the language of given input text.
+    /// If the language cannot be reliably detected, `None` is returned.
     pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {
         let confidence_values = self.compute_language_confidence_values(text);
 
@@ -111,6 +114,20 @@ impl LanguageDetector {
         Some(most_likely_language.clone())
     }
 
+    /// Computes confidence values for each language considered possible for the given input text.
+    ///
+    /// The values that this method computes are part of a **relative** confidence metric, not of
+    /// an absolute one. Each value is a number between 0.0 and 1.0. The most likely language is
+    /// always returned with value 1.0. All other languages get values assigned which are lower
+    /// than 1.0, denoting how less likely those languages are in comparison to the most likely
+    /// language.
+    ///
+    /// The vector returned by this method does not necessarily contain all languages which the
+    /// calling instance of `LanguageDetector` was built from. If the rule-based engine decides
+    /// that a specific language is truly impossible, then it will not be part of the returned
+    /// vector. Likewise, if no ngram probabilities can be found within the detector's languages
+    /// for the given input text, the returned vector will be empty. The confidence value for
+    /// each language not being part of the returned vector is assumed to be 0.0.
     pub fn compute_language_confidence_values<T: Into<String>>(
         &self,
         text: T,

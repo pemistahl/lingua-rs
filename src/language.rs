@@ -21,6 +21,7 @@ use std::collections::HashSet;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
+/// This enum specifies the so far 74 supported languages which can be detected by *Lingua*.
 #[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 pub enum Language {

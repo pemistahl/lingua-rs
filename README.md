@@ -333,13 +333,13 @@ let confidence_values: Vec<(Language, f64)> = detector.compute_language_confiden
 assert_eq!(confidence_values[0], (English, 1.0_f64));
 
 assert_eq!(confidence_values[1].0, French);
-assert!(approx_eq!(f64, confidence_values[1].1, 0.7917282993701181, ulps = 1));
+assert!(approx_eq!(f64, confidence_values[1].1, 0.7917282993701181, ulps = 2));
 
 assert_eq!(confidence_values[2].0, German);
-assert!(approx_eq!(f64, confidence_values[2].1, 0.7532048914992281, ulps = 1));
+assert!(approx_eq!(f64, confidence_values[2].1, 0.7532048914992281, ulps = 2));
 
 assert_eq!(confidence_values[3].0, Spanish);
-assert!(approx_eq!(f64, confidence_values[3].1, 0.7229637749926444, ulps = 1));
+assert!(approx_eq!(f64, confidence_values[3].1, 0.7229637749926444, ulps = 2));
 ```
 
 In the example above, a vector of all possible languages is returned, sorted by their confidence

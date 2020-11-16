@@ -35,13 +35,6 @@ jobs:
         with:
           toolchain: stable
 
-      - name: Upload release to GitHub
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref }}
-          release_name: Lingua ${{ github.ref }}
-
       - name: cargo login
         uses: actions-rs/cargo@v1
         with:

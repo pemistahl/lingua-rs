@@ -3,14 +3,9 @@
 <br>
 
 [![Build Status](https://github.com/pemistahl/lingua-rs/workflows/Lingua%20CI/badge.svg?branch=master)](https://github.com/pemistahl/lingua-rs/actions?query=workflow%3A%22Lingua+CI%22+branch%3Amaster)
-[![dependency status](https://deps.rs/crate/lingua/1.0.0/status.svg)](https://deps.rs/crate/lingua/1.0.0)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-74-green.svg)](#supported-languages)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
-
-[![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
-[![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.0.0-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## <a name="table-of-contents"></a> Table of Contents
@@ -244,11 +239,12 @@ Erroneously classified as Dutch: 0.20%, Latin: 0.10%
 
 ## 7. <a name="library-dependency"></a> How to add it to your project? <sup>[Top ▲](#table-of-contents)</sup>
 
-Simply add *Lingua* as a dependency to your `Cargo.toml` file:
+Unfortunately, *Lingua* is not yet available on [crates.io](https://crates.io) due to file size limitations on their server.
+Until this problem is resolved, add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.0.0"
+lingua = { git = "https://github.com/pemistahl/lingua-rs" }
 ```
 
 ## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>

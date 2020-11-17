@@ -247,6 +247,7 @@ dependencies = [
  "include_dir",
  "indoc",
  "itertools",
+ "lingua_german_language_model",
  "maplit",
  "mockall",
  "once_cell",
@@ -261,6 +262,10 @@ dependencies = [
  "whatlang",
  "zip",
 ]
+
+[[package]]
+name = "lingua_german_language_model"
+version = "1.0.0"
 
 [[package]]
 name = "maplit"

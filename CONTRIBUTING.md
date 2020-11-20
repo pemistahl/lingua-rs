@@ -26,18 +26,21 @@ than one language **but** not in all languages, then add them to the
 [`CHARS_TO_LANGUAGES_MAPPING`][chars to languages mapping url] constant instead.
 5. Use [`LanguageModelFilesWriter`][language model files writer url] to create the language model files.
 The training data file used for ngram probability estimation is not required to have a specific format
-other than to be a valid txt file.
-6. Create a new subdirectory in [`/assets/main/language-models`][language models directory url]
-and put the generated language model files in there. Do **not** rename the language model files. 
-The name of the subdirectory **must** be the language's ISO 639-1 code, completely lowercased.
-7. Use [`TestDataFilesWriter`][test data files writer url] to create the test data files used for
+other than to be a valid txt file with UTF-8 encoding. Do **not** rename the language model files.
+6. Use [`TestDataFilesWriter`][test data files writer url] to create the test data files used for
 accuracy report generation. The input file from which to create the test data should have each
-sentence on a separate line.
-8. Put the generated test data files in [`/assets/test/language-testdata`][test data directory url].
-Do **not** rename the test data files.
-9. Fix the existing unit tests by adding your new language.
-10. For accuracy report generation, run `cargo run --release --example accuracy_reports`.
-11. Be happy! :-) You have successfully contributed a new language and have thereby significantly widened
+sentence on a separate line. Do **not** rename the test data files.
+7. Create a new crate in [`/language-models`][language models directory url]. Add a subdirectory
+named after the new language's ISO 639-1 code and put the crate's content in there, including
+the language model files and the test data files. Look at the other languages' crates to see
+how it looks like. It should be pretty self-explanatory.
+8. Add the new crate as a dependency to the main [`Cargo.toml`][cargo toml url].
+9. Add the new language to the functions in [`/src/models/mod.rs`][mod rs url] and 
+[`/examples/accuracy_reports.rs`][accuracy reports url] so that *Lingua* can find the language
+model and test data directories.
+10. Fix the existing unit tests by adding your new language.
+11. For accuracy report generation, run `cargo run --release --example accuracy_reports`.
+12. Be happy! :-) You have successfully contributed a new language and have thereby significantly widened
 this library's fields of application. 
 
 [library build url]: https://github.com/pemistahl/lingua-rs#library-build
@@ -49,6 +52,9 @@ this library's fields of application.
 [alphabet url]: https://github.com/pemistahl/lingua-rs/blob/master/src/alphabet.rs#L25
 [chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/master/src/constant.rs#L34
 [language model files writer url]: https://github.com/pemistahl/lingua-rs/blob/master/src/writer.rs#L38
-[language models directory url]: https://github.com/pemistahl/lingua-rs/tree/master/assets/main/language-models
+[language models directory url]: https://github.com/pemistahl/lingua-rs/tree/master/language-models
 [test data files writer url]: https://github.com/pemistahl/lingua-rs/blob/master/src/writer.rs#L172
 [test data directory url]: https://github.com/pemistahl/lingua-rs/tree/master/assets/test/language-testdata
+[cargo toml url]: https://github.com/pemistahl/lingua-rs/blob/master/Cargo.toml
+[mod rs url]: https://github.com/pemistahl/lingua-rs/blob/master/src/models/mod.rs#L133
+[accuracy reports url]: https://github.com/pemistahl/lingua-rs/blob/master/examples/accuracy_reports.rs#L525

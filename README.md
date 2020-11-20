@@ -3,8 +3,14 @@
 <br>
 
 [![Build Status](https://github.com/pemistahl/lingua-rs/workflows/Lingua%20CI/badge.svg?branch=master)](https://github.com/pemistahl/lingua-rs/actions?query=workflow%3A%22Lingua+CI%22+branch%3Amaster)
+[![dependency status](https://deps.rs/crate/lingua/1.0.0/status.svg)](https://deps.rs/crate/lingua/1.0.0)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-74-green.svg)](#supported-languages)
+[![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
+
+[![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
+[![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.0.0-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## <a name="table-of-contents"></a> Table of Contents
@@ -225,11 +231,11 @@ to be found next to the `src` directory. As an example, here is the current outp
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 73.60%
-Erroneously classified as Dutch: 2.30%, English: 2.10%, Danish: 2.10%, Latin: 2.00%, Bokmal: 1.60%, Basque: 1.20%, Italian: 1.20%, French: 1.20%, Esperanto: 1.10%, Swedish: 1.00%, Afrikaans: 0.80%, Tsonga: 0.70%, Nynorsk: 0.60%, Portuguese: 0.60%, Yoruba: 0.50%, Sotho: 0.50%, Finnish: 0.50%, Welsh: 0.50%, Estonian: 0.50%, Swahili: 0.40%, Spanish: 0.40%, Icelandic: 0.40%, Polish: 0.40%, Tswana: 0.40%, Irish: 0.40%, Tagalog: 0.30%, Catalan: 0.30%, Bosnian: 0.30%, Xhosa: 0.20%, Croatian: 0.20%, Slovak: 0.20%, Romanian: 0.20%, Albanian: 0.20%, Indonesian: 0.20%, Lithuanian: 0.20%, Zulu: 0.20%, Turkish: 0.10%, Slovene: 0.10%, Somali: 0.10%, Latvian: 0.10%, Malay: 0.10%
+Erroneously classified as Dutch: 2.30%, Danish: 2.10%, English: 2.10%, Latin: 2.00%, Bokmal: 1.60%, Basque: 1.20%, French: 1.20%, Italian: 1.20%, Esperanto: 1.10%, Swedish: 1.00%, Afrikaans: 0.80%, Tsonga: 0.70%, Nynorsk: 0.60%, Portuguese: 0.60%, Estonian: 0.50%, Finnish: 0.50%, Sotho: 0.50%, Welsh: 0.50%, Yoruba: 0.50%, Icelandic: 0.40%, Irish: 0.40%, Polish: 0.40%, Spanish: 0.40%, Swahili: 0.40%, Tswana: 0.40%, Bosnian: 0.30%, Catalan: 0.30%, Tagalog: 0.30%, Albanian: 0.20%, Croatian: 0.20%, Indonesian: 0.20%, Lithuanian: 0.20%, Romanian: 0.20%, Slovak: 0.20%, Xhosa: 0.20%, Zulu: 0.20%, Latvian: 0.10%, Malay: 0.10%, Slovene: 0.10%, Somali: 0.10%, Turkish: 0.10%
 
 >> Detection of 1000 word pairs (average length: 18 chars)
 Accuracy: 94.00%
-Erroneously classified as Dutch: 0.90%, Latin: 0.80%, English: 0.70%, Swedish: 0.60%, Danish: 0.50%, French: 0.40%, Bokmal: 0.30%, Tagalog: 0.20%, Irish: 0.20%, Swahili: 0.20%, Afrikaans: 0.10%, Somali: 0.10%, Italian: 0.10%, Nynorsk: 0.10%, Tsonga: 0.10%, Esperanto: 0.10%, Zulu: 0.10%, Finnish: 0.10%, Turkish: 0.10%, Welsh: 0.10%, Icelandic: 0.10%, Estonian: 0.10%
+Erroneously classified as Dutch: 0.90%, Latin: 0.80%, English: 0.70%, Swedish: 0.60%, Danish: 0.50%, French: 0.40%, Bokmal: 0.30%, Irish: 0.20%, Swahili: 0.20%, Tagalog: 0.20%, Afrikaans: 0.10%, Esperanto: 0.10%, Estonian: 0.10%, Finnish: 0.10%, Icelandic: 0.10%, Italian: 0.10%, Nynorsk: 0.10%, Somali: 0.10%, Tsonga: 0.10%, Turkish: 0.10%, Welsh: 0.10%, Zulu: 0.10%
 
 >> Detection of 1000 sentences (average length: 112 chars)
 Accuracy: 99.70%
@@ -238,12 +244,11 @@ Erroneously classified as Dutch: 0.20%, Latin: 0.10%
 
 ## 7. <a name="library-dependency"></a> How to add it to your project? <sup>[Top ▲](#table-of-contents)</sup>
 
-Unfortunately, *Lingua* is not yet available on [crates.io](https://crates.io) due to file size limitations on their server.
-Until this problem is resolved, add *Lingua* to your `Cargo.toml` file like so:
+Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = { git = "https://github.com/pemistahl/lingua-rs" }
+lingua = "1.0.0"
 ```
 
 ## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>

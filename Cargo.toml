@@ -35,7 +35,6 @@ keywords = [
     "language-recognition",
     "nlp"
 ]
-#exclude = ["/accuracy-reports", "/examples", "/images"]
 
 [dependencies]
 cfg-if = "0.1.10"

@@ -252,7 +252,7 @@
 		<td>French</td>
 		<td><img src="images/green.png"> 89</td>
 		<td><img src="images/yellow.png"> 59</td>
-		<td><img src="images/lightgreen.png"> 74</td>
+		<td><img src="images/lightgreen.png"> 73</td>
 		<td><img src="images/orange.png"> 30</td>
 		<td><img src="images/green.png"> 94</td>
 		<td><img src="images/yellow.png"> 51</td>
@@ -338,7 +338,7 @@
 	</tr>
 	<tr>
 		<td>Hungarian</td>
-		<td><img src="images/green.png"> 95</td>
+		<td><img src="images/green.png"> 94</td>
 		<td><img src="images/lightgreen.png"> 61</td>
 		<td><img src="images/green.png"> 86</td>
 		<td><img src="images/orange.png"> 37</td>
@@ -351,7 +351,7 @@
 		<td>Icelandic</td>
 		<td><img src="images/green.png"> 93</td>
 		<td><img src="images/grey.png"> -</td>
-		<td><img src="images/green.png"> 82</td>
+		<td><img src="images/green.png"> 83</td>
 		<td><img src="images/grey.png"> -</td>
 		<td><img src="images/green.png"> 97</td>
 		<td><img src="images/grey.png"> -</td>
@@ -450,7 +450,7 @@
 		<td>Lithuanian</td>
 		<td><img src="images/green.png"> 95</td>
 		<td><img src="images/lightgreen.png"> 61</td>
-		<td><img src="images/green.png"> 86</td>
+		<td><img src="images/green.png"> 87</td>
 		<td><img src="images/orange.png"> 36</td>
 		<td><img src="images/green.png"> 98</td>
 		<td><img src="images/yellow.png"> 54</td>
@@ -602,9 +602,9 @@
 	</tr>
 	<tr>
 		<td>Slovak</td>
-		<td><img src="images/green.png"> 85</td>
+		<td><img src="images/green.png"> 84</td>
 		<td><img src="images/yellow.png"> 46</td>
-		<td><img src="images/lightgreen.png"> 65</td>
+		<td><img src="images/lightgreen.png"> 64</td>
 		<td><img src="images/orange.png"> 24</td>
 		<td><img src="images/green.png"> 90</td>
 		<td><img src="images/orange.png"> 35</td>
@@ -712,13 +712,13 @@
 	</tr>
 	<tr>
 		<td>Thai</td>
-		<td><img src="images/green.png"> 100</td>
-		<td><img src="images/green.png"> 100</td>
-		<td><img src="images/green.png"> 100</td>
-		<td><img src="images/green.png"> 100</td>
-		<td><img src="images/green.png"> 100</td>
-		<td><img src="images/green.png"> 100</td>
 		<td><img src="images/green.png"> 99</td>
+		<td><img src="images/green.png"> 100</td>
+		<td><img src="images/green.png"> 100</td>
+		<td><img src="images/green.png"> 100</td>
+		<td><img src="images/green.png"> 100</td>
+		<td><img src="images/green.png"> 100</td>
+		<td><img src="images/green.png"> 98</td>
 		<td><img src="images/green.png"> 99</td>
 	</tr>
 	<tr>
@@ -756,7 +756,7 @@
 	</tr>
 	<tr>
 		<td>Ukrainian</td>
-		<td><img src="images/green.png"> 93</td>
+		<td><img src="images/green.png"> 92</td>
 		<td><img src="images/lightgreen.png"> 72</td>
 		<td><img src="images/green.png"> 84</td>
 		<td><img src="images/yellow.png"> 53</td>
@@ -811,13 +811,13 @@
 	</tr>
 	<tr>
 		<td>Yoruba</td>
-		<td><img src="images/lightgreen.png"> 69</td>
+		<td><img src="images/lightgreen.png"> 63</td>
 		<td><img src="images/orange.png"> 22</td>
-		<td><img src="images/orange.png"> 39</td>
+		<td><img src="images/orange.png"> 34</td>
 		<td><img src="images/red.png"> 11</td>
-		<td><img src="images/lightgreen.png"> 74</td>
+		<td><img src="images/lightgreen.png"> 68</td>
 		<td><img src="images/red.png"> 14</td>
-		<td><img src="images/green.png"> 93</td>
+		<td><img src="images/green.png"> 87</td>
 		<td><img src="images/yellow.png"> 41</td>
 	</tr>
 	<tr>
@@ -832,13 +832,13 @@
 		<td><img src="images/green.png"> 98</td>
 	</tr>
 	<tr>
-		<td colspan="8"></td>
+		<td colspan="12"></td>
 	</tr>
 	<tr>
 		<td><strong>Mean</strong></td>
 		<td><img src="images/green.png"> <strong>86</strong></td>
 		<td><img src="images/lightgreen.png"> <strong>66</strong></td>
-		<td><img src="images/lightgreen.png"> <strong>74</strong></td>
+		<td><img src="images/lightgreen.png"> <strong>73</strong></td>
 		<td><img src="images/yellow.png"> <strong>46</strong></td>
 		<td><img src="images/green.png"> <strong>89</strong></td>
 		<td><img src="images/lightgreen.png"> <strong>61</strong></td>
@@ -846,11 +846,11 @@
 		<td><img src="images/green.png"> <strong>90</strong></td>
 	</tr>
 	<tr>
-		<td colspan="8"></td>
+		<td colspan="12"></td>
 	</tr>
 	<tr>
 		<td>Median</td>
-		<td>88.88</td>
+		<td>88.8</td>
 		<td>60.75</td>
 		<td>73.85</td>
 		<td>36.3</td>
@@ -861,13 +861,13 @@
 	</tr>
 	<tr>
 		<td>Standard Deviation</td>
-		<td>13.22</td>
+		<td>13.33</td>
 		<td>20.24</td>
-		<td>18.73</td>
+		<td>18.85</td>
 		<td>29.19</td>
-		<td>13.23</td>
+		<td>13.33</td>
 		<td>24.55</td>
-		<td>11.18</td>
+		<td>11.22</td>
 		<td>11.36</td>
 	</tr>
 </table>

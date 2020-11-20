@@ -16,12 +16,9 @@
 
 use crate::language::Language;
 use crate::language::Language::*;
-use include_dir::{include_dir, Dir};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
-
-pub(crate) const LANGUAGE_MODELS_DIRECTORY: Dir = include_dir!("assets/main/language-models");
 
 pub(crate) static JAPANESE_CHARACTER_SET: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap());

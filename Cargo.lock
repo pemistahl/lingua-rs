@@ -247,7 +247,80 @@ dependencies = [
  "include_dir",
  "indoc",
  "itertools",
- "lingua_german_language_model",
+ "lingua-afrikaans-language-model",
+ "lingua-albanian-language-model",
+ "lingua-arabic-language-model",
+ "lingua-armenian-language-model",
+ "lingua-azerbaijani-language-model",
+ "lingua-basque-language-model",
+ "lingua-belarusian-language-model",
+ "lingua-bengali-language-model",
+ "lingua-bokmal-language-model",
+ "lingua-bosnian-language-model",
+ "lingua-bulgarian-language-model",
+ "lingua-catalan-language-model",
+ "lingua-chinese-language-model",
+ "lingua-croatian-language-model",
+ "lingua-czech-language-model",
+ "lingua-danish-language-model",
+ "lingua-dutch-language-model",
+ "lingua-english-language-model",
+ "lingua-esperanto-language-model",
+ "lingua-estonian-language-model",
+ "lingua-finnish-language-model",
+ "lingua-french-language-model",
+ "lingua-ganda-language-model",
+ "lingua-georgian-language-model",
+ "lingua-german-language-model",
+ "lingua-greek-language-model",
+ "lingua-gujarati-language-model",
+ "lingua-hebrew-language-model",
+ "lingua-hindi-language-model",
+ "lingua-hungarian-language-model",
+ "lingua-icelandic-language-model",
+ "lingua-indonesian-language-model",
+ "lingua-irish-language-model",
+ "lingua-italian-language-model",
+ "lingua-japanese-language-model",
+ "lingua-kazakh-language-model",
+ "lingua-korean-language-model",
+ "lingua-latin-language-model",
+ "lingua-latvian-language-model",
+ "lingua-lithuanian-language-model",
+ "lingua-macedonian-language-model",
+ "lingua-malay-language-model",
+ "lingua-marathi-language-model",
+ "lingua-mongolian-language-model",
+ "lingua-nynorsk-language-model",
+ "lingua-persian-language-model",
+ "lingua-polish-language-model",
+ "lingua-portuguese-language-model",
+ "lingua-punjabi-language-model",
+ "lingua-romanian-language-model",
+ "lingua-russian-language-model",
+ "lingua-serbian-language-model",
+ "lingua-shona-language-model",
+ "lingua-slovak-language-model",
+ "lingua-slovene-language-model",
+ "lingua-somali-language-model",
+ "lingua-sotho-language-model",
+ "lingua-spanish-language-model",
+ "lingua-swahili-language-model",
+ "lingua-swedish-language-model",
+ "lingua-tagalog-language-model",
+ "lingua-tamil-language-model",
+ "lingua-telugu-language-model",
+ "lingua-thai-language-model",
+ "lingua-tsonga-language-model",
+ "lingua-tswana-language-model",
+ "lingua-turkish-language-model",
+ "lingua-ukrainian-language-model",
+ "lingua-urdu-language-model",
+ "lingua-vietnamese-language-model",
+ "lingua-welsh-language-model",
+ "lingua-xhosa-language-model",
+ "lingua-yoruba-language-model",
+ "lingua-zulu-language-model",
  "maplit",
  "mockall",
  "once_cell",
@@ -264,8 +337,522 @@ dependencies = [
 ]
 
 [[package]]
-name = "lingua_german_language_model"
+name = "lingua-afrikaans-language-model"
 version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-albanian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-arabic-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-armenian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-azerbaijani-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-basque-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-belarusian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bengali-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bokmal-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bosnian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bulgarian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-catalan-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-chinese-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-croatian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-czech-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-danish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-dutch-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-english-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-esperanto-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-estonian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-finnish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-french-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-ganda-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-georgian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-german-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-greek-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-gujarati-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-hebrew-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-hindi-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-hungarian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-icelandic-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-indonesian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-irish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-italian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-japanese-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-kazakh-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-korean-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-latin-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-latvian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-lithuanian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-macedonian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-malay-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-marathi-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-mongolian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-nynorsk-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-persian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-polish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-portuguese-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-punjabi-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-romanian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-russian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-serbian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-shona-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-slovak-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-slovene-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-somali-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-sotho-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-spanish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-swahili-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-swedish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-tagalog-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-tamil-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-telugu-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-thai-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-tsonga-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-tswana-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-turkish-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-ukrainian-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-urdu-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-vietnamese-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-welsh-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-xhosa-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-yoruba-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-zulu-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
 
 [[package]]
 name = "maplit"

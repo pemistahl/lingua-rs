@@ -250,3 +250,12 @@ pub use detector::LanguageDetector;
 pub use isocode::{IsoCode639_1, IsoCode639_3};
 pub use language::Language;
 pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter};
+
+#[cfg(test)]
+use regex::Regex;
+
+#[cfg(test)]
+pub(crate) fn minify(json: &str) -> String {
+    let re = Regex::new("\n\\s*").unwrap();
+    re.replace_all(json, "").to_string()
+}

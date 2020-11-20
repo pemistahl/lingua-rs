@@ -13,3 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+use include_dir::{include_dir, Dir};
+
+pub const GERMAN_MODELS_DIRECTORY: Dir = include_dir!("models");
+
+pub const GERMAN_TESTDATA_DIRECTORY: Dir = include_dir!("testdata");

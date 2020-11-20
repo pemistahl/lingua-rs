@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-use crate::constant::LANGUAGE_MODELS_DIRECTORY;
 use crate::models::{
     load_json, LanguageToNgramsMappingCell, LazyLanguageToNgramsMapping,
     LazyTrainingDataLanguageModel,
@@ -707,5 +706,5 @@ fn zulu_bigram_model() -> LazyTrainingDataLanguageModel {
 }
 
 fn load_bigrams(language: Language) -> String {
-    load_json(LANGUAGE_MODELS_DIRECTORY, language, 2).unwrap()
+    load_json(language, 2).unwrap()
 }

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 [package]
-name = "lingua_german_language_model"
+name = "lingua-german-language-model"
 version = "1.0.0"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
@@ -32,3 +32,6 @@ keywords = [
     "language-recognition",
     "nlp"
 ]
+
+[dependencies]
+include_dir = "0.6.0"

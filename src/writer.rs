@@ -21,7 +21,7 @@ use crate::Language;
 use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
-use std::fs::{create_dir, remove_file, File};
+use std::fs::{remove_file, File};
 use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
@@ -178,8 +178,6 @@ impl TestDataFilesWriter {
     /// `output_directory_path`: The path to an existing directory where the test data files
     /// are to be written.
     ///
-    /// `language`: The language for which to create test data.
-    ///
     /// `char_class`: A regex character class such as `\\p{L}` to restrict the set of characters
     /// that the test data are built from.
     ///
@@ -193,7 +191,6 @@ impl TestDataFilesWriter {
     pub fn create_and_write_test_data_files(
         input_file_path: &Path,
         output_directory_path: &Path,
-        language: &Language,
         char_class: &str,
         maximum_lines: u32,
     ) -> io::Result<()> {
@@ -203,24 +200,17 @@ impl TestDataFilesWriter {
         Self::create_and_write_sentences_file(
             input_file_path,
             output_directory_path,
-            language,
             maximum_lines,
         )?;
 
         let single_words = Self::create_and_write_single_words_file(
             input_file_path,
             output_directory_path,
-            language,
             char_class,
             maximum_lines,
         )?;
 
-        Self::create_and_write_word_pairs_file(
-            single_words,
-            output_directory_path,
-            language,
-            maximum_lines,
-        )?;
+        Self::create_and_write_word_pairs_file(single_words, output_directory_path, maximum_lines)?;
 
         Ok(())
     }
@@ -228,16 +218,9 @@ impl TestDataFilesWriter {
     fn create_and_write_sentences_file(
         input_file_path: &Path,
         output_directory_path: &Path,
-        language: &Language,
         maximum_lines: u32,
     ) -> io::Result<()> {
-        let file_name = format!("{}.txt", language.iso_code_639_1());
-        let sentences_directory_path = output_directory_path.join("sentences");
-        let sentences_file_path = sentences_directory_path.join(file_name);
-
-        if !sentences_directory_path.is_dir() {
-            create_dir(sentences_directory_path)?;
-        }
+        let sentences_file_path = output_directory_path.join("sentences.txt");
 
         if sentences_file_path.is_file() {
             remove_file(&sentences_file_path)?;
@@ -270,19 +253,12 @@ impl TestDataFilesWriter {
     fn create_and_write_single_words_file(
         input_file_path: &Path,
         output_directory_path: &Path,
-        language: &Language,
         char_class: &str,
         maximum_lines: u32,
     ) -> io::Result<Vec<String>> {
-        let file_name = format!("{}.txt", language.iso_code_639_1());
-        let single_words_directory_path = output_directory_path.join("single-words");
-        let single_words_file_path = single_words_directory_path.join(file_name);
+        let single_words_file_path = output_directory_path.join("single-words.txt");
         let word_regex = Regex::new(&format!("[{}]{{5,}}", char_class)).unwrap();
         let mut words = vec![];
-
-        if !single_words_directory_path.is_dir() {
-            create_dir(single_words_directory_path)?;
-        }
 
         if single_words_file_path.is_file() {
             remove_file(&single_words_file_path)?;
@@ -326,17 +302,10 @@ impl TestDataFilesWriter {
     fn create_and_write_word_pairs_file(
         words: Vec<String>,
         output_directory_path: &Path,
-        language: &Language,
         maximum_lines: u32,
     ) -> io::Result<()> {
-        let file_name = format!("{}.txt", language.iso_code_639_1());
-        let word_pairs_directory_path = output_directory_path.join("word-pairs");
-        let word_pairs_file_path = word_pairs_directory_path.join(file_name);
+        let word_pairs_file_path = output_directory_path.join("word-pairs.txt");
         let mut word_pairs = Vec::<String>::new();
-
-        if !word_pairs_directory_path.is_dir() {
-            create_dir(word_pairs_directory_path)?;
-        }
 
         if word_pairs_file_path.is_file() {
             remove_file(&word_pairs_file_path)?;
@@ -407,7 +376,6 @@ fn check_output_directory_path(output_directory_path: &Path) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use regex::Regex;
     use std::fs::read_dir;
     use std::io::Read;
     use std::path::PathBuf;
@@ -433,6 +401,7 @@ mod tests {
 
     mod language_model_files {
         use super::*;
+        use crate::minify;
         use zip::ZipArchive;
 
         const TEXT: &str = "
@@ -579,11 +548,6 @@ mod tests {
 
             assert_eq!(json, minify(expected_file_content));
         }
-
-        fn minify(json: &str) -> String {
-            let re = Regex::new("\n\\s*").unwrap();
-            re.replace_all(json, "").to_string()
-        }
     }
 
     mod test_data_files {
@@ -627,56 +591,46 @@ mod tests {
             let result = TestDataFilesWriter::create_and_write_test_data_files(
                 input_file.path(),
                 output_directory.path(),
-                &Language::English,
                 "\\p{L}",
                 4,
             );
 
             assert!(result.is_ok());
 
-            let subdirectories = read_directory_content(output_directory.path());
+            let test_data_files = read_directory_content(output_directory.path());
 
-            assert_eq!(subdirectories.len(), 3);
+            assert_eq!(test_data_files.len(), 3);
 
-            assert_directory_content(
-                &subdirectories[0],
-                "sentences",
+            assert_file_content(
+                &test_data_files[0],
+                "sentences.txt",
                 EXPECTED_SENTENCES_FILE_CONTENT,
             );
 
-            assert_directory_content(
-                &subdirectories[1],
-                "single-words",
+            assert_file_content(
+                &test_data_files[1],
+                "single-words.txt",
                 EXPECTED_SINGLE_WORDS_FILE_CONTENT,
             );
 
-            assert_directory_content(
-                &subdirectories[2],
-                "word-pairs",
+            assert_file_content(
+                &test_data_files[2],
+                "word-pairs.txt",
                 EXPECTED_WORD_PAIRS_FILE_CONTENT,
             );
         }
 
-        fn assert_directory_content(
-            directory: &Path,
-            expected_directory_name: &str,
+        fn assert_file_content(
+            file_path: &Path,
+            expected_file_name: &str,
             expected_file_content: &str,
         ) {
-            assert!(directory.is_dir());
+            assert!(file_path.is_file());
 
-            let directory_name = directory.file_name().unwrap();
-            assert_eq!(directory_name, expected_directory_name);
+            let file_name = file_path.file_name().unwrap();
+            assert_eq!(file_name, expected_file_name);
 
-            let directory_content = read_directory_content(directory);
-            assert_eq!(directory_content.len(), 1);
-
-            let test_data_file_path = &directory_content[0];
-            assert!(test_data_file_path.is_file());
-
-            let test_data_file_name = test_data_file_path.file_name().unwrap();
-            assert_eq!(test_data_file_name, "en.txt");
-
-            let mut test_data_file = File::open(test_data_file_path).unwrap();
+            let mut test_data_file = File::open(file_path).unwrap();
             let mut test_data_file_content = String::new();
             test_data_file
                 .read_to_string(&mut test_data_file_content)

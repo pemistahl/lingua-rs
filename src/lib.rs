@@ -119,6 +119,10 @@
 //! assert_eq!(detected_language, Some(English));
 //! ```
 //!
+//! All instances of [`LanguageDetector`](./struct.LanguageDetector.html) within a single
+//! application share the same language models and have synchronized access to them.
+//! So you can safely have multiple instances without worrying about consuming too much memory.
+//!
 //! ### 6.2 Minimum relative distance
 //!
 //! By default, *Lingua* returns the most likely language for a given input text. However, there are

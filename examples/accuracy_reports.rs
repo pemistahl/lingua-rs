@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
 use itertools::Itertools;
@@ -104,7 +105,7 @@ struct DetectorStatistics {
     single_word_statistic: Statistic,
     word_pair_statistic: Statistic,
     sentence_statistic: Statistic,
-    average_accuracies: HashMap<Language, f64>,
+    average_accuracies: HashMap<Language, Decimal>,
 }
 
 impl DetectorStatistics {
@@ -156,12 +157,12 @@ impl DetectorStatistics {
             .create_report_data(language, "sentences");
 
         let average_accuracy =
-            (single_word_accuracy + word_pair_accuracy + sentence_accuracy) / 3.0;
+            (single_word_accuracy + word_pair_accuracy + sentence_accuracy) / Decimal::from(3);
 
         self.average_accuracies
             .insert(language.clone(), average_accuracy);
 
-        if average_accuracy == 0.0 {
+        if average_accuracy.is_zero() {
             return None;
         }
 
@@ -186,7 +187,7 @@ impl DetectorStatistics {
     fn create_aggregated_report_row(&self, language: &Language) -> String {
         let average_accuracy_column = match self.average_accuracies.get(language) {
             Some(&accuracy) => {
-                if accuracy > 0.0 {
+                if accuracy > Decimal::zero() {
                     accuracy.to_string()
                 } else {
                     "NaN".to_string()
@@ -231,7 +232,7 @@ impl DetectorStatistics {
 
 struct Statistic {
     language_counts: HashMap<Option<Language>, u32>,
-    language_accuracies: HashMap<Option<Language>, f64>,
+    language_accuracies: HashMap<Option<Language>, Decimal>,
     entity_count: u32,
     entity_length_count: u32,
 }
@@ -267,17 +268,17 @@ impl Statistic {
             .map(|(language, count)| {
                 (
                     language.clone(),
-                    (*count as f64) / (sum_of_counts as f64) * 100.0,
+                    Decimal::from(*count) / Decimal::from(sum_of_counts) * Decimal::from(100),
                 )
             })
             .collect();
     }
 
-    fn create_report_data(&self, language: &Language, description: &str) -> (f64, String) {
+    fn create_report_data(&self, language: &Language, description: &str) -> (Decimal, String) {
         let accuracy = *self
             .language_accuracies
             .get(&Some(language.clone()))
-            .unwrap_or(&0.0);
+            .unwrap_or(&Decimal::zero());
 
         let average_length =
             ((self.entity_length_count as f64) / (self.entity_count as f64)).round();
@@ -454,7 +455,7 @@ fn get_file_content<'a>(file_name: &'a str, language: &'a Language) -> Vec<&'a s
         .collect_vec()
 }
 
-fn format_accuracy(accuracy: f64) -> String {
+fn format_accuracy(accuracy: Decimal) -> String {
     format!("{:.2}%", accuracy)
 }
 

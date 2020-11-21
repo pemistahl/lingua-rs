@@ -3,14 +3,14 @@
 >>> Accuracy on average: 70.23%
 
 >> Detection of 1000 single words (average length: 12 chars)
-Accuracy: 45.60%
-Erroneously classified as Unknown: 21.20%, Urdu: 17.40%, Arabic: 15.80%
+Accuracy: 45.6%
+Erroneously classified as Unknown: 21.2%, Urdu: 17.4%, Arabic: 15.8%
 
 >> Detection of 1000 word pairs (average length: 25 chars)
-Accuracy: 66.00%
-Erroneously classified as Urdu: 14.40%, Arabic: 11.30%, Unknown: 8.30%
+Accuracy: 66%
+Erroneously classified as Urdu: 14.4%, Arabic: 11.3%, Unknown: 8.3%
 
 >> Detection of 1000 sentences (average length: 193 chars)
-Accuracy: 99.10%
-Erroneously classified as Arabic: 0.30%, Unknown: 0.20%, English: 0.20%, Urdu: 0.20%
+Accuracy: 99.1%
+Erroneously classified as Arabic: 0.3%, Unknown: 0.2%, English: 0.2%, Urdu: 0.2%
 

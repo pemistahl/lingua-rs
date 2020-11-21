@@ -3,14 +3,14 @@
 >>> Accuracy on average: 51.23%
 
 >> Detection of 1000 single words (average length: 19 chars)
-Accuracy: 26.60%
-Erroneously classified as Unknown: 58.00%, Marathi: 15.40%
+Accuracy: 26.6%
+Erroneously classified as Unknown: 58%, Marathi: 15.4%
 
 >> Detection of 1000 word pairs (average length: 39 chars)
-Accuracy: 40.40%
-Erroneously classified as Unknown: 43.30%, Marathi: 16.30%
+Accuracy: 40.4%
+Erroneously classified as Unknown: 43.3%, Marathi: 16.3%
 
 >> Detection of 1000 sentences (average length: 207 chars)
-Accuracy: 86.70%
-Erroneously classified as Unknown: 11.80%, Marathi: 1.20%, English: 0.20%, French: 0.10%
+Accuracy: 86.7%
+Erroneously classified as Unknown: 11.8%, Marathi: 1.2%, English: 0.2%, French: 0.1%
 

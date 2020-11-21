@@ -1,16 +1,16 @@
 ##### Bokmal #####
 
->>> Accuracy on average: 57.60%
+>>> Accuracy on average: 57.6%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 38.60%
-Erroneously classified as Nynorsk: 21.40%, Danish: 17.70%, German: 2.70%, Swedish: 2.70%, Dutch: 1.50%, English: 1.20%, French: 1.20%, Italian: 1.20%, Latin: 1.10%, Afrikaans: 0.80%, Basque: 0.80%, Finnish: 0.70%, Icelandic: 0.70%, Sotho: 0.70%, Esperanto: 0.60%, Shona: 0.50%, Spanish: 0.50%, Tsonga: 0.50%, Catalan: 0.40%, Romanian: 0.40%, Tswana: 0.40%, Welsh: 0.40%, Indonesian: 0.30%, Lithuanian: 0.30%, Portuguese: 0.30%, Estonian: 0.20%, Ganda: 0.20%, Hungarian: 0.20%, Slovene: 0.20%, Turkish: 0.20%, Xhosa: 0.20%, Yoruba: 0.20%, Zulu: 0.20%, Albanian: 0.10%, Bosnian: 0.10%, Irish: 0.10%, Latvian: 0.10%, Polish: 0.10%, Somali: 0.10%, Tagalog: 0.10%, Vietnamese: 0.10%
+Accuracy: 38.6%
+Erroneously classified as Nynorsk: 21.4%, Danish: 17.7%, German: 2.7%, Swedish: 2.7%, Dutch: 1.5%, English: 1.2%, French: 1.2%, Italian: 1.2%, Latin: 1.1%, Afrikaans: 0.8%, Basque: 0.8%, Finnish: 0.7%, Icelandic: 0.7%, Sotho: 0.7%, Esperanto: 0.6%, Shona: 0.5%, Spanish: 0.5%, Tsonga: 0.5%, Catalan: 0.4%, Romanian: 0.4%, Tswana: 0.4%, Welsh: 0.4%, Indonesian: 0.3%, Lithuanian: 0.3%, Portuguese: 0.3%, Estonian: 0.2%, Ganda: 0.2%, Hungarian: 0.2%, Slovene: 0.2%, Turkish: 0.2%, Xhosa: 0.2%, Yoruba: 0.2%, Zulu: 0.2%, Albanian: 0.1%, Bosnian: 0.1%, Irish: 0.1%, Latvian: 0.1%, Polish: 0.1%, Somali: 0.1%, Tagalog: 0.1%, Vietnamese: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
-Accuracy: 58.70%
-Erroneously classified as Nynorsk: 23.70%, Danish: 12.70%, Swedish: 1.40%, German: 0.60%, English: 0.50%, Esperanto: 0.40%, French: 0.40%, Dutch: 0.30%, Latin: 0.20%, Tagalog: 0.20%, Basque: 0.10%, Finnish: 0.10%, Icelandic: 0.10%, Italian: 0.10%, Portuguese: 0.10%, Sotho: 0.10%, Swahili: 0.10%, Tswana: 0.10%, Xhosa: 0.10%
+Accuracy: 58.7%
+Erroneously classified as Nynorsk: 23.7%, Danish: 12.7%, Swedish: 1.4%, German: 0.6%, English: 0.5%, Esperanto: 0.4%, French: 0.4%, Dutch: 0.3%, Latin: 0.2%, Tagalog: 0.2%, Basque: 0.1%, Finnish: 0.1%, Icelandic: 0.1%, Italian: 0.1%, Portuguese: 0.1%, Sotho: 0.1%, Swahili: 0.1%, Tswana: 0.1%, Xhosa: 0.1%
 
 >> Detection of 1000 sentences (average length: 100 chars)
-Accuracy: 75.50%
-Erroneously classified as Nynorsk: 22.10%, Danish: 2.20%, Dutch: 0.10%, English: 0.10%
+Accuracy: 75.5%
+Erroneously classified as Nynorsk: 22.1%, Danish: 2.2%, Dutch: 0.1%, English: 0.1%
 

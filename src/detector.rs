@@ -421,28 +421,7 @@ impl LanguageDetector {
                 }
             }
         }
-        let logarithms = probabilities.into_iter().map(|it| it.ln()).collect_vec();
-        self.compute_sum_of_logarithms(logarithms)
-    }
-
-    // https://en.wikipedia.org/wiki/Kahan_summation_algorithm
-    fn compute_sum_of_logarithms(&self, logarithms: Vec<f64>) -> f64 {
-        let mut sum = 0.0;
-        let mut c = 0.0;
-
-        for logarithm in logarithms {
-            let t = sum + logarithm;
-
-            if sum.abs() >= logarithm.abs() {
-                c += (sum - t) + logarithm;
-            } else {
-                c += (logarithm - t) + sum;
-            }
-
-            sum = t;
-        }
-
-        sum + c
+        probabilities.into_iter().map(|it| it.ln()).sum()
     }
 
     fn look_up_ngram_probability(&self, language: &Language, ngram: &Ngram) -> f64 {

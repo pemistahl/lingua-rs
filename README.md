@@ -282,6 +282,10 @@ let detected_language: Option<Language> = detector.detect_language_of("languages
 assert_eq!(detected_language, Some(English));
 ```
 
+All instances of `LanguageDetector` within a single application share the same language models 
+and have synchronized access to them. So you can safely have multiple instances without worrying
+about consuming too much memory.
+
 ### 9.2 Minimum relative distance
 
 By default, *Lingua* returns the most likely language for a given input text. However, there are

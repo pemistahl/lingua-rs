@@ -156,8 +156,11 @@ impl TrainingDataLanguageModel {
             let denominator = if ngram_length == 1 || lower_ngram_absolute_frequencies.is_empty() {
                 total_ngram_frequency
             } else {
+                let chars = ngram.value.chars().collect_vec();
+                let slice = &chars[0..ngram_length - 1].iter().collect::<String>();
+
                 *lower_ngram_absolute_frequencies
-                    .get(&Ngram::new(&ngram.value[0..ngram_length - 1]))
+                    .get(&Ngram::new(slice))
                     .unwrap()
             };
             ngram_probabilities.insert(ngram.clone(), Fraction::new(*frequency, denominator));

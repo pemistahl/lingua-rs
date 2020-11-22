@@ -1,3 +1,9 @@
+## Lingua 1.0.2 (released on 22 Nov 2020)
+
+### Bug Fixes
+
+- Accidentally, bug #3 was only partially fixed. This has been corrected.
+
 ## Lingua 1.0.1 (released on 22 Nov 2020)
 
 ### Bug Fixes

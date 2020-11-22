@@ -129,10 +129,10 @@ impl TrainingDataLanguageModel {
         });
 
         for line in text.iter() {
-            let lowercased_line = line.to_lowercase();
+            let chars = line.to_lowercase().chars().collect_vec();
 
-            for i in 0..=lowercased_line.len() - ngram_length {
-                let slice = &lowercased_line[i..i + ngram_length];
+            for i in 0..=chars.len() - ngram_length {
+                let slice = &chars[i..i + ngram_length].iter().collect::<String>();
 
                 if regex.is_match(slice) {
                     let counter = absolute_frequencies.entry(Ngram::new(slice)).or_insert(0);
@@ -201,7 +201,7 @@ mod tests {
 
     const TEXT: &str = "
         These sentences are intended for testing purposes.
-        Do not use them in production!
+        ⚠ Do not use them in production
         By the way, they consist of 23 words in total.
     ";
 

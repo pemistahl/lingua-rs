@@ -17,7 +17,7 @@ members = ["language-models/*"]
 
 [package]
 name = "lingua"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for long and short text alike
@@ -37,7 +37,7 @@ keywords = [
 ]
 
 [dependencies]
-cfg-if = "0.1.10"
+cfg-if = "1.0.0"
 fraction = "0.6.3"
 include_dir = "0.6.0"
 itertools = "0.9.0"
@@ -46,8 +46,8 @@ once_cell = "1.5.2"
 regex = "1.4.2"
 serde = { version = "1.0.117", features = ["derive"] }
 serde_json = "1.0.59"
-strum = "0.19.5"
-strum_macros = "0.19.4"
+strum = "0.20.0"
+strum_macros = "0.20.1"
 zip = "0.5.8"
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.0.0" }
 lingua-albanian-language-model = { path = "language-models/sq", version = "1.0.0" }

@@ -116,11 +116,12 @@ impl LanguageDetector {
 
     /// Computes confidence values for each language considered possible for the given input text.
     ///
-    /// The values that this method computes are part of a **relative** confidence metric, not of
-    /// an absolute one. Each value is a number between 0.0 and 1.0. The most likely language is
-    /// always returned with value 1.0. All other languages get values assigned which are lower
-    /// than 1.0, denoting how less likely those languages are in comparison to the most likely
-    /// language.
+    /// A vector of all possible languages is returned, sorted by their confidence value in
+    /// descending order. The values that this method computes are part of a **relative**
+    /// confidence metric, not of an absolute one. Each value is a number between 0.0 and 1.0.
+    /// The most likely language is always returned with value 1.0. All other languages get values
+    /// assigned which are lower than 1.0, denoting how less likely those languages are in
+    /// comparison to the most likely language.
     ///
     /// The vector returned by this method does not necessarily contain all languages which the
     /// calling instance of `LanguageDetector` was built from. If the rule-based engine decides

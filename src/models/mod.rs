@@ -60,6 +60,7 @@ use lingua_latvian_language_model::LATVIAN_MODELS_DIRECTORY;
 use lingua_lithuanian_language_model::LITHUANIAN_MODELS_DIRECTORY;
 use lingua_macedonian_language_model::MACEDONIAN_MODELS_DIRECTORY;
 use lingua_malay_language_model::MALAY_MODELS_DIRECTORY;
+use lingua_maori_language_model::MAORI_MODELS_DIRECTORY;
 use lingua_marathi_language_model::MARATHI_MODELS_DIRECTORY;
 use lingua_mongolian_language_model::MONGOLIAN_MODELS_DIRECTORY;
 use lingua_nynorsk_language_model::NYNORSK_MODELS_DIRECTORY;
@@ -174,6 +175,7 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
         Language::Lithuanian => LITHUANIAN_MODELS_DIRECTORY,
         Language::Macedonian => MACEDONIAN_MODELS_DIRECTORY,
         Language::Malay => MALAY_MODELS_DIRECTORY,
+        Language::Maori => MAORI_MODELS_DIRECTORY,
         Language::Marathi => MARATHI_MODELS_DIRECTORY,
         Language::Mongolian => MONGOLIAN_MODELS_DIRECTORY,
         Language::Nynorsk => NYNORSK_MODELS_DIRECTORY,

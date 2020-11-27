@@ -1,0 +1,16 @@
+##### Maori #####
+
+>>> Accuracy on average: 90.9%
+
+>> Detection of 1000 single words (average length: 7 chars)
+Accuracy: 81.2%
+Erroneously classified as English: 4.3%, Latvian: 2.7%, Swahili: 1.2%, Tswana: 0.9%, French: 0.7%, Shona: 0.7%, Danish: 0.6%, Swedish: 0.6%, Basque: 0.5%, Romanian: 0.5%, Tsonga: 0.5%, Ganda: 0.4%, Latin: 0.4%, Xhosa: 0.4%, Yoruba: 0.4%, Afrikaans: 0.3%, Azerbaijani: 0.3%, Finnish: 0.3%, Indonesian: 0.3%, Malay: 0.3%, Zulu: 0.3%, Catalan: 0.2%, Estonian: 0.2%, Lithuanian: 0.2%, Polish: 0.2%, Slovak: 0.2%, Spanish: 0.2%, Tagalog: 0.2%, Turkish: 0.2%, Welsh: 0.2%, German: 0.1%, Slovene: 0.1%, Somali: 0.1%, Sotho: 0.1%
+
+>> Detection of 1000 word pairs (average length: 15 chars)
+Accuracy: 92.2%
+Erroneously classified as English: 3.7%, Swahili: 0.6%, Shona: 0.5%, French: 0.3%, Latin: 0.3%, Welsh: 0.3%, Basque: 0.2%, Latvian: 0.2%, Tagalog: 0.2%, Yoruba: 0.2%, Zulu: 0.2%, Afrikaans: 0.1%, Dutch: 0.1%, Ganda: 0.1%, Indonesian: 0.1%, Italian: 0.1%, Nynorsk: 0.1%, Polish: 0.1%, Romanian: 0.1%, Sotho: 0.1%, Spanish: 0.1%, Xhosa: 0.1%
+
+>> Detection of 1000 sentences (average length: 113 chars)
+Accuracy: 99.3%
+Erroneously classified as English: 0.5%, Indonesian: 0.1%, Lithuanian: 0.1%
+

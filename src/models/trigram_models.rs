@@ -77,6 +77,7 @@ pub(crate) fn trigram_models() -> LazyLanguageToNgramsMapping {
             Lithuanian => lithuanian_trigram_model(),
             Macedonian => macedonian_trigram_model(),
             Malay => malay_trigram_model(),
+            Maori => maori_trigram_model(),
             Marathi => marathi_trigram_model(),
             Mongolian => mongolian_trigram_model(),
             Nynorsk => nynorsk_trigram_model(),
@@ -445,6 +446,14 @@ fn malay_trigram_model() -> LazyTrainingDataLanguageModel {
     static MALAY_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
     MALAY_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Malay);
+        TrainingDataLanguageModel::from_json(&json)
+    })
+}
+
+fn maori_trigram_model() -> LazyTrainingDataLanguageModel {
+    static MAORI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    MAORI_TRIGRAM_MODEL.get_or_init(|| {
+        let json = load_trigrams(Maori);
         TrainingDataLanguageModel::from_json(&json)
     })
 }

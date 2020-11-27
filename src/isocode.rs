@@ -138,6 +138,9 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Latvian`](./enum.Language.html#variant.Latvian)
     LV,
 
+    /// The ISO 639-1 code for [`Maori`](./enum.Language.html#variant.Maori)
+    MI,
+    
     /// The ISO 639-1 code for [`Macedonian`](./enum.Language.html#variant.Macedonian)
     MK,
 
@@ -372,6 +375,9 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Mongolian`](./enum.Language.html#variant.Mongolian)
     MON,
 
+    /// The ISO 639-3 code for [`Maori`](./enum.Language.html#variant.Maori)
+    MRI,
+    
     /// The ISO 639-3 code for [`Malay`](./enum.Language.html#variant.Malay)
     MSA,
 

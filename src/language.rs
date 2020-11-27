@@ -21,7 +21,7 @@ use std::collections::HashSet;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-/// This enum specifies the so far 74 supported languages which can be detected by *Lingua*.
+/// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
 #[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 pub enum Language {
@@ -67,6 +67,7 @@ pub enum Language {
     Lithuanian,
     Macedonian,
     Malay,
+    Maori,
     Marathi,
     Mongolian,
     Nynorsk,
@@ -192,6 +193,7 @@ impl Language {
             Language::Lithuanian => IsoCode639_1::LT,
             Language::Macedonian => IsoCode639_1::MK,
             Language::Malay => IsoCode639_1::MS,
+            Language::Maori => IsoCode639_1::MI,
             Language::Marathi => IsoCode639_1::MR,
             Language::Mongolian => IsoCode639_1::MN,
             Language::Nynorsk => IsoCode639_1::NN,
@@ -271,6 +273,7 @@ impl Language {
             Language::Lithuanian => IsoCode639_3::LIT,
             Language::Macedonian => IsoCode639_3::MKD,
             Language::Malay => IsoCode639_3::MSA,
+            Language::Maori => IsoCode639_3::MRI,
             Language::Marathi => IsoCode639_3::MAR,
             Language::Mongolian => IsoCode639_3::MON,
             Language::Nynorsk => IsoCode639_3::NNO,
@@ -335,6 +338,7 @@ impl Language {
             | Language::Latvian
             | Language::Lithuanian
             | Language::Malay
+            | Language::Maori
             | Language::Nynorsk
             | Language::Polish
             | Language::Portuguese
@@ -407,7 +411,7 @@ impl Language {
             Language::Spanish => Some("¿¡"),
             Language::Ukrainian => Some("ҐґЄєЇї"),
             Language::Vietnamese => Some("ẰằẦầẲẳẨẩẴẵẪẫẮắẤấẠạẶặẬậỀềẺẻỂểẼẽỄễẾếỆệỈỉĨĩỊịƠơỒồỜờỎỏỔổỞởỖỗỠỡỐốỚớỘộỢợƯưỪừỦủỬửŨũỮữỨứỤụỰựỲỳỶỷỸỹỴỵ"),
-            Language::Yoruba => Some("ŌōṢṣ"),
+            Language::Yoruba => Some("Ṣṣ"),
             _ => None,
         }
     }
@@ -477,6 +481,7 @@ mod tests {
                 Lithuanian,
                 Macedonian,
                 Malay,
+                Maori,
                 Marathi,
                 Mongolian,
                 Nynorsk,
@@ -559,6 +564,7 @@ mod tests {
                 Lithuanian,
                 Macedonian,
                 Malay,
+                Maori,
                 Marathi,
                 Mongolian,
                 Nynorsk,
@@ -653,6 +659,7 @@ mod tests {
                 Latvian,
                 Lithuanian,
                 Malay,
+                Maori,
                 Nynorsk,
                 Polish,
                 Portuguese,

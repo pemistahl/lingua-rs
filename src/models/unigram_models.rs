@@ -77,6 +77,7 @@ pub(crate) fn unigram_models() -> LazyLanguageToNgramsMapping {
             Lithuanian => lithuanian_unigram_model(),
             Macedonian => macedonian_unigram_model(),
             Malay => malay_unigram_model(),
+            Maori => maori_unigram_model(),
             Marathi => marathi_unigram_model(),
             Mongolian => mongolian_unigram_model(),
             Nynorsk => nynorsk_unigram_model(),
@@ -445,6 +446,14 @@ fn malay_unigram_model() -> LazyTrainingDataLanguageModel {
     static MALAY_UNIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
     MALAY_UNIGRAM_MODEL.get_or_init(|| {
         let json = load_unigrams(Malay);
+        TrainingDataLanguageModel::from_json(&json)
+    })
+}
+
+fn maori_unigram_model() -> LazyTrainingDataLanguageModel {
+    static MAORI_UNIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    MAORI_UNIGRAM_MODEL.get_or_init(|| {
+        let json = load_unigrams(Maori);
         TrainingDataLanguageModel::from_json(&json)
     })
 }

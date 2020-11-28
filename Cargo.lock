@@ -290,6 +290,7 @@ dependencies = [
  "lingua-lithuanian-language-model",
  "lingua-macedonian-language-model",
  "lingua-malay-language-model",
+ "lingua-maori-language-model",
  "lingua-marathi-language-model",
  "lingua-mongolian-language-model",
  "lingua-nynorsk-language-model",
@@ -626,6 +627,13 @@ dependencies = [
 
 [[package]]
 name = "lingua-malay-language-model"
+version = "1.0.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-maori-language-model"
 version = "1.0.0"
 dependencies = [
  "include_dir",

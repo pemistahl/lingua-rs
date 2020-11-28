@@ -117,6 +117,7 @@ Currently, the following 74 languages are supported:
 - M
   - Macedonian
   - Malay
+  - Maori
   - Marathi
   - Mongolian
 - N
@@ -178,7 +179,7 @@ each comprising ten thousand sentences. From each test corpus, a random unsorted
 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 
 Given the generated test data, I have compared the detection results of *Lingua* and *Whatlang*
-running over the data of *Lingua's* supported 74 languages. Languages that are not supported
+running over the data of *Lingua's* supported 75 languages. Languages that are not supported
 by *Whatlang* are simply ignored for this library during the detection process.
 
 The box plot below shows the distribution of the averaged accuracy values for all three performed tasks: 

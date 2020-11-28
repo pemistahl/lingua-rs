@@ -77,6 +77,7 @@ pub(crate) fn quadrigram_models() -> LazyLanguageToNgramsMapping {
             Lithuanian => lithuanian_quadrigram_model(),
             Macedonian => macedonian_quadrigram_model(),
             Malay => malay_quadrigram_model(),
+            Maori => maori_quadrigram_model(),
             Marathi => marathi_quadrigram_model(),
             Mongolian => mongolian_quadrigram_model(),
             Nynorsk => nynorsk_quadrigram_model(),
@@ -445,6 +446,14 @@ fn malay_quadrigram_model() -> LazyTrainingDataLanguageModel {
     static MALAY_QUADRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
     MALAY_QUADRIGRAM_MODEL.get_or_init(|| {
         let json = load_quadrigrams(Malay);
+        TrainingDataLanguageModel::from_json(&json)
+    })
+}
+
+fn maori_quadrigram_model() -> LazyTrainingDataLanguageModel {
+    static MAORI_QUADRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    MAORI_QUADRIGRAM_MODEL.get_or_init(|| {
+        let json = load_quadrigrams(Maori);
         TrainingDataLanguageModel::from_json(&json)
     })
 }

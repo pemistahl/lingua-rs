@@ -91,6 +91,7 @@ lingua-latvian-language-model = { path = "language-models/lv", version = "1.0.0"
 lingua-lithuanian-language-model = { path = "language-models/lt", version = "1.0.0" }
 lingua-macedonian-language-model = { path = "language-models/mk", version = "1.0.0" }
 lingua-malay-language-model = { path = "language-models/ms", version = "1.0.0" }
+lingua-maori-language-model = { path = "language-models/mi", version = "1.0.0" }
 lingua-marathi-language-model = { path = "language-models/mr", version = "1.0.0" }
 lingua-mongolian-language-model = { path = "language-models/mn", version = "1.0.0" }
 lingua-nynorsk-language-model = { path = "language-models/nn", version = "1.0.0" }

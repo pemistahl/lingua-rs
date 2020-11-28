@@ -77,6 +77,7 @@ pub(crate) fn fivegram_models() -> LazyLanguageToNgramsMapping {
             Lithuanian => lithuanian_fivegram_model(),
             Macedonian => macedonian_fivegram_model(),
             Malay => malay_fivegram_model(),
+            Maori => maori_fivegram_model(),
             Marathi => marathi_fivegram_model(),
             Mongolian => mongolian_fivegram_model(),
             Nynorsk => nynorsk_fivegram_model(),
@@ -445,6 +446,14 @@ fn malay_fivegram_model() -> LazyTrainingDataLanguageModel {
     static MALAY_FIVEGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
     MALAY_FIVEGRAM_MODEL.get_or_init(|| {
         let json = load_fivegrams(Malay);
+        TrainingDataLanguageModel::from_json(&json)
+    })
+}
+
+fn maori_fivegram_model() -> LazyTrainingDataLanguageModel {
+    static MAORI_FIVEGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    MAORI_FIVEGRAM_MODEL.get_or_init(|| {
+        let json = load_fivegrams(Maori);
         TrainingDataLanguageModel::from_json(&json)
     })
 }

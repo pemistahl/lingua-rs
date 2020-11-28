@@ -40,10 +40,10 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             "Ăă" => hashset!(Romanian, Vietnamese),
             "İıĞğ" => hashset!(Azerbaijani, Turkish),
             "ЈјЉљЊњ" => hashset!(Macedonian, Serbian),
-            "ĀāĒēĪī" => hashset!(Latvian, Yoruba),
+            "ĀāĒēĪī" => hashset!(Latvian, Maori, Yoruba),
             "ẸẹỌọ" => hashset!(Vietnamese, Yoruba),
 
-            "Ūū" => hashset!(Latvian, Lithuanian, Yoruba),
+            "Ūū" => hashset!(Latvian, Lithuanian, Maori, Yoruba),
             "Şş" => hashset!(Azerbaijani, Romanian, Turkish),
             "Ďď" => hashset!(Czech, Romanian, Slovak),
             "ÐðÞþ" => hashset!(Icelandic, Latvian, Turkish),
@@ -63,6 +63,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             "ЩщЪъ" => hashset!(Bulgarian, Kazakh, Mongolian, Russian),
 
             "Òò" => hashset!(Catalan, Italian, Latvian, Vietnamese, Yoruba),
+            "Ōō" => hashset!(Maori, Yoruba),
             "Ýý" => hashset!(Czech, Icelandic, Slovak, Turkish, Vietnamese),
             "Ää" => hashset!(Estonian, Finnish, German, Slovak, Swedish),
             "Ââ" => hashset!(Latvian, Portuguese, Romanian, Turkish, Vietnamese),

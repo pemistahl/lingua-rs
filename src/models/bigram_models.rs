@@ -77,6 +77,7 @@ pub(crate) fn bigram_models() -> LazyLanguageToNgramsMapping {
             Lithuanian => lithuanian_bigram_model(),
             Macedonian => macedonian_bigram_model(),
             Malay => malay_bigram_model(),
+            Maori => maori_bigram_model(),
             Marathi => marathi_bigram_model(),
             Mongolian => mongolian_bigram_model(),
             Nynorsk => nynorsk_bigram_model(),
@@ -445,6 +446,14 @@ fn malay_bigram_model() -> LazyTrainingDataLanguageModel {
     static MALAY_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
     MALAY_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Malay);
+        TrainingDataLanguageModel::from_json(&json)
+    })
+}
+
+fn maori_bigram_model() -> LazyTrainingDataLanguageModel {
+    static MAORI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    MAORI_BIGRAM_MODEL.get_or_init(|| {
+        let json = load_bigrams(Maori);
         TrainingDataLanguageModel::from_json(&json)
     })
 }

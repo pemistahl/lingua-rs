@@ -61,6 +61,7 @@ use lingua_latvian_language_model::LATVIAN_TESTDATA_DIRECTORY;
 use lingua_lithuanian_language_model::LITHUANIAN_TESTDATA_DIRECTORY;
 use lingua_macedonian_language_model::MACEDONIAN_TESTDATA_DIRECTORY;
 use lingua_malay_language_model::MALAY_TESTDATA_DIRECTORY;
+use lingua_maori_language_model::MAORI_TESTDATA_DIRECTORY;
 use lingua_marathi_language_model::MARATHI_TESTDATA_DIRECTORY;
 use lingua_mongolian_language_model::MONGOLIAN_TESTDATA_DIRECTORY;
 use lingua_nynorsk_language_model::NYNORSK_TESTDATA_DIRECTORY;
@@ -567,6 +568,7 @@ fn get_test_data_directory(language: &Language) -> Dir<'static> {
         &Language::Lithuanian => LITHUANIAN_TESTDATA_DIRECTORY,
         &Language::Macedonian => MACEDONIAN_TESTDATA_DIRECTORY,
         &Language::Malay => MALAY_TESTDATA_DIRECTORY,
+        &Language::Maori => MAORI_TESTDATA_DIRECTORY,
         &Language::Marathi => MARATHI_TESTDATA_DIRECTORY,
         &Language::Mongolian => MONGOLIAN_TESTDATA_DIRECTORY,
         &Language::Nynorsk => NYNORSK_TESTDATA_DIRECTORY,

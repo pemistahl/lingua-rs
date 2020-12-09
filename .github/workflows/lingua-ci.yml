@@ -53,7 +53,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           sudo apt-get install musl-tools libssl-dev
-          sudo ln -s /bin/g++ /bin/musl-g++
+          sudo ln -s /usr/bin/g++ /usr/bin/musl-g++
 
       # needed to fix file corruption of cache
       # https://github.com/actions/cache/issues/403

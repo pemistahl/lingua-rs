@@ -51,7 +51,9 @@ jobs:
 
       - name: Install apt packages
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sudo apt-get install musl-tools libssl-dev
+        run: |
+          sudo apt-get install musl-tools libssl-dev
+          sudo ln -s /bin/g++ /bin/musl-g++
 
       # needed to fix file corruption of cache
       # https://github.com/actions/cache/issues/403

@@ -5,7 +5,7 @@
 [![Build Status](https://github.com/pemistahl/lingua-rs/workflows/Lingua%20CI/badge.svg?branch=master)](https://github.com/pemistahl/lingua-rs/actions?query=workflow%3A%22Lingua+CI%22+branch%3Amaster)
 [![dependency status](https://deps.rs/crate/lingua/1.0.2/status.svg)](https://deps.rs/crate/lingua/1.0.2)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
-[![supported languages](https://img.shields.io/badge/supported%20languages-74-green.svg)](#supported-languages)
+[![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#supported-languages)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
@@ -60,7 +60,7 @@ Once the library has been downloaded, it can be used completely offline.
 
 Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*, that is, 
 getting detection right for a small set of languages first before adding new ones. 
-Currently, the following 74 languages are supported:
+Currently, the following 75 languages are supported:
 
 - A
   - Afrikaans

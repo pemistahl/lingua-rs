@@ -1,0 +1,16 @@
+##### Estonian #####
+
+>>> Accuracy on average: 65.33%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 23.7%
+Erroneously classified as Unknown: 74.7%, English: 0.4%, Indonesian: 0.3%, Xhosa: 0.3%, Finnish: 0.1%, Lithuanian: 0.1%, Malay: 0.1%, Nynorsk: 0.1%, Portuguese: 0.1%, Sotho: 0.1%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 73.2%
+Erroneously classified as Unknown: 25.3%, Finnish: 0.7%, English: 0.2%, French: 0.1%, German: 0.1%, Icelandic: 0.1%, Lithuanian: 0.1%, Malay: 0.1%, Spanish: 0.1%
+
+>> Detection of 1000 sentences (average length: 105 chars)
+Accuracy: 99.1%
+Erroneously classified as Unknown: 0.5%, English: 0.3%, Finnish: 0.1%
+

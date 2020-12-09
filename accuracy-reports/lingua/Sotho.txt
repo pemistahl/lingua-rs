@@ -1,10 +1,10 @@
 ##### Sotho #####
 
->>> Accuracy on average: 84.96%
+>>> Accuracy on average: 84.9%
 
 >> Detection of 1000 single words (average length: 8 chars)
-Accuracy: 65.1%
-Erroneously classified as Tswana: 13.3%, Tsonga: 2.7%, Zulu: 1.8%, Xhosa: 1.6%, Shona: 1.5%, English: 1.4%, Latin: 1.1%, Indonesian: 0.8%, Swahili: 0.8%, Tagalog: 0.8%, Italian: 0.7%, Malay: 0.7%, Afrikaans: 0.6%, Danish: 0.6%, Basque: 0.5%, Ganda: 0.5%, German: 0.5%, Irish: 0.5%, Somali: 0.5%, French: 0.4%, Romanian: 0.4%, Welsh: 0.4%, Bokmal: 0.3%, Catalan: 0.3%, Dutch: 0.3%, Portuguese: 0.3%, Estonian: 0.2%, Icelandic: 0.2%, Swedish: 0.2%, Bosnian: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, Hungarian: 0.1%, Latvian: 0.1%, Polish: 0.1%, Slovak: 0.1%, Slovene: 0.1%, Spanish: 0.1%, Yoruba: 0.1%
+Accuracy: 64.9%
+Erroneously classified as Tswana: 13.2%, Tsonga: 2.5%, Zulu: 1.8%, Xhosa: 1.6%, Shona: 1.5%, English: 1.4%, Latin: 1.1%, Indonesian: 0.8%, Tagalog: 0.8%, Italian: 0.7%, Malay: 0.7%, Swahili: 0.7%, Afrikaans: 0.6%, Danish: 0.6%, Maori: 0.6%, Basque: 0.5%, Ganda: 0.5%, German: 0.5%, Irish: 0.5%, Somali: 0.5%, French: 0.4%, Romanian: 0.4%, Welsh: 0.4%, Bokmal: 0.3%, Catalan: 0.3%, Dutch: 0.3%, Portuguese: 0.3%, Estonian: 0.2%, Icelandic: 0.2%, Swedish: 0.2%, Bosnian: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, Hungarian: 0.1%, Latvian: 0.1%, Polish: 0.1%, Slovak: 0.1%, Slovene: 0.1%, Spanish: 0.1%, Yoruba: 0.1%
 
 >> Detection of 1000 word pairs (average length: 15 chars)
 Accuracy: 90.3%

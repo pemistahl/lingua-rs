@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+use cld2::{detect_language, Format, Lang as CLD2Language};
 use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
@@ -100,7 +101,7 @@ use std::io::Write;
 use std::path::Path;
 use strum::IntoEnumIterator;
 use titlecase::titlecase;
-use whatlang::{Detector, Lang};
+use whatlang::{Detector, Lang as WhatlangLanguage};
 
 struct DetectorStatistics {
     single_word_statistic: Statistic,
@@ -330,11 +331,17 @@ fn main() {
 
     let accuracy_reports_directory = Path::new("accuracy-reports");
     let lingua_reports_directory = accuracy_reports_directory.join("lingua");
+    let cld2_reports_directory = accuracy_reports_directory.join("cld2");
     let whatlang_reports_directory = accuracy_reports_directory.join("whatlang");
 
     if !lingua_reports_directory.is_dir() {
         fs::create_dir_all(&lingua_reports_directory)
             .expect("Lingua reports directory could not be created");
+    }
+
+    if !cld2_reports_directory.is_dir() {
+        fs::create_dir_all(&cld2_reports_directory)
+            .expect("CLD2 reports directory could not be created");
     }
 
     if !whatlang_reports_directory.is_dir() {
@@ -352,6 +359,10 @@ fn main() {
         "single-words-whatlang",
         "word-pairs-whatlang",
         "sentences-whatlang",
+        "average-cld2",
+        "single-words-cld2",
+        "word-pairs-cld2",
+        "sentences-cld2",
         "average-lingua",
         "single-words-lingua",
         "word-pairs-lingua",
@@ -377,11 +388,15 @@ fn main() {
         let sentences = get_file_content("sentences.txt", &language);
 
         let mut lingua_statistics = DetectorStatistics::new();
+        let mut cld2_statistics = DetectorStatistics::new();
         let mut whatlang_statistics = DetectorStatistics::new();
 
         for single_word in single_words {
             let lingua_language = lingua_detector.detect_language_of(single_word);
             lingua_statistics.add_single_word_counts(lingua_language, single_word);
+
+            let cld2_language = map_cld2_to_lingua(detect_language(single_word, Format::Text).0);
+            cld2_statistics.add_single_word_counts(cld2_language, single_word);
 
             let whatlang_language =
                 map_whatlang_to_lingua(whatlang_detector.detect_lang(single_word));
@@ -392,6 +407,9 @@ fn main() {
             let lingua_language = lingua_detector.detect_language_of(word_pair);
             lingua_statistics.add_word_pair_counts(lingua_language, word_pair);
 
+            let cld2_language = map_cld2_to_lingua(detect_language(word_pair, Format::Text).0);
+            cld2_statistics.add_word_pair_counts(cld2_language, word_pair);
+
             let whatlang_language =
                 map_whatlang_to_lingua(whatlang_detector.detect_lang(word_pair));
             whatlang_statistics.add_word_pair_counts(whatlang_language, word_pair);
@@ -401,23 +419,32 @@ fn main() {
             let lingua_language = lingua_detector.detect_language_of(sentence);
             lingua_statistics.add_sentence_counts(lingua_language, sentence);
 
+            let cld2_language = map_cld2_to_lingua(detect_language(sentence, Format::Text).0);
+            cld2_statistics.add_sentence_counts(cld2_language, sentence);
+
             let whatlang_language = map_whatlang_to_lingua(whatlang_detector.detect_lang(sentence));
             whatlang_statistics.add_sentence_counts(whatlang_language, sentence);
         }
 
         lingua_statistics.compute_accuracy_values();
+        cld2_statistics.compute_accuracy_values();
         whatlang_statistics.compute_accuracy_values();
 
         let lingua_report = lingua_statistics.create_report_data(&language);
+        let cld2_report = cld2_statistics.create_report_data(&language);
         let whatlang_report = whatlang_statistics.create_report_data(&language);
 
         let lingua_aggregated_report_row =
             lingua_statistics.create_aggregated_report_row(&language);
+        let cld2_aggregated_report_row = cld2_statistics.create_aggregated_report_row(&language);
         let whatlang_aggregated_report_row =
             whatlang_statistics.create_aggregated_report_row(&language);
         let total_aggregated_report_row = format!(
-            "{:?},{},{}\n",
-            &language, whatlang_aggregated_report_row, lingua_aggregated_report_row
+            "{:?},{},{},{}\n",
+            &language,
+            whatlang_aggregated_report_row,
+            cld2_aggregated_report_row,
+            lingua_aggregated_report_row
         );
 
         aggregated_report_file
@@ -426,11 +453,17 @@ fn main() {
 
         let report_file_name = titlecase(&format!("{:?}.txt", &language));
         let lingua_reports_file_path = lingua_reports_directory.join(&report_file_name);
+        let cld2_reports_file_path = cld2_reports_directory.join(&report_file_name);
         let whatlang_reports_file_path = whatlang_reports_directory.join(&report_file_name);
 
         if let Some(report) = lingua_report {
             fs::write(lingua_reports_file_path, report)
                 .expect("Lingua reports file could not be written");
+        }
+
+        if let Some(report) = cld2_report {
+            fs::write(cld2_reports_file_path, report)
+                .expect("CLD2 reports file could not be written");
         }
 
         if let Some(report) = whatlang_report {
@@ -460,66 +493,80 @@ fn format_accuracy(accuracy: Decimal) -> String {
     format!("{:.2}%", accuracy)
 }
 
-fn map_whatlang_to_lingua(language: Option<Lang>) -> Option<Language> {
+fn map_cld2_to_lingua(language: Option<CLD2Language>) -> Option<Language> {
     match language {
-        Some(Lang::Afr) => Some(Language::Afrikaans),
-        Some(Lang::Ara) => Some(Language::Arabic),
-        Some(Lang::Azj) => Some(Language::Azerbaijani),
-        Some(Lang::Bel) => Some(Language::Belarusian),
-        Some(Lang::Ben) => Some(Language::Bengali),
-        Some(Lang::Bul) => Some(Language::Bulgarian),
-        Some(Lang::Cat) => Some(Language::Catalan),
-        Some(Lang::Ces) => Some(Language::Czech),
-        Some(Lang::Cmn) => Some(Language::Chinese),
-        Some(Lang::Dan) => Some(Language::Danish),
-        Some(Lang::Deu) => Some(Language::German),
-        Some(Lang::Ell) => Some(Language::Greek),
-        Some(Lang::Eng) => Some(Language::English),
-        Some(Lang::Epo) => Some(Language::Esperanto),
-        Some(Lang::Est) => Some(Language::Estonian),
-        Some(Lang::Fin) => Some(Language::Finnish),
-        Some(Lang::Fra) => Some(Language::French),
-        Some(Lang::Guj) => Some(Language::Gujarati),
-        Some(Lang::Heb) => Some(Language::Hebrew),
-        Some(Lang::Hin) => Some(Language::Hindi),
-        Some(Lang::Hrv) => Some(Language::Croatian),
-        Some(Lang::Hun) => Some(Language::Hungarian),
-        Some(Lang::Ind) => Some(Language::Indonesian),
-        Some(Lang::Ita) => Some(Language::Italian),
-        Some(Lang::Jpn) => Some(Language::Japanese),
-        Some(Lang::Kat) => Some(Language::Georgian),
-        Some(Lang::Kor) => Some(Language::Korean),
-        Some(Lang::Lat) => Some(Language::Latin),
-        Some(Lang::Lav) => Some(Language::Latvian),
-        Some(Lang::Lit) => Some(Language::Lithuanian),
-        Some(Lang::Mar) => Some(Language::Marathi),
-        Some(Lang::Mkd) => Some(Language::Macedonian),
-        Some(Lang::Nld) => Some(Language::Dutch),
-        Some(Lang::Nno) => Some(Language::Nynorsk),
-        Some(Lang::Nob) => Some(Language::Bokmal),
-        Some(Lang::Pan) => Some(Language::Punjabi),
-        Some(Lang::Pes) => Some(Language::Persian),
-        Some(Lang::Pol) => Some(Language::Polish),
-        Some(Lang::Por) => Some(Language::Portuguese),
-        Some(Lang::Ron) => Some(Language::Romanian),
-        Some(Lang::Rus) => Some(Language::Russian),
-        Some(Lang::Slk) => Some(Language::Slovak),
-        Some(Lang::Slv) => Some(Language::Slovene),
-        Some(Lang::Sna) => Some(Language::Shona),
-        Some(Lang::Som) => Some(Language::Somali),
-        Some(Lang::Spa) => Some(Language::Spanish),
-        Some(Lang::Srp) => Some(Language::Serbian),
-        Some(Lang::Swe) => Some(Language::Swedish),
-        Some(Lang::Tam) => Some(Language::Tamil),
-        Some(Lang::Tel) => Some(Language::Telugu),
-        Some(Lang::Tgl) => Some(Language::Tagalog),
-        Some(Lang::Tha) => Some(Language::Thai),
-        Some(Lang::Tur) => Some(Language::Turkish),
-        Some(Lang::Ukr) => Some(Language::Ukrainian),
-        Some(Lang::Urd) => Some(Language::Urdu),
-        Some(Lang::Vie) => Some(Language::Vietnamese),
-        Some(Lang::Yor) => Some(Language::Yoruba),
-        Some(Lang::Zul) => Some(Language::Zulu),
+        Some(cld2_language) => {
+            for lingua_language in Language::iter() {
+                if cld2_language.0 == lingua_language.iso_code_639_1().to_string() {
+                    return Some(lingua_language);
+                }
+            }
+            None
+        }
+        None => None,
+    }
+}
+
+fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language> {
+    match language {
+        Some(WhatlangLanguage::Afr) => Some(Language::Afrikaans),
+        Some(WhatlangLanguage::Ara) => Some(Language::Arabic),
+        Some(WhatlangLanguage::Azj) => Some(Language::Azerbaijani),
+        Some(WhatlangLanguage::Bel) => Some(Language::Belarusian),
+        Some(WhatlangLanguage::Ben) => Some(Language::Bengali),
+        Some(WhatlangLanguage::Bul) => Some(Language::Bulgarian),
+        Some(WhatlangLanguage::Cat) => Some(Language::Catalan),
+        Some(WhatlangLanguage::Ces) => Some(Language::Czech),
+        Some(WhatlangLanguage::Cmn) => Some(Language::Chinese),
+        Some(WhatlangLanguage::Dan) => Some(Language::Danish),
+        Some(WhatlangLanguage::Deu) => Some(Language::German),
+        Some(WhatlangLanguage::Ell) => Some(Language::Greek),
+        Some(WhatlangLanguage::Eng) => Some(Language::English),
+        Some(WhatlangLanguage::Epo) => Some(Language::Esperanto),
+        Some(WhatlangLanguage::Est) => Some(Language::Estonian),
+        Some(WhatlangLanguage::Fin) => Some(Language::Finnish),
+        Some(WhatlangLanguage::Fra) => Some(Language::French),
+        Some(WhatlangLanguage::Guj) => Some(Language::Gujarati),
+        Some(WhatlangLanguage::Heb) => Some(Language::Hebrew),
+        Some(WhatlangLanguage::Hin) => Some(Language::Hindi),
+        Some(WhatlangLanguage::Hrv) => Some(Language::Croatian),
+        Some(WhatlangLanguage::Hun) => Some(Language::Hungarian),
+        Some(WhatlangLanguage::Ind) => Some(Language::Indonesian),
+        Some(WhatlangLanguage::Ita) => Some(Language::Italian),
+        Some(WhatlangLanguage::Jpn) => Some(Language::Japanese),
+        Some(WhatlangLanguage::Kat) => Some(Language::Georgian),
+        Some(WhatlangLanguage::Kor) => Some(Language::Korean),
+        Some(WhatlangLanguage::Lat) => Some(Language::Latin),
+        Some(WhatlangLanguage::Lav) => Some(Language::Latvian),
+        Some(WhatlangLanguage::Lit) => Some(Language::Lithuanian),
+        Some(WhatlangLanguage::Mar) => Some(Language::Marathi),
+        Some(WhatlangLanguage::Mkd) => Some(Language::Macedonian),
+        Some(WhatlangLanguage::Nld) => Some(Language::Dutch),
+        Some(WhatlangLanguage::Nno) => Some(Language::Nynorsk),
+        Some(WhatlangLanguage::Nob) => Some(Language::Bokmal),
+        Some(WhatlangLanguage::Pan) => Some(Language::Punjabi),
+        Some(WhatlangLanguage::Pes) => Some(Language::Persian),
+        Some(WhatlangLanguage::Pol) => Some(Language::Polish),
+        Some(WhatlangLanguage::Por) => Some(Language::Portuguese),
+        Some(WhatlangLanguage::Ron) => Some(Language::Romanian),
+        Some(WhatlangLanguage::Rus) => Some(Language::Russian),
+        Some(WhatlangLanguage::Slk) => Some(Language::Slovak),
+        Some(WhatlangLanguage::Slv) => Some(Language::Slovene),
+        Some(WhatlangLanguage::Sna) => Some(Language::Shona),
+        Some(WhatlangLanguage::Som) => Some(Language::Somali),
+        Some(WhatlangLanguage::Spa) => Some(Language::Spanish),
+        Some(WhatlangLanguage::Srp) => Some(Language::Serbian),
+        Some(WhatlangLanguage::Swe) => Some(Language::Swedish),
+        Some(WhatlangLanguage::Tam) => Some(Language::Tamil),
+        Some(WhatlangLanguage::Tel) => Some(Language::Telugu),
+        Some(WhatlangLanguage::Tgl) => Some(Language::Tagalog),
+        Some(WhatlangLanguage::Tha) => Some(Language::Thai),
+        Some(WhatlangLanguage::Tur) => Some(Language::Turkish),
+        Some(WhatlangLanguage::Ukr) => Some(Language::Ukrainian),
+        Some(WhatlangLanguage::Urd) => Some(Language::Urdu),
+        Some(WhatlangLanguage::Vie) => Some(Language::Vietnamese),
+        Some(WhatlangLanguage::Yor) => Some(Language::Yoruba),
+        Some(WhatlangLanguage::Zul) => Some(Language::Zulu),
         _ => None,
     }
 }

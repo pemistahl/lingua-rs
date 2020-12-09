@@ -4,11 +4,11 @@
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 73.6%
-Erroneously classified as Dutch: 2.3%, Danish: 2.1%, English: 2.1%, Latin: 2%, Bokmal: 1.6%, Basque: 1.2%, French: 1.2%, Italian: 1.2%, Esperanto: 1.1%, Swedish: 1%, Afrikaans: 0.8%, Tsonga: 0.7%, Nynorsk: 0.6%, Portuguese: 0.6%, Estonian: 0.5%, Finnish: 0.5%, Sotho: 0.5%, Welsh: 0.5%, Yoruba: 0.5%, Icelandic: 0.4%, Irish: 0.4%, Polish: 0.4%, Spanish: 0.4%, Swahili: 0.4%, Tswana: 0.4%, Bosnian: 0.3%, Catalan: 0.3%, Tagalog: 0.3%, Albanian: 0.2%, Croatian: 0.2%, Indonesian: 0.2%, Lithuanian: 0.2%, Romanian: 0.2%, Slovak: 0.2%, Xhosa: 0.2%, Zulu: 0.2%, Latvian: 0.1%, Malay: 0.1%, Slovene: 0.1%, Somali: 0.1%, Turkish: 0.1%
+Erroneously classified as Dutch: 2.3%, Danish: 2.1%, English: 2%, Latin: 2%, Bokmal: 1.6%, Basque: 1.2%, French: 1.2%, Italian: 1.2%, Esperanto: 1.1%, Swedish: 1%, Afrikaans: 0.8%, Tsonga: 0.7%, Nynorsk: 0.6%, Portuguese: 0.6%, Estonian: 0.5%, Finnish: 0.5%, Sotho: 0.5%, Welsh: 0.5%, Yoruba: 0.5%, Icelandic: 0.4%, Irish: 0.4%, Polish: 0.4%, Spanish: 0.4%, Swahili: 0.4%, Tswana: 0.4%, Bosnian: 0.3%, Tagalog: 0.3%, Albanian: 0.2%, Catalan: 0.2%, Croatian: 0.2%, Indonesian: 0.2%, Lithuanian: 0.2%, Maori: 0.2%, Romanian: 0.2%, Slovak: 0.2%, Xhosa: 0.2%, Zulu: 0.2%, Latvian: 0.1%, Malay: 0.1%, Slovene: 0.1%, Somali: 0.1%, Turkish: 0.1%
 
 >> Detection of 1000 word pairs (average length: 18 chars)
 Accuracy: 94%
-Erroneously classified as Dutch: 0.9%, Latin: 0.8%, English: 0.7%, Swedish: 0.6%, Danish: 0.5%, French: 0.4%, Bokmal: 0.3%, Irish: 0.2%, Swahili: 0.2%, Tagalog: 0.2%, Afrikaans: 0.1%, Esperanto: 0.1%, Estonian: 0.1%, Finnish: 0.1%, Icelandic: 0.1%, Italian: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Tsonga: 0.1%, Turkish: 0.1%, Welsh: 0.1%, Zulu: 0.1%
+Erroneously classified as Dutch: 0.9%, Latin: 0.8%, English: 0.7%, Swedish: 0.6%, Danish: 0.5%, French: 0.4%, Bokmal: 0.3%, Irish: 0.2%, Tagalog: 0.2%, Afrikaans: 0.1%, Esperanto: 0.1%, Estonian: 0.1%, Finnish: 0.1%, Icelandic: 0.1%, Italian: 0.1%, Maori: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Swahili: 0.1%, Tsonga: 0.1%, Turkish: 0.1%, Welsh: 0.1%, Zulu: 0.1%
 
 >> Detection of 1000 sentences (average length: 112 chars)
 Accuracy: 99.7%

@@ -4,7 +4,7 @@
 
 >> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 50.3%
-Erroneously classified as Spanish: 7.7%, Portuguese: 6.3%, French: 5.8%, Latin: 3.6%, Italian: 3.5%, English: 2.7%, Romanian: 2.5%, Basque: 2.1%, Esperanto: 2%, Yoruba: 1.2%, Tswana: 1.1%, Shona: 0.8%, Dutch: 0.7%, Somali: 0.7%, Icelandic: 0.6%, Afrikaans: 0.5%, Indonesian: 0.5%, Malay: 0.5%, Sotho: 0.5%, Swahili: 0.5%, Swedish: 0.5%, Turkish: 0.5%, Albanian: 0.4%, German: 0.4%, Nynorsk: 0.4%, Bokmal: 0.3%, Croatian: 0.3%, Estonian: 0.3%, Finnish: 0.3%, Zulu: 0.3%, Bosnian: 0.2%, Danish: 0.2%, Hungarian: 0.2%, Polish: 0.2%, Tagalog: 0.2%, Tsonga: 0.2%, Vietnamese: 0.2%, Welsh: 0.2%, Xhosa: 0.2%, Irish: 0.1%, Latvian: 0.1%, Lithuanian: 0.1%, Slovene: 0.1%
+Erroneously classified as Spanish: 7.7%, Portuguese: 6.3%, French: 5.8%, Latin: 3.6%, Italian: 3.5%, English: 2.7%, Romanian: 2.5%, Basque: 2.1%, Esperanto: 2%, Yoruba: 1.2%, Tswana: 1.1%, Shona: 0.8%, Dutch: 0.7%, Somali: 0.7%, Icelandic: 0.6%, Afrikaans: 0.5%, Indonesian: 0.5%, Malay: 0.5%, Sotho: 0.5%, Swahili: 0.5%, Swedish: 0.5%, Turkish: 0.5%, Albanian: 0.4%, German: 0.4%, Nynorsk: 0.4%, Bokmal: 0.3%, Croatian: 0.3%, Finnish: 0.3%, Zulu: 0.3%, Bosnian: 0.2%, Danish: 0.2%, Estonian: 0.2%, Hungarian: 0.2%, Polish: 0.2%, Tagalog: 0.2%, Tsonga: 0.2%, Vietnamese: 0.2%, Welsh: 0.2%, Xhosa: 0.2%, Irish: 0.1%, Latvian: 0.1%, Lithuanian: 0.1%, Maori: 0.1%, Slovene: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 73.7%

@@ -99,6 +99,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
+use std::time::Instant;
 use strum::IntoEnumIterator;
 use titlecase::titlecase;
 use whatlang::{Detector, Lang as WhatlangLanguage};
@@ -326,6 +327,8 @@ impl Statistic {
 }
 
 fn main() {
+    let now = Instant::now();
+
     let lingua_detector = LanguageDetectorBuilder::from_all_languages().build();
     let whatlang_detector = Detector::new();
 
@@ -474,7 +477,10 @@ fn main() {
         println!("Done\n");
     }
 
-    println!("All accuracy reports written successfully");
+    println!(
+        "All accuracy reports successfully written in {} seconds",
+        now.elapsed().as_secs()
+    );
 }
 
 fn get_file_content<'a>(file_name: &'a str, language: &'a Language) -> Vec<&'a str> {

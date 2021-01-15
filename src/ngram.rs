@@ -16,7 +16,6 @@
 
 use itertools::Itertools;
 use serde::de::{Error, Visitor};
-use serde::export::Formatter;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::fmt::Display;
@@ -59,7 +58,7 @@ impl Ngram {
 }
 
 impl Display for Ngram {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
     }
 }

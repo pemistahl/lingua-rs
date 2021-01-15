@@ -139,7 +139,7 @@ impl LanguageDetectorBuilder {
     ///
     /// ⚠ Panics if `distance` is smaller than 0.0 or greater than 0.99.
     pub fn with_minimum_relative_distance(&mut self, distance: f64) -> &mut Self {
-        if distance < 0.0 || distance > 0.99 {
+        if !(0.0..=0.99).contains(&distance) {
             panic!("minimum relative distance must lie in between 0.0 and 0.99");
         }
         self.minimum_relative_distance = distance;

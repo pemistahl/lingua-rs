@@ -1,3 +1,11 @@
+## Lingua 1.0.3 (released on 15 Jan 2021)
+
+### Bug Fixes
+
+- Lingua could not be used within other projects because of a private
+serde module that was accidentally tried to be exposed.
+Thanks to @luananama for reporting this bug. (#9)  
+
 ## Lingua 1.0.2 (released on 22 Nov 2020)
 
 ### Bug Fixes

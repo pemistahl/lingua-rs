@@ -29,9 +29,10 @@
 //! functionality of those systems or don't want to learn the ropes of those,
 //! a small flexible library comes in handy.
 //!
-//! So far, the only other comprehensive open source library in the Rust ecosystem for
-//! this task is [*Whatlang*](https://github.com/greyblake/whatlang-rs).
-//! Unfortunately, it has two major drawbacks:
+//! So far, the only other comprehensive open source libraries in the Rust ecosystem for
+//! this task are [*CLD2*](https://github.com/emk/rust-cld2)
+//! and [*Whatlang*](https://github.com/greyblake/whatlang-rs).
+//! Unfortunately, they have two major drawbacks:
 //!
 //! 1. Detection only works with quite lengthy text fragments. For very short text snippets
 //! such as Twitter messages, it does not provide adequate results.
@@ -48,7 +49,7 @@
 //!
 //! Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*,
 //! that is, getting detection right for a small set of languages first before adding new ones.
-//! Currently, 74 languages are supported. They are listed as variants in the
+//! Currently, 75 languages are supported. They are listed as variants in the
 //! [`Language`](./enum.Language.html) enum.
 //!
 //! ## 4. How good is it?
@@ -67,9 +68,9 @@
 //! each comprising ten thousand sentences. From each test corpus, a random unsorted subset of
 //! 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 //!
-//! Given the generated test data, I have compared the detection results of *Lingua* and *Whatlang*
-//! running over the data of *Lingua's* supported 74 languages. Languages that are not supported
-//! by *Whatlang* are simply ignored for this library during the detection process.
+//! Given the generated test data, I have compared the detection results of *Lingua*, *CLD2* and
+//! *Whatlang* running over the data of *Lingua's* supported 75 languages. Languages that are not
+//! supported by *Whatlang* are simply ignored for this library during the detection process.
 //!
 //! The [bar and box plots](https://github.com/pemistahl/lingua-rs/blob/master/ACCURACY_PLOTS.md)
 //! show the measured accuracy values for all three performed tasks: Single word detection,

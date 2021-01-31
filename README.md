@@ -3,14 +3,14 @@
 <br>
 
 [![Build Status](https://github.com/pemistahl/lingua-rs/workflows/Lingua%20CI/badge.svg?branch=master)](https://github.com/pemistahl/lingua-rs/actions?query=workflow%3A%22Lingua+CI%22+branch%3Amaster)
-[![dependency status](https://deps.rs/crate/lingua/1.0.3/status.svg)](https://deps.rs/crate/lingua/1.0.3)
+[![dependency status](https://deps.rs/crate/lingua/1.1.0/status.svg)](https://deps.rs/crate/lingua/1.1.0)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#supported-languages)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.0.3-blue)](https://lib.rs/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.1.0-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## <a name="table-of-contents"></a> Table of Contents
@@ -24,7 +24,8 @@
 7. [How to add it to your project?](#library-dependency)  
 8. [How to build?](#library-build)
 9. [How to use?](#library-use)  
-10. [What's next for version 1.1.0?](#whats-next) 
+10. [What's next for version 1.2.0?](#whats-next)
+11. [Contributions](#contributions)
 
 ## 1. <a name="library-purpose"></a> What does this library do? <sup>[Top ▲](#table-of-contents)</sup>
 
@@ -41,9 +42,10 @@ language processing applications. In cases where you don't need the full-fledged
 functionality of those systems or don't want to learn the ropes of those,
 a small flexible library comes in handy.
 
-So far, the only other comprehensive open source library in the Rust ecosystem for
-this task is [*Whatlang*](https://github.com/greyblake/whatlang-rs).
-Unfortunately, it has two major drawbacks:
+So far, the only other comprehensive open source libraries in the Rust ecosystem for
+this task are [*CLD2*](https://github.com/emk/rust-cld2) 
+and [*Whatlang*](https://github.com/greyblake/whatlang-rs).
+Unfortunately, they have two major drawbacks:
 
 1. Detection only works with quite lengthy text fragments. For very short text snippets
 such as Twitter messages, it does not provide adequate results.
@@ -178,9 +180,9 @@ million sentences. For testing, corpora made of arbitrarily chosen websites have
 each comprising ten thousand sentences. From each test corpus, a random unsorted subset of
 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 
-Given the generated test data, I have compared the detection results of *Lingua* and *Whatlang*
+Given the generated test data, I have compared the detection results of *Lingua*, *CLD2* and *Whatlang*
 running over the data of *Lingua's* supported 75 languages. Languages that are not supported
-by *Whatlang* are simply ignored for this library during the detection process.
+by *CLD2* or *Whatlang* are simply ignored for the respective library during the detection process.
 
 The box plot below shows the distribution of the averaged accuracy values for all three performed tasks: 
 Single word detection, word pair detection and sentence detection. *Lingua* clearly outperforms its contender.
@@ -249,7 +251,7 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.0.3"
+lingua = "1.1.0"
 ```
 
 ## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>
@@ -398,6 +400,11 @@ LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::EN, IsoCode639_1::
 LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
 ```
 
-## 10. <a name="whats-next"></a> What's next for version 1.1.0? <sup>[Top ▲](#table-of-contents)</sup>
+## 10. <a name="whats-next"></a> What's next for version 1.2.0? <sup>[Top ▲](#table-of-contents)</sup>
 
-Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/1).
+Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/4).
+
+## 11. <a name="contributions"></a> Contributions <sup>[Top ▲](#table-of-contents)</sup>
+
+- [Josh Rotenberg](https://github.com/joshrotenberg) has written a [wrapper](https://github.com/joshrotenberg/lingua_ex)
+for using *Lingua* with the [Elixir programming language](https://elixir-lang.org/).

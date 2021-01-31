@@ -1,3 +1,22 @@
+## Lingua 1.1.0 (released on 31 Jan 2021)
+
+### Languages
+
+- The Maori language is now supported.
+Thanks to @eekkaiia for the contribution. (#5)
+
+### Performance
+
+- Loading and searching the language models has been quite slow so far.
+Using parallel iterators from the [Rayon](https://github.com/rayon-rs/rayon)
+library, this process is now at least 50% faster, depending on how many
+CPU cores are available. (#8)
+  
+### Accuracy Reports
+
+- Accuracy reports are now also generated for the [*CLD2*](https://github.com/emk/rust-cld2)
+library and included in the language detector comparison plots. (#6)
+  
 ## Lingua 1.0.3 (released on 15 Jan 2021)
 
 ### Bug Fixes

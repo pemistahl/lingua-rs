@@ -12,5 +12,5 @@ Erroneously classified as
 
 >> Detection of 1000 sentences (average length: 147 chars)
 Accuracy: 99.8%
-Erroneously classified as Yoruba: 0.1%, Zulu: 0.1%
+Erroneously classified as Spanish: 0.1%, Yoruba: 0.1%
 

@@ -1,10 +1,10 @@
 ##### Bokmal #####
 
->>> Accuracy on average: 57.6%
+>>> Accuracy on average: 57.66%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 38.6%
-Erroneously classified as Nynorsk: 21.4%, Danish: 17.7%, German: 2.7%, Swedish: 2.7%, Dutch: 1.5%, English: 1.2%, French: 1.2%, Italian: 1.2%, Latin: 1.1%, Afrikaans: 0.8%, Basque: 0.8%, Finnish: 0.7%, Icelandic: 0.7%, Sotho: 0.7%, Esperanto: 0.6%, Shona: 0.5%, Spanish: 0.5%, Tsonga: 0.5%, Catalan: 0.4%, Romanian: 0.4%, Tswana: 0.4%, Welsh: 0.4%, Indonesian: 0.3%, Lithuanian: 0.3%, Portuguese: 0.3%, Estonian: 0.2%, Ganda: 0.2%, Hungarian: 0.2%, Slovene: 0.2%, Turkish: 0.2%, Xhosa: 0.2%, Yoruba: 0.2%, Zulu: 0.2%, Albanian: 0.1%, Bosnian: 0.1%, Irish: 0.1%, Latvian: 0.1%, Polish: 0.1%, Somali: 0.1%, Tagalog: 0.1%, Vietnamese: 0.1%
+Accuracy: 38.8%
+Erroneously classified as Nynorsk: 21.3%, Danish: 17.6%, German: 2.7%, Swedish: 2.7%, Dutch: 1.6%, English: 1.2%, French: 1.2%, Italian: 1.2%, Latin: 1%, Afrikaans: 0.8%, Basque: 0.8%, Finnish: 0.7%, Icelandic: 0.7%, Sotho: 0.7%, Esperanto: 0.6%, Shona: 0.5%, Spanish: 0.5%, Tsonga: 0.5%, Catalan: 0.4%, Romanian: 0.4%, Tswana: 0.4%, Welsh: 0.4%, Indonesian: 0.3%, Portuguese: 0.3%, Yoruba: 0.3%, Estonian: 0.2%, Ganda: 0.2%, Hungarian: 0.2%, Lithuanian: 0.2%, Slovene: 0.2%, Turkish: 0.2%, Xhosa: 0.2%, Zulu: 0.2%, Albanian: 0.1%, Bosnian: 0.1%, Irish: 0.1%, Latvian: 0.1%, Polish: 0.1%, Somali: 0.1%, Tagalog: 0.1%, Vietnamese: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 58.7%

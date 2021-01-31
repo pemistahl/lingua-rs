@@ -1,10 +1,10 @@
 ##### Russian #####
 
->>> Accuracy on average: 89.63%
+>>> Accuracy on average: 89.7%
 
 >> Detection of 1000 single words (average length: 16 chars)
-Accuracy: 76.3%
-Erroneously classified as Ukrainian: 6.4%, Bulgarian: 5.5%, Serbian: 3.4%, Belarusian: 3.3%, Macedonian: 3.1%, Mongolian: 1.1%, Kazakh: 0.9%
+Accuracy: 76.5%
+Erroneously classified as Ukrainian: 6.3%, Bulgarian: 5.5%, Serbian: 3.4%, Belarusian: 3.3%, Macedonian: 3%, Mongolian: 1.1%, Kazakh: 0.9%
 
 >> Detection of 1000 word pairs (average length: 31 chars)
 Accuracy: 94.8%

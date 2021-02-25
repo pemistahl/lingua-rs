@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Peter M. Stahl pemistahl@gmail.com
+ * Copyright © 2020-today Peter M. Stahl pemistahl@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,9 +114,9 @@ pub(crate) mod unigram_models;
 
 pub(crate) type LazyTrainingDataLanguageModel = &'static TrainingDataLanguageModel;
 pub(crate) type LanguageToNgramsMappingCell =
-    OnceCell<HashMap<Language, LazyTrainingDataLanguageModel>>;
+    OnceCell<HashMap<Language, fn() -> LazyTrainingDataLanguageModel>>;
 pub(crate) type LazyLanguageToNgramsMapping =
-    &'static HashMap<Language, LazyTrainingDataLanguageModel>;
+    &'static HashMap<Language, fn() -> LazyTrainingDataLanguageModel>;
 
 fn load_json(language: Language, ngram_length: u32) -> std::io::Result<String> {
     let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Peter M. Stahl pemistahl@gmail.com
+ * Copyright © 2020-today Peter M. Stahl pemistahl@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,7 @@
 //!
 //! Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*,
 //! that is, getting detection right for a small set of languages first before adding new ones.
-//! Currently, 75 languages are supported. They are listed as variants in the
-//! [`Language`](./enum.Language.html) enum.
+//! Currently, 75 languages are supported. They are listed as variants in the [Language] enum.
 //!
 //! ## 4. How good is it?
 //!
@@ -72,12 +71,12 @@
 //! *Whatlang* running over the data of *Lingua's* supported 75 languages. Languages that are not
 //! supported by *Whatlang* are simply ignored for this library during the detection process.
 //!
-//! The [bar and box plots](https://github.com/pemistahl/lingua-rs/blob/master/ACCURACY_PLOTS.md)
+//! The [bar and box plots](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_PLOTS.md)
 //! show the measured accuracy values for all three performed tasks: Single word detection,
 //! word pair detection and sentence detection. *Lingua* clearly outperforms its contender.
 //! Detailed statistics including mean, median and standard deviation values for each language
 //! and classifier are available in
-//! [tabular form](https://github.com/pemistahl/lingua-rs/blob/master/ACCURACY_TABLE.md) as well.
+//! [tabular form](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_TABLE.md) as well.
 //!
 //! ## 5. Why is it better than other libraries?
 //!
@@ -120,9 +119,9 @@
 //! assert_eq!(detected_language, Some(English));
 //! ```
 //!
-//! All instances of [`LanguageDetector`](./struct.LanguageDetector.html) within a single
-//! application share the same language models and have synchronized access to them.
-//! So you can safely have multiple instances without worrying about consuming too much memory.
+//! All instances of [LanguageDetector] within a single application share the same language models
+//! and have synchronized access to them. So you can safely have multiple instances without worrying
+//! about consuming too much memory.
 //!
 //! ### 6.2 Minimum relative distance
 //!
@@ -195,11 +194,11 @@
 //! to the most likely language.
 //!
 //! The vector returned by this method does not necessarily contain all languages which the calling
-//! instance of [`LanguageDetector`](./struct.LanguageDetector.html) was built from.
-//! If the rule-based engine decides that a specific language is truly impossible, then it will not
-//! be part of the returned vector. Likewise, if no ngram probabilities can be found within the
-//! detector's languages for the given input text, the returned vector will be empty. The confidence
-//! value for each language not being part of the returned vector is assumed to be 0.0.
+//! instance of [LanguageDetector] was built from. If the rule-based engine decides that a specific
+//! language is truly impossible, then it will not be part of the returned vector. Likewise, if no
+//! ngram probabilities can be found within the detector's languages for the given input text, the
+//! returned vector will be empty. The confidence value for each language not being part of the
+//! returned vector is assumed to be 0.0.
 //!
 //! ### 6.4 Methods to build the LanguageDetector
 //!
@@ -233,6 +232,9 @@
 //!
 //! // Select languages by ISO 639-3 code.
 //! LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
+//!
+//! // Switch from on-demand lazy-loading to preloading all language models.
+//! LanguageDetectorBuilder::from_all_languages().with_preloaded_language_models();
 //! ```
 
 #[macro_use]

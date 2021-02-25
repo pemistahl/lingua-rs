@@ -1,3 +1,11 @@
+## Lingua 1.2.0 (released on 8 Apr 2021)
+
+### Features
+
+- A `LanguageDetector` can now be built with lazy-loading required language models
+on demand (default) or with preloading all language models at once by calling
+`LanguageDetectorBuilder.with_preloaded_language_models()`. (#10)  
+
 ## Lingua 1.1.0 (released on 31 Jan 2021)
 
 ### Languages

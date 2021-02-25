@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Peter M. Stahl pemistahl@gmail.com
+ * Copyright © 2020-today Peter M. Stahl pemistahl@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ use std::fmt::{Debug, Display, Formatter, Result};
 ///
 /// ISO 639 is a standardized nomenclature used to classify languages.
 #[derive(Debug, Eq, PartialEq)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AF,
@@ -140,7 +141,7 @@ pub enum IsoCode639_1 {
 
     /// The ISO 639-1 code for [`Maori`](./enum.Language.html#variant.Maori)
     MI,
-    
+
     /// The ISO 639-1 code for [`Macedonian`](./enum.Language.html#variant.Macedonian)
     MK,
 
@@ -251,6 +252,7 @@ pub enum IsoCode639_1 {
 ///
 /// ISO 639 is a standardized nomenclature used to classify languages.
 #[derive(Debug, Eq, PartialEq)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AFR,
@@ -377,7 +379,7 @@ pub enum IsoCode639_3 {
 
     /// The ISO 639-3 code for [`Maori`](./enum.Language.html#variant.Maori)
     MRI,
-    
+
     /// The ISO 639-3 code for [`Malay`](./enum.Language.html#variant.Malay)
     MSA,
 

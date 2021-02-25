@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Peter M. Stahl pemistahl@gmail.com
+ * Copyright © 2020-today Peter M. Stahl pemistahl@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ use std::collections::HashSet;
 
 const MISSING_LANGUAGE_MESSAGE: &str = "LanguageDetector needs at least 2 languages to choose from";
 
-/// This struct configures and creates an instance of
-/// [`LanguageDetector`](./struct.LanguageDetector.html).
+/// This struct configures and creates an instance of [LanguageDetector].
 pub struct LanguageDetectorBuilder {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,
+    is_every_language_model_preloaded: bool,
 }
 
 impl LanguageDetectorBuilder {
@@ -72,7 +72,7 @@ impl LanguageDetectorBuilder {
         let mut languages_to_load = Language::all();
         languages_to_load.retain(|it| !languages.contains(it));
         if languages_to_load.len() < 2 {
-            panic!(MISSING_LANGUAGE_MESSAGE);
+            panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         Self::from(languages_to_load)
     }
@@ -83,7 +83,7 @@ impl LanguageDetectorBuilder {
     /// ⚠ Panics if less than two `languages` are specified.
     pub fn from_languages(languages: &[Language]) -> Self {
         if languages.len() < 2 {
-            panic!(MISSING_LANGUAGE_MESSAGE);
+            panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         Self::from(languages.iter().cloned().collect())
     }
@@ -94,7 +94,7 @@ impl LanguageDetectorBuilder {
     /// ⚠ Panics if less than two `iso_codes` are specified.
     pub fn from_iso_codes_639_1(iso_codes: &[IsoCode639_1]) -> Self {
         if iso_codes.len() < 2 {
-            panic!(MISSING_LANGUAGE_MESSAGE);
+            panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         let languages = iso_codes
             .iter()
@@ -109,7 +109,7 @@ impl LanguageDetectorBuilder {
     /// ⚠ Panics if less than two `iso_codes` are specified.
     pub fn from_iso_codes_639_3(iso_codes: &[IsoCode639_3]) -> Self {
         if iso_codes.len() < 2 {
-            panic!(MISSING_LANGUAGE_MESSAGE);
+            panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         let languages = iso_codes
             .iter()
@@ -146,16 +146,32 @@ impl LanguageDetectorBuilder {
         self
     }
 
-    /// Creates and returns the configured instance of
-    /// [`LanguageDetector`](./struct.LanguageDetector.html).
+    /// Preloads all language models when creating the instance of [LanguageDetector].
+    ///
+    /// By default, *Lingua* uses lazy-loading to load only those language models
+    /// on demand which are considered relevant by the rule-based filter engine.
+    /// For web services, for instance, it is rather beneficial to preload all language
+    /// models into memory to avoid unexpected latency while waiting for the
+    /// service response. This method allows to switch between these two loading modes.
+    pub fn with_preloaded_language_models(&mut self) -> &mut Self {
+        self.is_every_language_model_preloaded = true;
+        self
+    }
+
+    /// Creates and returns the configured instance of [LanguageDetector].
     pub fn build(&mut self) -> LanguageDetector {
-        LanguageDetector::from(self.languages.clone(), self.minimum_relative_distance)
+        LanguageDetector::from(
+            self.languages.clone(),
+            self.minimum_relative_distance,
+            self.is_every_language_model_preloaded,
+        )
     }
 
     fn from(languages: HashSet<Language>) -> Self {
         Self {
             languages,
             minimum_relative_distance: 0.0,
+            is_every_language_model_preloaded: false,
         }
     }
 }

@@ -2,15 +2,15 @@
 
 <br>
 
-[![Build Status](https://github.com/pemistahl/lingua-rs/workflows/Lingua%20CI/badge.svg?branch=master)](https://github.com/pemistahl/lingua-rs/actions?query=workflow%3A%22Lingua+CI%22+branch%3Amaster)
-[![dependency status](https://deps.rs/crate/lingua/1.1.0/status.svg)](https://deps.rs/crate/lingua/1.1.0)
-[![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
+[![build](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml)
+[![dependency status](https://deps.rs/crate/lingua/1.2.0/status.svg)](https://deps.rs/crate/lingua/1.2.0)
+[![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#supported-languages)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.1.0-blue)](https://lib.rs/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.2.0-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## <a name="table-of-contents"></a> Table of Contents
@@ -24,7 +24,7 @@
 7. [How to add it to your project?](#library-dependency)  
 8. [How to build?](#library-build)
 9. [How to use?](#library-use)  
-10. [What's next for version 1.2.0?](#whats-next)
+10. [What's next for version 1.3.0?](#whats-next)
 11. [Contributions](#contributions)
 
 ## 1. <a name="library-purpose"></a> What does this library do? <sup>[Top ▲](#table-of-contents)</sup>
@@ -187,12 +187,12 @@ by *CLD2* or *Whatlang* are simply ignored for the respective library during the
 The box plot below shows the distribution of the averaged accuracy values for all three performed tasks: 
 Single word detection, word pair detection and sentence detection. *Lingua* clearly outperforms its contender.
 Bar plots for each language and further box plots for the separate detection tasks can be found in the file 
-[ACCURACY_PLOTS.md](https://github.com/pemistahl/lingua-rs/blob/master/ACCURACY_PLOTS.md). 
+[ACCURACY_PLOTS.md](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_PLOTS.md). 
 Detailed statistics including mean, median and standard deviation values for each language and classifier are 
 available in the file 
-[ACCURACY_TABLE.md](https://github.com/pemistahl/lingua-rs/blob/master/ACCURACY_TABLE.md).
+[ACCURACY_TABLE.md](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_TABLE.md).
 
-<img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/master/images/plots/boxplot-average.png" alt="Average Detection Performance" />
+<img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/plots/boxplot-average.png" alt="Average Detection Performance" />
 
 ## 5. <a name="why-is-it-better"></a> Why is it better than other libraries? <sup>[Top ▲](#table-of-contents)</sup>
 
@@ -224,7 +224,7 @@ and all languages by doing:
     
 It is important to use the `--release` flag here because loading the language models in debug mode takes too much time. 
 For each detector and language, a test report file is then written into 
-[`/accuracy-reports`](https://github.com/pemistahl/lingua-rs/tree/master/accuracy-reports), 
+[`/accuracy-reports`](https://github.com/pemistahl/lingua-rs/tree/main/accuracy-reports), 
 to be found next to the `src` directory. As an example, here is the current output of the *Lingua* German report:
 
 ```
@@ -251,7 +251,7 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.1.0"
+lingua = "1.2.0"
 ```
 
 ## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>
@@ -398,13 +398,19 @@ LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::EN, IsoCode639_1::
 
 // Select languages by ISO 639-3 code.
 LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
+
+// Switch from on-demand lazy-loading to preloading all language models.
+LanguageDetectorBuilder::from_all_languages().with_preloaded_language_models();
 ```
 
-## 10. <a name="whats-next"></a> What's next for version 1.2.0? <sup>[Top ▲](#table-of-contents)</sup>
+## 10. <a name="whats-next"></a> What's next for version 1.3.0? <sup>[Top ▲](#table-of-contents)</sup>
 
-Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/4).
+Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/5).
 
 ## 11. <a name="contributions"></a> Contributions <sup>[Top ▲](#table-of-contents)</sup>
 
 - [Josh Rotenberg](https://github.com/joshrotenberg) has written a [wrapper](https://github.com/joshrotenberg/lingua_ex)
 for using *Lingua* with the [Elixir programming language](https://elixir-lang.org/).
+  
+- [Simon Liang](https://github.com/lhr0909) has written a [wrapper](https://github.com/xanthous-tech/lingua-node)
+for using *Lingua* with [NodeJS](https://nodejs.org/).

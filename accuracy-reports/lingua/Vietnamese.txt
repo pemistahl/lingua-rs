@@ -1,10 +1,10 @@
 ##### Vietnamese #####
 
->>> Accuracy on average: 90.8%
+>>> Accuracy on average: 90.87%
 
 >> Detection of 879 single words (average length: 5 chars)
-Accuracy: 78.95%
-Erroneously classified as Irish: 1.82%, Tagalog: 1.59%, Yoruba: 1.59%, Icelandic: 0.91%, Latin: 0.91%, Romanian: 0.91%, Maori: 0.79%, Sotho: 0.79%, English: 0.68%, German: 0.68%, Lithuanian: 0.68%, Portuguese: 0.68%, Swahili: 0.68%, Zulu: 0.68%, French: 0.56%, Shona: 0.56%, Estonian: 0.45%, Italian: 0.45%, Malay: 0.45%, Spanish: 0.45%, Tsonga: 0.45%, Basque: 0.34%, Catalan: 0.34%, Dutch: 0.34%, Hungarian: 0.34%, Swedish: 0.34%, Tswana: 0.34%, Afrikaans: 0.22%, Bosnian: 0.22%, Esperanto: 0.22%, Polish: 0.22%, Somali: 0.22%, Turkish: 0.22%, Welsh: 0.22%, Xhosa: 0.22%, Croatian: 0.11%, Czech: 0.11%, Slovak: 0.11%
+Accuracy: 79.18%
+Erroneously classified as Irish: 1.82%, Tagalog: 1.59%, Yoruba: 1.59%, Latin: 0.91%, Romanian: 0.91%, Icelandic: 0.79%, Maori: 0.79%, Sotho: 0.79%, English: 0.68%, German: 0.68%, Lithuanian: 0.68%, Portuguese: 0.68%, Swahili: 0.68%, Zulu: 0.68%, French: 0.56%, Shona: 0.56%, Estonian: 0.45%, Italian: 0.45%, Malay: 0.45%, Tsonga: 0.45%, Basque: 0.34%, Catalan: 0.34%, Dutch: 0.34%, Hungarian: 0.34%, Spanish: 0.34%, Swedish: 0.34%, Tswana: 0.34%, Afrikaans: 0.22%, Bosnian: 0.22%, Esperanto: 0.22%, Polish: 0.22%, Somali: 0.22%, Turkish: 0.22%, Welsh: 0.22%, Xhosa: 0.22%, Croatian: 0.11%, Czech: 0.11%, Slovak: 0.11%
 
 >> Detection of 957 word pairs (average length: 15 chars)
 Accuracy: 94.14%

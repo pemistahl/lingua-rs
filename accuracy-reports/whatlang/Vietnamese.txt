@@ -1,16 +1,16 @@
 ##### Vietnamese #####
 
->>> Accuracy on average: 72.3%
+>>> Accuracy on average: 91.34%
 
 >> Detection of 879 single words (average length: 5 chars)
-Accuracy: 35.03%
-Erroneously classified as Unknown: 44.93%, English: 2.38%, Zulu: 2.27%, Yoruba: 1.93%, Lithuanian: 1.25%, Indonesian: 1.13%, Latin: 1.02%, Romanian: 0.91%, French: 0.79%, Shona: 0.79%, Afrikaans: 0.68%, Latvian: 0.68%, Tagalog: 0.68%, Swedish: 0.56%, Turkish: 0.56%, Croatian: 0.45%, German: 0.45%, Hungarian: 0.45%, Spanish: 0.45%, Czech: 0.34%, Polish: 0.34%, Catalan: 0.22%, Estonian: 0.22%, Nynorsk: 0.22%, Portuguese: 0.22%, Slovak: 0.22%, Somali: 0.22%, Bokmal: 0.11%, Dutch: 0.11%, Esperanto: 0.11%, Italian: 0.11%
+Accuracy: 76.33%
+Erroneously classified as Spanish: 5.8%, Portuguese: 4.09%, Unknown: 2.5%, French: 1.25%, Indonesian: 1.02%, Hungarian: 0.91%, Romanian: 0.91%, Latin: 0.79%, Slovak: 0.79%, Shona: 0.68%, German: 0.56%, Afrikaans: 0.45%, English: 0.45%, Lithuanian: 0.45%, Zulu: 0.45%, Catalan: 0.34%, Croatian: 0.34%, Turkish: 0.34%, Esperanto: 0.22%, Estonian: 0.22%, Slovene: 0.22%, Swedish: 0.22%, Czech: 0.11%, Dutch: 0.11%, Finnish: 0.11%, Italian: 0.11%, Latvian: 0.11%
 
 >> Detection of 957 word pairs (average length: 15 chars)
-Accuracy: 85.16%
-Erroneously classified as Unknown: 5.95%, English: 1.98%, Tagalog: 0.83%, Afrikaans: 0.73%, German: 0.73%, Bokmal: 0.41%, Indonesian: 0.41%, Italian: 0.41%, Shona: 0.41%, French: 0.31%, Latin: 0.31%, Swedish: 0.31%, Danish: 0.2%, Nynorsk: 0.2%, Romanian: 0.2%, Spanish: 0.2%, Yoruba: 0.2%, Zulu: 0.2%, Catalan: 0.1%, Czech: 0.1%, Dutch: 0.1%, Finnish: 0.1%, Latvian: 0.1%, Lithuanian: 0.1%, Somali: 0.1%
+Accuracy: 97.8%
+Erroneously classified as Unknown: 0.62%, Afrikaans: 0.41%, French: 0.2%, German: 0.2%, Spanish: 0.2%, Catalan: 0.1%, Danish: 0.1%, Romanian: 0.1%, Shona: 0.1%, Swedish: 0.1%
 
 >> Detection of 1000 sentences (average length: 158 chars)
-Accuracy: 96.7%
-Erroneously classified as Unknown: 2%, English: 0.5%, Catalan: 0.2%, Afrikaans: 0.1%, Danish: 0.1%, Indonesian: 0.1%, Romanian: 0.1%, Swedish: 0.1%, Tagalog: 0.1%
+Accuracy: 99.9%
+Erroneously classified as English: 0.1%
 

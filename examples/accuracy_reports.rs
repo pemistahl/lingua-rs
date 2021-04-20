@@ -358,14 +358,14 @@ fn main() {
         fs::File::create(aggregated_report_file_path).expect("CSV file could not be created");
     let aggregated_report_columns = vec![
         "language",
-        "average-whatlang",
-        "single-words-whatlang",
-        "word-pairs-whatlang",
-        "sentences-whatlang",
         "average-cld2",
         "single-words-cld2",
         "word-pairs-cld2",
         "sentences-cld2",
+        "average-whatlang",
+        "single-words-whatlang",
+        "word-pairs-whatlang",
+        "sentences-whatlang",
         "average-lingua",
         "single-words-lingua",
         "word-pairs-lingua",
@@ -445,8 +445,8 @@ fn main() {
         let total_aggregated_report_row = format!(
             "{:?},{},{},{}\n",
             &language,
-            whatlang_aggregated_report_row,
             cld2_aggregated_report_row,
+            whatlang_aggregated_report_row,
             lingua_aggregated_report_row
         );
 
@@ -517,7 +517,7 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
     match language {
         Some(WhatlangLanguage::Afr) => Some(Language::Afrikaans),
         Some(WhatlangLanguage::Ara) => Some(Language::Arabic),
-        Some(WhatlangLanguage::Azj) => Some(Language::Azerbaijani),
+        Some(WhatlangLanguage::Aze) => Some(Language::Azerbaijani),
         Some(WhatlangLanguage::Bel) => Some(Language::Belarusian),
         Some(WhatlangLanguage::Ben) => Some(Language::Bengali),
         Some(WhatlangLanguage::Bul) => Some(Language::Bulgarian),
@@ -548,7 +548,6 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
         Some(WhatlangLanguage::Mar) => Some(Language::Marathi),
         Some(WhatlangLanguage::Mkd) => Some(Language::Macedonian),
         Some(WhatlangLanguage::Nld) => Some(Language::Dutch),
-        Some(WhatlangLanguage::Nno) => Some(Language::Nynorsk),
         Some(WhatlangLanguage::Nob) => Some(Language::Bokmal),
         Some(WhatlangLanguage::Pan) => Some(Language::Punjabi),
         Some(WhatlangLanguage::Pes) => Some(Language::Persian),
@@ -559,19 +558,16 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
         Some(WhatlangLanguage::Slk) => Some(Language::Slovak),
         Some(WhatlangLanguage::Slv) => Some(Language::Slovene),
         Some(WhatlangLanguage::Sna) => Some(Language::Shona),
-        Some(WhatlangLanguage::Som) => Some(Language::Somali),
         Some(WhatlangLanguage::Spa) => Some(Language::Spanish),
         Some(WhatlangLanguage::Srp) => Some(Language::Serbian),
         Some(WhatlangLanguage::Swe) => Some(Language::Swedish),
         Some(WhatlangLanguage::Tam) => Some(Language::Tamil),
         Some(WhatlangLanguage::Tel) => Some(Language::Telugu),
-        Some(WhatlangLanguage::Tgl) => Some(Language::Tagalog),
         Some(WhatlangLanguage::Tha) => Some(Language::Thai),
         Some(WhatlangLanguage::Tur) => Some(Language::Turkish),
         Some(WhatlangLanguage::Ukr) => Some(Language::Ukrainian),
         Some(WhatlangLanguage::Urd) => Some(Language::Urdu),
         Some(WhatlangLanguage::Vie) => Some(Language::Vietnamese),
-        Some(WhatlangLanguage::Yor) => Some(Language::Yoruba),
         Some(WhatlangLanguage::Zul) => Some(Language::Zulu),
         _ => None,
     }

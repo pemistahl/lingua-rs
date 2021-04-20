@@ -1,6 +1,6 @@
 ##### Japanese #####
 
->>> Accuracy on average: 93.91%
+>>> Accuracy on average: 99.57%
 
 >> Detection of 157 single words (average length: 3 chars)
 Accuracy: 98.72%
@@ -11,6 +11,6 @@ Accuracy: 100%
 Erroneously classified as 
 
 >> Detection of 412 sentences (average length: 129 chars)
-Accuracy: 83%
-Erroneously classified as Chinese: 16.99%
+Accuracy: 100%
+Erroneously classified as 
 

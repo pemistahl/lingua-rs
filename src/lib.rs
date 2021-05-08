@@ -119,10 +119,6 @@
 //! assert_eq!(detected_language, Some(English));
 //! ```
 //!
-//! All instances of [LanguageDetector] within a single application share the same language models
-//! and have synchronized access to them. So you can safely have multiple instances without worrying
-//! about consuming too much memory.
-//!
 //! ### 6.2 Minimum relative distance
 //!
 //! By default, *Lingua* returns the most likely language for a given input text. However, there are
@@ -200,7 +196,24 @@
 //! returned vector will be empty. The confidence value for each language not being part of the
 //! returned vector is assumed to be 0.0.
 //!
-//! ### 6.4 Methods to build the LanguageDetector
+//! ### 6.4 Eager loading versus lazy loading
+//!
+//! By default, *Lingua* uses lazy-loading to load only those language models on demand which are
+//! considered relevant by the rule-based filter engine. For web services, for instance, it is
+//! rather beneficial to preload all language models into memory to avoid unexpected latency while
+//! waiting for the service response. If you want to enable the eager-loading mode, you can do it
+//! like this:
+//!
+//! ```
+//! use lingua::LanguageDetectorBuilder;
+//!
+//! LanguageDetectorBuilder::from_all_languages().with_preloaded_language_models().build();
+//! ```
+//!
+//! Multiple instances of `LanguageDetector` share the same language models in memory which are
+//! accessed asynchronously by the instances.
+//!
+//! ### 6.5 Methods to build the LanguageDetector
 //!
 //! There might be classification tasks where you know beforehand that your language data is
 //! definitely not written in Latin, for instance (what a surprise :-). The detection accuracy can
@@ -232,9 +245,6 @@
 //!
 //! // Select languages by ISO 639-3 code.
 //! LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
-//!
-//! // Switch from on-demand lazy-loading to preloading all language models.
-//! LanguageDetectorBuilder::from_all_languages().with_preloaded_language_models();
 //! ```
 
 #[macro_use]

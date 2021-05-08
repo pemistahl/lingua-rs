@@ -1,6 +1,6 @@
 ##### Nynorsk #####
 
->>> Accuracy on average: 65.93%
+>>> Accuracy on average: 65.5%
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 40.8%
@@ -11,6 +11,6 @@ Accuracy: 65.6%
 Erroneously classified as Bokmal: 17.2%, Danish: 4.4%, Swedish: 2.4%, German: 0.9%, English: 0.7%, Albanian: 0.6%, Latin: 0.6%, Dutch: 0.5%, Afrikaans: 0.4%, Basque: 0.4%, Bosnian: 0.4%, Esperanto: 0.4%, Portuguese: 0.4%, Romanian: 0.4%, Tswana: 0.4%, Yoruba: 0.4%, French: 0.3%, Hungarian: 0.3%, Icelandic: 0.3%, Indonesian: 0.3%, Italian: 0.3%, Catalan: 0.2%, Czech: 0.2%, Estonian: 0.2%, Finnish: 0.2%, Polish: 0.2%, Shona: 0.2%, Slovene: 0.2%, Sotho: 0.2%, Spanish: 0.2%, Welsh: 0.2%, Lithuanian: 0.1%, Swahili: 0.1%, Turkish: 0.1%, Xhosa: 0.1%
 
 >> Detection of 1000 sentences (average length: 98 chars)
-Accuracy: 91.4%
-Erroneously classified as Bokmal: 6.4%, Swedish: 0.5%, Danish: 0.4%, English: 0.3%, Esperanto: 0.2%, German: 0.2%, Latin: 0.2%, Dutch: 0.1%, Finnish: 0.1%, French: 0.1%, Lithuanian: 0.1%
+Accuracy: 90.1%
+Erroneously classified as Bokmal: 7.1%, Swedish: 0.8%, Danish: 0.5%, English: 0.3%, Esperanto: 0.2%, German: 0.2%, Italian: 0.2%, Latin: 0.2%, Dutch: 0.1%, Finnish: 0.1%, French: 0.1%, Lithuanian: 0.1%
 

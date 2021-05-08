@@ -3,14 +3,14 @@
 <br>
 
 [![build](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml)
-[![dependency status](https://deps.rs/crate/lingua/1.2.0/status.svg)](https://deps.rs/crate/lingua/1.2.0)
+[![dependency status](https://deps.rs/crate/lingua/1.2.1/status.svg)](https://deps.rs/crate/lingua/1.2.1)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#supported-languages)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.2.0-blue)](https://lib.rs/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.2.1-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## <a name="table-of-contents"></a> Table of Contents
@@ -251,7 +251,7 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.2.0"
+lingua = "1.2.1"
 ```
 
 ## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>
@@ -284,10 +284,6 @@ let detected_language: Option<Language> = detector.detect_language_of("languages
 
 assert_eq!(detected_language, Some(English));
 ```
-
-All instances of `LanguageDetector` within a single application share the same language models 
-and have synchronized access to them. So you can safely have multiple instances without worrying
-about consuming too much memory.
 
 ### 9.2 Minimum relative distance
 
@@ -366,7 +362,22 @@ be part of the returned vector. Likewise, if no ngram probabilities can be found
 detector's languages for the given input text, the returned vector will be empty. The confidence
 value for each language not being part of the returned vector is assumed to be 0.0.
 
-### 9.4 Methods to build the LanguageDetector
+### 9.4 Eager loading versus lazy loading
+
+By default, *Lingua* uses lazy-loading to load only those language models on demand which are
+considered relevant by the rule-based filter engine. For web services, for instance, it is
+rather beneficial to preload all language models into memory to avoid unexpected latency while
+waiting for the service response. If you want to enable the eager-loading mode, you can do it
+like this:
+
+```rust
+LanguageDetectorBuilder::from_all_languages().with_preloaded_language_models().build();
+```
+
+Multiple instances of `LanguageDetector` share the same language models in memory which are
+accessed asynchronously by the instances.
+
+### 9.5 Methods to build the LanguageDetector
 
 There might be classification tasks where you know beforehand that your language data is
 definitely not written in Latin, for instance (what a surprise :-). The detection accuracy can
@@ -398,9 +409,6 @@ LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::EN, IsoCode639_1::
 
 // Select languages by ISO 639-3 code.
 LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
-
-// Switch from on-demand lazy-loading to preloading all language models.
-LanguageDetectorBuilder::from_all_languages().with_preloaded_language_models();
 ```
 
 ## 10. <a name="whats-next"></a> What's next for version 1.3.0? <sup>[Top ▲](#table-of-contents)</sup>

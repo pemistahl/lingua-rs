@@ -16,8 +16,8 @@
 
 use crate::alphabet::Alphabet;
 use crate::constant::{
-    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, MULTIPLE_WHITESPACE, NO_LETTER, NUMBERS,
-    PUNCTUATION,
+    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, LANGUAGES_SUPPORTING_LOGOGRAMS,
+    MULTIPLE_WHITESPACE, NO_LETTER, NUMBERS, PUNCTUATION,
 };
 use crate::language::Language;
 use crate::language::Language::*;
@@ -183,11 +183,17 @@ impl LanguageDetector {
             return values;
         }
 
+        let ngram_size_range = if cleaned_up_text.len() >= 120 {
+            3..4usize
+        } else {
+            1..6usize
+        };
+
         #[allow(clippy::type_complexity)]
         let all_probabilities_and_unigram_counts: Vec<(
             HashMap<Language, f64>,
             Option<HashMap<Language, u32>>,
-        )> = (1..6usize)
+        )> = ngram_size_range
             .into_par_iter()
             .filter(|i| cleaned_up_text.chars().count() >= *i)
             .map(|i| {
@@ -219,7 +225,11 @@ impl LanguageDetector {
             .map(|(probabilities, _)| probabilities)
             .collect::<Vec<_>>();
 
-        let unigram_counts = all_probabilities_and_unigram_counts[0].1.as_ref().unwrap();
+        let unigram_counts = all_probabilities_and_unigram_counts[0]
+            .1
+            .clone()
+            .or_else(|| Some(hashmap!()))
+            .unwrap();
 
         let summed_up_probabilities =
             self.sum_up_probabilities(all_probabilities, unigram_counts, filtered_languages);
@@ -258,15 +268,38 @@ impl LanguageDetector {
         normalized_whitespace.to_string()
     }
 
-    fn split_text_into_words<'a>(&self, text: &'a str) -> Vec<&'a str> {
-        if text.contains(' ') {
-            text.split(' ').collect_vec()
+    fn split_text_into_words(&self, text: &str) -> Vec<String> {
+        let mut normalized_text_builder = vec![];
+        for chr in text.chars() {
+            normalized_text_builder.push(chr.to_string());
+            if self.is_logogram(chr) {
+                normalized_text_builder.push(' '.to_string());
+            }
+        }
+        let normalized_text: String = normalized_text_builder.join("");
+        if normalized_text.contains(' ') {
+            normalized_text
+                .split(' ')
+                .filter(|it| !it.is_empty())
+                .map(|it| it.to_string())
+                .collect_vec()
         } else {
-            vec![text]
+            vec![normalized_text]
         }
     }
 
-    fn detect_language_with_rules(&self, words: &[&str]) -> Option<Language> {
+    fn is_logogram(&self, chr: char) -> bool {
+        if chr.is_whitespace() {
+            false
+        } else {
+            LANGUAGES_SUPPORTING_LOGOGRAMS
+                .iter()
+                .flat_map(|it| it.alphabets())
+                .any(|it| it.matches(&chr.to_string()))
+        }
+    }
+
+    fn detect_language_with_rules(&self, words: &Vec<String>) -> Option<Language> {
         let mut total_language_counts = HashMap::<Option<&Language>, u32>::new();
         let half_word_count = (words.len() as f64) * 0.5;
 
@@ -349,6 +382,13 @@ impl LanguageDetector {
             return total_language_counts.iter().next().unwrap().0.cloned();
         }
 
+        if total_language_counts.len() == 2
+            && total_language_counts.contains_key(&Some(&Chinese))
+            && total_language_counts.contains_key(&Some(&Japanese))
+        {
+            return Some(Japanese);
+        }
+
         let sorted_total_language_counts = total_language_counts
             .into_iter()
             .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
@@ -363,7 +403,7 @@ impl LanguageDetector {
         most_frequent_language.cloned()
     }
 
-    fn filter_languages_by_rules(&self, words: Vec<&str>) -> HashSet<Language> {
+    fn filter_languages_by_rules(&self, words: Vec<String>) -> HashSet<Language> {
         let mut detected_alphabets = HashMap::<Alphabet, u32>::new();
         let half_word_count = (words.len() as f64) * 0.5;
 
@@ -500,7 +540,7 @@ impl LanguageDetector {
     fn sum_up_probabilities(
         &self,
         probabilities: Vec<&HashMap<Language, f64>>,
-        unigram_counts: &HashMap<Language, u32>,
+        unigram_counts: HashMap<Language, u32>,
         filtered_languages: HashSet<Language>,
     ) -> HashMap<Language, f64> {
         let mut summed_up_probabilities = hashmap!();
@@ -905,6 +945,14 @@ mod tests {
             detector_for_all_languages.split_text_into_words("sentence"),
             vec!["sentence"]
         );
+        assert_eq!(
+            detector_for_all_languages
+                .split_text_into_words("上海大学是一个好大学 this is a sentence"),
+            vec![
+                "上", "海", "大", "学", "是", "一", "个", "好", "大", "学", "this", "is", "a",
+                "sentence"
+            ]
+        );
     }
 
     #[rstest(
@@ -1237,7 +1285,8 @@ mod tests {
         word: &str,
         expected_language: Option<Language>,
     ) {
-        let detected_language = detector_for_all_languages.detect_language_with_rules(&vec![word]);
+        let detected_language =
+            detector_for_all_languages.detect_language_with_rules(&vec![word.to_string()]);
         assert_eq!(
             detected_language, expected_language,
             "expected {:?} for word '{}', got {:?}",
@@ -1282,20 +1331,20 @@ mod tests {
         case("rtuť", hashset!(Czech, Slovak)),
         case("pregătire", hashset!(Romanian, Vietnamese)),
         case("jeďte", hashset!(Czech, Romanian, Slovak)),
-        case("minjaverðir", hashset!(Icelandic, Latvian, Turkish)),
-        case("þagnarskyldu", hashset!(Icelandic, Latvian, Turkish)),
-        case("nebûtu", hashset!(French, Hungarian, Latvian)),
+        case("minjaverðir", hashset!(Icelandic, Turkish)),
+        case("þagnarskyldu", hashset!(Icelandic, Turkish)),
+        case("nebûtu", hashset!(French, Hungarian)),
         case("hashemidëve", hashset!(Afrikaans, Albanian, Dutch, French)),
         case("forêt", hashset!(Afrikaans, French, Portuguese, Vietnamese)),
         case("succèdent", hashset!(French, Italian, Vietnamese, Yoruba)),
         case("où", hashset!(French, Italian, Vietnamese, Yoruba)),
         case("tõeliseks", hashset!(Estonian, Hungarian, Portuguese, Vietnamese)),
-        case("viòiem", hashset!(Catalan, Italian, Latvian, Vietnamese, Yoruba)),
+        case("viòiem", hashset!(Catalan, Italian, Vietnamese, Yoruba)),
         case("contrôle", hashset!(French, Portuguese, Slovak, Vietnamese)),
         case("direktør", hashset!(Bokmal, Danish, Nynorsk)),
         case("vývoj", hashset!(Czech, Icelandic, Slovak, Turkish, Vietnamese)),
         case("päralt", hashset!(Estonian, Finnish, German, Slovak, Swedish)),
-        case("labâk", hashset!(Latvian, Portuguese, Romanian, Turkish, Vietnamese)),
+        case("labâk", hashset!(Portuguese, Romanian, Turkish, Vietnamese)),
         case("pràctiques", hashset!(Catalan, French, Italian, Portuguese, Vietnamese)),
         case(
             "überrascht",
@@ -1308,7 +1357,7 @@ mod tests {
         case("navržen", hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene)),
         case(
             "façonnage",
-            hashset!(Albanian, Azerbaijani, Basque, Catalan, French, Latvian, Portuguese, Turkish)
+            hashset!(Albanian, Azerbaijani, Basque, Catalan, French, Portuguese, Turkish)
         ),
         case(
             "höher",
@@ -1365,7 +1414,8 @@ mod tests {
         word: &str,
         expected_languages: HashSet<Language>,
     ) {
-        let filtered_languages = detector_for_all_languages.filter_languages_by_rules(vec![word]);
+        let filtered_languages =
+            detector_for_all_languages.filter_languages_by_rules(vec![word.to_string()]);
         assert_eq!(
             filtered_languages, expected_languages,
             "expected {:?} for word '{}', got {:?}",

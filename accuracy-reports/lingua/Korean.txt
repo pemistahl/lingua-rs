@@ -1,6 +1,6 @@
 ##### Korean #####
 
->>> Accuracy on average: 99.9%
+>>> Accuracy on average: 99.96%
 
 >> Detection of 1000 single words (average length: 17 chars)
 Accuracy: 100%
@@ -11,6 +11,6 @@ Accuracy: 100%
 Erroneously classified as 
 
 >> Detection of 1000 sentences (average length: 147 chars)
-Accuracy: 99.7%
-Erroneously classified as Spanish: 0.1%, Tagalog: 0.1%, Yoruba: 0.1%
+Accuracy: 99.9%
+Erroneously classified as Yoruba: 0.1%
 

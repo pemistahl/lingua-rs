@@ -1,6 +1,6 @@
 ##### Mongolian #####
 
->>> Accuracy on average: 96.93%
+>>> Accuracy on average: 96.9%
 
 >> Detection of 1000 single words (average length: 15 chars)
 Accuracy: 92.8%
@@ -11,6 +11,6 @@ Accuracy: 98.7%
 Erroneously classified as Russian: 0.4%, Ukrainian: 0.4%, Macedonian: 0.2%, Bulgarian: 0.1%, Kazakh: 0.1%, Serbian: 0.1%
 
 >> Detection of 1000 sentences (average length: 188 chars)
-Accuracy: 99.3%
-Erroneously classified as English: 0.1%, Finnish: 0.1%, Macedonian: 0.1%, Russian: 0.1%, Somali: 0.1%, Ukrainian: 0.1%, Welsh: 0.1%
+Accuracy: 99.2%
+Erroneously classified as Somali: 0.2%, Ukrainian: 0.2%, English: 0.1%, Finnish: 0.1%, Macedonian: 0.1%, Welsh: 0.1%
 

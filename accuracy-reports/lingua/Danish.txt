@@ -1,6 +1,6 @@
 ##### Danish #####
 
->>> Accuracy on average: 81.13%
+>>> Accuracy on average: 80.96%
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 61.2%
@@ -11,6 +11,6 @@ Accuracy: 83.9%
 Erroneously classified as Bokmal: 6.7%, Nynorsk: 2.5%, Swedish: 1%, German: 0.9%, Latin: 0.9%, English: 0.6%, Afrikaans: 0.5%, Dutch: 0.4%, Esperanto: 0.4%, French: 0.4%, Basque: 0.3%, Italian: 0.3%, Shona: 0.2%, Finnish: 0.1%, Indonesian: 0.1%, Malay: 0.1%, Romanian: 0.1%, Slovak: 0.1%, Swahili: 0.1%, Tagalog: 0.1%, Tswana: 0.1%, Welsh: 0.1%, Zulu: 0.1%
 
 >> Detection of 1000 sentences (average length: 115 chars)
-Accuracy: 98.3%
-Erroneously classified as Bokmal: 0.9%, Nynorsk: 0.8%
+Accuracy: 97.8%
+Erroneously classified as Nynorsk: 1.2%, Bokmal: 0.9%, Malay: 0.1%
 

@@ -1,3 +1,20 @@
+## Lingua 1.2.1 (released on 8 May 2021)
+
+### Improvements
+
+- Language detection for sentences with more than 120 characters now
+  performs more quickly by iterating through trigrams only which is
+  enough to achieve high detection accuracy.
+- Textual input that includes logograms from Chinese, Japanese or Korean
+  is now split at each logogram and not only at whitespace. This
+  provides for more reliable language detection for sentences that
+  include multi-language content.
+  
+### Bug Fixes
+
+- Errors in the rule engine for the Latvian language have been resolved.
+- Corrupted characters in the Latvian test data have been corrected.
+
 ## Lingua 1.2.0 (released on 8 Apr 2021)
 
 ### Features

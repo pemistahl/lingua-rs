@@ -1,6 +1,6 @@
 ##### Zulu #####
 
->>> Accuracy on average: 80.83%
+>>> Accuracy on average: 80.56%
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 62%
@@ -11,6 +11,6 @@ Accuracy: 83.1%
 Erroneously classified as Xhosa: 12%, English: 0.9%, Swahili: 0.7%, Latin: 0.5%, Afrikaans: 0.4%, Sotho: 0.4%, Tswana: 0.4%, Shona: 0.2%, Tagalog: 0.2%, Tsonga: 0.2%, Yoruba: 0.2%, Dutch: 0.1%, Italian: 0.1%, Portuguese: 0.1%, Romanian: 0.1%, Somali: 0.1%, Swedish: 0.1%, Turkish: 0.1%, Welsh: 0.1%
 
 >> Detection of 1000 sentences (average length: 115 chars)
-Accuracy: 97.4%
-Erroneously classified as Xhosa: 2.6%
+Accuracy: 96.6%
+Erroneously classified as Xhosa: 3.4%
 

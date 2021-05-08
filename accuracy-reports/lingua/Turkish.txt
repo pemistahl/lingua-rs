@@ -1,10 +1,10 @@
 ##### Turkish #####
 
->>> Accuracy on average: 93.76%
+>>> Accuracy on average: 93.73%
 
 >> Detection of 1000 single words (average length: 10 chars)
-Accuracy: 83.9%
-Erroneously classified as Azerbaijani: 3.2%, Esperanto: 1.1%, Tagalog: 0.9%, Malay: 0.8%, Tsonga: 0.8%, Swahili: 0.7%, Dutch: 0.5%, Ganda: 0.5%, Romanian: 0.5%, Xhosa: 0.5%, Catalan: 0.4%, Finnish: 0.4%, Icelandic: 0.4%, Latin: 0.4%, Shona: 0.4%, Afrikaans: 0.3%, Croatian: 0.3%, English: 0.3%, German: 0.3%, Sotho: 0.3%, Spanish: 0.3%, Yoruba: 0.3%, Albanian: 0.2%, Bokmal: 0.2%, Estonian: 0.2%, Indonesian: 0.2%, Italian: 0.2%, Nynorsk: 0.2%, Zulu: 0.2%, Basque: 0.1%, Bosnian: 0.1%, Danish: 0.1%, French: 0.1%, Irish: 0.1%, Lithuanian: 0.1%, Portuguese: 0.1%, Slovene: 0.1%, Somali: 0.1%, Swedish: 0.1%, Vietnamese: 0.1%
+Accuracy: 83.8%
+Erroneously classified as Azerbaijani: 3.2%, Esperanto: 1.1%, Tagalog: 0.9%, Malay: 0.8%, Tsonga: 0.8%, Swahili: 0.7%, Dutch: 0.5%, Ganda: 0.5%, Romanian: 0.5%, Xhosa: 0.5%, Catalan: 0.4%, Finnish: 0.4%, Icelandic: 0.4%, Latin: 0.4%, Shona: 0.4%, Afrikaans: 0.3%, Croatian: 0.3%, English: 0.3%, German: 0.3%, Sotho: 0.3%, Spanish: 0.3%, Yoruba: 0.3%, Albanian: 0.2%, Bokmal: 0.2%, Estonian: 0.2%, Indonesian: 0.2%, Italian: 0.2%, Nynorsk: 0.2%, Zulu: 0.2%, Basque: 0.1%, Bosnian: 0.1%, Danish: 0.1%, French: 0.1%, Irish: 0.1%, Lithuanian: 0.1%, Portuguese: 0.1%, Slovak: 0.1%, Slovene: 0.1%, Somali: 0.1%, Swedish: 0.1%, Vietnamese: 0.1%
 
 >> Detection of 1000 word pairs (average length: 19 chars)
 Accuracy: 97.6%

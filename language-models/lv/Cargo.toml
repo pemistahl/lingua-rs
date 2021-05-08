@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua-latvian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 The Latvian language model for Lingua, an accurate natural language detection library

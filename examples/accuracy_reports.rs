@@ -329,7 +329,9 @@ impl Statistic {
 fn main() {
     let now = Instant::now();
 
-    let lingua_detector = LanguageDetectorBuilder::from_all_languages().build();
+    let lingua_detector = LanguageDetectorBuilder::from_all_languages()
+        .with_preloaded_language_models()
+        .build();
     let whatlang_detector = Detector::new();
 
     let accuracy_reports_directory = Path::new("accuracy-reports");

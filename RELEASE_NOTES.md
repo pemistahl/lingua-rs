@@ -1,3 +1,22 @@
+## Lingua 1.2.2 (released on 2 Jun 2021)
+
+### Features
+
+- The enums `Language`, `IsoCode639_1` and `IsoCode639_3` now implement
+  [`std::str::FromStr`](https://doc.rust-lang.org/std/str/trait.FromStr.html)
+  in order to instantiate enum variants by string values. This comes in
+  handy for JavaScript bindings and the like. (#15)
+  
+### Improvements
+
+- The performance of preloading the language models has been improved.
+
+### Bug Fixes
+
+- Language detection for sentences with more than 120 characters
+  was supposed to be done by iterating through trigrams only but
+  this was never the case. This has been corrected.
+
 ## Lingua 1.2.1 (released on 8 May 2021)
 
 ### Improvements

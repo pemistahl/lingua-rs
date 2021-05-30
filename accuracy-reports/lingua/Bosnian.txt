@@ -12,5 +12,5 @@ Erroneously classified as Croatian: 53.7%, Slovene: 4.6%, Yoruba: 0.9%, English:
 
 >> Detection of 1000 sentences (average length: 107 chars)
 Accuracy: 40%
-Erroneously classified as Croatian: 58.4%, Slovene: 0.4%, Welsh: 0.2%, Czech: 0.1%, English: 0.1%, Esperanto: 0.1%, French: 0.1%, Latin: 0.1%, Malay: 0.1%, Shona: 0.1%, Slovak: 0.1%, Swahili: 0.1%, Zulu: 0.1%
+Erroneously classified as Croatian: 58.5%, Slovene: 0.4%, Welsh: 0.2%, Czech: 0.1%, Esperanto: 0.1%, French: 0.1%, Latin: 0.1%, Malay: 0.1%, Shona: 0.1%, Slovak: 0.1%, Swahili: 0.1%, Zulu: 0.1%
 

@@ -1,16 +1,16 @@
 ##### Vietnamese #####
 
->>> Accuracy on average: 90.85%
+>>> Accuracy on average: 90.76%
 
 >> Detection of 879 single words (average length: 5 chars)
-Accuracy: 79.4%
-Erroneously classified as Irish: 1.82%, Tagalog: 1.59%, Yoruba: 1.59%, Latin: 0.91%, Romanian: 0.91%, Maori: 0.79%, Sotho: 0.79%, English: 0.68%, German: 0.68%, Icelandic: 0.68%, Lithuanian: 0.68%, Portuguese: 0.68%, Swahili: 0.68%, Zulu: 0.68%, French: 0.56%, Shona: 0.56%, Estonian: 0.45%, Italian: 0.45%, Malay: 0.45%, Tsonga: 0.45%, Basque: 0.34%, Catalan: 0.34%, Dutch: 0.34%, Hungarian: 0.34%, Spanish: 0.34%, Swedish: 0.34%, Tswana: 0.34%, Afrikaans: 0.22%, Bosnian: 0.22%, Esperanto: 0.22%, Polish: 0.22%, Somali: 0.22%, Turkish: 0.22%, Welsh: 0.22%, Xhosa: 0.22%, Croatian: 0.11%, Czech: 0.11%
+Accuracy: 78.95%
+Erroneously classified as Irish: 1.82%, Tagalog: 1.59%, Yoruba: 1.59%, Icelandic: 0.91%, Latin: 0.91%, Romanian: 0.91%, Maori: 0.79%, Sotho: 0.79%, English: 0.68%, German: 0.68%, Lithuanian: 0.68%, Portuguese: 0.68%, Swahili: 0.68%, Zulu: 0.68%, French: 0.56%, Shona: 0.56%, Estonian: 0.45%, Italian: 0.45%, Malay: 0.45%, Spanish: 0.45%, Tsonga: 0.45%, Basque: 0.34%, Catalan: 0.34%, Dutch: 0.34%, Hungarian: 0.34%, Swedish: 0.34%, Tswana: 0.34%, Afrikaans: 0.22%, Bosnian: 0.22%, Esperanto: 0.22%, Polish: 0.22%, Somali: 0.22%, Turkish: 0.22%, Welsh: 0.22%, Xhosa: 0.22%, Croatian: 0.11%, Czech: 0.11%, Slovak: 0.11%
 
 >> Detection of 957 word pairs (average length: 15 chars)
 Accuracy: 94.14%
 Erroneously classified as Tagalog: 0.83%, English: 0.73%, Dutch: 0.41%, Tsonga: 0.41%, Afrikaans: 0.31%, Shona: 0.31%, Catalan: 0.2%, Danish: 0.2%, Estonian: 0.2%, French: 0.2%, German: 0.2%, Italian: 0.2%, Maori: 0.2%, Tswana: 0.2%, Xhosa: 0.2%, Indonesian: 0.1%, Irish: 0.1%, Nynorsk: 0.1%, Portuguese: 0.1%, Romanian: 0.1%, Somali: 0.1%, Swahili: 0.1%, Swedish: 0.1%, Zulu: 0.1%
 
 >> Detection of 1000 sentences (average length: 158 chars)
-Accuracy: 99%
-Erroneously classified as Shona: 0.2%, English: 0.1%, German: 0.1%, Sotho: 0.1%, Tsonga: 0.1%, Tswana: 0.1%, Welsh: 0.1%, Yoruba: 0.1%, Zulu: 0.1%
+Accuracy: 99.2%
+Erroneously classified as Shona: 0.2%, English: 0.1%, German: 0.1%, Sotho: 0.1%, Tsonga: 0.1%, Tswana: 0.1%, Yoruba: 0.1%
 

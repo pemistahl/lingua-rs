@@ -1,6 +1,6 @@
 ##### Azerbaijani #####
 
->>> Accuracy on average: 89.43%
+>>> Accuracy on average: 89.53%
 
 >> Detection of 1000 single words (average length: 10 chars)
 Accuracy: 77.4%
@@ -11,6 +11,6 @@ Accuracy: 92.3%
 Erroneously classified as Turkish: 4.7%, Italian: 0.3%, Albanian: 0.2%, Basque: 0.2%, Esperanto: 0.2%, Indonesian: 0.2%, Latin: 0.2%, Shona: 0.2%, Swahili: 0.2%, Bosnian: 0.1%, Danish: 0.1%, Dutch: 0.1%, German: 0.1%, Latvian: 0.1%, Malay: 0.1%, Polish: 0.1%, Somali: 0.1%, Swedish: 0.1%, Tagalog: 0.1%, Tswana: 0.1%, Xhosa: 0.1%, Zulu: 0.1%
 
 >> Detection of 1000 sentences (average length: 124 chars)
-Accuracy: 98.6%
-Erroneously classified as Turkish: 1%, Tagalog: 0.2%, Shona: 0.1%, Sotho: 0.1%
+Accuracy: 98.9%
+Erroneously classified as Turkish: 0.8%, Shona: 0.1%, Sotho: 0.1%, Tagalog: 0.1%
 

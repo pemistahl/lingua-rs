@@ -12,5 +12,5 @@ Erroneously classified as Spanish: 8.9%, Portuguese: 3.7%, French: 3%, Yoruba: 2
 
 >> Detection of 1000 sentences (average length: 105 chars)
 Accuracy: 86%
-Erroneously classified as Spanish: 6.6%, English: 1.8%, Latin: 1.4%, French: 1%, Yoruba: 0.5%, Portuguese: 0.4%, Basque: 0.3%, Italian: 0.3%, Tagalog: 0.3%, Romanian: 0.2%, Swahili: 0.2%, Vietnamese: 0.2%, Danish: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, German: 0.1%, Malay: 0.1%, Slovene: 0.1%, Tswana: 0.1%, Xhosa: 0.1%
+Erroneously classified as Spanish: 6.6%, English: 1.8%, Latin: 1.4%, French: 1%, Yoruba: 0.6%, Portuguese: 0.4%, Basque: 0.3%, Italian: 0.3%, Romanian: 0.2%, Swahili: 0.2%, Tagalog: 0.2%, Vietnamese: 0.2%, Danish: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, German: 0.1%, Malay: 0.1%, Slovene: 0.1%, Tswana: 0.1%, Xhosa: 0.1%
 

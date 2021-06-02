@@ -18,12 +18,14 @@ use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
+use strum_macros::{EnumIter, EnumString};
 
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
-#[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd, EnumString)]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
+#[strum(serialize_all = "snake_case", ascii_case_insensitive)]
 pub enum Language {
     Afrikaans,
     Albanian,
@@ -432,6 +434,12 @@ mod tests {
     fn test_language_deserializer() {
         let deserialized = serde_json::from_str::<Language>("\"ENGLISH\"").unwrap();
         assert_eq!(deserialized, Language::English);
+    }
+
+    #[test]
+    fn test_from_str() {
+        let language = Language::from_str("english").unwrap();
+        assert_eq!(language, Language::English);
     }
 
     #[test]

@@ -18,12 +18,13 @@ use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
-use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
 
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
-#[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd, EnumString)]
+#[derive(
+    Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd, EnumString,
+)]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
 pub enum Language {
@@ -423,6 +424,7 @@ impl Language {
 mod tests {
     use super::*;
     use crate::language::Language::*;
+    use std::str::FromStr;
 
     #[test]
     fn test_language_serializer() {

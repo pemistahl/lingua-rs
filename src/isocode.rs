@@ -15,7 +15,6 @@
  */
 
 use std::fmt::{Debug, Display, Formatter, Result};
-use std::str::FromStr;
 use strum_macros::EnumString;
 
 /// This enum specifies the ISO 639-1 code representations for the supported languages.
@@ -501,6 +500,7 @@ impl Display for IsoCode639_3 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     fn assert_iso_code_639_1_string_representation_is_correct() {

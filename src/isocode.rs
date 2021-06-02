@@ -15,12 +15,15 @@
  */
 
 use std::fmt::{Debug, Display, Formatter, Result};
+use std::str::FromStr;
+use strum_macros::EnumString;
 
 /// This enum specifies the ISO 639-1 code representations for the supported languages.
 ///
 /// ISO 639 is a standardized nomenclature used to classify languages.
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, EnumString)]
 #[allow(clippy::upper_case_acronyms)]
+#[strum(ascii_case_insensitive)]
 pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AF,
@@ -251,8 +254,9 @@ pub enum IsoCode639_1 {
 /// This enum specifies the ISO 639-3 code representations for the supported languages.
 ///
 /// ISO 639 is a standardized nomenclature used to classify languages.
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, EnumString)]
 #[allow(clippy::upper_case_acronyms)]
+#[strum(ascii_case_insensitive)]
 pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AFR,
@@ -506,5 +510,15 @@ mod tests {
     #[test]
     fn assert_iso_code_639_3_string_representation_is_correct() {
         assert_eq!(IsoCode639_3::ENG.to_string(), "eng");
+    }
+
+    #[test]
+    fn assert_string_to_iso_code_639_1_is_correct() {
+        assert_eq!(IsoCode639_1::from_str("en").unwrap(), IsoCode639_1::EN);
+    }
+
+    #[test]
+    fn assert_string_to_iso_code_639_3_is_correct() {
+        assert_eq!(IsoCode639_3::from_str("eng").unwrap(), IsoCode639_3::ENG);
     }
 }

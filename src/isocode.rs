@@ -23,7 +23,7 @@ use strum_macros::EnumString;
 /// ISO 639 is a standardized nomenclature used to classify languages.
 #[derive(Debug, Eq, PartialEq, EnumString)]
 #[allow(clippy::upper_case_acronyms)]
-#[strum(serialize_all = "snake_case", ascii_case_insensitive)]
+#[strum(ascii_case_insensitive)]
 pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AF,
@@ -256,7 +256,7 @@ pub enum IsoCode639_1 {
 /// ISO 639 is a standardized nomenclature used to classify languages.
 #[derive(Debug, Eq, PartialEq, EnumString)]
 #[allow(clippy::upper_case_acronyms)]
-#[strum(serialize_all = "snake_case", ascii_case_insensitive)]
+#[strum(ascii_case_insensitive)]
 pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
     AFR,

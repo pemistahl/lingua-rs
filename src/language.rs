@@ -25,7 +25,7 @@ use strum_macros::{EnumIter, EnumString};
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
 #[derive(Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd, EnumString)]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
-#[strum(serialize_all = "snake_case", ascii_case_insensitive)]
+#[strum(ascii_case_insensitive)]
 pub enum Language {
     Afrikaans,
     Albanian,

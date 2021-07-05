@@ -2,15 +2,15 @@
 
 >>> Accuracy on average: 65.53%
 
->> Detection of 1000 single words (average length: 17 chars)
+>> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 31.5%
 Erroneously classified as Unknown: 62.8%, Macedonian: 2.3%, Russian: 1.9%, Serbian: 1%, Belarusian: 0.2%, Romanian: 0.2%, Ukrainian: 0.1%
 
->> Detection of 1000 word pairs (average length: 32 chars)
+>> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 72.3%
 Erroneously classified as Unknown: 21.1%, Macedonian: 2.9%, Serbian: 2.7%, Russian: 0.8%, Ukrainian: 0.2%
 
->> Detection of 1000 sentences (average length: 161 chars)
+>> Detection of 1000 sentences (average length: 89 chars)
 Accuracy: 92.8%
 Erroneously classified as Unknown: 3.4%, Serbian: 3.2%, Macedonian: 0.4%, Russian: 0.2%
 

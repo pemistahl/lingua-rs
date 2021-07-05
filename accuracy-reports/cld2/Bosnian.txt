@@ -10,7 +10,7 @@ Erroneously classified as Unknown: 61.5%, Croatian: 27.1%, Serbian: 5.4%, Englis
 Accuracy: 15.2%
 Erroneously classified as Croatian: 40.3%, Unknown: 33.3%, Serbian: 8.7%, English: 1.1%, Slovak: 0.3%, Slovene: 0.3%, Nynorsk: 0.2%, Czech: 0.1%, Danish: 0.1%, Esperanto: 0.1%, Latin: 0.1%, Latvian: 0.1%, Xhosa: 0.1%
 
->> Detection of 1000 sentences (average length: 107 chars)
+>> Detection of 1000 sentences (average length: 105 chars)
 Accuracy: 36.5%
 Erroneously classified as Croatian: 41.1%, Serbian: 14%, Unknown: 7.6%, English: 0.4%, Catalan: 0.1%, Danish: 0.1%, Slovak: 0.1%, Slovene: 0.1%
 

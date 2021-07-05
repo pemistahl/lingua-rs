@@ -10,7 +10,7 @@ Erroneously classified as Dutch: 11%, German: 7.5%, Unknown: 6.5%, Danish: 5.8%,
 Accuracy: 41.5%
 Erroneously classified as Dutch: 15.3%, German: 6.9%, Danish: 4.9%, Bokmal: 3.8%, French: 3.3%, Estonian: 3.1%, Unknown: 2.4%, English: 1.9%, Catalan: 1.8%, Swedish: 1.8%, Turkish: 1.7%, Finnish: 1.4%, Latin: 1.2%, Portuguese: 1.2%, Italian: 1.1%, Romanian: 1.1%, Indonesian: 0.8%, Shona: 0.7%, Spanish: 0.6%, Latvian: 0.5%, Zulu: 0.5%, Lithuanian: 0.4%, Slovak: 0.4%, Croatian: 0.3%, Esperanto: 0.3%, Hungarian: 0.3%, Slovene: 0.3%, Czech: 0.2%, Azerbaijani: 0.1%, Polish: 0.1%, Vietnamese: 0.1%
 
->> Detection of 1000 sentences (average length: 103 chars)
+>> Detection of 1000 sentences (average length: 102 chars)
 Accuracy: 92.5%
 Erroneously classified as Dutch: 3.7%, German: 0.9%, Danish: 0.6%, Portuguese: 0.6%, Bokmal: 0.3%, English: 0.3%, Catalan: 0.2%, Estonian: 0.2%, French: 0.2%, Hungarian: 0.1%, Latin: 0.1%, Romanian: 0.1%, Swedish: 0.1%, Turkish: 0.1%
 

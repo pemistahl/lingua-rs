@@ -2,15 +2,15 @@
 
 >>> Accuracy on average: 100%
 
->> Detection of 1000 single words (average length: 18 chars)
+>> Detection of 1000 single words (average length: 6 chars)
 Accuracy: 100%
 Erroneously classified as 
 
->> Detection of 1000 word pairs (average length: 37 chars)
+>> Detection of 1000 word pairs (average length: 13 chars)
 Accuracy: 100%
 Erroneously classified as 
 
->> Detection of 1000 sentences (average length: 246 chars)
+>> Detection of 1000 sentences (average length: 95 chars)
 Accuracy: 100%
 Erroneously classified as 
 

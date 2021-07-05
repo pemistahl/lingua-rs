@@ -2,15 +2,15 @@
 
 >>> Accuracy on average: 73.63%
 
->> Detection of 1000 single words (average length: 9 chars)
+>> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 50.5%
 Erroneously classified as Unknown: 43.3%, Slovak: 4.9%, Croatian: 0.3%, English: 0.2%, Latin: 0.2%, Polish: 0.2%, Hungarian: 0.1%, Maori: 0.1%, Slovene: 0.1%, Spanish: 0.1%
 
->> Detection of 1000 word pairs (average length: 18 chars)
+>> Detection of 1000 word pairs (average length: 16 chars)
 Accuracy: 79.5%
 Erroneously classified as Unknown: 14%, Slovak: 5.5%, Polish: 0.3%, Croatian: 0.2%, English: 0.1%, Finnish: 0.1%, Ganda: 0.1%, Romanian: 0.1%, Spanish: 0.1%
 
->> Detection of 1000 sentences (average length: 102 chars)
+>> Detection of 1000 sentences (average length: 93 chars)
 Accuracy: 90.9%
 Erroneously classified as Unknown: 5.4%, Slovak: 1.9%, English: 0.7%, Latin: 0.4%, Polish: 0.2%, Bosnian: 0.1%, Croatian: 0.1%, German: 0.1%, Hungarian: 0.1%, Slovene: 0.1%
 

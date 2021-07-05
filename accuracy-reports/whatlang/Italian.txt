@@ -10,7 +10,7 @@ Erroneously classified as Portuguese: 7.6%, Latin: 7.4%, Romanian: 6%, Unknown: 
 Accuracy: 48.5%
 Erroneously classified as Portuguese: 6.7%, Romanian: 5.8%, Latin: 5.5%, Catalan: 3.5%, Spanish: 2.9%, Esperanto: 2.6%, French: 2.6%, Unknown: 2.5%, Croatian: 2%, English: 1.8%, Slovene: 1.8%, Indonesian: 1.6%, Shona: 1.5%, German: 1.4%, Finnish: 1.1%, Afrikaans: 1%, Danish: 1%, Lithuanian: 1%, Zulu: 0.9%, Bokmal: 0.7%, Estonian: 0.7%, Turkish: 0.6%, Slovak: 0.5%, Swedish: 0.5%, Dutch: 0.4%, Czech: 0.2%, Hungarian: 0.2%, Latvian: 0.2%, Azerbaijani: 0.1%, Polish: 0.1%, Vietnamese: 0.1%
 
->> Detection of 1000 sentences (average length: 125 chars)
+>> Detection of 1000 sentences (average length: 123 chars)
 Accuracy: 96.2%
 Erroneously classified as Portuguese: 0.8%, Spanish: 0.6%, Unknown: 0.5%, Latin: 0.4%, French: 0.3%, Indonesian: 0.3%, Romanian: 0.3%, Catalan: 0.2%, English: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, Lithuanian: 0.1%
 

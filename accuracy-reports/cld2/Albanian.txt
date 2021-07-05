@@ -6,11 +6,11 @@
 Accuracy: 18.5%
 Erroneously classified as Unknown: 79.8%, English: 0.5%, Czech: 0.2%, Indonesian: 0.2%, Malay: 0.2%, Turkish: 0.2%, Croatian: 0.1%, Danish: 0.1%, Nynorsk: 0.1%, Xhosa: 0.1%
 
->> Detection of 1000 word pairs (average length: 16 chars)
+>> Detection of 1000 word pairs (average length: 15 chars)
 Accuracy: 76.7%
 Erroneously classified as Unknown: 21.7%, English: 0.9%, German: 0.2%, Catalan: 0.1%, Finnish: 0.1%, Latvian: 0.1%, Malay: 0.1%, Swahili: 0.1%
 
->> Detection of 1000 sentences (average length: 125 chars)
+>> Detection of 1000 sentences (average length: 118 chars)
 Accuracy: 99.2%
 Erroneously classified as Unknown: 0.6%, Catalan: 0.1%, Italian: 0.1%
 

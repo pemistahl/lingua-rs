@@ -10,7 +10,7 @@ Erroneously classified as Unknown: 78.9%, Xhosa: 1%, English: 0.2%, Zulu: 0.2%, 
 Accuracy: 67.8%
 Erroneously classified as Unknown: 27.9%, English: 2.4%, Maori: 0.4%, Shona: 0.4%, Zulu: 0.4%, Xhosa: 0.3%, Indonesian: 0.1%, Portuguese: 0.1%, Sotho: 0.1%, Tswana: 0.1%
 
->> Detection of 1000 sentences (average length: 122 chars)
+>> Detection of 1000 sentences (average length: 121 chars)
 Accuracy: 97.3%
 Erroneously classified as Unknown: 1.6%, English: 1.1%
 

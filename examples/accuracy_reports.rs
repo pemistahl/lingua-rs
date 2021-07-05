@@ -260,7 +260,7 @@ impl Statistic {
     }
 
     fn add_entity_length_count(&mut self, entity: &str) {
-        self.entity_length_count += entity.len() as u32;
+        self.entity_length_count += entity.chars().count() as u32;
     }
 
     fn map_counts_to_accuracy_values(&mut self) {
@@ -320,7 +320,7 @@ impl Statistic {
                 } else {
                     "Unknown".to_string()
                 };
-                format!("{}: {}", formatted_lang, format_accuracy(accuracy))
+                format!("{}: {:.2}%", formatted_lang, accuracy)
             })
             .join(", ")
     }

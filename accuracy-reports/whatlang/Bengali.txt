@@ -2,15 +2,15 @@
 
 >>> Accuracy on average: 99.96%
 
->> Detection of 1000 single words (average length: 22 chars)
+>> Detection of 1000 single words (average length: 7 chars)
 Accuracy: 100%
 Erroneously classified as 
 
->> Detection of 1000 word pairs (average length: 43 chars)
+>> Detection of 1000 word pairs (average length: 15 chars)
 Accuracy: 100%
 Erroneously classified as 
 
->> Detection of 1000 sentences (average length: 233 chars)
+>> Detection of 1000 sentences (average length: 87 chars)
 Accuracy: 99.9%
 Erroneously classified as Indonesian: 0.1%
 

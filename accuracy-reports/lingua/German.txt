@@ -10,7 +10,7 @@ Erroneously classified as Dutch: 2.3%, Danish: 2.1%, English: 2%, Latin: 1.9%, B
 Accuracy: 94.1%
 Erroneously classified as Dutch: 0.9%, Latin: 0.8%, English: 0.7%, Swedish: 0.6%, Danish: 0.5%, French: 0.4%, Bokmal: 0.3%, Irish: 0.2%, Tagalog: 0.2%, Afrikaans: 0.1%, Esperanto: 0.1%, Estonian: 0.1%, Finnish: 0.1%, Italian: 0.1%, Maori: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Swahili: 0.1%, Tsonga: 0.1%, Turkish: 0.1%, Welsh: 0.1%, Zulu: 0.1%
 
->> Detection of 1000 sentences (average length: 112 chars)
+>> Detection of 1000 sentences (average length: 111 chars)
 Accuracy: 99.7%
 Erroneously classified as Dutch: 0.2%, Latin: 0.1%
 

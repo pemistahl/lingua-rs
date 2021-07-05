@@ -67,7 +67,8 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages except those specified in `languages`.
     ///
-    /// ⚠ Panics if less than two `languages` are specified.
+    /// ⚠ Panics if less than two `languages` are used to build the
+    /// `LanguageDetector`.
     pub fn from_all_languages_without(languages: &[Language]) -> Self {
         let mut languages_to_load = Language::all();
         languages_to_load.retain(|it| !languages.contains(it));
@@ -146,7 +147,8 @@ impl LanguageDetectorBuilder {
         self
     }
 
-    /// Preloads all language models when creating the instance of [LanguageDetector].
+    /// Configures `LanguageDetectorBuilder` to preload all language models when creating
+    /// the instance of [LanguageDetector].
     ///
     /// By default, *Lingua* uses lazy-loading to load only those language models
     /// on demand which are considered relevant by the rule-based filter engine.

@@ -10,7 +10,7 @@ Erroneously classified as Unknown: 57.1%, Bosnian: 3.6%, Serbian: 2.6%, Czech: 1
 Accuracy: 46.7%
 Erroneously classified as Unknown: 27.8%, Bosnian: 16.1%, Serbian: 6.2%, English: 0.9%, Slovak: 0.9%, Slovene: 0.6%, Czech: 0.4%, Nynorsk: 0.2%, Azerbaijani: 0.1%, Polish: 0.1%
 
->> Detection of 1000 sentences (average length: 130 chars)
+>> Detection of 1000 sentences (average length: 127 chars)
 Accuracy: 72.7%
 Erroneously classified as Bosnian: 19.8%, Serbian: 4.3%, Unknown: 2.5%, English: 0.5%, Czech: 0.1%, Latin: 0.1%
 

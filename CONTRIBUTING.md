@@ -44,17 +44,17 @@ model and test data directories.
 this library's fields of application. 
 
 [library build url]: https://github.com/pemistahl/lingua-rs#library-build
-[isocode639_1 url]: https://github.com/pemistahl/lingua-rs/blob/master/src/isocode.rs#L23
-[isocode639_3 url]: https://github.com/pemistahl/lingua-rs/blob/master/src/isocode.rs#L251
+[isocode639_1 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L23
+[isocode639_3 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L251
 [wikipedia isocodes list]: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-[language url]: https://github.com/pemistahl/lingua-rs/blob/master/src/language.rs#L27
-[language method url]: https://github.com/pemistahl/lingua-rs/blob/master/src/language.rs#L389
-[alphabet url]: https://github.com/pemistahl/lingua-rs/blob/master/src/alphabet.rs#L25
-[chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/master/src/constant.rs#L34
-[language model files writer url]: https://github.com/pemistahl/lingua-rs/blob/master/src/writer.rs#L38
-[language models directory url]: https://github.com/pemistahl/lingua-rs/tree/master/language-models
-[test data files writer url]: https://github.com/pemistahl/lingua-rs/blob/master/src/writer.rs#L172
-[test data directory url]: https://github.com/pemistahl/lingua-rs/tree/master/assets/test/language-testdata
-[cargo toml url]: https://github.com/pemistahl/lingua-rs/blob/master/Cargo.toml
-[mod rs url]: https://github.com/pemistahl/lingua-rs/blob/master/src/models/mod.rs#L133
-[accuracy reports url]: https://github.com/pemistahl/lingua-rs/blob/master/examples/accuracy_reports.rs#L525
+[language url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L27
+[language method url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L389
+[alphabet url]: https://github.com/pemistahl/lingua-rs/blob/main/src/alphabet.rs#L25
+[chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/main/src/constant.rs#L34
+[language model files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L38
+[language models directory url]: https://github.com/pemistahl/lingua-rs/tree/main/language-models
+[test data files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L172
+[test data directory url]: https://github.com/pemistahl/lingua-rs/tree/main/assets/test/language-testdata
+[cargo toml url]: https://github.com/pemistahl/lingua-rs/blob/main/Cargo.toml
+[mod rs url]: https://github.com/pemistahl/lingua-rs/blob/main/src/models/mod.rs#L133
+[accuracy reports url]: https://github.com/pemistahl/lingua-rs/blob/main/examples/accuracy_reports.rs#L525

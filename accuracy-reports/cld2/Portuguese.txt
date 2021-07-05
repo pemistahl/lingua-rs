@@ -10,7 +10,7 @@ Erroneously classified as Unknown: 77.3%, Spanish: 1.1%, English: 1%, Slovak: 0.
 Accuracy: 47.7%
 Erroneously classified as Unknown: 47.7%, English: 2.3%, Spanish: 1.4%, Catalan: 0.1%, Icelandic: 0.1%, Indonesian: 0.1%, Italian: 0.1%, Malay: 0.1%, Romanian: 0.1%, Slovak: 0.1%, Swedish: 0.1%, Tsonga: 0.1%
 
->> Detection of 1000 sentences (average length: 131 chars)
+>> Detection of 1000 sentences (average length: 127 chars)
 Accuracy: 94.3%
 Erroneously classified as Unknown: 5.2%, English: 0.5%
 

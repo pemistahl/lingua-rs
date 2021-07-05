@@ -10,7 +10,7 @@ Erroneously classified as Unknown: 70.8%, English: 1.1%, Danish: 0.4%, Dutch: 0.
 Accuracy: 66%
 Erroneously classified as Unknown: 29.6%, English: 3.6%, Dutch: 0.3%, French: 0.2%, Afrikaans: 0.1%, Indonesian: 0.1%, Swedish: 0.1%
 
->> Detection of 1000 sentences (average length: 112 chars)
+>> Detection of 1000 sentences (average length: 111 chars)
 Accuracy: 98.4%
 Erroneously classified as Unknown: 1.2%, English: 0.3%, Swedish: 0.1%
 

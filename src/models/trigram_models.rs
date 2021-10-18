@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
+use crate::model::TrainingDataLanguageModel;
 use crate::models::{
-    load_json, LanguageToNgramsMappingCell, LazyLanguageToNgramsMapping,
+    load_json, BoxedLanguageModel, LanguageToNgramsMappingCell, LazyLanguageToNgramsMapping,
     LazyTrainingDataLanguageModel,
 };
 use crate::Language;
 use crate::Language::*;
-use cfg_if::cfg_if;
 use once_cell::sync::OnceCell;
-
-cfg_if! {
-    if #[cfg(test)] {
-        use crate::model::MockTrainingDataLanguageModel as TrainingDataLanguageModel;
-    } else {
-        use crate::model::TrainingDataLanguageModel;
-    }
-}
 
 pub(crate) fn trigram_models() -> LazyLanguageToNgramsMapping {
     static TRIGRAM_MODELS: LanguageToNgramsMappingCell = OnceCell::new();
@@ -115,602 +107,602 @@ pub(crate) fn trigram_models() -> LazyLanguageToNgramsMapping {
 }
 
 fn afrikaans_trigram_model() -> LazyTrainingDataLanguageModel {
-    static AFRIKAANS_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static AFRIKAANS_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     AFRIKAANS_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Afrikaans);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn albanian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ALBANIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ALBANIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ALBANIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Albanian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn arabic_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ARABIC_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ARABIC_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ARABIC_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Arabic);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn armenian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ARMENIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ARMENIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ARMENIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Armenian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn azerbaijani_trigram_model() -> LazyTrainingDataLanguageModel {
-    static AZERBAIJANI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static AZERBAIJANI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     AZERBAIJANI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Azerbaijani);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn basque_trigram_model() -> LazyTrainingDataLanguageModel {
-    static BASQUE_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BASQUE_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BASQUE_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Basque);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn belarusian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static BELARUSIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BELARUSIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BELARUSIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Belarusian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bengali_trigram_model() -> LazyTrainingDataLanguageModel {
-    static BENGALI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BENGALI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BENGALI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Bengali);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bokmal_trigram_model() -> LazyTrainingDataLanguageModel {
-    static BOKMAL_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BOKMAL_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BOKMAL_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Bokmal);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bosnian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static BOSNIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BOSNIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BOSNIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Bosnian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bulgarian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static BULGARIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BULGARIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BULGARIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Bulgarian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn catalan_trigram_model() -> LazyTrainingDataLanguageModel {
-    static CATALAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CATALAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CATALAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Catalan);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn chinese_trigram_model() -> LazyTrainingDataLanguageModel {
-    static CHINESE_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CHINESE_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CHINESE_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Chinese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn croatian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static CROATIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CROATIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CROATIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Croatian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn czech_trigram_model() -> LazyTrainingDataLanguageModel {
-    static CZECH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CZECH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CZECH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Czech);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn danish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static DANISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static DANISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     DANISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Danish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn dutch_trigram_model() -> LazyTrainingDataLanguageModel {
-    static DUTCH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static DUTCH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     DUTCH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Dutch);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn english_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ENGLISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ENGLISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ENGLISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(English);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn esperanto_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ESPERANTO_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ESPERANTO_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ESPERANTO_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Esperanto);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn estonian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ESTONIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ESTONIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ESTONIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Estonian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn finnish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static FINNISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static FINNISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     FINNISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Finnish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn french_trigram_model() -> LazyTrainingDataLanguageModel {
-    static FRENCH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static FRENCH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     FRENCH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(French);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn ganda_trigram_model() -> LazyTrainingDataLanguageModel {
-    static GANDA_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GANDA_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GANDA_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Ganda);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn georgian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static GEORGIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GEORGIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GEORGIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Georgian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn german_trigram_model() -> LazyTrainingDataLanguageModel {
-    static GERMAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GERMAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GERMAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(German);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn greek_trigram_model() -> LazyTrainingDataLanguageModel {
-    static GREEK_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GREEK_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GREEK_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Greek);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn gujarati_trigram_model() -> LazyTrainingDataLanguageModel {
-    static GUJARATI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GUJARATI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GUJARATI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Gujarati);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn hebrew_trigram_model() -> LazyTrainingDataLanguageModel {
-    static HEBREW_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static HEBREW_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     HEBREW_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Hebrew);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn hindi_trigram_model() -> LazyTrainingDataLanguageModel {
-    static HINDI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static HINDI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     HINDI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Hindi);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn hungarian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static HUNGARIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static HUNGARIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     HUNGARIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Hungarian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn icelandic_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ICELANDIC_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ICELANDIC_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ICELANDIC_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Icelandic);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn indonesian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static INDONESIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static INDONESIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     INDONESIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Indonesian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn irish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static IRISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static IRISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     IRISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Irish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn italian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ITALIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ITALIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ITALIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Italian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn japanese_trigram_model() -> LazyTrainingDataLanguageModel {
-    static JAPANESE_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static JAPANESE_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     JAPANESE_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Japanese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn kazakh_trigram_model() -> LazyTrainingDataLanguageModel {
-    static KAZAKH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static KAZAKH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     KAZAKH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Kazakh);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn korean_trigram_model() -> LazyTrainingDataLanguageModel {
-    static KOREAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static KOREAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     KOREAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Korean);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn latin_trigram_model() -> LazyTrainingDataLanguageModel {
-    static LATIN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static LATIN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     LATIN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Latin);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn latvian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static LATVIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static LATVIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     LATVIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Latvian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn lithuanian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static LITHUANIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static LITHUANIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     LITHUANIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Lithuanian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn macedonian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static MACEDONIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MACEDONIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MACEDONIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Macedonian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn malay_trigram_model() -> LazyTrainingDataLanguageModel {
-    static MALAY_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MALAY_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MALAY_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Malay);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn maori_trigram_model() -> LazyTrainingDataLanguageModel {
-    static MAORI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MAORI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MAORI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Maori);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn marathi_trigram_model() -> LazyTrainingDataLanguageModel {
-    static MARATHI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MARATHI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MARATHI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Marathi);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn mongolian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static MONGOLIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MONGOLIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MONGOLIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Mongolian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn nynorsk_trigram_model() -> LazyTrainingDataLanguageModel {
-    static NYNORSK_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static NYNORSK_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     NYNORSK_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Nynorsk);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn persian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static PERSIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static PERSIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     PERSIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Persian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn polish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static POLISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static POLISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     POLISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Polish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn portuguese_trigram_model() -> LazyTrainingDataLanguageModel {
-    static PORTUGUESE_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static PORTUGUESE_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     PORTUGUESE_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Portuguese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn punjabi_trigram_model() -> LazyTrainingDataLanguageModel {
-    static PUNJABI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static PUNJABI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     PUNJABI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Punjabi);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn romanian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ROMANIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ROMANIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ROMANIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Romanian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn russian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static RUSSIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static RUSSIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     RUSSIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Russian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn serbian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SERBIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SERBIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SERBIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Serbian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn shona_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SHONA_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SHONA_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SHONA_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Shona);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn slovak_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SLOVAK_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SLOVAK_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SLOVAK_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Slovak);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn slovene_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SLOVENE_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SLOVENE_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SLOVENE_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Slovene);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn somali_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SOMALI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SOMALI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SOMALI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Somali);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn sotho_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SOTHO_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SOTHO_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SOTHO_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Sotho);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn spanish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SPANISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SPANISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SPANISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Spanish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn swahili_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SWAHILI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SWAHILI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SWAHILI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Swahili);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn swedish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static SWEDISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SWEDISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SWEDISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Swedish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tagalog_trigram_model() -> LazyTrainingDataLanguageModel {
-    static TAGALOG_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TAGALOG_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TAGALOG_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Tagalog);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tamil_trigram_model() -> LazyTrainingDataLanguageModel {
-    static TAMIL_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TAMIL_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TAMIL_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Tamil);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn telugu_trigram_model() -> LazyTrainingDataLanguageModel {
-    static TELUGU_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TELUGU_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TELUGU_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Telugu);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn thai_trigram_model() -> LazyTrainingDataLanguageModel {
-    static THAI_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static THAI_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     THAI_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Thai);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tsonga_trigram_model() -> LazyTrainingDataLanguageModel {
-    static TSONGA_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TSONGA_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TSONGA_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Tsonga);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tswana_trigram_model() -> LazyTrainingDataLanguageModel {
-    static TSWANA_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TSWANA_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TSWANA_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Tswana);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn turkish_trigram_model() -> LazyTrainingDataLanguageModel {
-    static TURKISH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TURKISH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TURKISH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Turkish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn ukrainian_trigram_model() -> LazyTrainingDataLanguageModel {
-    static UKRAINIAN_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static UKRAINIAN_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     UKRAINIAN_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Ukrainian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn urdu_trigram_model() -> LazyTrainingDataLanguageModel {
-    static URDU_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static URDU_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     URDU_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Urdu);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn vietnamese_trigram_model() -> LazyTrainingDataLanguageModel {
-    static VIETNAMESE_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static VIETNAMESE_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     VIETNAMESE_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Vietnamese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn welsh_trigram_model() -> LazyTrainingDataLanguageModel {
-    static WELSH_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static WELSH_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     WELSH_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Welsh);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn xhosa_trigram_model() -> LazyTrainingDataLanguageModel {
-    static XHOSA_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static XHOSA_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     XHOSA_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Xhosa);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn yoruba_trigram_model() -> LazyTrainingDataLanguageModel {
-    static YORUBA_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static YORUBA_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     YORUBA_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Yoruba);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn zulu_trigram_model() -> LazyTrainingDataLanguageModel {
-    static ZULU_TRIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ZULU_TRIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ZULU_TRIGRAM_MODEL.get_or_init(|| {
         let json = load_trigrams(Zulu);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 

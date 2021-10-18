@@ -36,7 +36,7 @@ impl Fraction {
         }
     }
 
-    pub(crate) fn to_f64(&self) -> f64 {
+    pub(crate) fn to_f64(self) -> f64 {
         self.numerator as f64 / self.denominator as f64
     }
 }

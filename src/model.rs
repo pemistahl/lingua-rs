@@ -23,8 +23,10 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap, HashSet};
 
-#[cfg(test)]
-use mockall::automock;
+#[cfg_attr(test, mockall::automock)]
+pub(crate) trait LanguageModel {
+    fn get_relative_frequency(&self, ngram: &Ngram) -> f64;
+}
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 struct JsonLanguageModel {
@@ -39,7 +41,15 @@ pub(crate) struct TrainingDataLanguageModel {
     json_relative_frequencies: Option<HashMap<Ngram, f64>>,
 }
 
-#[cfg_attr(test, automock)]
+impl LanguageModel for TrainingDataLanguageModel {
+    fn get_relative_frequency(&self, ngram: &Ngram) -> f64 {
+        match &self.json_relative_frequencies {
+            Some(frequencies) => *frequencies.get(ngram).unwrap_or(&0.0),
+            None => 0.0,
+        }
+    }
+}
+
 impl TrainingDataLanguageModel {
     pub(crate) fn from_text<'a>(
         text: &[&'a str],
@@ -105,14 +115,6 @@ impl TrainingDataLanguageModel {
         };
 
         serde_json::to_string(&model).unwrap()
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn get_relative_frequency(&self, ngram: &Ngram) -> f64 {
-        match &self.json_relative_frequencies {
-            Some(frequencies) => *frequencies.get(ngram).unwrap_or(&0.0),
-            None => 0.0,
-        }
     }
 
     fn compute_absolute_frequencies<'a>(

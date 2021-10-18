@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+use crate::model::LanguageModel;
 use crate::ngram::Ngram;
 use crate::Language;
-use cfg_if::cfg_if;
 use include_dir::Dir;
 use lingua_afrikaans_language_model::AFRIKAANS_MODELS_DIRECTORY;
 use lingua_albanian_language_model::ALBANIAN_MODELS_DIRECTORY;
@@ -98,21 +98,14 @@ use std::collections::HashMap;
 use std::io::{Cursor, Read};
 use zip::ZipArchive;
 
-cfg_if! {
-    if #[cfg(test)] {
-        use crate::model::MockTrainingDataLanguageModel as TrainingDataLanguageModel;
-    } else {
-        use crate::model::TrainingDataLanguageModel;
-    }
-}
-
 pub(crate) mod bigram_models;
 pub(crate) mod fivegram_models;
 pub(crate) mod quadrigram_models;
 pub(crate) mod trigram_models;
 pub(crate) mod unigram_models;
 
-pub(crate) type LazyTrainingDataLanguageModel = &'static TrainingDataLanguageModel;
+pub(crate) type BoxedLanguageModel = Box<dyn LanguageModel + Send + Sync>;
+pub(crate) type LazyTrainingDataLanguageModel = &'static BoxedLanguageModel;
 pub(crate) type LanguageToNgramsMappingCell =
     OnceCell<HashMap<Language, fn() -> LazyTrainingDataLanguageModel>>;
 pub(crate) type LazyLanguageToNgramsMapping =

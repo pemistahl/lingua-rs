@@ -29,21 +29,11 @@ use crate::models::trigram_models::trigram_models;
 use crate::models::unigram_models::unigram_models;
 use crate::models::LazyLanguageToNgramsMapping;
 use crate::ngram::Ngram;
-use cfg_if::cfg_if;
 use itertools::Itertools;
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use strum::IntoEnumIterator;
-
-cfg_if! {
-    if #[cfg(test)] {
-        use crate::model::MockTrainingDataLanguageModel as TrainingDataLanguageModel;
-    } else {
-        #[allow(unused_imports)]
-        use crate::model::TrainingDataLanguageModel;
-    }
-}
 
 /// This struct detects the language of given input text.
 pub struct LanguageDetector {
@@ -590,7 +580,11 @@ impl LanguageDetector {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::{LanguageToNgramsMappingCell, LazyTrainingDataLanguageModel};
+    use crate::model::MockLanguageModel;
+    use crate::models::{
+        BoxedLanguageModel, LanguageToNgramsMappingCell, LazyTrainingDataLanguageModel,
+    };
+    use crate::LanguageDetectorBuilder;
     use float_cmp::approx_eq;
     use once_cell::sync::OnceCell;
     use rstest::*;
@@ -599,14 +593,14 @@ mod tests {
     // MOCKS
     // ##############################
 
-    fn create_training_model_mock(data: HashMap<&'static str, f64>) -> TrainingDataLanguageModel {
-        let mut mock = TrainingDataLanguageModel::new();
+    fn create_training_model_mock(data: HashMap<&'static str, f64>) -> Box<MockLanguageModel> {
+        let mut mock = MockLanguageModel::new();
         for (ngram, probability) in data {
             mock.expect_get_relative_frequency()
                 .withf(move |n| n == &Ngram::new(ngram))
                 .return_const(probability);
         }
-        mock
+        Box::new(mock)
     }
 
     // ##############################
@@ -615,7 +609,7 @@ mod tests {
 
     #[fixture]
     fn unigram_language_model_for_english() -> fn() -> LazyTrainingDataLanguageModel {
-        static ENGLISH_UNIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static ENGLISH_UNIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             ENGLISH_UNIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -633,7 +627,7 @@ mod tests {
 
     #[fixture]
     fn bigram_language_model_for_english() -> fn() -> LazyTrainingDataLanguageModel {
-        static ENGLISH_BIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static ENGLISH_BIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             ENGLISH_BIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -651,7 +645,7 @@ mod tests {
 
     #[fixture]
     fn trigram_language_model_for_english() -> fn() -> LazyTrainingDataLanguageModel {
-        static ENGLISH_TRIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static ENGLISH_TRIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             ENGLISH_TRIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -669,8 +663,7 @@ mod tests {
 
     #[fixture]
     fn quadrigram_language_model_for_english() -> fn() -> LazyTrainingDataLanguageModel {
-        static ENGLISH_QUADRIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> =
-            OnceCell::new();
+        static ENGLISH_QUADRIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             ENGLISH_QUADRIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -686,8 +679,7 @@ mod tests {
 
     #[fixture]
     fn fivegram_language_model_for_english() -> fn() -> LazyTrainingDataLanguageModel {
-        static ENGLISH_FIVEGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> =
-            OnceCell::new();
+        static ENGLISH_FIVEGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             ENGLISH_FIVEGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -705,7 +697,7 @@ mod tests {
 
     #[fixture]
     fn unigram_language_model_for_german() -> fn() -> LazyTrainingDataLanguageModel {
-        static GERMAN_UNIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static GERMAN_UNIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             GERMAN_UNIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -723,7 +715,7 @@ mod tests {
 
     #[fixture]
     fn bigram_language_model_for_german() -> fn() -> LazyTrainingDataLanguageModel {
-        static GERMAN_BIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static GERMAN_BIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             GERMAN_BIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -740,7 +732,7 @@ mod tests {
 
     #[fixture]
     fn trigram_language_model_for_german() -> fn() -> LazyTrainingDataLanguageModel {
-        static GERMAN_TRIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static GERMAN_TRIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             GERMAN_TRIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -756,8 +748,7 @@ mod tests {
 
     #[fixture]
     fn quadrigram_language_model_for_german() -> fn() -> LazyTrainingDataLanguageModel {
-        static GERMAN_QUADRIGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> =
-            OnceCell::new();
+        static GERMAN_QUADRIGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             GERMAN_QUADRIGRAM_MODEL_FIXTURE.get_or_init(|| {
                 create_training_model_mock(hashmap!(
@@ -772,7 +763,7 @@ mod tests {
 
     #[fixture]
     fn fivegram_language_model_for_german() -> fn() -> LazyTrainingDataLanguageModel {
-        static GERMAN_FIVEGRAM_MODEL_FIXTURE: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+        static GERMAN_FIVEGRAM_MODEL_FIXTURE: OnceCell<BoxedLanguageModel> = OnceCell::new();
         || {
             GERMAN_FIVEGRAM_MODEL_FIXTURE
                 .get_or_init(|| create_training_model_mock(hashmap!("alter" => 0.3)))

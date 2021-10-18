@@ -81,7 +81,7 @@ impl Alphabet {
     fn supported_languages(&self) -> Vec<Language> {
         let mut languages = vec![];
         for language in Language::iter() {
-            if language.alphabets().contains(&self) {
+            if language.alphabets().contains(self) {
                 languages.push(language);
             }
         }

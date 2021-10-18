@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
+use crate::model::TrainingDataLanguageModel;
 use crate::models::{
-    load_json, LanguageToNgramsMappingCell, LazyLanguageToNgramsMapping,
+    load_json, BoxedLanguageModel, LanguageToNgramsMappingCell, LazyLanguageToNgramsMapping,
     LazyTrainingDataLanguageModel,
 };
 use crate::Language;
 use crate::Language::*;
-use cfg_if::cfg_if;
 use once_cell::sync::OnceCell;
-
-cfg_if! {
-    if #[cfg(test)] {
-        use crate::model::MockTrainingDataLanguageModel as TrainingDataLanguageModel;
-    } else {
-        use crate::model::TrainingDataLanguageModel;
-    }
-}
 
 pub(crate) fn bigram_models() -> LazyLanguageToNgramsMapping {
     static BIGRAM_MODELS: LanguageToNgramsMappingCell = OnceCell::new();
@@ -115,602 +107,602 @@ pub(crate) fn bigram_models() -> LazyLanguageToNgramsMapping {
 }
 
 fn afrikaans_bigram_model() -> LazyTrainingDataLanguageModel {
-    static AFRIKAANS_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static AFRIKAANS_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     AFRIKAANS_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Afrikaans);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn albanian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ALBANIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ALBANIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ALBANIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Albanian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn arabic_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ARABIC_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ARABIC_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ARABIC_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Arabic);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn armenian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ARMENIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ARMENIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ARMENIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Armenian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn azerbaijani_bigram_model() -> LazyTrainingDataLanguageModel {
-    static AZERBAIJANI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static AZERBAIJANI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     AZERBAIJANI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Azerbaijani);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn basque_bigram_model() -> LazyTrainingDataLanguageModel {
-    static BASQUE_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BASQUE_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BASQUE_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Basque);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn belarusian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static BELARUSIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BELARUSIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BELARUSIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Belarusian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bengali_bigram_model() -> LazyTrainingDataLanguageModel {
-    static BENGALI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BENGALI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BENGALI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Bengali);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bokmal_bigram_model() -> LazyTrainingDataLanguageModel {
-    static BOKMAL_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BOKMAL_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BOKMAL_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Bokmal);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bosnian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static BOSNIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BOSNIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BOSNIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Bosnian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn bulgarian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static BULGARIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static BULGARIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     BULGARIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Bulgarian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn catalan_bigram_model() -> LazyTrainingDataLanguageModel {
-    static CATALAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CATALAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CATALAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Catalan);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn chinese_bigram_model() -> LazyTrainingDataLanguageModel {
-    static CHINESE_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CHINESE_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CHINESE_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Chinese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn croatian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static CROATIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CROATIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CROATIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Croatian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn czech_bigram_model() -> LazyTrainingDataLanguageModel {
-    static CZECH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static CZECH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     CZECH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Czech);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn danish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static DANISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static DANISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     DANISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Danish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn dutch_bigram_model() -> LazyTrainingDataLanguageModel {
-    static DUTCH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static DUTCH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     DUTCH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Dutch);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn english_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ENGLISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ENGLISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ENGLISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(English);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn esperanto_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ESPERANTO_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ESPERANTO_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ESPERANTO_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Esperanto);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn estonian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ESTONIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ESTONIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ESTONIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Estonian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn finnish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static FINNISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static FINNISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     FINNISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Finnish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn french_bigram_model() -> LazyTrainingDataLanguageModel {
-    static FRENCH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static FRENCH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     FRENCH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(French);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn ganda_bigram_model() -> LazyTrainingDataLanguageModel {
-    static GANDA_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GANDA_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GANDA_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Ganda);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn georgian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static GEORGIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GEORGIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GEORGIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Georgian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn german_bigram_model() -> LazyTrainingDataLanguageModel {
-    static GERMAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GERMAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GERMAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(German);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn greek_bigram_model() -> LazyTrainingDataLanguageModel {
-    static GREEK_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GREEK_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GREEK_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Greek);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn gujarati_bigram_model() -> LazyTrainingDataLanguageModel {
-    static GUJARATI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static GUJARATI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     GUJARATI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Gujarati);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn hebrew_bigram_model() -> LazyTrainingDataLanguageModel {
-    static HEBREW_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static HEBREW_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     HEBREW_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Hebrew);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn hindi_bigram_model() -> LazyTrainingDataLanguageModel {
-    static HINDI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static HINDI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     HINDI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Hindi);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn hungarian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static HUNGARIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static HUNGARIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     HUNGARIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Hungarian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn icelandic_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ICELANDIC_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ICELANDIC_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ICELANDIC_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Icelandic);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn indonesian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static INDONESIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static INDONESIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     INDONESIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Indonesian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn irish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static IRISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static IRISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     IRISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Irish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn italian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ITALIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ITALIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ITALIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Italian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn japanese_bigram_model() -> LazyTrainingDataLanguageModel {
-    static JAPANESE_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static JAPANESE_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     JAPANESE_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Japanese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn kazakh_bigram_model() -> LazyTrainingDataLanguageModel {
-    static KAZAKH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static KAZAKH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     KAZAKH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Kazakh);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn korean_bigram_model() -> LazyTrainingDataLanguageModel {
-    static KOREAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static KOREAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     KOREAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Korean);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn latin_bigram_model() -> LazyTrainingDataLanguageModel {
-    static LATIN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static LATIN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     LATIN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Latin);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn latvian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static LATVIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static LATVIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     LATVIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Latvian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn lithuanian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static LITHUANIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static LITHUANIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     LITHUANIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Lithuanian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn macedonian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static MACEDONIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MACEDONIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MACEDONIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Macedonian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn malay_bigram_model() -> LazyTrainingDataLanguageModel {
-    static MALAY_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MALAY_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MALAY_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Malay);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn maori_bigram_model() -> LazyTrainingDataLanguageModel {
-    static MAORI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MAORI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MAORI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Maori);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn marathi_bigram_model() -> LazyTrainingDataLanguageModel {
-    static MARATHI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MARATHI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MARATHI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Marathi);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn mongolian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static MONGOLIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static MONGOLIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     MONGOLIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Mongolian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn nynorsk_bigram_model() -> LazyTrainingDataLanguageModel {
-    static NYNORSK_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static NYNORSK_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     NYNORSK_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Nynorsk);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn persian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static PERSIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static PERSIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     PERSIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Persian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn polish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static POLISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static POLISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     POLISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Polish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn portuguese_bigram_model() -> LazyTrainingDataLanguageModel {
-    static PORTUGUESE_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static PORTUGUESE_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     PORTUGUESE_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Portuguese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn punjabi_bigram_model() -> LazyTrainingDataLanguageModel {
-    static PUNJABI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static PUNJABI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     PUNJABI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Punjabi);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn romanian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ROMANIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ROMANIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ROMANIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Romanian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn russian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static RUSSIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static RUSSIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     RUSSIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Russian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn serbian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SERBIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SERBIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SERBIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Serbian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn shona_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SHONA_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SHONA_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SHONA_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Shona);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn slovak_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SLOVAK_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SLOVAK_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SLOVAK_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Slovak);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn slovene_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SLOVENE_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SLOVENE_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SLOVENE_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Slovene);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn somali_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SOMALI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SOMALI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SOMALI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Somali);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn sotho_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SOTHO_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SOTHO_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SOTHO_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Sotho);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn spanish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SPANISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SPANISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SPANISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Spanish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn swahili_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SWAHILI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SWAHILI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SWAHILI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Swahili);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn swedish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static SWEDISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static SWEDISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     SWEDISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Swedish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tagalog_bigram_model() -> LazyTrainingDataLanguageModel {
-    static TAGALOG_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TAGALOG_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TAGALOG_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Tagalog);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tamil_bigram_model() -> LazyTrainingDataLanguageModel {
-    static TAMIL_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TAMIL_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TAMIL_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Tamil);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn telugu_bigram_model() -> LazyTrainingDataLanguageModel {
-    static TELUGU_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TELUGU_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TELUGU_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Telugu);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn thai_bigram_model() -> LazyTrainingDataLanguageModel {
-    static THAI_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static THAI_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     THAI_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Thai);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tsonga_bigram_model() -> LazyTrainingDataLanguageModel {
-    static TSONGA_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TSONGA_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TSONGA_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Tsonga);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn tswana_bigram_model() -> LazyTrainingDataLanguageModel {
-    static TSWANA_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TSWANA_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TSWANA_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Tswana);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn turkish_bigram_model() -> LazyTrainingDataLanguageModel {
-    static TURKISH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static TURKISH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     TURKISH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Turkish);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn ukrainian_bigram_model() -> LazyTrainingDataLanguageModel {
-    static UKRAINIAN_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static UKRAINIAN_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     UKRAINIAN_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Ukrainian);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn urdu_bigram_model() -> LazyTrainingDataLanguageModel {
-    static URDU_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static URDU_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     URDU_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Urdu);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn vietnamese_bigram_model() -> LazyTrainingDataLanguageModel {
-    static VIETNAMESE_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static VIETNAMESE_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     VIETNAMESE_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Vietnamese);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn welsh_bigram_model() -> LazyTrainingDataLanguageModel {
-    static WELSH_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static WELSH_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     WELSH_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Welsh);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn xhosa_bigram_model() -> LazyTrainingDataLanguageModel {
-    static XHOSA_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static XHOSA_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     XHOSA_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Xhosa);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn yoruba_bigram_model() -> LazyTrainingDataLanguageModel {
-    static YORUBA_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static YORUBA_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     YORUBA_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Yoruba);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 
 fn zulu_bigram_model() -> LazyTrainingDataLanguageModel {
-    static ZULU_BIGRAM_MODEL: OnceCell<TrainingDataLanguageModel> = OnceCell::new();
+    static ZULU_BIGRAM_MODEL: OnceCell<BoxedLanguageModel> = OnceCell::new();
     ZULU_BIGRAM_MODEL.get_or_init(|| {
         let json = load_bigrams(Zulu);
-        TrainingDataLanguageModel::from_json(&json)
+        Box::new(TrainingDataLanguageModel::from_json(&json))
     })
 }
 

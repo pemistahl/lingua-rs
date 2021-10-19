@@ -94,8 +94,8 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}
         uses: actions-rs/tarpaulin@v0.1
         with:
-          version: '0.16.0'
-          args: '--ignore-tests'
+          version: '0.18.2'
+          args: '--ignore-config --ignore-panics --ignore-tests'
 
       - name: Upload code coverage report to Codecov
         if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}

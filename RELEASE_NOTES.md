@@ -1,3 +1,10 @@
+## Lingua 1.3.1 (released on 19 Oct 2021)
+
+### Bug Fixes
+
+- When Chinese, Japanese or Korean were left out as Cargo features,
+  there were compilation errors. This has been fixed.
+
 ## Lingua 1.3.0 (released on 19 Oct 2021)
 
 ### Features

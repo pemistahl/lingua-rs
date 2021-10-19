@@ -15,10 +15,10 @@
  */
 
 use crate::language::Language;
-use crate::language::Language::*;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
+use std::str::FromStr;
 
 pub(crate) static JAPANESE_CHARACTER_SET: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap());
@@ -27,73 +27,979 @@ pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\
 pub(crate) static NO_LETTER: Lazy<Regex> = Lazy::new(|| Regex::new("^[^\\p{L}]+$").unwrap());
 pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
 pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());
-pub(crate) static LANGUAGES_SUPPORTING_LOGOGRAMS: Lazy<HashSet<Language>> =
-    Lazy::new(|| hashset!(Chinese, Japanese, Korean));
+pub(crate) static LANGUAGES_SUPPORTING_LOGOGRAMS: Lazy<HashSet<Language>> = Lazy::new(|| {
+    let mut languages = hashset!();
+    if cfg!(feature = "chinese") {
+        languages.insert(Language::from_str("Chinese").unwrap());
+    }
+    if cfg!(feature = "japanese") {
+        languages.insert(Language::from_str("Japanese").unwrap());
+    }
+    if cfg!(feature = "korean") {
+        languages.insert(Language::from_str("Korean").unwrap());
+    }
+    languages
+});
 
 pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet<Language>>> =
     Lazy::new(|| {
+        let mut mapping = hashmap!();
+
+        if cfg!(feature = "portuguese") || cfg!(feature = "vietnamese") {
+            mapping.insert("Ãã", {
+                let mut languages = hashset!();
+                if cfg!(feature = "portuguese") {
+                    languages.insert(Language::from_str("Portuguese").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "lithuanian") || cfg!(feature = "polish") {
+            mapping.insert("ĄąĘę", {
+                let mut languages = hashset!();
+                if cfg!(feature = "lithuanian") {
+                    languages.insert(Language::from_str("Lithuanian").unwrap());
+                }
+                if cfg!(feature = "polish") {
+                    languages.insert(Language::from_str("Polish").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "polish") || cfg!(feature = "romanian") {
+            mapping.insert("Żż", {
+                let mut languages = hashset!();
+                if cfg!(feature = "polish") {
+                    languages.insert(Language::from_str("Polish").unwrap());
+                }
+                if cfg!(feature = "romanian") {
+                    languages.insert(Language::from_str("Romanian").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "french") || cfg!(feature = "romanian") {
+            mapping.insert("Îî", {
+                let mut languages = hashset!();
+                if cfg!(feature = "french") {
+                    languages.insert(Language::from_str("French").unwrap());
+                }
+                if cfg!(feature = "romanian") {
+                    languages.insert(Language::from_str("Romanian").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "basque") || cfg!(feature = "spanish") {
+            mapping.insert("Ññ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "basque") {
+                    languages.insert(Language::from_str("Basque").unwrap());
+                }
+                if cfg!(feature = "spanish") {
+                    languages.insert(Language::from_str("Spanish").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "czech") || cfg!(feature = "slovak") {
+            mapping.insert("ŇňŤť", {
+                let mut languages = hashset!();
+                if cfg!(feature = "czech") {
+                    languages.insert(Language::from_str("Czech").unwrap());
+                }
+                if cfg!(feature = "slovak") {
+                    languages.insert(Language::from_str("Slovak").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "romanian") || cfg!(feature = "vietnamese") {
+            mapping.insert("Ăă", {
+                let mut languages = hashset!();
+                if cfg!(feature = "romanian") {
+                    languages.insert(Language::from_str("Romanian").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "azerbaijani") || cfg!(feature = "turkish") {
+            mapping.insert("İıĞğ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "azerbaijani") {
+                    languages.insert(Language::from_str("Azerbaijani").unwrap());
+                }
+                if cfg!(feature = "turkish") {
+                    languages.insert(Language::from_str("Turkish").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "macedonian") || cfg!(feature = "serbian") {
+            mapping.insert("ЈјЉљЊњ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "macedonian") {
+                    languages.insert(Language::from_str("Macedonian").unwrap());
+                }
+                if cfg!(feature = "serbian") {
+                    languages.insert(Language::from_str("Serbian").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "vietnamese") || cfg!(feature = "yoruba") {
+            mapping.insert("ẸẹỌọ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                if cfg!(feature = "yoruba") {
+                    languages.insert(Language::from_str("Yoruba").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "icelandic") || cfg!(feature = "turkish") {
+            mapping.insert("ÐðÞþ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "icelandic") {
+                    languages.insert(Language::from_str("Icelandic").unwrap());
+                }
+                if cfg!(feature = "turkish") {
+                    languages.insert(Language::from_str("Turkish").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "french") || cfg!(feature = "hungarian") {
+            mapping.insert("Ûû", {
+                let mut languages = hashset!();
+                if cfg!(feature = "french") {
+                    languages.insert(Language::from_str("French").unwrap());
+                }
+                if cfg!(feature = "hungarian") {
+                    languages.insert(Language::from_str("Hungarian").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "maori") || cfg!(feature = "yoruba") {
+            mapping.insert("Ōō", {
+                let mut languages = hashset!();
+                if cfg!(feature = "maori") {
+                    languages.insert(Language::from_str("Maori").unwrap());
+                }
+                if cfg!(feature = "yoruba") {
+                    languages.insert(Language::from_str("Yoruba").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "latvian") || cfg!(feature = "maori") || cfg!(feature = "yoruba") {
+            mapping.insert("ĀāĒēĪī", {
+                let mut languages = hashset!();
+                if cfg!(feature = "latvian") {
+                    languages.insert(Language::from_str("Latvian").unwrap());
+                }
+                if cfg!(feature = "maori") {
+                    languages.insert(Language::from_str("Maori").unwrap());
+                }
+                if cfg!(feature = "yoruba") {
+                    languages.insert(Language::from_str("Yoruba").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "azerbaijani") || cfg!(feature = "romanian") || cfg!(feature = "turkish")
+        {
+            mapping.insert("Şş", {
+                let mut languages = hashset!();
+                if cfg!(feature = "azerbaijani") {
+                    languages.insert(Language::from_str("Azerbaijani").unwrap());
+                }
+                if cfg!(feature = "romanian") {
+                    languages.insert(Language::from_str("Romanian").unwrap());
+                }
+                if cfg!(feature = "turkish") {
+                    languages.insert(Language::from_str("Turkish").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "czech") || cfg!(feature = "romanian") || cfg!(feature = "slovak") {
+            mapping.insert("Ďď", {
+                let mut languages = hashset!();
+                if cfg!(feature = "czech") {
+                    languages.insert(Language::from_str("Czech").unwrap());
+                }
+                if cfg!(feature = "romanian") {
+                    languages.insert(Language::from_str("Romanian").unwrap());
+                }
+                if cfg!(feature = "slovak") {
+                    languages.insert(Language::from_str("Slovak").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "bosnian") || cfg!(feature = "croatian") || cfg!(feature = "polish") {
+            mapping.insert("Ćć", {
+                let mut languages = hashset!();
+                if cfg!(feature = "bosnian") {
+                    languages.insert(Language::from_str("Bosnian").unwrap());
+                }
+                if cfg!(feature = "croatian") {
+                    languages.insert(Language::from_str("Croatian").unwrap());
+                }
+                if cfg!(feature = "polish") {
+                    languages.insert(Language::from_str("Polish").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "bosnian") || cfg!(feature = "croatian") || cfg!(feature = "vietnamese") {
+            mapping.insert("Đđ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "bosnian") {
+                    languages.insert(Language::from_str("Bosnian").unwrap());
+                }
+                if cfg!(feature = "croatian") {
+                    languages.insert(Language::from_str("Croatian").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "belarusian") || cfg!(feature = "kazakh") || cfg!(feature = "ukrainian") {
+            mapping.insert("Іі", {
+                let mut languages = hashset!();
+                if cfg!(feature = "belarusian") {
+                    languages.insert(Language::from_str("Belarusian").unwrap());
+                }
+                if cfg!(feature = "kazakh") {
+                    languages.insert(Language::from_str("Kazakh").unwrap());
+                }
+                if cfg!(feature = "ukrainian") {
+                    languages.insert(Language::from_str("Ukrainian").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "italian") || cfg!(feature = "vietnamese") || cfg!(feature = "yoruba") {
+            mapping.insert("Ìì", {
+                let mut languages = hashset!();
+                if cfg!(feature = "italian") {
+                    languages.insert(Language::from_str("Italian").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                if cfg!(feature = "yoruba") {
+                    languages.insert(Language::from_str("Yoruba").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "bokmal") || cfg!(feature = "danish") || cfg!(feature = "nynorsk") {
+            mapping.insert("Øø", {
+                let mut languages = hashset!();
+                if cfg!(feature = "bokmal") {
+                    languages.insert(Language::from_str("Bokmal").unwrap());
+                }
+                if cfg!(feature = "danish") {
+                    languages.insert(Language::from_str("Danish").unwrap());
+                }
+                if cfg!(feature = "nynorsk") {
+                    languages.insert(Language::from_str("Nynorsk").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "latvian")
+            || cfg!(feature = "lithuanian")
+            || cfg!(feature = "maori")
+            || cfg!(feature = "yoruba")
+        {
+            mapping.insert("Ūū", {
+                let mut languages = hashset!();
+                if cfg!(feature = "latvian") {
+                    languages.insert(Language::from_str("Latvian").unwrap());
+                }
+                if cfg!(feature = "lithuanian") {
+                    languages.insert(Language::from_str("Lithuanian").unwrap());
+                }
+                if cfg!(feature = "maori") {
+                    languages.insert(Language::from_str("Maori").unwrap());
+                }
+                if cfg!(feature = "yoruba") {
+                    languages.insert(Language::from_str("Yoruba").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "afrikaans")
+            || cfg!(feature = "albanian")
+            || cfg!(feature = "dutch")
+            || cfg!(feature = "french")
+        {
+            mapping.insert("Ëë", {
+                let mut languages = hashset!();
+                if cfg!(feature = "afrikaans") {
+                    languages.insert(Language::from_str("Afrikaans").unwrap());
+                }
+                if cfg!(feature = "albanian") {
+                    languages.insert(Language::from_str("Albanian").unwrap());
+                }
+                if cfg!(feature = "dutch") {
+                    languages.insert(Language::from_str("Dutch").unwrap());
+                }
+                if cfg!(feature = "french") {
+                    languages.insert(Language::from_str("French").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "french")
+            || cfg!(feature = "italian")
+            || cfg!(feature = "vietnamese")
+            || cfg!(feature = "yoruba")
+        {
+            mapping.insert("ÈèÙù", {
+                let mut languages = hashset!();
+                if cfg!(feature = "french") {
+                    languages.insert(Language::from_str("French").unwrap());
+                }
+                if cfg!(feature = "italian") {
+                    languages.insert(Language::from_str("Italian").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                if cfg!(feature = "yoruba") {
+                    languages.insert(Language::from_str("Yoruba").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "afrikaans")
+            || cfg!(feature = "french")
+            || cfg!(feature = "portuguese")
+            || cfg!(feature = "vietnamese")
+        {
+            mapping.insert("Êê", {
+                let mut languages = hashset!();
+                if cfg!(feature = "afrikaans") {
+                    languages.insert(Language::from_str("Afrikaans").unwrap());
+                }
+                if cfg!(feature = "french") {
+                    languages.insert(Language::from_str("French").unwrap());
+                }
+                if cfg!(feature = "portuguese") {
+                    languages.insert(Language::from_str("Portuguese").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                languages
+            });
+        }
+
+        if cfg!(feature = "estonian")
+            || cfg!(feature = "hungarian")
+            || cfg!(feature = "portuguese")
+            || cfg!(feature = "vietnamese")
+        {
+            mapping.insert("Õõ", {
+                let mut languages = hashset!();
+                if cfg!(feature = "estonian") {
+                    languages.insert(Language::from_str("Estonian").unwrap());
+                }
+                if cfg!(feature = "hungarian") {
+                    languages.insert(Language::from_str("Hungarian").unwrap());
+                }
+                if cfg!(feature = "portuguese") {
+                    languages.insert(Language::from_str("Portuguese").unwrap());
+                }
+                if cfg!(feature = "vietnamese") {
+                    languages.insert(Language::from_str("Vietnamese").unwrap());
+                }
+                languages
+            });
+
+            if cfg!(feature = "french")
+                || cfg!(feature = "portuguese")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "vietnamese")
+            {
+                mapping.insert("Ôô", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "french") {
+                        languages.insert(Language::from_str("French").unwrap());
+                    }
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "belarusian")
+                || cfg!(feature = "kazakh")
+                || cfg!(feature = "mongolian")
+                || cfg!(feature = "russian")
+            {
+                mapping.insert("ЁёЫыЭэ", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "belarusian") {
+                        languages.insert(Language::from_str("Belarusian").unwrap());
+                    }
+                    if cfg!(feature = "kazakh") {
+                        languages.insert(Language::from_str("Kazakh").unwrap());
+                    }
+                    if cfg!(feature = "mongolian") {
+                        languages.insert(Language::from_str("Mongolian").unwrap());
+                    }
+                    if cfg!(feature = "russian") {
+                        languages.insert(Language::from_str("Russian").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "bulgarian")
+                || cfg!(feature = "kazakh")
+                || cfg!(feature = "mongolian")
+                || cfg!(feature = "russian")
+            {
+                mapping.insert("ЩщЪъ", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "bulgarian") {
+                        languages.insert(Language::from_str("Bulgarian").unwrap());
+                    }
+                    if cfg!(feature = "kazakh") {
+                        languages.insert(Language::from_str("Kazakh").unwrap());
+                    }
+                    if cfg!(feature = "mongolian") {
+                        languages.insert(Language::from_str("Mongolian").unwrap());
+                    }
+                    if cfg!(feature = "russian") {
+                        languages.insert(Language::from_str("Russian").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "catalan")
+                || cfg!(feature = "italian")
+                || cfg!(feature = "vietnamese")
+                || cfg!(feature = "yoruba")
+            {
+                mapping.insert("Òò", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "italian") {
+                        languages.insert(Language::from_str("Italian").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    if cfg!(feature = "yoruba") {
+                        languages.insert(Language::from_str("Yoruba").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "portuguese")
+                || cfg!(feature = "romanian")
+                || cfg!(feature = "turkish")
+                || cfg!(feature = "vietnamese")
+            {
+                mapping.insert("Ââ", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "romanian") {
+                        languages.insert(Language::from_str("Romanian").unwrap());
+                    }
+                    if cfg!(feature = "turkish") {
+                        languages.insert(Language::from_str("Turkish").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "bokmal")
+                || cfg!(feature = "danish")
+                || cfg!(feature = "icelandic")
+                || cfg!(feature = "nynorsk")
+            {
+                mapping.insert("Ææ", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "bokmal") {
+                        languages.insert(Language::from_str("Bokmal").unwrap());
+                    }
+                    if cfg!(feature = "danish") {
+                        languages.insert(Language::from_str("Danish").unwrap());
+                    }
+                    if cfg!(feature = "icelandic") {
+                        languages.insert(Language::from_str("Icelandic").unwrap());
+                    }
+                    if cfg!(feature = "nynorsk") {
+                        languages.insert(Language::from_str("Nynorsk").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "bokmal")
+                || cfg!(feature = "danish")
+                || cfg!(feature = "nynorsk")
+                || cfg!(feature = "swedish")
+            {
+                mapping.insert("Åå", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "bokmal") {
+                        languages.insert(Language::from_str("Bokmal").unwrap());
+                    }
+                    if cfg!(feature = "danish") {
+                        languages.insert(Language::from_str("Danish").unwrap());
+                    }
+                    if cfg!(feature = "nynorsk") {
+                        languages.insert(Language::from_str("Nynorsk").unwrap());
+                    }
+                    if cfg!(feature = "swedish") {
+                        languages.insert(Language::from_str("Swedish").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "czech")
+                || cfg!(feature = "icelandic")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "turkish")
+                || cfg!(feature = "vietnamese")
+            {
+                mapping.insert("Ýý", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "czech") {
+                        languages.insert(Language::from_str("Czech").unwrap());
+                    }
+                    if cfg!(feature = "icelandic") {
+                        languages.insert(Language::from_str("Icelandic").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "turkish") {
+                        languages.insert(Language::from_str("Turkish").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "estonian")
+                || cfg!(feature = "finnish")
+                || cfg!(feature = "german")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "swedish")
+            {
+                mapping.insert("Ää", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "estonian") {
+                        languages.insert(Language::from_str("Estonian").unwrap());
+                    }
+                    if cfg!(feature = "finnish") {
+                        languages.insert(Language::from_str("Finnish").unwrap());
+                    }
+                    if cfg!(feature = "german") {
+                        languages.insert(Language::from_str("German").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "swedish") {
+                        languages.insert(Language::from_str("Swedish").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "catalan")
+                || cfg!(feature = "french")
+                || cfg!(feature = "italian")
+                || cfg!(feature = "portuguese")
+                || cfg!(feature = "vietnamese")
+            {
+                mapping.insert("Àà", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "french") {
+                        languages.insert(Language::from_str("French").unwrap());
+                    }
+                    if cfg!(feature = "italian") {
+                        languages.insert(Language::from_str("Italian").unwrap());
+                    }
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "azerbaijani")
+                || cfg!(feature = "catalan")
+                || cfg!(feature = "estonian")
+                || cfg!(feature = "german")
+                || cfg!(feature = "hungarian")
+                || cfg!(feature = "spanish")
+                || cfg!(feature = "turkish")
+            {
+                mapping.insert("Üü", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "azerbaijani") {
+                        languages.insert(Language::from_str("Azerbaijani").unwrap());
+                    }
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "estonian") {
+                        languages.insert(Language::from_str("Estonian").unwrap());
+                    }
+                    if cfg!(feature = "german") {
+                        languages.insert(Language::from_str("German").unwrap());
+                    }
+                    if cfg!(feature = "hungarian") {
+                        languages.insert(Language::from_str("Hungarian").unwrap());
+                    }
+                    if cfg!(feature = "spanish") {
+                        languages.insert(Language::from_str("Spanish").unwrap());
+                    }
+                    if cfg!(feature = "turkish") {
+                        languages.insert(Language::from_str("Turkish").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "bosnian")
+                || cfg!(feature = "czech")
+                || cfg!(feature = "croatian")
+                || cfg!(feature = "latvian")
+                || cfg!(feature = "lithuanian")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "slovene")
+            {
+                mapping.insert("ČčŠšŽž", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "bosnian") {
+                        languages.insert(Language::from_str("Bosnian").unwrap());
+                    }
+                    if cfg!(feature = "czech") {
+                        languages.insert(Language::from_str("Czech").unwrap());
+                    }
+                    if cfg!(feature = "croatian") {
+                        languages.insert(Language::from_str("Croatian").unwrap());
+                    }
+                    if cfg!(feature = "latvian") {
+                        languages.insert(Language::from_str("Latvian").unwrap());
+                    }
+                    if cfg!(feature = "lithuanian") {
+                        languages.insert(Language::from_str("Lithuanian").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "slovene") {
+                        languages.insert(Language::from_str("Slovene").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "albanian")
+                || cfg!(feature = "azerbaijani")
+                || cfg!(feature = "basque")
+                || cfg!(feature = "catalan")
+                || cfg!(feature = "french")
+                || cfg!(feature = "portuguese")
+                || cfg!(feature = "turkish")
+            {
+                mapping.insert("Çç", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "albanian") {
+                        languages.insert(Language::from_str("Albanian").unwrap());
+                    }
+                    if cfg!(feature = "azerbaijani") {
+                        languages.insert(Language::from_str("Azerbaijani").unwrap());
+                    }
+                    if cfg!(feature = "basque") {
+                        languages.insert(Language::from_str("Basque").unwrap());
+                    }
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "french") {
+                        languages.insert(Language::from_str("French").unwrap());
+                    }
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "turkish") {
+                        languages.insert(Language::from_str("Turkish").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "azerbaijani")
+                || cfg!(feature = "estonian")
+                || cfg!(feature = "finnish")
+                || cfg!(feature = "german")
+                || cfg!(feature = "hungarian")
+                || cfg!(feature = "icelandic")
+                || cfg!(feature = "swedish")
+                || cfg!(feature = "turkish")
+            {
+                mapping.insert("Öö", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "azerbaijani") {
+                        languages.insert(Language::from_str("Azerbaijani").unwrap());
+                    }
+                    if cfg!(feature = "estonian") {
+                        languages.insert(Language::from_str("Estonian").unwrap());
+                    }
+                    if cfg!(feature = "finnish") {
+                        languages.insert(Language::from_str("Finnish").unwrap());
+                    }
+                    if cfg!(feature = "german") {
+                        languages.insert(Language::from_str("German").unwrap());
+                    }
+                    if cfg!(feature = "hungarian") {
+                        languages.insert(Language::from_str("Hungarian").unwrap());
+                    }
+                    if cfg!(feature = "icelandic") {
+                        languages.insert(Language::from_str("Icelandic").unwrap());
+                    }
+                    if cfg!(feature = "swedish") {
+                        languages.insert(Language::from_str("Swedish").unwrap());
+                    }
+                    if cfg!(feature = "turkish") {
+                        languages.insert(Language::from_str("Turkish").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "catalan")
+                || cfg!(feature = "hungarian")
+                || cfg!(feature = "icelandic")
+                || cfg!(feature = "irish")
+                || cfg!(feature = "polish")
+                || cfg!(feature = "portuguese")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "spanish")
+                || cfg!(feature = "vietnamese")
+                || cfg!(feature = "yoruba")
+            {
+                mapping.insert("Óó", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "hungarian") {
+                        languages.insert(Language::from_str("Hungarian").unwrap());
+                    }
+                    if cfg!(feature = "icelandic") {
+                        languages.insert(Language::from_str("Icelandic").unwrap());
+                    }
+                    if cfg!(feature = "irish") {
+                        languages.insert(Language::from_str("Irish").unwrap());
+                    }
+                    if cfg!(feature = "polish") {
+                        languages.insert(Language::from_str("Polish").unwrap());
+                    }
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "spanish") {
+                        languages.insert(Language::from_str("Spanish").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    if cfg!(feature = "yoruba") {
+                        languages.insert(Language::from_str("Yoruba").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "catalan")
+                || cfg!(feature = "czech")
+                || cfg!(feature = "icelandic")
+                || cfg!(feature = "irish")
+                || cfg!(feature = "hungarian")
+                || cfg!(feature = "portuguese")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "spanish")
+                || cfg!(feature = "vietnamese")
+                || cfg!(feature = "yoruba")
+            {
+                mapping.insert("ÁáÍíÚú", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "czech") {
+                        languages.insert(Language::from_str("Czech").unwrap());
+                    }
+                    if cfg!(feature = "icelandic") {
+                        languages.insert(Language::from_str("Icelandic").unwrap());
+                    }
+                    if cfg!(feature = "irish") {
+                        languages.insert(Language::from_str("Irish").unwrap());
+                    }
+                    if cfg!(feature = "hungarian") {
+                        languages.insert(Language::from_str("Hungarian").unwrap());
+                    }
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "spanish") {
+                        languages.insert(Language::from_str("Spanish").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    if cfg!(feature = "yoruba") {
+                        languages.insert(Language::from_str("Yoruba").unwrap());
+                    }
+                    languages
+                });
+            }
+
+            if cfg!(feature = "catalan")
+                || cfg!(feature = "czech")
+                || cfg!(feature = "french")
+                || cfg!(feature = "hungarian")
+                || cfg!(feature = "icelandic")
+                || cfg!(feature = "irish")
+                || cfg!(feature = "italian")
+                || cfg!(feature = "portuguese")
+                || cfg!(feature = "slovak")
+                || cfg!(feature = "spanish")
+                || cfg!(feature = "vietnamese")
+                || cfg!(feature = "yoruba")
+            {
+                mapping.insert("Éé", {
+                    let mut languages = hashset!();
+                    if cfg!(feature = "catalan") {
+                        languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "czech") {
+                        languages.insert(Language::from_str("Czech").unwrap());
+                    }
+                    if cfg!(feature = "french") {
+                        languages.insert(Language::from_str("French").unwrap());
+                    }
+                    if cfg!(feature = "hungarian") {
+                        languages.insert(Language::from_str("Hungarian").unwrap());
+                    }
+                    if cfg!(feature = "icelandic") {
+                        languages.insert(Language::from_str("Icelandic").unwrap());
+                    }
+                    if cfg!(feature = "irish") {
+                        languages.insert(Language::from_str("Irish").unwrap());
+                    }
+                    if cfg!(feature = "italian") {
+                        languages.insert(Language::from_str("Italian").unwrap());
+                    }
+                    if cfg!(feature = "portuguese") {
+                        languages.insert(Language::from_str("Portuguese").unwrap());
+                    }
+                    if cfg!(feature = "slovak") {
+                        languages.insert(Language::from_str("Slovak").unwrap());
+                    }
+                    if cfg!(feature = "spanish") {
+                        languages.insert(Language::from_str("Spanish").unwrap());
+                    }
+                    if cfg!(feature = "vietnamese") {
+                        languages.insert(Language::from_str("Vietnamese").unwrap());
+                    }
+                    if cfg!(feature = "yoruba") {
+                        languages.insert(Language::from_str("Yoruba").unwrap());
+                    }
+                    languages
+                });
+            }
+        }
+
+        /*
         hashmap!(
-            "Ãã" => hashset!(Portuguese, Vietnamese),
-            "ĄąĘę" => hashset!(Lithuanian, Polish),
-            "Żż" => hashset!(Polish, Romanian),
-            "Îî" => hashset!(French, Romanian),
-            "Ññ" => hashset!(Basque, Spanish),
-            "ŇňŤť" => hashset!(Czech, Slovak),
-            "Ăă" => hashset!(Romanian, Vietnamese),
-            "İıĞğ" => hashset!(Azerbaijani, Turkish),
-            "ЈјЉљЊњ" => hashset!(Macedonian, Serbian),
-            "ẸẹỌọ" => hashset!(Vietnamese, Yoruba),
-            "ÐðÞþ" => hashset!(Icelandic, Turkish),
-            "Ûû" => hashset!(French, Hungarian),
-            "Ōō" => hashset!(Maori, Yoruba),
-
-            "ĀāĒēĪī" => hashset!(Latvian, Maori, Yoruba),
-            "Şş" => hashset!(Azerbaijani, Romanian, Turkish),
-            "Ďď" => hashset!(Czech, Romanian, Slovak),
-            "Ćć" => hashset!(Bosnian, Croatian, Polish),
-            "Đđ" => hashset!(Bosnian, Croatian, Vietnamese),
-            "Іі" => hashset!(Belarusian, Kazakh, Ukrainian),
-            "Ìì" => hashset!(Italian, Vietnamese, Yoruba),
-
-            "Ūū" => hashset!(Latvian, Lithuanian, Maori, Yoruba),
-            "Ëë" => hashset!(Afrikaans, Albanian, Dutch, French),
-            "ÈèÙù" => hashset!(French, Italian, Vietnamese, Yoruba),
-            "Êê" => hashset!(Afrikaans, French, Portuguese, Vietnamese),
-            "Õõ" => hashset!(Estonian, Hungarian, Portuguese, Vietnamese),
-            "Ôô" => hashset!(French, Portuguese, Slovak, Vietnamese),
-            "Øø" => hashset!(Bokmal, Danish, Nynorsk),
-            "ЁёЫыЭэ" => hashset!(Belarusian, Kazakh, Mongolian, Russian),
-            "ЩщЪъ" => hashset!(Bulgarian, Kazakh, Mongolian, Russian),
-            "Òò" => hashset!(Catalan, Italian, Vietnamese, Yoruba),
-            "Ââ" => hashset!(Portuguese, Romanian, Turkish, Vietnamese),
-
-            "Ýý" => hashset!(Czech, Icelandic, Slovak, Turkish, Vietnamese),
-            "Ää" => hashset!(Estonian, Finnish, German, Slovak, Swedish),
-            "Àà" => hashset!(Catalan, French, Italian, Portuguese, Vietnamese),
-            "Ææ" => hashset!(Bokmal, Danish, Icelandic, Nynorsk),
-            "Åå" => hashset!(Bokmal, Danish, Nynorsk, Swedish),
-
-            "Üü" => hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish),
-            "ČčŠšŽž" => hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene),
-            "Çç" => hashset!(
-                Albanian, Azerbaijani, Basque, Catalan, French, Portuguese, Turkish
-            ),
-            "Öö" => hashset!(
-                Azerbaijani, Estonian, Finnish, German, Hungarian, Icelandic, Swedish, Turkish
-            ),
-
-            "Óó" => hashset!(
-                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish,
-                Vietnamese, Yoruba
-            ),
-            "ÁáÍíÚú" => hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
-                Vietnamese, Yoruba
-            ),
-
             "Éé" => hashset!(
                 Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
                 Spanish, Vietnamese, Yoruba
             )
         )
+        */
+        mapping
     });

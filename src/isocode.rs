@@ -24,229 +24,304 @@ use strum_macros::EnumString;
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
 pub enum IsoCode639_1 {
-    /// The ISO 639-1 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
+    #[cfg(feature = "afrikaans")]
+    /// The ISO 639-1 code for [`Afrikaans`](crate::language::Language::Afrikaans)
     AF,
 
-    /// The ISO 639-1 code for [`Arabic`](./enum.Language.html#variant.Arabic)
+    #[cfg(feature = "arabic")]
+    /// The ISO 639-1 code for [`Arabic`](crate::language::Language::Arabic)
     AR,
 
-    /// The ISO 639-1 code for [`Azerbaijani`](./enum.Language.html#variant.Azerbaijani)
+    #[cfg(feature = "azerbaijani")]
+    /// The ISO 639-1 code for [`Azerbaijani`](crate::language::Language::Azerbaijani)
     AZ,
 
-    /// The ISO 639-1 code for [`Belarusian`](./enum.Language.html#variant.Belarusian)
+    #[cfg(feature = "belarusian")]
+    /// The ISO 639-1 code for [`Belarusian`](crate::language::Language::Belarusian)
     BE,
 
-    /// The ISO 639-1 code for [`Bulgarian`](./enum.Language.html#variant.Bulgarian)
+    #[cfg(feature = "bulgarian")]
+    /// The ISO 639-1 code for [`Bulgarian`](crate::language::Language::Bulgarian)
     BG,
 
-    /// The ISO 639-1 code for [`Bengali`](./enum.Language.html#variant.Bengali)
+    #[cfg(feature = "bengali")]
+    /// The ISO 639-1 code for [`Bengali`](crate::language::Language::Bengali)
     BN,
 
-    /// The ISO 639-1 code for [`Bosnian`](./enum.Language.html#variant.Bosnian)
+    #[cfg(feature = "bosnian")]
+    /// The ISO 639-1 code for [`Bosnian`](crate::language::Language::Bosnian)
     BS,
 
-    /// The ISO 639-1 code for [`Catalan`](./enum.Language.html#variant.Catalan)
+    #[cfg(feature = "catalan")]
+    /// The ISO 639-1 code for [`Catalan`](crate::language::Language::Catalan)
     CA,
 
-    /// The ISO 639-1 code for [`Czech`](./enum.Language.html#variant.Czech)
+    #[cfg(feature = "czech")]
+    /// The ISO 639-1 code for [`Czech`](crate::language::Language::Czech)
     CS,
 
-    /// The ISO 639-1 code for [`Welsh`](./enum.Language.html#variant.Welsh)
+    #[cfg(feature = "welsh")]
+    /// The ISO 639-1 code for [`Welsh`](crate::language::Language::Welsh)
     CY,
 
-    /// The ISO 639-1 code for [`Danish`](./enum.Language.html#variant.Danish)
+    #[cfg(feature = "danish")]
+    /// The ISO 639-1 code for [`Danish`](crate::language::Language::Danish)
     DA,
 
-    /// The ISO 639-1 code for [`German`](./enum.Language.html#variant.German)
+    #[cfg(feature = "german")]
+    /// The ISO 639-1 code for [`German`](crate::language::Language::German)
     DE,
 
-    /// The ISO 639-1 code for [`Greek`](./enum.Language.html#variant.Greek)
+    #[cfg(feature = "greek")]
+    /// The ISO 639-1 code for [`Greek`](crate::language::Language::Greek)
     EL,
 
-    /// The ISO 639-1 code for [`English`](./enum.Language.html#variant.English)
+    #[cfg(feature = "english")]
+    /// The ISO 639-1 code for [`English`](crate::language::Language::English)
     EN,
 
-    /// The ISO 639-1 code for [`Esperanto`](./enum.Language.html#variant.Esperanto)
+    #[cfg(feature = "esperanto")]
+    /// The ISO 639-1 code for [`Esperanto`](crate::language::Language::Esperanto)
     EO,
 
-    /// The ISO 639-1 code for [`Spanish`](./enum.Language.html#variant.Spanish)
+    #[cfg(feature = "spanish")]
+    /// The ISO 639-1 code for [`Spanish`](crate::language::Language::Spanish)
     ES,
 
-    /// The ISO 639-1 code for [`Estonian`](./enum.Language.html#variant.Estonian)
+    #[cfg(feature = "estonian")]
+    /// The ISO 639-1 code for [`Estonian`](crate::language::Language::Estonian)
     ET,
 
-    /// The ISO 639-1 code for [`Basque`](./enum.Language.html#variant.Basque)
+    #[cfg(feature = "basque")]
+    /// The ISO 639-1 code for [`Basque`](crate::language::Language::Basque)
     EU,
 
-    /// The ISO 639-1 code for [`Persian`](./enum.Language.html#variant.Persian)
+    #[cfg(feature = "persian")]
+    /// The ISO 639-1 code for [`Persian`](crate::language::Language::Persian)
     FA,
 
-    /// The ISO 639-1 code for [`Finnish`](./enum.Language.html#variant.Finnish)
+    #[cfg(feature = "finnish")]
+    /// The ISO 639-1 code for [`Finnish`](crate::language::Language::Finnish)
     FI,
 
-    /// The ISO 639-1 code for [`French`](./enum.Language.html#variant.French)
+    #[cfg(feature = "french")]
+    /// The ISO 639-1 code for [`French`](crate::language::Language::French)
     FR,
 
-    /// The ISO 639-1 code for [`Irish`](./enum.Language.html#variant.Irish)
+    #[cfg(feature = "irish")]
+    /// The ISO 639-1 code for [`Irish`](crate::language::Language::Irish)
     GA,
 
-    /// The ISO 639-1 code for [`Gujarati`](./enum.Language.html#variant.Gujarati)
+    #[cfg(feature = "gujarati")]
+    /// The ISO 639-1 code for [`Gujarati`](crate::language::Language::Gujarati)
     GU,
 
-    /// The ISO 639-1 code for [`Hebrew`](./enum.Language.html#variant.Hebrew)
+    #[cfg(feature = "hebrew")]
+    /// The ISO 639-1 code for [`Hebrew`](crate::language::Language::Hebrew)
     HE,
 
-    /// The ISO 639-1 code for [`Hindi`](./enum.Language.html#variant.Hindi)
+    #[cfg(feature = "hindi")]
+    /// The ISO 639-1 code for [`Hindi`](crate::language::Language::Hindi)
     HI,
 
-    /// The ISO 639-1 code for [`Croatian`](./enum.Language.html#variant.Croatian)
+    #[cfg(feature = "croatian")]
+    /// The ISO 639-1 code for [`Croatian`](crate::language::Language::Croatian)
     HR,
 
-    /// The ISO 639-1 code for [`Hungarian`](./enum.Language.html#variant.Hungarian)
+    #[cfg(feature = "hungarian")]
+    /// The ISO 639-1 code for [`Hungarian`](crate::language::Language::Hungarian)
     HU,
 
-    /// The ISO 639-1 code for [`Armenian`](./enum.Language.html#variant.Armenian)
+    #[cfg(feature = "armenian")]
+    /// The ISO 639-1 code for [`Armenian`](crate::language::Language::Armenian)
     HY,
 
-    /// The ISO 639-1 code for [`Indonesian`](./enum.Language.html#variant.Indonesian)
+    #[cfg(feature = "indonesian")]
+    /// The ISO 639-1 code for [`Indonesian`](crate::language::Language::Indonesian)
     ID,
 
-    /// The ISO 639-1 code for [`Icelandic`](./enum.Language.html#variant.Icelandic)
+    #[cfg(feature = "icelandic")]
+    /// The ISO 639-1 code for [`Icelandic`](crate::language::Language::Icelandic)
     IS,
 
-    /// The ISO 639-1 code for [`Italian`](./enum.Language.html#variant.Italian)
+    #[cfg(feature = "italian")]
+    /// The ISO 639-1 code for [`Italian`](crate::language::Language::Italian)
     IT,
 
-    /// The ISO 639-1 code for [`Japanese`](./enum.Language.html#variant.Japanese)
+    #[cfg(feature = "japanese")]
+    /// The ISO 639-1 code for [`Japanese`](crate::language::Language::Japanese)
     JA,
 
-    /// The ISO 639-1 code for [`Georgian`](./enum.Language.html#variant.Georgian)
+    #[cfg(feature = "georgian")]
+    /// The ISO 639-1 code for [`Georgian`](crate::language::Language::Georgian)
     KA,
 
-    /// The ISO 639-1 code for [`Kazakh`](./enum.Language.html#variant.Kazakh)
+    #[cfg(feature = "kazakh")]
+    /// The ISO 639-1 code for [`Kazakh`](crate::language::Language::Kazakh)
     KK,
 
-    /// The ISO 639-1 code for [`Korean`](./enum.Language.html#variant.Korean)
+    #[cfg(feature = "korean")]
+    /// The ISO 639-1 code for [`Korean`](crate::language::Language::Korean)
     KO,
 
-    /// The ISO 639-1 code for [`Latin`](./enum.Language.html#variant.Latin)
+    #[cfg(feature = "latin")]
+    /// The ISO 639-1 code for [`Latin`](crate::language::Language::Latin)
     LA,
 
-    /// The ISO 639-1 code for [`Ganda`](./enum.Language.html#variant.Ganda)
+    #[cfg(feature = "ganda")]
+    /// The ISO 639-1 code for [`Ganda`](crate::language::Language::Ganda)
     LG,
 
-    /// The ISO 639-1 code for [`Lithuanian`](./enum.Language.html#variant.Lithuanian)
+    #[cfg(feature = "lithuanian")]
+    /// The ISO 639-1 code for [`Lithuanian`](crate::language::Language::Lithuanian)
     LT,
 
-    /// The ISO 639-1 code for [`Latvian`](./enum.Language.html#variant.Latvian)
+    #[cfg(feature = "latvian")]
+    /// The ISO 639-1 code for [`Latvian`](crate::language::Language::Latvian)
     LV,
 
-    /// The ISO 639-1 code for [`Maori`](./enum.Language.html#variant.Maori)
+    #[cfg(feature = "maori")]
+    /// The ISO 639-1 code for [`Maori`](crate::language::Language::Maori)
     MI,
 
-    /// The ISO 639-1 code for [`Macedonian`](./enum.Language.html#variant.Macedonian)
+    #[cfg(feature = "macedonian")]
+    /// The ISO 639-1 code for [`Macedonian`](crate::language::Language::Macedonian)
     MK,
 
-    /// The ISO 639-1 code for [`Mongolian`](./enum.Language.html#variant.Mongolian)
+    #[cfg(feature = "mongolian")]
+    /// The ISO 639-1 code for [`Mongolian`](crate::language::Language::Mongolian)
     MN,
 
-    /// The ISO 639-1 code for [`Marathi`](./enum.Language.html#variant.Marathi)
+    #[cfg(feature = "marathi")]
+    /// The ISO 639-1 code for [`Marathi`](crate::language::Language::Marathi)
     MR,
 
-    /// The ISO 639-1 code for [`Malay`](./enum.Language.html#variant.Malay)
+    #[cfg(feature = "malay")]
+    /// The ISO 639-1 code for [`Malay`](crate::language::Language::Malay)
     MS,
 
-    /// The ISO 639-1 code for [`Norwegian Bokmal`](./enum.Language.html#variant.Bokmal)
+    #[cfg(feature = "bokmal")]
+    /// The ISO 639-1 code for [`Norwegian Bokmal`](crate::language::Language::Bokmal)
     NB,
 
-    /// The ISO 639-1 code for [`Dutch`](./enum.Language.html#variant.Dutch)
+    #[cfg(feature = "dutch")]
+    /// The ISO 639-1 code for [`Dutch`](crate::language::Language::Dutch)
     NL,
 
-    /// The ISO 639-1 code for [`Norwegian Nynorsk`](./enum.Language.html#variant.Nynorsk)
+    #[cfg(feature = "nynorsk")]
+    /// The ISO 639-1 code for [`Norwegian Nynorsk`](crate::language::Language::Nynorsk)
     NN,
 
-    /// The ISO 639-1 code for [`Punjabi`](./enum.Language.html#variant.Punjabi)
+    #[cfg(feature = "punjabi")]
+    /// The ISO 639-1 code for [`Punjabi`](crate::language::Language::Punjabi)
     PA,
 
-    /// The ISO 639-1 code for [`Polish`](./enum.Language.html#variant.Polish)
+    #[cfg(feature = "polish")]
+    /// The ISO 639-1 code for [`Polish`](crate::language::Language::Polish)
     PL,
 
-    /// The ISO 639-1 code for [`Portuguese`](./enum.Language.html#variant.Portuguese)
+    #[cfg(feature = "portuguese")]
+    /// The ISO 639-1 code for [`Portuguese`](crate::language::Language::Portuguese)
     PT,
 
-    /// The ISO 639-1 code for [`Romanian`](./enum.Language.html#variant.Romanian)
+    #[cfg(feature = "romanian")]
+    /// The ISO 639-1 code for [`Romanian`](crate::language::Language::Romanian)
     RO,
 
-    /// The ISO 639-1 code for [`Russian`](./enum.Language.html#variant.Russian)
+    #[cfg(feature = "russian")]
+    /// The ISO 639-1 code for [`Russian`](crate::language::Language::Russian)
     RU,
 
-    /// The ISO 639-1 code for [`Slovak`](./enum.Language.html#variant.Slovak)
+    #[cfg(feature = "slovak")]
+    /// The ISO 639-1 code for [`Slovak`](crate::language::Language::Slovak)
     SK,
 
-    /// The ISO 639-1 code for [`Slovene`](./enum.Language.html#variant.Slovene)
+    #[cfg(feature = "slovene")]
+    /// The ISO 639-1 code for [`Slovene`](crate::language::Language::Slovene)
     SL,
 
-    /// The ISO 639-1 code for [`Shona`](./enum.Language.html#variant.Shona)
+    #[cfg(feature = "shona")]
+    /// The ISO 639-1 code for [`Shona`](crate::language::Language::Shona)
     SN,
 
-    /// The ISO 639-1 code for [`Somali`](./enum.Language.html#variant.Somali)
+    #[cfg(feature = "somali")]
+    /// The ISO 639-1 code for [`Somali`](crate::language::Language::Somali)
     SO,
 
-    /// The ISO 639-1 code for [`Albanian`](./enum.Language.html#variant.Albanian)
+    #[cfg(feature = "albanian")]
+    /// The ISO 639-1 code for [`Albanian`](crate::language::Language::Albanian)
     SQ,
 
-    /// The ISO 639-1 code for [`Serbian`](./enum.Language.html#variant.Serbian)
+    #[cfg(feature = "serbian")]
+    /// The ISO 639-1 code for [`Serbian`](crate::language::Language::Serbian)
     SR,
 
-    /// The ISO 639-1 code for [`Sotho`](./enum.Language.html#variant.Sotho)
+    #[cfg(feature = "sotho")]
+    /// The ISO 639-1 code for [`Sotho`](crate::language::Language::Sotho)
     ST,
 
-    /// The ISO 639-1 code for [`Swedish`](./enum.Language.html#variant.Swedish)
+    #[cfg(feature = "swedish")]
+    /// The ISO 639-1 code for [`Swedish`](crate::language::Language::Swedish)
     SV,
 
-    /// The ISO 639-1 code for [`Swahili`](./enum.Language.html#variant.Swahili)
+    #[cfg(feature = "swahili")]
+    /// The ISO 639-1 code for [`Swahili`](crate::language::Language::Swahili)
     SW,
 
-    /// The ISO 639-1 code for [`Tamil`](./enum.Language.html#variant.Tamil)
+    #[cfg(feature = "tamil")]
+    /// The ISO 639-1 code for [`Tamil`](crate::language::Language::Tamil)
     TA,
 
-    /// The ISO 639-1 code for [`Telugu`](./enum.Language.html#variant.Telugu)
+    #[cfg(feature = "telugu")]
+    /// The ISO 639-1 code for [`Telugu`](crate::language::Language::Telugu)
     TE,
 
-    /// The ISO 639-1 code for [`Thai`](./enum.Language.html#variant.Thai)
+    #[cfg(feature = "thai")]
+    /// The ISO 639-1 code for [`Thai`](crate::language::Language::Thai)
     TH,
 
-    /// The ISO 639-1 code for [`Tagalog`](./enum.Language.html#variant.Tagalog)
+    #[cfg(feature = "tagalog")]
+    /// The ISO 639-1 code for [`Tagalog`](crate::language::Language::Tagalog)
     TL,
 
-    /// The ISO 639-1 code for [`Tswana`](./enum.Language.html#variant.Tswana)
+    #[cfg(feature = "tswana")]
+    /// The ISO 639-1 code for [`Tswana`](crate::language::Language::Tswana)
     TN,
 
-    /// The ISO 639-1 code for [`Turkish`](./enum.Language.html#variant.Turkish)
+    #[cfg(feature = "turkish")]
+    /// The ISO 639-1 code for [`Turkish`](crate::language::Language::Turkish)
     TR,
 
-    /// The ISO 639-1 code for [`Tsonga`](./enum.Language.html#variant.Tsonga)
+    #[cfg(feature = "tsonga")]
+    /// The ISO 639-1 code for [`Tsonga`](crate::language::Language::Tsonga)
     TS,
 
-    /// The ISO 639-1 code for [`Ukrainian`](./enum.Language.html#variant.Ukrainian)
+    #[cfg(feature = "ukrainian")]
+    /// The ISO 639-1 code for [`Ukrainian`](crate::language::Language::Ukrainian)
     UK,
 
-    /// The ISO 639-1 code for [`Urdu`](./enum.Language.html#variant.Urdu)
+    #[cfg(feature = "urdu")]
+    /// The ISO 639-1 code for [`Urdu`](crate::language::Language::Urdu)
     UR,
 
-    /// The ISO 639-1 code for [`Vietnamese`](./enum.Language.html#variant.Vietnamese)
+    #[cfg(feature = "vietnamese")]
+    /// The ISO 639-1 code for [`Vietnamese`](crate::language::Language::Vietnamese)
     VI,
 
-    /// The ISO 639-1 code for [`Xhosa`](./enum.Language.html#variant.Xhosa)
+    #[cfg(feature = "xhosa")]
+    /// The ISO 639-1 code for [`Xhosa`](crate::language::Language::Xhosa)
     XH,
 
-    /// The ISO 639-1 code for [`Yoruba`](./enum.Language.html#variant.Yoruba)
+    #[cfg(feature = "yoruba")]
+    /// The ISO 639-1 code for [`Yoruba`](crate::language::Language::Yoruba)
     YO,
 
-    /// The ISO 639-1 code for [`Chinese`](./enum.Language.html#variant.Chinese)
+    #[cfg(feature = "chinese")]
+    /// The ISO 639-1 code for [`Chinese`](crate::language::Language::Chinese)
     ZH,
 
-    /// The ISO 639-1 code for [`Zulu`](./enum.Language.html#variant.Zulu)
+    #[cfg(feature = "zulu")]
+    /// The ISO 639-1 code for [`Zulu`](crate::language::Language::Zulu)
     ZU,
 }
 
@@ -257,229 +332,304 @@ pub enum IsoCode639_1 {
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
 pub enum IsoCode639_3 {
-    /// The ISO 639-3 code for [`Afrikaans`](./enum.Language.html#variant.Afrikaans)
+    #[cfg(feature = "afrikaans")]
+    /// The ISO 639-3 code for [`Afrikaans`](crate::language::Language::Afrikaans)
     AFR,
 
-    /// The ISO 639-3 code for [`Arabic`](./enum.Language.html#variant.Arabic)
+    #[cfg(feature = "arabic")]
+    /// The ISO 639-3 code for [`Arabic`](crate::language::Language::Arabic)
     ARA,
 
-    /// The ISO 639-3 code for [`Azerbaijani`](./enum.Language.html#variant.Azerbaijani)
+    #[cfg(feature = "azerbaijani")]
+    /// The ISO 639-3 code for [`Azerbaijani`](crate::language::Language::Azerbaijani)
     AZE,
 
-    /// The ISO 639-3 code for [`Belarusian`](./enum.Language.html#variant.Belarusian)
+    #[cfg(feature = "belarusian")]
+    /// The ISO 639-3 code for [`Belarusian`](crate::language::Language::Belarusian)
     BEL,
 
-    /// The ISO 639-3 code for [`Bengali`](./enum.Language.html#variant.Bengali)
+    #[cfg(feature = "bengali")]
+    /// The ISO 639-3 code for [`Bengali`](crate::language::Language::Bengali)
     BEN,
 
-    /// The ISO 639-3 code for [`Bosnian`](./enum.Language.html#variant.Bosnian)
+    #[cfg(feature = "bosnian")]
+    /// The ISO 639-3 code for [`Bosnian`](crate::language::Language::Bosnian)
     BOS,
 
-    /// The ISO 639-3 code for [`Bulgarian`](./enum.Language.html#variant.Bulgarian)
+    #[cfg(feature = "bulgarian")]
+    /// The ISO 639-3 code for [`Bulgarian`](crate::language::Language::Bulgarian)
     BUL,
 
-    /// The ISO 639-3 code for [`Catalan`](./enum.Language.html#variant.Catalan)
+    #[cfg(feature = "catalan")]
+    /// The ISO 639-3 code for [`Catalan`](crate::language::Language::Catalan)
     CAT,
 
-    /// The ISO 639-3 code for [`Czech`](./enum.Language.html#variant.Czech)
+    #[cfg(feature = "czech")]
+    /// The ISO 639-3 code for [`Czech`](crate::language::Language::Czech)
     CES,
 
-    /// The ISO 639-3 code for [`Welsh`](./enum.Language.html#variant.Welsh)
+    #[cfg(feature = "welsh")]
+    /// The ISO 639-3 code for [`Welsh`](crate::language::Language::Welsh)
     CYM,
 
-    /// The ISO 639-3 code for [`Danish`](./enum.Language.html#variant.Danish)
+    #[cfg(feature = "danish")]
+    /// The ISO 639-3 code for [`Danish`](crate::language::Language::Danish)
     DAN,
 
-    /// The ISO 639-3 code for [`German`](./enum.Language.html#variant.German)
+    #[cfg(feature = "german")]
+    /// The ISO 639-3 code for [`German`](crate::language::Language::German)
     DEU,
 
-    /// The ISO 639-3 code for [`Greek`](./enum.Language.html#variant.Greek)
+    #[cfg(feature = "greek")]
+    /// The ISO 639-3 code for [`Greek`](crate::language::Language::Greek)
     ELL,
 
-    /// The ISO 639-3 code for [`English`](./enum.Language.html#variant.English)
+    #[cfg(feature = "english")]
+    /// The ISO 639-3 code for [`English`](crate::language::Language::English)
     ENG,
 
-    /// The ISO 639-3 code for [`Esperanto`](./enum.Language.html#variant.Esperanto)
+    #[cfg(feature = "esperanto")]
+    /// The ISO 639-3 code for [`Esperanto`](crate::language::Language::Esperanto)
     EPO,
 
-    /// The ISO 639-3 code for [`Estonian`](./enum.Language.html#variant.Estonian)
+    #[cfg(feature = "estonian")]
+    /// The ISO 639-3 code for [`Estonian`](crate::language::Language::Estonian)
     EST,
 
-    /// The ISO 639-3 code for [`Basque`](./enum.Language.html#variant.Basque)
+    #[cfg(feature = "basque")]
+    /// The ISO 639-3 code for [`Basque`](crate::language::Language::Basque)
     EUS,
 
-    /// The ISO 639-3 code for [`Persian`](./enum.Language.html#variant.Persian)
+    #[cfg(feature = "persian")]
+    /// The ISO 639-3 code for [`Persian`](crate::language::Language::Persian)
     FAS,
 
-    /// The ISO 639-3 code for [`Finnish`](./enum.Language.html#variant.Finnish)
+    #[cfg(feature = "finnish")]
+    /// The ISO 639-3 code for [`Finnish`](crate::language::Language::Finnish)
     FIN,
 
-    /// The ISO 639-3 code for [`French`](./enum.Language.html#variant.French)
+    #[cfg(feature = "french")]
+    /// The ISO 639-3 code for [`French`](crate::language::Language::French)
     FRA,
 
-    /// The ISO 639-3 code for [`Irish`](./enum.Language.html#variant.Irish)
+    #[cfg(feature = "irish")]
+    /// The ISO 639-3 code for [`Irish`](crate::language::Language::Irish)
     GLE,
 
-    /// The ISO 639-3 code for [`Gujarati`](./enum.Language.html#variant.Gujarati)
+    #[cfg(feature = "gujarati")]
+    /// The ISO 639-3 code for [`Gujarati`](crate::language::Language::Gujarati)
     GUJ,
 
-    /// The ISO 639-3 code for [`Hebrew`](./enum.Language.html#variant.Hebrew)
+    #[cfg(feature = "hebrew")]
+    /// The ISO 639-3 code for [`Hebrew`](crate::language::Language::Hebrew)
     HEB,
 
-    /// The ISO 639-3 code for [`Hindi`](./enum.Language.html#variant.Hindi)
+    #[cfg(feature = "hindi")]
+    /// The ISO 639-3 code for [`Hindi`](crate::language::Language::Hindi)
     HIN,
 
-    /// The ISO 639-3 code for [`Croatian`](./enum.Language.html#variant.Croatian)
+    #[cfg(feature = "croatian")]
+    /// The ISO 639-3 code for [`Croatian`](crate::language::Language::Croatian)
     HRV,
 
-    /// The ISO 639-3 code for [`Hungarian`](./enum.Language.html#variant.Hungarian)
+    #[cfg(feature = "hungarian")]
+    /// The ISO 639-3 code for [`Hungarian`](crate::language::Language::Hungarian)
     HUN,
 
-    /// The ISO 639-3 code for [`Armenian`](./enum.Language.html#variant.Armenian)
+    #[cfg(feature = "armenian")]
+    /// The ISO 639-3 code for [`Armenian`](crate::language::Language::Armenian)
     HYE,
 
-    /// The ISO 639-3 code for [`Indonesian`](./enum.Language.html#variant.Indonesian)
+    #[cfg(feature = "indonesian")]
+    /// The ISO 639-3 code for [`Indonesian`](crate::language::Language::Indonesian)
     IND,
 
-    /// The ISO 639-3 code for [`Icelandic`](./enum.Language.html#variant.Icelandic)
+    #[cfg(feature = "icelandic")]
+    /// The ISO 639-3 code for [`Icelandic`](crate::language::Language::Icelandic)
     ISL,
 
-    /// The ISO 639-3 code for [`Italian`](./enum.Language.html#variant.Italian)
+    #[cfg(feature = "italian")]
+    /// The ISO 639-3 code for [`Italian`](crate::language::Language::Italian)
     ITA,
 
-    /// The ISO 639-3 code for [`Japanese`](./enum.Language.html#variant.Japanese)
+    #[cfg(feature = "japanese")]
+    /// The ISO 639-3 code for [`Japanese`](crate::language::Language::Japanese)
     JPN,
 
-    /// The ISO 639-3 code for [`Georgian`](./enum.Language.html#variant.Georgian)
+    #[cfg(feature = "georgian")]
+    /// The ISO 639-3 code for [`Georgian`](crate::language::Language::Georgian)
     KAT,
 
-    /// The ISO 639-3 code for [`Kazakh`](./enum.Language.html#variant.Kazakh)
+    #[cfg(feature = "kazakh")]
+    /// The ISO 639-3 code for [`Kazakh`](crate::language::Language::Kazakh)
     KAZ,
 
-    /// The ISO 639-3 code for [`Korean`](./enum.Language.html#variant.Korean)
+    #[cfg(feature = "korean")]
+    /// The ISO 639-3 code for [`Korean`](crate::language::Language::Korean)
     KOR,
 
-    /// The ISO 639-3 code for [`Latin`](./enum.Language.html#variant.Latin)
+    #[cfg(feature = "latin")]
+    /// The ISO 639-3 code for [`Latin`](crate::language::Language::Latin)
     LAT,
 
-    /// The ISO 639-3 code for [`Latvian`](./enum.Language.html#variant.Latvian)
+    #[cfg(feature = "latvian")]
+    /// The ISO 639-3 code for [`Latvian`](crate::language::Language::Latvian)
     LAV,
 
-    /// The ISO 639-3 code for [`Lithuanian`](./enum.Language.html#variant.Lithuanian)
+    #[cfg(feature = "lithuanian")]
+    /// The ISO 639-3 code for [`Lithuanian`](crate::language::Language::Lithuanian)
     LIT,
 
-    /// The ISO 639-3 code for [`Ganda`](./enum.Language.html#variant.Ganda)
+    #[cfg(feature = "ganda")]
+    /// The ISO 639-3 code for [`Ganda`](crate::language::Language::Ganda)
     LUG,
 
-    /// The ISO 639-3 code for [`Marathi`](./enum.Language.html#variant.Marathi)
+    #[cfg(feature = "marathi")]
+    /// The ISO 639-3 code for [`Marathi`](crate::language::Language::Marathi)
     MAR,
 
-    /// The ISO 639-3 code for [`Macedonian`](./enum.Language.html#variant.Macedonian)
+    #[cfg(feature = "macedonian")]
+    /// The ISO 639-3 code for [`Macedonian`](crate::language::Language::Macedonian)
     MKD,
 
-    /// The ISO 639-3 code for [`Mongolian`](./enum.Language.html#variant.Mongolian)
+    #[cfg(feature = "mongolian")]
+    /// The ISO 639-3 code for [`Mongolian`](crate::language::Language::Mongolian)
     MON,
 
-    /// The ISO 639-3 code for [`Maori`](./enum.Language.html#variant.Maori)
+    #[cfg(feature = "maori")]
+    /// The ISO 639-3 code for [`Maori`](crate::language::Language::Maori)
     MRI,
 
-    /// The ISO 639-3 code for [`Malay`](./enum.Language.html#variant.Malay)
+    #[cfg(feature = "malay")]
+    /// The ISO 639-3 code for [`Malay`](crate::language::Language::Malay)
     MSA,
 
-    /// The ISO 639-3 code for [`Dutch`](./enum.Language.html#variant.Dutch)
+    #[cfg(feature = "dutch")]
+    /// The ISO 639-3 code for [`Dutch`](crate::language::Language::Dutch)
     NLD,
 
-    /// The ISO 639-3 code for [`Norwegian Nynorsk`](./enum.Language.html#variant.Nynorsk)
+    #[cfg(feature = "nynorsk")]
+    /// The ISO 639-3 code for [`Norwegian Nynorsk`](crate::language::Language::Nynorsk)
     NNO,
 
-    /// The ISO 639-3 code for [`Norwegian Bokmal`](./enum.Language.html#variant.Bokmal)
+    #[cfg(feature = "bokmal")]
+    /// The ISO 639-3 code for [`Norwegian Bokmal`](crate::language::Language::Bokmal)
     NOB,
 
-    /// The ISO 639-3 code for [`Punjabi`](./enum.Language.html#variant.Punjabi)
+    #[cfg(feature = "punjabi")]
+    /// The ISO 639-3 code for [`Punjabi`](crate::language::Language::Punjabi)
     PAN,
 
-    /// The ISO 639-3 code for [`Polish`](./enum.Language.html#variant.Polish)
+    #[cfg(feature = "polish")]
+    /// The ISO 639-3 code for [`Polish`](crate::language::Language::Polish)
     POL,
 
-    /// The ISO 639-3 code for [`Portuguese`](./enum.Language.html#variant.Portuguese)
+    #[cfg(feature = "portuguese")]
+    /// The ISO 639-3 code for [`Portuguese`](crate::language::Language::Portuguese)
     POR,
 
-    /// The ISO 639-3 code for [`Romanian`](./enum.Language.html#variant.Romanian)
+    #[cfg(feature = "romanian")]
+    /// The ISO 639-3 code for [`Romanian`](crate::language::Language::Romanian)
     RON,
 
-    /// The ISO 639-3 code for [`Russian`](./enum.Language.html#variant.Russian)
+    #[cfg(feature = "russian")]
+    /// The ISO 639-3 code for [`Russian`](crate::language::Language::Russian)
     RUS,
 
-    /// The ISO 639-3 code for [`Slovak`](./enum.Language.html#variant.Slovak)
+    #[cfg(feature = "slovak")]
+    /// The ISO 639-3 code for [`Slovak`](crate::language::Language::Slovak)
     SLK,
 
-    /// The ISO 639-3 code for [`Slovene`](./enum.Language.html#variant.Slovene)
+    #[cfg(feature = "slovene")]
+    /// The ISO 639-3 code for [`Slovene`](crate::language::Language::Slovene)
     SLV,
 
-    /// The ISO 639-3 code for [`Shona`](./enum.Language.html#variant.Shona)
+    #[cfg(feature = "shona")]
+    /// The ISO 639-3 code for [`Shona`](crate::language::Language::Shona)
     SNA,
 
-    /// The ISO 639-3 code for [`Somali`](./enum.Language.html#variant.Somali)
+    #[cfg(feature = "somali")]
+    /// The ISO 639-3 code for [`Somali`](crate::language::Language::Somali)
     SOM,
 
-    /// The ISO 639-3 code for [`Sotho`](./enum.Language.html#variant.Sotho)
+    #[cfg(feature = "sotho")]
+    /// The ISO 639-3 code for [`Sotho`](crate::language::Language::Sotho)
     SOT,
 
-    /// The ISO 639-3 code for [`Spanish`](./enum.Language.html#variant.Spanish)
+    #[cfg(feature = "spanish")]
+    /// The ISO 639-3 code for [`Spanish`](crate::language::Language::Spanish)
     SPA,
 
-    /// The ISO 639-3 code for [`Albanian`](./enum.Language.html#variant.Albanian)
+    #[cfg(feature = "albanian")]
+    /// The ISO 639-3 code for [`Albanian`](crate::language::Language::Albanian)
     SQI,
 
-    /// The ISO 639-3 code for [`Serbian`](./enum.Language.html#variant.Serbian)
+    #[cfg(feature = "serbian")]
+    /// The ISO 639-3 code for [`Serbian`](crate::language::Language::Serbian)
     SRP,
 
-    /// The ISO 639-3 code for [`Swahili`](./enum.Language.html#variant.Swahili)
+    #[cfg(feature = "swahili")]
+    /// The ISO 639-3 code for [`Swahili`](crate::language::Language::Swahili)
     SWA,
 
-    /// The ISO 639-3 code for [`Swedish`](./enum.Language.html#variant.Swedish)
+    #[cfg(feature = "swedish")]
+    /// The ISO 639-3 code for [`Swedish`](crate::language::Language::Swedish)
     SWE,
 
-    /// The ISO 639-3 code for [`Tamil`](./enum.Language.html#variant.Tamil)
+    #[cfg(feature = "tamil")]
+    /// The ISO 639-3 code for [`Tamil`](crate::language::Language::Tamil)
     TAM,
 
-    /// The ISO 639-3 code for [`Telugu`](./enum.Language.html#variant.Telugu)
+    #[cfg(feature = "telugu")]
+    /// The ISO 639-3 code for [`Telugu`](crate::language::Language::Telugu)
     TEL,
 
-    /// The ISO 639-3 code for [`Tagalog`](./enum.Language.html#variant.Tagalog)
+    #[cfg(feature = "tagalog")]
+    /// The ISO 639-3 code for [`Tagalog`](crate::language::Language::Tagalog)
     TGL,
 
-    /// The ISO 639-3 code for [`Thai`](./enum.Language.html#variant.Thai)
+    #[cfg(feature = "thai")]
+    /// The ISO 639-3 code for [`Thai`](crate::language::Language::Thai)
     THA,
 
-    /// The ISO 639-3 code for [`Tswana`](./enum.Language.html#variant.Tswana)
+    #[cfg(feature = "tswana")]
+    /// The ISO 639-3 code for [`Tswana`](crate::language::Language::Tswana)
     TSN,
 
-    /// The ISO 639-3 code for [`Tsonga`](./enum.Language.html#variant.Tsonga)
+    #[cfg(feature = "tsonga")]
+    /// The ISO 639-3 code for [`Tsonga`](crate::language::Language::Tsonga)
     TSO,
 
-    /// The ISO 639-3 code for [`Turkish`](./enum.Language.html#variant.Turkish)
+    #[cfg(feature = "turkish")]
+    /// The ISO 639-3 code for [`Turkish`](crate::language::Language::Turkish)
     TUR,
 
-    /// The ISO 639-3 code for [`Ukrainian`](./enum.Language.html#variant.Ukrainian)
+    #[cfg(feature = "ukrainian")]
+    /// The ISO 639-3 code for [`Ukrainian`](crate::language::Language::Ukrainian)
     UKR,
 
-    /// The ISO 639-3 code for [`Urdu`](./enum.Language.html#variant.Urdu)
+    #[cfg(feature = "urdu")]
+    /// The ISO 639-3 code for [`Urdu`](crate::language::Language::Urdu)
     URD,
 
-    /// The ISO 639-3 code for [`Vietnamese`](./enum.Language.html#variant.Vietnamese)
+    #[cfg(feature = "vietnamese")]
+    /// The ISO 639-3 code for [`Vietnamese`](crate::language::Language::Vietnamese)
     VIE,
 
-    /// The ISO 639-3 code for [`Xhosa`](./enum.Language.html#variant.Xhosa)
+    #[cfg(feature = "xhosa")]
+    /// The ISO 639-3 code for [`Xhosa`](crate::language::Language::Xhosa)
     XHO,
 
-    /// The ISO 639-3 code for [`Yoruba`](./enum.Language.html#variant.Yoruba)
+    #[cfg(feature = "yoruba")]
+    /// The ISO 639-3 code for [`Yoruba`](crate::language::Language::Yoruba)
     YOR,
 
-    /// The ISO 639-3 code for [`Chinese`](./enum.Language.html#variant.Chinese)
+    #[cfg(feature = "chinese")]
+    /// The ISO 639-3 code for [`Chinese`](crate::language::Language::Chinese)
     ZHO,
 
-    /// The ISO 639-3 code for [`Zulu`](./enum.Language.html#variant.Zulu)
+    #[cfg(feature = "zulu")]
+    /// The ISO 639-3 code for [`Zulu`](crate::language::Language::Zulu)
     ZUL,
 }
 

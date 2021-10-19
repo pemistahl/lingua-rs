@@ -49,81 +49,81 @@ serde_json = "1.0.68"
 strum = "0.22.0"
 strum_macros = "0.22.0"
 zip = "0.5.13"
-lingua-afrikaans-language-model = { path = "language-models/af", version = "1.0.0" }
-lingua-albanian-language-model = { path = "language-models/sq", version = "1.0.0" }
-lingua-arabic-language-model = { path = "language-models/ar", version = "1.0.0" }
-lingua-armenian-language-model = { path = "language-models/hy", version = "1.0.0" }
-lingua-azerbaijani-language-model = { path = "language-models/az", version = "1.0.0" }
-lingua-basque-language-model = { path = "language-models/eu", version = "1.0.0" }
-lingua-belarusian-language-model = { path = "language-models/be", version = "1.0.0" }
-lingua-bengali-language-model = { path = "language-models/bn", version = "1.0.0" }
-lingua-bokmal-language-model = { path = "language-models/nb", version = "1.0.0" }
-lingua-bosnian-language-model = { path = "language-models/bs", version = "1.0.0" }
-lingua-bulgarian-language-model = { path = "language-models/bg", version = "1.0.0" }
-lingua-catalan-language-model = { path = "language-models/ca", version = "1.0.0" }
-lingua-chinese-language-model = { path = "language-models/zh", version = "1.0.0" }
-lingua-croatian-language-model = { path = "language-models/hr", version = "1.0.0" }
-lingua-czech-language-model = { path = "language-models/cs", version = "1.0.0" }
-lingua-danish-language-model = { path = "language-models/da", version = "1.0.0" }
-lingua-dutch-language-model = { path = "language-models/nl", version = "1.0.0" }
-lingua-english-language-model = { path = "language-models/en", version = "1.0.0" }
-lingua-esperanto-language-model = { path = "language-models/eo", version = "1.0.0" }
-lingua-estonian-language-model = { path = "language-models/et", version = "1.0.0" }
-lingua-finnish-language-model = { path = "language-models/fi", version = "1.0.0" }
-lingua-french-language-model = { path = "language-models/fr", version = "1.0.0" }
-lingua-ganda-language-model = { path = "language-models/lg", version = "1.0.0" }
-lingua-georgian-language-model = { path = "language-models/ka", version = "1.0.0" }
-lingua-german-language-model = { path = "language-models/de", version = "1.0.0" }
-lingua-greek-language-model = { path = "language-models/el", version = "1.0.0" }
-lingua-gujarati-language-model = { path = "language-models/gu", version = "1.0.0" }
-lingua-hebrew-language-model = { path = "language-models/he", version = "1.0.0" }
-lingua-hindi-language-model = { path = "language-models/hi", version = "1.0.0" }
-lingua-hungarian-language-model = { path = "language-models/hu", version = "1.0.0" }
-lingua-icelandic-language-model = { path = "language-models/is", version = "1.0.0" }
-lingua-indonesian-language-model = { path = "language-models/id", version = "1.0.0" }
-lingua-irish-language-model = { path = "language-models/ga", version = "1.0.0" }
-lingua-italian-language-model = { path = "language-models/it", version = "1.0.0" }
-lingua-japanese-language-model = { path = "language-models/ja", version = "1.0.0" }
-lingua-kazakh-language-model = { path = "language-models/kk", version = "1.0.0" }
-lingua-korean-language-model = { path = "language-models/ko", version = "1.0.0" }
-lingua-latin-language-model = { path = "language-models/la", version = "1.0.0" }
-lingua-latvian-language-model = { path = "language-models/lv", version = "1.0.1" }
-lingua-lithuanian-language-model = { path = "language-models/lt", version = "1.0.0" }
-lingua-macedonian-language-model = { path = "language-models/mk", version = "1.0.0" }
-lingua-malay-language-model = { path = "language-models/ms", version = "1.0.0" }
-lingua-maori-language-model = { path = "language-models/mi", version = "1.0.0" }
-lingua-marathi-language-model = { path = "language-models/mr", version = "1.0.0" }
-lingua-mongolian-language-model = { path = "language-models/mn", version = "1.0.0" }
-lingua-nynorsk-language-model = { path = "language-models/nn", version = "1.0.0" }
-lingua-persian-language-model = { path = "language-models/fa", version = "1.0.0" }
-lingua-polish-language-model = { path = "language-models/pl", version = "1.0.0" }
-lingua-portuguese-language-model = { path = "language-models/pt", version = "1.0.0" }
-lingua-punjabi-language-model = { path = "language-models/pa", version = "1.0.0" }
-lingua-romanian-language-model = { path = "language-models/ro", version = "1.0.0" }
-lingua-russian-language-model = { path = "language-models/ru", version = "1.0.0" }
-lingua-serbian-language-model = { path = "language-models/sr", version = "1.0.0" }
-lingua-shona-language-model = { path = "language-models/sn", version = "1.0.0" }
-lingua-slovak-language-model = { path = "language-models/sk", version = "1.0.0" }
-lingua-slovene-language-model = { path = "language-models/sl", version = "1.0.0" }
-lingua-somali-language-model = { path = "language-models/so", version = "1.0.0" }
-lingua-sotho-language-model = { path = "language-models/st", version = "1.0.0" }
-lingua-spanish-language-model = { path = "language-models/es", version = "1.0.0" }
-lingua-swahili-language-model = { path = "language-models/sw", version = "1.0.0" }
-lingua-swedish-language-model = { path = "language-models/sv", version = "1.0.0" }
-lingua-tagalog-language-model = { path = "language-models/tl", version = "1.0.0" }
-lingua-tamil-language-model = { path = "language-models/ta", version = "1.0.0" }
-lingua-telugu-language-model = { path = "language-models/te", version = "1.0.0" }
-lingua-thai-language-model = { path = "language-models/th", version = "1.0.0" }
-lingua-tsonga-language-model = { path = "language-models/ts", version = "1.0.0" }
-lingua-tswana-language-model = { path = "language-models/tn", version = "1.0.0" }
-lingua-turkish-language-model = { path = "language-models/tr", version = "1.0.0" }
-lingua-ukrainian-language-model = { path = "language-models/uk", version = "1.0.0" }
-lingua-urdu-language-model = { path = "language-models/ur", version = "1.0.0" }
-lingua-vietnamese-language-model = { path = "language-models/vi", version = "1.0.0" }
-lingua-welsh-language-model = { path = "language-models/cy", version = "1.0.0" }
-lingua-xhosa-language-model = { path = "language-models/xh", version = "1.0.0" }
-lingua-yoruba-language-model = { path = "language-models/yo", version = "1.0.0" }
-lingua-zulu-language-model = { path = "language-models/zu", version = "1.0.0" }
+lingua-afrikaans-language-model = { path = "language-models/af", version = "1.0.0", optional = true }
+lingua-albanian-language-model = { path = "language-models/sq", version = "1.0.0", optional = true }
+lingua-arabic-language-model = { path = "language-models/ar", version = "1.0.0", optional = true }
+lingua-armenian-language-model = { path = "language-models/hy", version = "1.0.0", optional = true }
+lingua-azerbaijani-language-model = { path = "language-models/az", version = "1.0.0", optional = true }
+lingua-basque-language-model = { path = "language-models/eu", version = "1.0.0", optional = true }
+lingua-belarusian-language-model = { path = "language-models/be", version = "1.0.0", optional = true }
+lingua-bengali-language-model = { path = "language-models/bn", version = "1.0.0", optional = true }
+lingua-bokmal-language-model = { path = "language-models/nb", version = "1.0.0", optional = true }
+lingua-bosnian-language-model = { path = "language-models/bs", version = "1.0.0", optional = true }
+lingua-bulgarian-language-model = { path = "language-models/bg", version = "1.0.0", optional = true }
+lingua-catalan-language-model = { path = "language-models/ca", version = "1.0.0", optional = true }
+lingua-chinese-language-model = { path = "language-models/zh", version = "1.0.0", optional = true }
+lingua-croatian-language-model = { path = "language-models/hr", version = "1.0.0", optional = true }
+lingua-czech-language-model = { path = "language-models/cs", version = "1.0.0", optional = true }
+lingua-danish-language-model = { path = "language-models/da", version = "1.0.0", optional = true }
+lingua-dutch-language-model = { path = "language-models/nl", version = "1.0.0", optional = true }
+lingua-english-language-model = { path = "language-models/en", version = "1.0.0", optional = true }
+lingua-esperanto-language-model = { path = "language-models/eo", version = "1.0.0", optional = true }
+lingua-estonian-language-model = { path = "language-models/et", version = "1.0.0", optional = true }
+lingua-finnish-language-model = { path = "language-models/fi", version = "1.0.0", optional = true }
+lingua-french-language-model = { path = "language-models/fr", version = "1.0.0", optional = true }
+lingua-ganda-language-model = { path = "language-models/lg", version = "1.0.0", optional = true }
+lingua-georgian-language-model = { path = "language-models/ka", version = "1.0.0", optional = true }
+lingua-german-language-model = { path = "language-models/de", version = "1.0.0", optional = true }
+lingua-greek-language-model = { path = "language-models/el", version = "1.0.0", optional = true }
+lingua-gujarati-language-model = { path = "language-models/gu", version = "1.0.0", optional = true }
+lingua-hebrew-language-model = { path = "language-models/he", version = "1.0.0", optional = true }
+lingua-hindi-language-model = { path = "language-models/hi", version = "1.0.0", optional = true }
+lingua-hungarian-language-model = { path = "language-models/hu", version = "1.0.0", optional = true }
+lingua-icelandic-language-model = { path = "language-models/is", version = "1.0.0", optional = true }
+lingua-indonesian-language-model = { path = "language-models/id", version = "1.0.0", optional = true }
+lingua-irish-language-model = { path = "language-models/ga", version = "1.0.0", optional = true }
+lingua-italian-language-model = { path = "language-models/it", version = "1.0.0", optional = true }
+lingua-japanese-language-model = { path = "language-models/ja", version = "1.0.0", optional = true }
+lingua-kazakh-language-model = { path = "language-models/kk", version = "1.0.0", optional = true }
+lingua-korean-language-model = { path = "language-models/ko", version = "1.0.0", optional = true }
+lingua-latin-language-model = { path = "language-models/la", version = "1.0.0", optional = true }
+lingua-latvian-language-model = { path = "language-models/lv", version = "1.0.1", optional = true }
+lingua-lithuanian-language-model = { path = "language-models/lt", version = "1.0.0", optional = true }
+lingua-macedonian-language-model = { path = "language-models/mk", version = "1.0.0", optional = true }
+lingua-malay-language-model = { path = "language-models/ms", version = "1.0.0", optional = true }
+lingua-maori-language-model = { path = "language-models/mi", version = "1.0.0", optional = true }
+lingua-marathi-language-model = { path = "language-models/mr", version = "1.0.0", optional = true }
+lingua-mongolian-language-model = { path = "language-models/mn", version = "1.0.0", optional = true }
+lingua-nynorsk-language-model = { path = "language-models/nn", version = "1.0.0", optional = true }
+lingua-persian-language-model = { path = "language-models/fa", version = "1.0.0", optional = true }
+lingua-polish-language-model = { path = "language-models/pl", version = "1.0.0", optional = true }
+lingua-portuguese-language-model = { path = "language-models/pt", version = "1.0.0", optional = true }
+lingua-punjabi-language-model = { path = "language-models/pa", version = "1.0.0", optional = true }
+lingua-romanian-language-model = { path = "language-models/ro", version = "1.0.0", optional = true }
+lingua-russian-language-model = { path = "language-models/ru", version = "1.0.0", optional = true }
+lingua-serbian-language-model = { path = "language-models/sr", version = "1.0.0", optional = true }
+lingua-shona-language-model = { path = "language-models/sn", version = "1.0.0", optional = true }
+lingua-slovak-language-model = { path = "language-models/sk", version = "1.0.0", optional = true }
+lingua-slovene-language-model = { path = "language-models/sl", version = "1.0.0", optional = true }
+lingua-somali-language-model = { path = "language-models/so", version = "1.0.0", optional = true }
+lingua-sotho-language-model = { path = "language-models/st", version = "1.0.0", optional = true }
+lingua-spanish-language-model = { path = "language-models/es", version = "1.0.0", optional = true }
+lingua-swahili-language-model = { path = "language-models/sw", version = "1.0.0", optional = true }
+lingua-swedish-language-model = { path = "language-models/sv", version = "1.0.0", optional = true }
+lingua-tagalog-language-model = { path = "language-models/tl", version = "1.0.0", optional = true }
+lingua-tamil-language-model = { path = "language-models/ta", version = "1.0.0", optional = true }
+lingua-telugu-language-model = { path = "language-models/te", version = "1.0.0", optional = true }
+lingua-thai-language-model = { path = "language-models/th", version = "1.0.0", optional = true }
+lingua-tsonga-language-model = { path = "language-models/ts", version = "1.0.0", optional = true }
+lingua-tswana-language-model = { path = "language-models/tn", version = "1.0.0", optional = true }
+lingua-turkish-language-model = { path = "language-models/tr", version = "1.0.0", optional = true }
+lingua-ukrainian-language-model = { path = "language-models/uk", version = "1.0.0", optional = true }
+lingua-urdu-language-model = { path = "language-models/ur", version = "1.0.0", optional = true }
+lingua-vietnamese-language-model = { path = "language-models/vi", version = "1.0.0", optional = true }
+lingua-welsh-language-model = { path = "language-models/cy", version = "1.0.0", optional = true }
+lingua-xhosa-language-model = { path = "language-models/xh", version = "1.0.0", optional = true }
+lingua-yoruba-language-model = { path = "language-models/yo", version = "1.0.0", optional = true }
+lingua-zulu-language-model = { path = "language-models/zu", version = "1.0.0", optional = true }
 
 [dev-dependencies]
 cld2 = "1.0.2"
@@ -134,3 +134,94 @@ rstest = "0.11.0"
 tempfile = "3.2.0"
 titlecase = "1.1.0"
 whatlang = "0.12.0"
+
+[features]
+default = [
+    "afrikaans", "albanian", "arabic", "armenian", "azerbaijani", "basque",
+    "belarusian", "bengali", "bokmal", "bosnian", "bulgarian", "catalan",
+    "chinese", "croatian", "czech", "danish", "dutch", "english", "esperanto",
+    "estonian", "finnish", "french", "ganda", "georgian", "german", "greek",
+    "gujarati", "hebrew", "hindi", "hungarian", "icelandic", "indonesian",
+    "irish", "italian", "japanese", "kazakh", "korean", "latin", "latvian",
+    "lithuanian", "macedonian", "malay", "maori", "marathi", "mongolian",
+    "nynorsk", "persian", "polish", "portuguese", "punjabi", "romanian",
+    "russian", "serbian", "shona", "slovak", "slovene", "somali", "sotho",
+    "spanish", "swahili", "swedish", "tagalog", "tamil", "telugu", "thai",
+    "tsonga", "tswana", "turkish", "ukrainian", "urdu", "vietnamese",
+    "welsh", "xhosa", "yoruba", "zulu"
+]
+afrikaans = ["lingua-afrikaans-language-model"]
+albanian = ["lingua-albanian-language-model"]
+arabic = ["lingua-arabic-language-model"]
+armenian = ["lingua-armenian-language-model"]
+azerbaijani = ["lingua-azerbaijani-language-model"]
+basque = ["lingua-basque-language-model"]
+belarusian = ["lingua-belarusian-language-model"]
+bengali = ["lingua-bengali-language-model"]
+bokmal = ["lingua-bokmal-language-model"]
+bosnian = ["lingua-bosnian-language-model"]
+bulgarian = ["lingua-bulgarian-language-model"]
+catalan = ["lingua-catalan-language-model"]
+chinese = ["lingua-chinese-language-model"]
+croatian = ["lingua-croatian-language-model"]
+czech = ["lingua-czech-language-model"]
+danish = ["lingua-danish-language-model"]
+dutch = ["lingua-dutch-language-model"]
+english = ["lingua-english-language-model"]
+esperanto = ["lingua-esperanto-language-model"]
+estonian = ["lingua-estonian-language-model"]
+finnish = ["lingua-finnish-language-model"]
+french = ["lingua-french-language-model"]
+ganda = ["lingua-ganda-language-model"]
+georgian = ["lingua-georgian-language-model"]
+german = ["lingua-german-language-model"]
+greek = ["lingua-greek-language-model"]
+gujarati = ["lingua-gujarati-language-model"]
+hebrew = ["lingua-hebrew-language-model"]
+hindi = ["lingua-hindi-language-model"]
+hungarian = ["lingua-hungarian-language-model"]
+icelandic = ["lingua-icelandic-language-model"]
+indonesian = ["lingua-indonesian-language-model"]
+irish = ["lingua-irish-language-model"]
+italian = ["lingua-italian-language-model"]
+japanese = ["lingua-japanese-language-model"]
+kazakh = ["lingua-kazakh-language-model"]
+korean = ["lingua-korean-language-model"]
+latin = ["lingua-latin-language-model"]
+latvian = ["lingua-latvian-language-model"]
+lithuanian = ["lingua-lithuanian-language-model"]
+macedonian = ["lingua-macedonian-language-model"]
+malay = ["lingua-malay-language-model"]
+maori = ["lingua-maori-language-model"]
+marathi = ["lingua-marathi-language-model"]
+mongolian = ["lingua-mongolian-language-model"]
+nynorsk = ["lingua-nynorsk-language-model"]
+persian = ["lingua-persian-language-model"]
+polish = ["lingua-polish-language-model"]
+portuguese = ["lingua-portuguese-language-model"]
+punjabi = ["lingua-punjabi-language-model"]
+romanian = ["lingua-romanian-language-model"]
+russian = ["lingua-russian-language-model"]
+serbian = ["lingua-serbian-language-model"]
+shona = ["lingua-shona-language-model"]
+slovak = ["lingua-slovak-language-model"]
+slovene = ["lingua-slovene-language-model"]
+somali = ["lingua-somali-language-model"]
+sotho = ["lingua-sotho-language-model"]
+spanish = ["lingua-spanish-language-model"]
+swahili = ["lingua-swahili-language-model"]
+swedish = ["lingua-swedish-language-model"]
+tagalog = ["lingua-tagalog-language-model"]
+tamil = ["lingua-tamil-language-model"]
+telugu = ["lingua-telugu-language-model"]
+thai = ["lingua-thai-language-model"]
+tsonga = ["lingua-tsonga-language-model"]
+tswana = ["lingua-tswana-language-model"]
+turkish = ["lingua-turkish-language-model"]
+ukrainian = ["lingua-ukrainian-language-model"]
+urdu = ["lingua-urdu-language-model"]
+vietnamese = ["lingua-vietnamese-language-model"]
+welsh = ["lingua-welsh-language-model"]
+xhosa = ["lingua-xhosa-language-model"]
+yoruba = ["lingua-yoruba-language-model"]
+zulu = ["lingua-zulu-language-model"]

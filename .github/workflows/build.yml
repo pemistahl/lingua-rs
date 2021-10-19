@@ -95,7 +95,7 @@ jobs:
         uses: actions-rs/tarpaulin@v0.1
         with:
           version: '0.16.0'
-          args: '--ignore-tests --exclude-files src/models/*_models.rs'
+          args: '--ignore-tests'
 
       - name: Upload code coverage report to Codecov
         if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}

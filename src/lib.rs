@@ -256,9 +256,9 @@ mod constant;
 mod detector;
 mod fraction;
 mod isocode;
+mod json;
 mod language;
 mod model;
-mod models;
 mod ngram;
 mod writer;
 

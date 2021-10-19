@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-use crate::model::LanguageModel;
 use crate::ngram::Ngram;
 use crate::Language;
 use include_dir::Dir;
@@ -93,26 +92,11 @@ use lingua_welsh_language_model::WELSH_MODELS_DIRECTORY;
 use lingua_xhosa_language_model::XHOSA_MODELS_DIRECTORY;
 use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
 use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
-use once_cell::sync::OnceCell;
-use std::collections::HashMap;
 use std::io::{Cursor, Read};
 use zip::ZipArchive;
 
-pub(crate) mod bigram_models;
-pub(crate) mod fivegram_models;
-pub(crate) mod quadrigram_models;
-pub(crate) mod trigram_models;
-pub(crate) mod unigram_models;
-
-pub(crate) type BoxedLanguageModel = Box<dyn LanguageModel + Send + Sync>;
-pub(crate) type LazyTrainingDataLanguageModel = &'static BoxedLanguageModel;
-pub(crate) type LanguageToNgramsMappingCell =
-    OnceCell<HashMap<Language, fn() -> LazyTrainingDataLanguageModel>>;
-pub(crate) type LazyLanguageToNgramsMapping =
-    &'static HashMap<Language, fn() -> LazyTrainingDataLanguageModel>;
-
-fn load_json(language: Language, ngram_length: u32) -> std::io::Result<String> {
-    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
+pub(crate) fn load_json(language: Language, ngram_length: usize) -> std::io::Result<String> {
+    let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
     let file_path = format!("{}s.json.zip", ngram_name);
     let directory = get_language_models_directory(language);
     let zip_file = directory.get_file(file_path).unwrap();

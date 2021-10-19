@@ -39,7 +39,7 @@ impl Ngram {
         }
     }
 
-    pub(crate) fn get_ngram_name_by_length(ngram_length: u32) -> &'static str {
+    pub(crate) fn find_ngram_name_by_length(ngram_length: usize) -> &'static str {
         match ngram_length {
             1 => "unigram",
             2 => "bigram",

@@ -18,6 +18,7 @@ use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
 
@@ -261,7 +262,13 @@ impl Language {
 
     pub fn all_spoken_ones() -> HashSet<Language> {
         Language::iter()
-            .filter(|it| it != &Language::Latin)
+            .filter(|it| {
+                if cfg!(feature = "latin") {
+                    it != &Language::from_str("Latin").unwrap()
+                } else {
+                    true
+                }
+            })
             .collect()
     }
 

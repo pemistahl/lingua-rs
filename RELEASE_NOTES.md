@@ -1,3 +1,10 @@
+## Lingua 1.3.2 (released on 19 Oct 2021)
+
+### Bug Fixes
+
+- Another compilation error has been fixed which occurred when the
+  Latin language was left out as Cargo feature.
+
 ## Lingua 1.3.1 (released on 19 Oct 2021)
 
 ### Bug Fixes

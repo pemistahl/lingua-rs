@@ -375,6 +375,16 @@ impl LanguageDetector {
             return self.languages.clone();
         }
 
+        if detected_alphabets.len() > 1 {
+            let mut distinct_alphabets = hashset!();
+            for count in detected_alphabets.values() {
+                distinct_alphabets.insert(count);
+            }
+            if distinct_alphabets.len() == 1 {
+                return self.languages.clone();
+            }
+        }
+
         let most_frequent_alphabet = detected_alphabets
             .into_iter()
             .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
@@ -393,18 +403,12 @@ impl LanguageDetector {
 
         for word in words.iter() {
             for (characters, languages) in CHARS_TO_LANGUAGES_MAPPING.iter() {
-                let mut word_contains_char = false;
                 for character in characters.chars() {
                     if word.contains(character) {
                         for language in languages.iter() {
                             self.increment_counter(&mut language_counts, language);
                         }
-                        word_contains_char = true;
-                        break;
                     }
-                }
-                if word_contains_char {
-                    break;
                 }
             }
         }
@@ -615,6 +619,7 @@ impl LanguageDetector {
 mod tests {
     use super::*;
     use crate::model::MockLanguageModel;
+    use crate::LanguageDetectorBuilder;
     use float_cmp::approx_eq;
     use once_cell::sync::OnceCell;
     use rstest::*;
@@ -1425,6 +1430,33 @@ mod tests {
         assert_eq!(
             detector_for_all_languages.detect_language_of(invalid_str),
             None
+        );
+    }
+
+    #[rstest(text, languages,
+        case(
+            "ام وی با نیکی میناج تیزر داشت؟؟؟؟؟؟ i vote for bts ( _ ) as the _ via ( _ )",
+            vec!(English, Urdu)
+        ),
+        case(
+            "Az elmúlt hétvégén 12-re emelkedett az elhunyt koronavírus-fertőzöttek száma Szlovákiában. Mindegyik szociális otthon dolgozóját letesztelik, Matovič szerint az ingázóknak még várniuk kellene a teszteléssel",
+            vec!(Hungarian, Slovak)
+        )
+    )]
+    fn assert_language_detection_is_deterministic(text: &str, languages: Vec<Language>) {
+        let detector = LanguageDetectorBuilder::from_languages(&languages)
+            .with_preloaded_language_models()
+            .build();
+        let mut detected_languages = hashset!();
+        for _ in 0..100 {
+            let language = detector.detect_language_of(text);
+            detected_languages.insert(language.unwrap());
+        }
+        assert_eq!(
+            detected_languages.len(),
+            1,
+            "language detector is non-deterministic for languages {:?}",
+            languages
         );
     }
 }

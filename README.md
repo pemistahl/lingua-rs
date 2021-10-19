@@ -3,14 +3,14 @@
 <br>
 
 [![build](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml)
-[![dependency status](https://deps.rs/crate/lingua/1.2.2/status.svg)](https://deps.rs/crate/lingua/1.2.2)
+[![dependency status](https://deps.rs/crate/lingua/1.3.0/status.svg)](https://deps.rs/crate/lingua/1.3.0)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#supported-languages)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.2.2-blue)](https://lib.rs/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.3.0-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## <a name="table-of-contents"></a> Table of Contents
@@ -24,7 +24,7 @@
 7. [How to add it to your project?](#library-dependency)  
 8. [How to build?](#library-build)
 9. [How to use?](#library-use)  
-10. [What's next for version 1.3.0?](#whats-next)
+10. [What's next for version 1.4.0?](#whats-next)
 11. [Contributions](#contributions)
 
 ## 1. <a name="library-purpose"></a> What does this library do? <sup>[Top ▲](#table-of-contents)</sup>
@@ -251,7 +251,17 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.2.2"
+lingua = "1.3.0"
+```
+
+By default, this will download the language model dependencies for all 75 supported languages, 
+a total of approximately 120 MB. If your bandwidth or hard drive space is limited, or you simply 
+do not need all languages, you can specify a subset of the language models to be downloaded as 
+separate features in your `Cargo.toml`:
+
+```toml
+[dependencies]
+lingua = { version = "1.3.0", default-features = false, features = ["french", "italian", "spanish"] }
 ```
 
 ## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>
@@ -411,9 +421,9 @@ LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::EN, IsoCode639_1::
 LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
 ```
 
-## 10. <a name="whats-next"></a> What's next for version 1.3.0? <sup>[Top ▲](#table-of-contents)</sup>
+## 10. <a name="whats-next"></a> What's next for version 1.4.0? <sup>[Top ▲](#table-of-contents)</sup>
 
-Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/5).
+Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/6).
 
 ## 11. <a name="contributions"></a> Contributions <sup>[Top ▲](#table-of-contents)</sup>
 

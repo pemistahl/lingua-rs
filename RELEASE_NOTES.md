@@ -1,3 +1,21 @@
+## Lingua 1.3.0 (released on 19 Oct 2021)
+
+### Features
+
+- The language model dependencies are separate Cargo features now.
+  Users can decide which languages shall be downloaded and used in
+  the library. (#12)
+
+### Improvements
+
+- The code that does the lazy-loading of the language models has been
+  refactored significantly, making the code more stable and less error-prone.
+
+### Bug Fixes
+
+- In very rare cases, the language returned by the detector was non-deterministic. 
+  This has been fixed. Big thanks to @asg0451 for identifying this problem. (#17)
+
 ## Lingua 1.2.2 (released on 2 Jun 2021)
 
 ### Features

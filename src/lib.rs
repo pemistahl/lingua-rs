@@ -104,9 +104,28 @@
 //! process. The filtering mechanism of the rule-based engine is quite good, however, filtering
 //! based on your own knowledge of the input text is always preferable.
 //!
-//! ## 6. How to use?
+//! ## 6. How to add it to your project?
 //!
-//! ### 6.1 Basic usage
+//! Add *Lingua* to your `Cargo.toml` file like so:
+//!
+//! ```toml
+//! [dependencies]
+//! lingua = "1.3.0"
+//! ```
+//!
+//! By default, this will download the language model dependencies for all 75 supported languages,
+//! a total of approximately 120 MB. If your bandwidth or hard drive space is limited, or you simply
+//! do not need all languages, you can specify a subset of the language models to be downloaded as
+//! separate features in your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! lingua = { version = "1.3.0", default-features = false, features = ["french", "italian", "spanish"] }
+//! ```
+//!
+//! ## 7. How to use?
+//!
+//! ### 7.1 Basic usage
 //!
 //! ```
 //! use lingua::{Language, LanguageDetector, LanguageDetectorBuilder};
@@ -119,7 +138,7 @@
 //! assert_eq!(detected_language, Some(English));
 //! ```
 //!
-//! ### 6.2 Minimum relative distance
+//! ### 7.2 Minimum relative distance
 //!
 //! By default, *Lingua* returns the most likely language for a given input text. However, there are
 //! certain words that are spelled the same in more than one language. The word *prologue*, for
@@ -147,7 +166,7 @@
 //! returned most of the time as in the example above. This is the return value for cases where
 //! language detection is not reliably possible.
 //!
-//! ### 6.3 Confidence values
+//! ### 7.3 Confidence values
 //!
 //! Knowing about the most likely language is nice but how reliable is the computed likelihood?
 //! And how less likely are the other examined languages in comparison to the most likely one?
@@ -196,7 +215,7 @@
 //! returned vector will be empty. The confidence value for each language not being part of the
 //! returned vector is assumed to be 0.0.
 //!
-//! ### 6.4 Eager loading versus lazy loading
+//! ### 7.4 Eager loading versus lazy loading
 //!
 //! By default, *Lingua* uses lazy-loading to load only those language models on demand which are
 //! considered relevant by the rule-based filter engine. For web services, for instance, it is
@@ -213,7 +232,7 @@
 //! Multiple instances of `LanguageDetector` share the same language models in memory which are
 //! accessed asynchronously by the instances.
 //!
-//! ### 6.5 Methods to build the LanguageDetector
+//! ### 7.5 Methods to build the LanguageDetector
 //!
 //! There might be classification tasks where you know beforehand that your language data is
 //! definitely not written in Latin, for instance (what a surprise :-). The detection accuracy can

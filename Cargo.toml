@@ -48,7 +48,7 @@ serde = { version = "1.0.136", features = ["derive"] }
 serde_json = "1.0.78"
 strum = "0.23.0"
 strum_macros = "0.23.1"
-zip = "0.5.13"
+zip = { version = "0.5.13", default-features = false, features = ["deflate"] }
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.0.0", optional = true }
 lingua-albanian-language-model = { path = "language-models/sq", version = "1.0.0", optional = true }
 lingua-arabic-language-model = { path = "language-models/ar", version = "1.0.0", optional = true }

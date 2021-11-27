@@ -26,6 +26,7 @@ use crate::model::{LanguageModel, TestDataLanguageModel};
 use crate::ngram::Ngram;
 use itertools::Itertools;
 use once_cell::sync::Lazy;
+#[cfg(not(feature = "without-rayon"))]
 use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
@@ -92,7 +93,12 @@ impl LanguageDetector {
     }
 
     fn preload_language_models(&mut self, languages: &HashSet<Language>) {
-        languages.par_iter().for_each(|language| {
+        #[cfg(not(feature = "without-rayon"))]
+        let languages_iter = languages.par_iter();
+        #[cfg(feature = "without-rayon")]
+        let languages_iter = languages.iter();
+
+        languages_iter.for_each(|language| {
             self.load_language_models(self.unigram_language_models, language, 1);
             self.load_language_models(self.bigram_language_models, language, 2);
             self.load_language_models(self.trigram_language_models, language, 3);
@@ -183,12 +189,16 @@ impl LanguageDetector {
             1..6usize
         };
 
+        #[cfg(not(feature = "without-rayon"))]
+        let ngram_length_range_iter = ngram_length_range.into_par_iter();
+        #[cfg(feature = "without-rayon")]
+        let ngram_length_range_iter = ngram_length_range.into_iter();
+
         #[allow(clippy::type_complexity)]
         let all_probabilities_and_unigram_counts: Vec<(
             HashMap<Language, f64>,
             Option<HashMap<Language, u32>>,
-        )> = ngram_length_range
-            .into_par_iter()
+        )> = ngram_length_range_iter
             .filter(|i| character_count >= *i)
             .map(|ngram_length| {
                 self.look_up_language_models(&cleaned_up_text, ngram_length, &filtered_languages)

@@ -150,6 +150,7 @@ default = [
     "tsonga", "tswana", "turkish", "ukrainian", "urdu", "vietnamese",
     "welsh", "xhosa", "yoruba", "zulu"
 ]
+without-rayon = []
 afrikaans = ["lingua-afrikaans-language-model"]
 albanian = ["lingua-albanian-language-model"]
 arabic = ["lingua-arabic-language-model"]

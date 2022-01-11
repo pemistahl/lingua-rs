@@ -549,13 +549,17 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
                 });
             }
 
-            if cfg!(feature = "portuguese")
+            if cfg!(feature = "french")
+                || cfg!(feature = "portuguese")
                 || cfg!(feature = "romanian")
                 || cfg!(feature = "turkish")
                 || cfg!(feature = "vietnamese")
             {
                 mapping.insert("Ââ", {
                     let mut languages = hashset!();
+                    if cfg!(feature = "french") {
+                        languages.insert(Language::from_str("French").unwrap());
+                    }
                     if cfg!(feature = "portuguese") {
                         languages.insert(Language::from_str("Portuguese").unwrap());
                     }

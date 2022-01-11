@@ -1361,7 +1361,7 @@ mod tests {
         case("direktør", hashset!(Bokmal, Danish, Nynorsk)),
         case("vývoj", hashset!(Czech, Icelandic, Slovak, Turkish, Vietnamese)),
         case("päralt", hashset!(Estonian, Finnish, German, Slovak, Swedish)),
-        case("labâk", hashset!(Portuguese, Romanian, Turkish, Vietnamese)),
+        case("labâk", hashset!(French, Portuguese, Romanian, Turkish, Vietnamese)),
         case("pràctiques", hashset!(Catalan, French, Italian, Portuguese, Vietnamese)),
         case(
             "überrascht",

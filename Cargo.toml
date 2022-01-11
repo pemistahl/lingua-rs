@@ -47,7 +47,7 @@ regex = "1.5.4"
 serde = { version = "1.0.130", features = ["derive"] }
 serde_json = "1.0.68"
 strum = "0.22.0"
-strum_macros = "0.22.0"
+strum_macros = "0.23.1"
 zip = "0.5.13"
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.0.0", optional = true }
 lingua-albanian-language-model = { path = "language-models/sq", version = "1.0.0", optional = true }

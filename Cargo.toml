@@ -133,7 +133,7 @@ mockall = "0.11.0"
 rstest = "0.12.0"
 tempfile = "3.3.0"
 titlecase = "1.1.0"
-whatlang = "0.12.0"
+whatlang = "0.13.0"
 
 [features]
 default = [

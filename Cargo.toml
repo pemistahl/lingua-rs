@@ -37,7 +37,7 @@ keywords = [
 ]
 
 [dependencies]
-fraction = "0.9.0"
+fraction = "0.10.0"
 include_dir = "0.6.2"
 itertools = "0.10.3"
 maplit = "1.0.2"

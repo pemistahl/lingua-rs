@@ -16,6 +16,6 @@
 
 use include_dir::{include_dir, Dir};
 
-pub const GUJARATI_MODELS_DIRECTORY: Dir = include_dir!("models");
+pub const GUJARATI_MODELS_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/models");
 
-pub const GUJARATI_TESTDATA_DIRECTORY: Dir = include_dir!("testdata");
+pub const GUJARATI_TESTDATA_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/testdata");

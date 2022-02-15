@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua-urdu-language-model"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 The Urdu language model for Lingua, an accurate natural language detection library
@@ -24,7 +24,7 @@ repository = "https://github.com/pemistahl/lingua-rs"
 documentation = "https://docs.rs/lingua"
 license = "Apache-2.0"
 readme = "README.md"
-edition = "2018"
+edition = "2021"
 categories = ["text-processing"]
 keywords = [
     "language-processing",
@@ -34,4 +34,4 @@ keywords = [
 ]
 
 [dependencies]
-include_dir = "0.6.0"
+include_dir = "0.7.2"

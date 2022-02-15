@@ -16,6 +16,6 @@
 
 use include_dir::{include_dir, Dir};
 
-pub const HINDI_MODELS_DIRECTORY: Dir = include_dir!("models");
+pub const HINDI_MODELS_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/models");
 
-pub const HINDI_TESTDATA_DIRECTORY: Dir = include_dir!("testdata");
+pub const HINDI_TESTDATA_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/testdata");

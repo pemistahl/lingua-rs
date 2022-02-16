@@ -26,13 +26,14 @@ use crate::model::{LanguageModel, TestDataLanguageModel};
 use crate::ngram::Ngram;
 use itertools::Itertools;
 use once_cell::sync::Lazy;
-#[cfg(not(feature = "without-rayon"))]
-use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use std::str::FromStr;
 use std::sync::RwLock;
 use strum::IntoEnumIterator;
+
+#[cfg(feature = "parallelism")]
+use rayon::prelude::*;
 
 type BoxedLanguageModel = Box<dyn LanguageModel + Send + Sync>;
 type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, BoxedLanguageModel>>>;
@@ -93,9 +94,9 @@ impl LanguageDetector {
     }
 
     fn preload_language_models(&mut self, languages: &HashSet<Language>) {
-        #[cfg(not(feature = "without-rayon"))]
+        #[cfg(feature = "parallelism")]
         let languages_iter = languages.par_iter();
-        #[cfg(feature = "without-rayon")]
+        #[cfg(not(feature = "parallelism"))]
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
@@ -189,9 +190,9 @@ impl LanguageDetector {
             1..6usize
         };
 
-        #[cfg(not(feature = "without-rayon"))]
+        #[cfg(feature = "parallelism")]
         let ngram_length_range_iter = ngram_length_range.into_par_iter();
-        #[cfg(feature = "without-rayon")]
+        #[cfg(not(feature = "parallelism"))]
         let ngram_length_range_iter = ngram_length_range.into_iter();
 
         #[allow(clippy::type_complexity)]

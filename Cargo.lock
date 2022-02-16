@@ -33,12 +33,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anyhow"
-version = "1.0.38"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "afddf7f520a80dbf76e6f50a35bca42a2331ef227a28b3b6dc5c2e2338d114b1"
-
-[[package]]
 name = "autocfg"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -202,9 +196,9 @@ dependencies = [
 
 [[package]]
 name = "fraction"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aba3510011eee8825018be07f08d9643421de007eaf62a3bde58d89b058abfa7"
+checksum = "6bb65943183b6b3cbf00f64c181e8178217e30194381b150e4f87ec59864c803"
 dependencies = [
  "lazy_static 1.4.0",
  "num",
@@ -221,12 +215,6 @@ name = "gcc"
 version = "0.3.55"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f5f3913fa0bfe7ee1fd8248b6b9f42a5af4b9d65ec2dd2c3c26132b950ecfc2"
-
-[[package]]
-name = "glob"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
 
 [[package]]
 name = "hashbrown"
@@ -258,26 +246,21 @@ dependencies = [
 
 [[package]]
 name = "include_dir"
-version = "0.6.2"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24b56e147e6187d61e9d0f039f10e070d0c0a887e24fe0bb9ca3f29bfde62cab"
+checksum = "482a2e29200b7eed25d7fdbd14423326760b7f6658d21a4cf12d55a50713c69f"
 dependencies = [
- "glob",
- "include_dir_impl",
- "proc-macro-hack",
+ "include_dir_macros",
 ]
 
 [[package]]
-name = "include_dir_impl"
-version = "0.6.2"
+name = "include_dir_macros"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0a0c890c85da4bab7bce4204c707396bbd3c6c8a681716a51c8814cfc2b682df"
+checksum = "5e074c19deab2501407c91ba1860fa3d6820bfde307db6d8cb851b55a10be89b"
 dependencies = [
- "anyhow",
- "proc-macro-hack",
  "proc-macro2",
  "quote",
- "syn",
 ]
 
 [[package]]
@@ -343,7 +326,7 @@ checksum = "1cca32fa0182e8c0989459524dc356b8f2b5c10f1b9eb521b7d182c03cf8c5ff"
 
 [[package]]
 name = "lingua"
-version = "1.3.2"
+version = "1.4.0"
 dependencies = [
  "cld2",
  "float-cmp",
@@ -444,525 +427,525 @@ dependencies = [
 
 [[package]]
 name = "lingua-afrikaans-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-albanian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-arabic-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-armenian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-azerbaijani-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-basque-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-belarusian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-bengali-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-bokmal-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-bosnian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-bulgarian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-catalan-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-chinese-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-croatian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-czech-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-danish-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-dutch-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-english-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-esperanto-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-estonian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-finnish-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-french-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-ganda-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-georgian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-german-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-greek-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-gujarati-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-hebrew-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-hindi-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-hungarian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-icelandic-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-indonesian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-irish-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-italian-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-japanese-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-kazakh-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-korean-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-latin-language-model"
-version = "1.0.0"
-dependencies = [
- "include_dir",
-]
-
-[[package]]
-name = "lingua-latvian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
+name = "lingua-albanian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-arabic-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-armenian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-azerbaijani-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-basque-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-belarusian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bengali-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bokmal-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bosnian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-bulgarian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-catalan-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-chinese-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-croatian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-czech-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-danish-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-dutch-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-english-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-esperanto-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-estonian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-finnish-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-french-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-ganda-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-georgian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-german-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-greek-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-gujarati-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-hebrew-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-hindi-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-hungarian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-icelandic-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-indonesian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-irish-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-italian-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-japanese-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-kazakh-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-korean-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-latin-language-model"
+version = "1.0.1"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-latvian-language-model"
+version = "1.0.2"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-lithuanian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-macedonian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-malay-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-maori-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-marathi-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-mongolian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-nynorsk-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-persian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-polish-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-portuguese-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-punjabi-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-romanian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-russian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-serbian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-shona-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-slovak-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-slovene-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-somali-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-sotho-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-spanish-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-swahili-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-swedish-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-tagalog-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-tamil-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-telugu-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-thai-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-tsonga-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-tswana-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-turkish-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-ukrainian-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-urdu-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-vietnamese-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-welsh-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-xhosa-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-yoruba-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
 
 [[package]]
 name = "lingua-zulu-language-model"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "include_dir",
 ]
@@ -1163,12 +1146,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "proc-macro-hack"
-version = "0.5.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dbf0c48bc1d91375ae5c3cd81e3722dff1abcf81a30960240640d223f59fe0e5"
-
-[[package]]
 name = "proc-macro2"
 version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1339,9 +1316,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.78"
+version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d23c1ba4cf0efd44be32017709280b32d1cea5c3f1275c3b6d9e8bc54f758085"
+checksum = "8e8d9fa5c3b304765ce1fd9c4c8a3de2c8db365a5b91be52f186efc675681d95"
 dependencies = [
  "itoa",
  "ryu",

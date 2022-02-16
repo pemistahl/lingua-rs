@@ -243,14 +243,14 @@ use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
 #[cfg(feature = "zulu")]
 use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
 
-use std::io::{Cursor, Read};
+use std::io::{Cursor, ErrorKind, Read};
 use zip::ZipArchive;
 
 pub(crate) fn load_json(language: Language, ngram_length: usize) -> std::io::Result<String> {
     let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
     let file_path = format!("{}s.json.zip", ngram_name);
     let directory = get_language_models_directory(language);
-    let zip_file = directory.get_file(file_path).unwrap();
+    let zip_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
     let zip_file_reader = Cursor::new(zip_file.contents());
     let mut archive = ZipArchive::new(zip_file_reader).unwrap();
     let mut json_file = archive.by_index(0).unwrap();

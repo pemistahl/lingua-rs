@@ -554,12 +554,10 @@ impl LanguageDetector {
 
         self.load_language_models(language_models, language, ngram_length);
 
-        language_models
-            .read()
-            .unwrap()
-            .get(language)
-            .unwrap()
-            .get_relative_frequency(ngram)
+        match language_models.read().unwrap().get(language) {
+            Some(model) => model.get_relative_frequency(ngram),
+            None => 0.0,
+        }
     }
 
     fn count_unigrams(
@@ -618,11 +616,13 @@ impl LanguageDetector {
         if !models.contains_key(language) {
             std::mem::drop(models);
             let mut models = language_models.write().unwrap();
-            let json = load_json(language.clone(), ngram_length).unwrap();
-            models.insert(
-                language.clone(),
-                Box::new(TrainingDataLanguageModel::from_json(&json)),
-            );
+            let json = load_json(language.clone(), ngram_length);
+            if let Ok(json_content) = json {
+                models.insert(
+                    language.clone(),
+                    Box::new(TrainingDataLanguageModel::from_json(&json_content)),
+                );
+            }
         }
     }
 

@@ -128,7 +128,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.0.1", o
 [dev-dependencies]
 cld2 = "1.0.2"
 float-cmp = "0.9.0"
-indoc = "1.0.3"
+indoc = "1.0.4"
 mockall = "0.11.0"
 rstest = "0.12.0"
 tempfile = "3.3.0"

@@ -99,7 +99,7 @@ impl LanguageDetectorBuilder {
         }
         let languages = iso_codes
             .iter()
-            .map(|it| Language::from_iso_code_639_1(it))
+            .map(Language::from_iso_code_639_1)
             .collect::<HashSet<_>>();
         Self::from(languages)
     }
@@ -114,7 +114,7 @@ impl LanguageDetectorBuilder {
         }
         let languages = iso_codes
             .iter()
-            .map(|it| Language::from_iso_code_639_3(it))
+            .map(Language::from_iso_code_639_3)
             .collect::<HashSet<_>>();
         Self::from(languages)
     }

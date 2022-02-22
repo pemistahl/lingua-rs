@@ -1,3 +1,11 @@
+## Lingua 1.3.3 (released on 22 Feb 2022)
+
+### Bug Fixes
+
+- This release updates outdated dependencies and fixes an incompatibility
+  between different versions of the `include_dir` crate which are used
+  in the main `lingua` crate and the language model crates.
+
 ## Lingua 1.3.2 (released on 19 Oct 2021)
 
 ### Bug Fixes

@@ -3,31 +3,17 @@
 <br>
 
 [![build](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml)
-[![dependency status](https://deps.rs/crate/lingua/1.3.2/status.svg)](https://deps.rs/crate/lingua/1.3.2)
+[![dependency status](https://deps.rs/crate/lingua/1.3.3/status.svg)](https://deps.rs/crate/lingua/1.3.3)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
-[![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#supported-languages)
+[![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.3.2-blue)](https://lib.rs/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.3.3-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-## <a name="table-of-contents"></a> Table of Contents
-
-1. [What does this library do?](#library-purpose)
-2. [Why does this library exist?](#library-reason)
-3. [Which languages are supported?](#supported-languages)
-4. [How good is it?](#library-accuracy)
-5. [Why is it better than other libraries?](#why-is-it-better)   
-6. [Test report generation](#report-generation)
-7. [How to add it to your project?](#library-dependency)  
-8. [How to build?](#library-build)
-9. [How to use?](#library-use)  
-10. [What's next for version 1.4.0?](#whats-next)
-11. [Contributions](#contributions)
-
-## 1. <a name="library-purpose"></a> What does this library do? <sup>[Top ▲](#table-of-contents)</sup>
+## 1. What does this library do?
 
 Its task is simple: It tells you which language some provided textual data is written in.
 This is very useful as a preprocessing step for linguistic data in natural language
@@ -35,7 +21,7 @@ processing applications such as text classification and spell checking.
 Other use cases, for instance, might include routing e-mails to the right geographically
 located customer service department, based on the e-mails' languages.
 
-## 2. <a name="library-reason"></a> Why does this library exist? <sup>[Top ▲](#table-of-contents)</sup>
+## 2. Why does this library exist?
 
 Language detection is often done as part of large machine learning frameworks or natural
 language processing applications. In cases where you don't need the full-fledged
@@ -58,7 +44,7 @@ It draws on both rule-based and statistical methods but does not use any diction
 It does not need a connection to any external API or service either.
 Once the library has been downloaded, it can be used completely offline.
 
-## 3. <a name="supported-languages"></a> Which languages are supported? <sup>[Top ▲](#table-of-contents)</sup>
+## 3. Which languages are supported?
 
 Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*, that is, 
 getting detection right for a small set of languages first before adding new ones. 
@@ -164,7 +150,7 @@ Currently, the following 75 languages are supported:
 - Z
   - Zulu
   
-## 4. <a name="library-accuracy"></a> How good is it? <sup>[Top ▲](#table-of-contents)</sup>
+## 4. How good is it?
 
 *Lingua* is able to report accuracy statistics for some bundled test data available for each
 supported language. The test data for each language is split into three parts:
@@ -194,7 +180,7 @@ available in the file
 
 <img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/plots/boxplot-average.png" alt="Average Detection Performance" />
 
-## 5. <a name="why-is-it-better"></a> Why is it better than other libraries? <sup>[Top ▲](#table-of-contents)</sup>
+## 5. Why is it better than other libraries?
 
 Every language detector uses a probabilistic [n-gram](https://en.wikipedia.org/wiki/N-gram) model trained on the 
 character distribution in some training corpus. Most libraries only use n-grams of size 3 (trigrams) which is 
@@ -211,11 +197,11 @@ of the input text. Only then, in a second step, the probabilistic n-gram model i
 This makes sense because loading less language models means less memory consumption and better runtime performance.
 
 In general, it is always a good idea to restrict the set of languages to be considered in the classification process 
-using the respective [api methods](#library-use). If you know beforehand that certain languages are 
+using the respective API methods. If you know beforehand that certain languages are 
 never to occur in an input text, do not let those take part in the classifcation process. The filtering mechanism 
 of the rule-based engine is quite good, however, filtering based on your own knowledge of the input text is always preferable.
 
-## 6. <a name="report-generation"></a> Test report generation <sup>[Top ▲](#table-of-contents)</sup>
+## 6. Test report generation
 
 If you want to reproduce the accuracy results above, you can generate the test reports yourself for both classifiers 
 and all languages by doing:
@@ -245,13 +231,13 @@ Accuracy: 99.7%
 Erroneously classified as Dutch: 0.2%, Latin: 0.1%
 ```
 
-## 7. <a name="library-dependency"></a> How to add it to your project? <sup>[Top ▲](#table-of-contents)</sup>
+## 7. How to add it to your project?
 
 Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.3.2"
+lingua = "1.3.3"
 ```
 
 By default, this will download the language model dependencies for all 75 supported languages, 
@@ -261,10 +247,10 @@ separate features in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-lingua = { version = "1.3.2", default-features = false, features = ["french", "italian", "spanish"] }
+lingua = { version = "1.3.3", default-features = false, features = ["french", "italian", "spanish"] }
 ```
 
-## 8. <a name="library-build"></a> How to build? <sup>[Top ▲](#table-of-contents)</sup>
+## 8. How to build?
 
 In order to build the source code yourself, you need the 
 [stable Rust toolchain](https://www.rust-lang.org/tools/install) installed on your machine 
@@ -280,7 +266,7 @@ The source code is accompanied by an extensive unit test suite. To run them, sim
 
     cargo test --lib
     
-## 9. <a name="library-use"></a> How to use? <sup>[Top ▲](#table-of-contents)</sup>
+## 9. How to use?
 
 ### 9.1 Basic usage
 
@@ -421,11 +407,11 @@ LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::EN, IsoCode639_1::
 LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
 ```
 
-## 10. <a name="whats-next"></a> What's next for version 1.4.0? <sup>[Top ▲](#table-of-contents)</sup>
+## 10. What's next for version 1.4.0?
 
 Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/6).
 
-## 11. <a name="contributions"></a> Contributions <sup>[Top ▲](#table-of-contents)</sup>
+## 11. Contributions
 
 - [Josh Rotenberg](https://github.com/joshrotenberg) has written a [wrapper](https://github.com/joshrotenberg/lingua_ex)
 for using *Lingua* with the [Elixir programming language](https://elixir-lang.org/).

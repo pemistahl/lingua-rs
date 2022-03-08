@@ -437,7 +437,7 @@ dependencies = [
  "mockall",
  "once_cell",
  "rayon",
- "regex 1.5.4",
+ "regex 1.5.5",
  "rstest",
  "serde",
  "serde_json",
@@ -1156,7 +1156,7 @@ dependencies = [
  "itertools",
  "normalize-line-endings",
  "predicates-core",
- "regex 1.5.4",
+ "regex 1.5.5",
 ]
 
 [[package]]
@@ -1242,9 +1242,9 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.5.4"
+version = "1.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d07a8629359eb56f1e2fb1652bb04212c072a87ba68546a04065d525673ac461"
+checksum = "1a11647b6b25ff05a515cb92c365cec08801e83423a235b51e231e1808747286"
 dependencies = [
  "aho-corasick 0.7.18",
  "memchr 2.4.0",
@@ -1455,7 +1455,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f565e410cfc24c2f2a89960b023ca192689d7f77d3f8d4f4af50c2d8affe1117"
 dependencies = [
  "lazy_static 1.4.0",
- "regex 1.5.4",
+ "regex 1.5.5",
 ]
 
 [[package]]

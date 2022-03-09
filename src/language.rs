@@ -21,6 +21,7 @@ use std::collections::HashSet;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
+use std::fmt::{Debug, Display, Formatter, Result};
 
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
 #[derive(
@@ -253,6 +254,13 @@ pub enum Language {
 
     #[cfg(feature = "zulu")]
     Zulu,
+}
+
+impl Display for Language {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        let debug_repr = format!("{:?}", self);
+        write!(f, "{}", debug_repr.to_lowercase())
+    }
 }
 
 impl Language {
@@ -1067,6 +1075,11 @@ mod tests {
     use super::*;
     use crate::language::Language::*;
     use std::str::FromStr;
+
+    #[test]
+    fn assert_language_string_representation_is_correct() {
+        assert_eq!(Language::English.to_string(), "english");
+    }
 
     #[test]
     fn test_language_serializer() {

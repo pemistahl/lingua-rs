@@ -19,7 +19,7 @@ use crate::constant::{
     CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, LANGUAGES_SUPPORTING_LOGOGRAMS,
     MULTIPLE_WHITESPACE, NO_LETTER, NUMBERS, PUNCTUATION,
 };
-use crate::json::load_json;
+use crate::json::load_rkyv;
 use crate::language::Language;
 use crate::model::TrainingDataLanguageModel;
 use crate::model::{LanguageModel, TestDataLanguageModel};
@@ -627,11 +627,11 @@ impl LanguageDetector {
         if !models.contains_key(language) {
             std::mem::drop(models);
             let mut models = language_models.write().unwrap();
-            let json = load_json(language.clone(), ngram_length);
-            if let Ok(json_content) = json {
+            let bytes = load_rkyv(language.clone(), ngram_length);
+            if let Ok(bytes) = bytes {
                 models.insert(
                     language.clone(),
-                    Box::new(TrainingDataLanguageModel::from_json(&json_content)),
+                    Box::new(TrainingDataLanguageModel::from_rkyv(bytes, language)),
                 );
             }
         }

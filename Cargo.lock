@@ -494,6 +494,7 @@ dependencies = [
  "once_cell",
  "rayon",
  "regex 1.5.5",
+ "rkyv",
  "rstest",
  "serde",
  "serde_json",

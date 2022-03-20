@@ -243,20 +243,15 @@ use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
 #[cfg(feature = "zulu")]
 use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
 
-use std::io::{Cursor, ErrorKind, Read};
-use zip::ZipArchive;
+use std::io::ErrorKind;
 
-pub(crate) fn load_json(language: Language, ngram_length: usize) -> std::io::Result<String> {
+pub(crate) fn load_rkyv(language: Language, ngram_length: usize) -> std::io::Result<&'static [u8]> {
     let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
-    let file_path = format!("{}s.json.zip", ngram_name);
+    let file_path = format!("{}s.bin", ngram_name);
     let directory = get_language_models_directory(language);
-    let zip_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
-    let zip_file_reader = Cursor::new(zip_file.contents());
-    let mut archive = ZipArchive::new(zip_file_reader).unwrap();
-    let mut json_file = archive.by_index(0).unwrap();
-    let mut json = String::new();
-    json_file.read_to_string(&mut json)?;
-    Ok(json)
+    let rkyv_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
+
+    Ok(rkyv_file.contents())
 }
 
 fn get_language_models_directory(language: Language) -> Dir<'static> {
@@ -578,7 +573,7 @@ mod tests {
 
     #[test]
     fn test_load_json() {
-        let result = load_json(Language::English, 1);
+        let result = load_rkyv(Language::English, 1);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), minify(EXPECTED_UNIGRAM_MODEL));
     }

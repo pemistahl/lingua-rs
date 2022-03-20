@@ -17,9 +17,10 @@
 use crate::constant::LETTER;
 use crate::language::Language;
 use common::fraction::Fraction;
-use common::ngram::Ngram;
+use common::ngram::{ArchivedNgram, Ngram};
 use itertools::Itertools;
 use regex::Regex;
+use rkyv::collections::ArchivedHashMap;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap, HashSet};
 
@@ -38,11 +39,15 @@ pub(crate) struct TrainingDataLanguageModel {
     language: Language,
     pub(crate) absolute_frequencies: Option<HashMap<Ngram, u32>>,
     relative_frequencies: Option<HashMap<Ngram, Fraction>>,
-    json_relative_frequencies: Option<HashMap<Ngram, f64>>,
+    json_relative_frequencies: Option<&'static ArchivedHashMap<ArchivedNgram, f64>>,
 }
 
 impl LanguageModel for TrainingDataLanguageModel {
     fn get_relative_frequency(&self, ngram: &Ngram) -> f64 {
+        // TODO: is there a better way to construct the archived version?
+        let bytes = rkyv::to_bytes::<_, 256>(ngram).unwrap();
+        let ngram = unsafe { rkyv::archived_root::<Ngram>(&bytes) };
+
         match &self.json_relative_frequencies {
             Some(frequencies) => *frequencies.get(ngram).unwrap_or(&0.0),
             None => 0.0,
@@ -75,19 +80,12 @@ impl TrainingDataLanguageModel {
         }
     }
 
-    pub(crate) fn from_json(json: &str) -> Self {
-        let json_language_model = serde_json::from_str::<JsonLanguageModel>(json).unwrap();
-        let mut json_relative_frequencies = hashmap!();
-
-        for (fraction, ngrams) in json_language_model.ngrams {
-            let floating_point_value = fraction.to_f64();
-            for ngram in ngrams.split(' ') {
-                json_relative_frequencies.insert(Ngram::new(ngram), floating_point_value);
-            }
-        }
+    pub(crate) fn from_rkyv(bytes: &'static [u8], language: &Language) -> Self {
+        let json_relative_frequencies =
+            unsafe { rkyv::archived_root::<HashMap<Ngram, f64>>(bytes) };
 
         TrainingDataLanguageModel {
-            language: json_language_model.language,
+            language: language.clone(),
             absolute_frequencies: None,
             relative_frequencies: None,
             json_relative_frequencies: Some(json_relative_frequencies),
@@ -479,7 +477,7 @@ mod tests {
                 relative_frequencies: Some(expected_unigram_relative_frequencies()),
                 json_relative_frequencies: None,
             };
-            let deserialized = TrainingDataLanguageModel::from_json(&model.to_json());
+            let deserialized = TrainingDataLanguageModel::from_rkyv(&model.to_json());
 
             assert_eq!(deserialized.language, Language::English);
             assert_eq!(deserialized.absolute_frequencies, None);

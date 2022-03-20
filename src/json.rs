@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-use crate::ngram::Ngram;
 use crate::Language;
+use common::ngram::Ngram;
 use include_dir::Dir;
 
 #[cfg(feature = "afrikaans")]

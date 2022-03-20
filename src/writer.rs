@@ -16,8 +16,8 @@
 
 use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
 use crate::model::TrainingDataLanguageModel;
-use crate::ngram::Ngram;
 use crate::Language;
+use common::ngram::Ngram;
 use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;

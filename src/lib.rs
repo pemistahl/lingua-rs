@@ -278,7 +278,6 @@ mod isocode;
 mod json;
 mod language;
 mod model;
-mod ngram;
 mod writer;
 
 #[cfg(target_family = "wasm")]

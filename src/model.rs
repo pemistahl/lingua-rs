@@ -17,7 +17,7 @@
 use crate::constant::LETTER;
 use crate::fraction::Fraction;
 use crate::language::Language;
-use crate::ngram::Ngram;
+use common::ngram::Ngram;
 use itertools::Itertools;
 use regex::Regex;
 use serde::{Deserialize, Serialize};

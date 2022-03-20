@@ -21,12 +21,12 @@ use std::fmt;
 use std::fmt::Display;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub(crate) struct Ngram {
-    pub(crate) value: String,
+pub struct Ngram {
+    pub value: String,
 }
 
 impl Ngram {
-    pub(crate) fn new(value: &str) -> Self {
+    pub fn new(value: &str) -> Self {
         let char_count = value.chars().count();
         if !(0..6).contains(&char_count) {
             panic!(
@@ -39,7 +39,7 @@ impl Ngram {
         }
     }
 
-    pub(crate) fn find_ngram_name_by_length(ngram_length: usize) -> &'static str {
+    pub fn find_ngram_name_by_length(ngram_length: usize) -> &'static str {
         match ngram_length {
             1 => "unigram",
             2 => "bigram",
@@ -50,7 +50,7 @@ impl Ngram {
         }
     }
 
-    pub(crate) fn range_of_lower_order_ngrams(&self) -> NgramRange {
+    pub fn range_of_lower_order_ngrams(&self) -> NgramRange {
         NgramRange {
             start: self.clone(),
         }
@@ -89,7 +89,7 @@ impl<'de> Deserialize<'de> for Ngram {
     }
 }
 
-pub(crate) struct NgramRange {
+pub struct NgramRange {
     start: Ngram,
 }
 

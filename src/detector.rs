@@ -23,7 +23,7 @@ use crate::json::load_json;
 use crate::language::Language;
 use crate::model::TrainingDataLanguageModel;
 use crate::model::{LanguageModel, TestDataLanguageModel};
-use crate::ngram::Ngram;
+use common::ngram::Ngram;
 use itertools::Itertools;
 use once_cell::sync::Lazy;
 use std::collections::{HashMap, HashSet};

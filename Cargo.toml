@@ -13,7 +13,7 @@
 # limitations under the License.
 
 [workspace]
-members = ["language-models/*", "common"]
+members = ["language-models/*", "common", "model-builder"]
 
 [package]
 name = "lingua"

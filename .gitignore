@@ -52,3 +52,4 @@ Desktop.ini
 ehthumbs.db
 
 src/main.rs
+*.bin

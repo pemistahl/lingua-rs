@@ -20,7 +20,8 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::fmt::Display;
 
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
+#[archive_attr(derive(Eq, PartialEq, Hash))]
 pub struct Ngram {
     pub value: String,
 }

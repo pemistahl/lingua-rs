@@ -273,7 +273,6 @@ mod alphabet;
 mod builder;
 mod constant;
 mod detector;
-mod fraction;
 mod isocode;
 mod json;
 mod language;

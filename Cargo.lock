@@ -89,6 +89,7 @@ dependencies = [
 name = "common"
 version = "0.1.0"
 dependencies = [
+ "fraction",
  "itertools",
  "serde",
  "serde_json",
@@ -330,7 +331,6 @@ dependencies = [
  "cld2",
  "common",
  "float-cmp",
- "fraction",
  "include_dir",
  "indoc",
  "itertools",

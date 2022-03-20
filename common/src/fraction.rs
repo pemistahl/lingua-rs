@@ -22,13 +22,13 @@ use std::fmt;
 use std::fmt::{Debug, Display};
 
 #[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub(crate) struct Fraction {
+pub struct Fraction {
     numerator: u32,
     denominator: u32,
 }
 
 impl Fraction {
-    pub(crate) fn new(numerator: u32, denominator: u32) -> Self {
+    pub fn new(numerator: u32, denominator: u32) -> Self {
         let fraction = GenericFraction::<u32>::new(numerator, denominator);
         Self {
             numerator: *fraction.numer().unwrap(),
@@ -36,7 +36,7 @@ impl Fraction {
         }
     }
 
-    pub(crate) fn to_f64(self) -> f64 {
+    pub fn to_f64(self) -> f64 {
         self.numerator as f64 / self.denominator as f64
     }
 }

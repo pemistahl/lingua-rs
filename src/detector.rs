@@ -628,12 +628,10 @@ impl LanguageDetector {
             std::mem::drop(models);
             let mut models = language_models.write().unwrap();
             let bytes = load_rkyv(language.clone(), ngram_length);
-            if let Ok(bytes) = bytes {
-                models.insert(
-                    language.clone(),
-                    Box::new(TrainingDataLanguageModel::from_rkyv(bytes, language)),
-                );
-            }
+            models.insert(
+                language.clone(),
+                Box::new(TrainingDataLanguageModel::from_rkyv(bytes, language)),
+            );
         }
     }
 

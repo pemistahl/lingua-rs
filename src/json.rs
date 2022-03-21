@@ -15,479 +15,244 @@
  */
 
 use crate::Language;
-use common::ngram::Ngram;
-use include_dir::Dir;
 
-#[cfg(feature = "afrikaans")]
-use lingua_afrikaans_language_model::AFRIKAANS_MODELS_DIRECTORY;
+pub(crate) fn load_rkyv(language: Language, ngram_length: usize) -> &'static [u8] {
+    let ngrams = get_language_models_ngrams(language);
 
-#[cfg(feature = "albanian")]
-use lingua_albanian_language_model::ALBANIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "arabic")]
-use lingua_arabic_language_model::ARABIC_MODELS_DIRECTORY;
-
-#[cfg(feature = "armenian")]
-use lingua_armenian_language_model::ARMENIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "azerbaijani")]
-use lingua_azerbaijani_language_model::AZERBAIJANI_MODELS_DIRECTORY;
-
-#[cfg(feature = "basque")]
-use lingua_basque_language_model::BASQUE_MODELS_DIRECTORY;
-
-#[cfg(feature = "belarusian")]
-use lingua_belarusian_language_model::BELARUSIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "bengali")]
-use lingua_bengali_language_model::BENGALI_MODELS_DIRECTORY;
-
-#[cfg(feature = "bokmal")]
-use lingua_bokmal_language_model::BOKMAL_MODELS_DIRECTORY;
-
-#[cfg(feature = "bosnian")]
-use lingua_bosnian_language_model::BOSNIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "bulgarian")]
-use lingua_bulgarian_language_model::BULGARIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "catalan")]
-use lingua_catalan_language_model::CATALAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "chinese")]
-use lingua_chinese_language_model::CHINESE_MODELS_DIRECTORY;
-
-#[cfg(feature = "croatian")]
-use lingua_croatian_language_model::CROATIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "czech")]
-use lingua_czech_language_model::CZECH_MODELS_DIRECTORY;
-
-#[cfg(feature = "danish")]
-use lingua_danish_language_model::DANISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "dutch")]
-use lingua_dutch_language_model::DUTCH_MODELS_DIRECTORY;
-
-#[cfg(feature = "english")]
-use lingua_english_language_model::ENGLISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "esperanto")]
-use lingua_esperanto_language_model::ESPERANTO_MODELS_DIRECTORY;
-
-#[cfg(feature = "estonian")]
-use lingua_estonian_language_model::ESTONIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "finnish")]
-use lingua_finnish_language_model::FINNISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "french")]
-use lingua_french_language_model::FRENCH_MODELS_DIRECTORY;
-
-#[cfg(feature = "ganda")]
-use lingua_ganda_language_model::GANDA_MODELS_DIRECTORY;
-
-#[cfg(feature = "georgian")]
-use lingua_georgian_language_model::GEORGIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "german")]
-use lingua_german_language_model::GERMAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "greek")]
-use lingua_greek_language_model::GREEK_MODELS_DIRECTORY;
-
-#[cfg(feature = "gujarati")]
-use lingua_gujarati_language_model::GUJARATI_MODELS_DIRECTORY;
-
-#[cfg(feature = "hebrew")]
-use lingua_hebrew_language_model::HEBREW_MODELS_DIRECTORY;
-
-#[cfg(feature = "hindi")]
-use lingua_hindi_language_model::HINDI_MODELS_DIRECTORY;
-
-#[cfg(feature = "hungarian")]
-use lingua_hungarian_language_model::HUNGARIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "icelandic")]
-use lingua_icelandic_language_model::ICELANDIC_MODELS_DIRECTORY;
-
-#[cfg(feature = "indonesian")]
-use lingua_indonesian_language_model::INDONESIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "irish")]
-use lingua_irish_language_model::IRISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "italian")]
-use lingua_italian_language_model::ITALIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "japanese")]
-use lingua_japanese_language_model::JAPANESE_MODELS_DIRECTORY;
-
-#[cfg(feature = "kazakh")]
-use lingua_kazakh_language_model::KAZAKH_MODELS_DIRECTORY;
-
-#[cfg(feature = "korean")]
-use lingua_korean_language_model::KOREAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "latin")]
-use lingua_latin_language_model::LATIN_MODELS_DIRECTORY;
-
-#[cfg(feature = "latvian")]
-use lingua_latvian_language_model::LATVIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "lithuanian")]
-use lingua_lithuanian_language_model::LITHUANIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "macedonian")]
-use lingua_macedonian_language_model::MACEDONIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "malay")]
-use lingua_malay_language_model::MALAY_MODELS_DIRECTORY;
-
-#[cfg(feature = "maori")]
-use lingua_maori_language_model::MAORI_MODELS_DIRECTORY;
-
-#[cfg(feature = "marathi")]
-use lingua_marathi_language_model::MARATHI_MODELS_DIRECTORY;
-
-#[cfg(feature = "mongolian")]
-use lingua_mongolian_language_model::MONGOLIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "nynorsk")]
-use lingua_nynorsk_language_model::NYNORSK_MODELS_DIRECTORY;
-
-#[cfg(feature = "persian")]
-use lingua_persian_language_model::PERSIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "polish")]
-use lingua_polish_language_model::POLISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "portuguese")]
-use lingua_portuguese_language_model::PORTUGUESE_MODELS_DIRECTORY;
-
-#[cfg(feature = "punjabi")]
-use lingua_punjabi_language_model::PUNJABI_MODELS_DIRECTORY;
-
-#[cfg(feature = "romanian")]
-use lingua_romanian_language_model::ROMANIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "russian")]
-use lingua_russian_language_model::RUSSIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "serbian")]
-use lingua_serbian_language_model::SERBIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "shona")]
-use lingua_shona_language_model::SHONA_MODELS_DIRECTORY;
-
-#[cfg(feature = "slovak")]
-use lingua_slovak_language_model::SLOVAK_MODELS_DIRECTORY;
-
-#[cfg(feature = "slovene")]
-use lingua_slovene_language_model::SLOVENE_MODELS_DIRECTORY;
-
-#[cfg(feature = "somali")]
-use lingua_somali_language_model::SOMALI_MODELS_DIRECTORY;
-
-#[cfg(feature = "sotho")]
-use lingua_sotho_language_model::SOTHO_MODELS_DIRECTORY;
-
-#[cfg(feature = "spanish")]
-use lingua_spanish_language_model::SPANISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "swahili")]
-use lingua_swahili_language_model::SWAHILI_MODELS_DIRECTORY;
-
-#[cfg(feature = "swedish")]
-use lingua_swedish_language_model::SWEDISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "tagalog")]
-use lingua_tagalog_language_model::TAGALOG_MODELS_DIRECTORY;
-
-#[cfg(feature = "tamil")]
-use lingua_tamil_language_model::TAMIL_MODELS_DIRECTORY;
-
-#[cfg(feature = "telugu")]
-use lingua_telugu_language_model::TELUGU_MODELS_DIRECTORY;
-
-#[cfg(feature = "thai")]
-use lingua_thai_language_model::THAI_MODELS_DIRECTORY;
-
-#[cfg(feature = "tsonga")]
-use lingua_tsonga_language_model::TSONGA_MODELS_DIRECTORY;
-
-#[cfg(feature = "tswana")]
-use lingua_tswana_language_model::TSWANA_MODELS_DIRECTORY;
-
-#[cfg(feature = "turkish")]
-use lingua_turkish_language_model::TURKISH_MODELS_DIRECTORY;
-
-#[cfg(feature = "ukrainian")]
-use lingua_ukrainian_language_model::UKRAINIAN_MODELS_DIRECTORY;
-
-#[cfg(feature = "urdu")]
-use lingua_urdu_language_model::URDU_MODELS_DIRECTORY;
-
-#[cfg(feature = "vietnamese")]
-use lingua_vietnamese_language_model::VIETNAMESE_MODELS_DIRECTORY;
-
-#[cfg(feature = "welsh")]
-use lingua_welsh_language_model::WELSH_MODELS_DIRECTORY;
-
-#[cfg(feature = "xhosa")]
-use lingua_xhosa_language_model::XHOSA_MODELS_DIRECTORY;
-
-#[cfg(feature = "yoruba")]
-use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
-
-#[cfg(feature = "zulu")]
-use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
-
-use std::io::ErrorKind;
-
-pub(crate) fn load_rkyv(language: Language, ngram_length: usize) -> std::io::Result<&'static [u8]> {
-    let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
-    let file_path = format!("{}s.bin", ngram_name);
-    let directory = get_language_models_directory(language);
-    let rkyv_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
-
-    Ok(rkyv_file.contents())
+    ngrams[ngram_length - 1]
 }
 
-fn get_language_models_directory(language: Language) -> Dir<'static> {
+fn get_language_models_ngrams(language: Language) -> [&'static [u8]; 5] {
     match language {
         #[cfg(feature = "afrikaans")]
-        Language::Afrikaans => AFRIKAANS_MODELS_DIRECTORY,
+        Language::Afrikaans => lingua_afrikaans_language_model::NGRAMS,
 
         #[cfg(feature = "albanian")]
-        Language::Albanian => ALBANIAN_MODELS_DIRECTORY,
+        Language::Albanian => lingua_albanian_language_model::NGRAMS,
 
         #[cfg(feature = "arabic")]
-        Language::Arabic => ARABIC_MODELS_DIRECTORY,
+        Language::Arabic => lingua_arabic_language_model::NGRAMS,
 
         #[cfg(feature = "armenian")]
-        Language::Armenian => ARMENIAN_MODELS_DIRECTORY,
+        Language::Armenian => lingua_armenian_language_model::NGRAMS,
 
         #[cfg(feature = "azerbaijani")]
-        Language::Azerbaijani => AZERBAIJANI_MODELS_DIRECTORY,
+        Language::Azerbaijani => lingua_azerbaijani_language_model::NGRAMS,
 
         #[cfg(feature = "basque")]
-        Language::Basque => BASQUE_MODELS_DIRECTORY,
+        Language::Basque => lingua_basque_language_model::NGRAMS,
 
         #[cfg(feature = "belarusian")]
-        Language::Belarusian => BELARUSIAN_MODELS_DIRECTORY,
+        Language::Belarusian => lingua_belarusian_language_model::NGRAMS,
 
         #[cfg(feature = "bengali")]
-        Language::Bengali => BENGALI_MODELS_DIRECTORY,
+        Language::Bengali => lingua_bengali_language_model::NGRAMS,
 
         #[cfg(feature = "bokmal")]
-        Language::Bokmal => BOKMAL_MODELS_DIRECTORY,
+        Language::Bokmal => lingua_bokmal_language_model::NGRAMS,
 
         #[cfg(feature = "bosnian")]
-        Language::Bosnian => BOSNIAN_MODELS_DIRECTORY,
+        Language::Bosnian => lingua_bosnian_language_model::NGRAMS,
 
         #[cfg(feature = "bulgarian")]
-        Language::Bulgarian => BULGARIAN_MODELS_DIRECTORY,
+        Language::Bulgarian => lingua_bulgarian_language_model::NGRAMS,
 
         #[cfg(feature = "catalan")]
-        Language::Catalan => CATALAN_MODELS_DIRECTORY,
+        Language::Catalan => lingua_catalan_language_model::NGRAMS,
 
         #[cfg(feature = "chinese")]
-        Language::Chinese => CHINESE_MODELS_DIRECTORY,
+        Language::Chinese => lingua_chinese_language_model::NGRAMS,
 
         #[cfg(feature = "croatian")]
-        Language::Croatian => CROATIAN_MODELS_DIRECTORY,
+        Language::Croatian => lingua_croatian_language_model::NGRAMS,
 
         #[cfg(feature = "czech")]
-        Language::Czech => CZECH_MODELS_DIRECTORY,
+        Language::Czech => lingua_czech_language_model::NGRAMS,
 
         #[cfg(feature = "danish")]
-        Language::Danish => DANISH_MODELS_DIRECTORY,
+        Language::Danish => lingua_danish_language_model::NGRAMS,
 
         #[cfg(feature = "dutch")]
-        Language::Dutch => DUTCH_MODELS_DIRECTORY,
+        Language::Dutch => lingua_dutch_language_model::NGRAMS,
 
         #[cfg(feature = "english")]
-        Language::English => ENGLISH_MODELS_DIRECTORY,
+        Language::English => lingua_english_language_model::NGRAMS,
 
         #[cfg(feature = "esperanto")]
-        Language::Esperanto => ESPERANTO_MODELS_DIRECTORY,
+        Language::Esperanto => lingua_esperanto_language_model::NGRAMS,
 
         #[cfg(feature = "estonian")]
-        Language::Estonian => ESTONIAN_MODELS_DIRECTORY,
+        Language::Estonian => lingua_estonian_language_model::NGRAMS,
 
         #[cfg(feature = "finnish")]
-        Language::Finnish => FINNISH_MODELS_DIRECTORY,
+        Language::Finnish => lingua_finnish_language_model::NGRAMS,
 
         #[cfg(feature = "french")]
-        Language::French => FRENCH_MODELS_DIRECTORY,
+        Language::French => lingua_french_language_model::NGRAMS,
 
         #[cfg(feature = "ganda")]
-        Language::Ganda => GANDA_MODELS_DIRECTORY,
+        Language::Ganda => lingua_ganda_language_model::NGRAMS,
 
         #[cfg(feature = "georgian")]
-        Language::Georgian => GEORGIAN_MODELS_DIRECTORY,
+        Language::Georgian => lingua_georgian_language_model::NGRAMS,
 
         #[cfg(feature = "german")]
-        Language::German => GERMAN_MODELS_DIRECTORY,
+        Language::German => lingua_german_language_model::NGRAMS,
 
         #[cfg(feature = "greek")]
-        Language::Greek => GREEK_MODELS_DIRECTORY,
+        Language::Greek => lingua_greek_language_model::NGRAMS,
 
         #[cfg(feature = "gujarati")]
-        Language::Gujarati => GUJARATI_MODELS_DIRECTORY,
+        Language::Gujarati => lingua_gujarati_language_model::NGRAMS,
 
         #[cfg(feature = "hebrew")]
-        Language::Hebrew => HEBREW_MODELS_DIRECTORY,
+        Language::Hebrew => lingua_hebrew_language_model::NGRAMS,
 
         #[cfg(feature = "hindi")]
-        Language::Hindi => HINDI_MODELS_DIRECTORY,
+        Language::Hindi => lingua_hindi_language_model::NGRAMS,
 
         #[cfg(feature = "hungarian")]
-        Language::Hungarian => HUNGARIAN_MODELS_DIRECTORY,
+        Language::Hungarian => lingua_hungarian_language_model::NGRAMS,
 
         #[cfg(feature = "icelandic")]
-        Language::Icelandic => ICELANDIC_MODELS_DIRECTORY,
+        Language::Icelandic => lingua_icelandic_language_model::NGRAMS,
 
         #[cfg(feature = "indonesian")]
-        Language::Indonesian => INDONESIAN_MODELS_DIRECTORY,
+        Language::Indonesian => lingua_indonesian_language_model::NGRAMS,
 
         #[cfg(feature = "irish")]
-        Language::Irish => IRISH_MODELS_DIRECTORY,
+        Language::Irish => lingua_irish_language_model::NGRAMS,
 
         #[cfg(feature = "italian")]
-        Language::Italian => ITALIAN_MODELS_DIRECTORY,
+        Language::Italian => lingua_italian_language_model::NGRAMS,
 
         #[cfg(feature = "japanese")]
-        Language::Japanese => JAPANESE_MODELS_DIRECTORY,
+        Language::Japanese => lingua_japanese_language_model::NGRAMS,
 
         #[cfg(feature = "kazakh")]
-        Language::Kazakh => KAZAKH_MODELS_DIRECTORY,
+        Language::Kazakh => lingua_kazakh_language_model::NGRAMS,
 
         #[cfg(feature = "korean")]
-        Language::Korean => KOREAN_MODELS_DIRECTORY,
+        Language::Korean => lingua_korean_language_model::NGRAMS,
 
         #[cfg(feature = "latin")]
-        Language::Latin => LATIN_MODELS_DIRECTORY,
+        Language::Latin => lingua_latin_language_model::NGRAMS,
 
         #[cfg(feature = "latvian")]
-        Language::Latvian => LATVIAN_MODELS_DIRECTORY,
+        Language::Latvian => lingua_latvian_language_model::NGRAMS,
 
         #[cfg(feature = "lithuanian")]
-        Language::Lithuanian => LITHUANIAN_MODELS_DIRECTORY,
+        Language::Lithuanian => lingua_lithuanian_language_model::NGRAMS,
 
         #[cfg(feature = "macedonian")]
-        Language::Macedonian => MACEDONIAN_MODELS_DIRECTORY,
+        Language::Macedonian => lingua_macedonian_language_model::NGRAMS,
 
         #[cfg(feature = "malay")]
-        Language::Malay => MALAY_MODELS_DIRECTORY,
+        Language::Malay => lingua_malay_language_model::NGRAMS,
 
         #[cfg(feature = "maori")]
-        Language::Maori => MAORI_MODELS_DIRECTORY,
+        Language::Maori => lingua_maori_language_model::NGRAMS,
 
         #[cfg(feature = "marathi")]
-        Language::Marathi => MARATHI_MODELS_DIRECTORY,
+        Language::Marathi => lingua_marathi_language_model::NGRAMS,
 
         #[cfg(feature = "mongolian")]
-        Language::Mongolian => MONGOLIAN_MODELS_DIRECTORY,
+        Language::Mongolian => lingua_mongolian_language_model::NGRAMS,
 
         #[cfg(feature = "nynorsk")]
-        Language::Nynorsk => NYNORSK_MODELS_DIRECTORY,
+        Language::Nynorsk => lingua_nynorsk_language_model::NGRAMS,
 
         #[cfg(feature = "persian")]
-        Language::Persian => PERSIAN_MODELS_DIRECTORY,
+        Language::Persian => lingua_persian_language_model::NGRAMS,
 
         #[cfg(feature = "polish")]
-        Language::Polish => POLISH_MODELS_DIRECTORY,
+        Language::Polish => lingua_polish_language_model::NGRAMS,
 
         #[cfg(feature = "portuguese")]
-        Language::Portuguese => PORTUGUESE_MODELS_DIRECTORY,
+        Language::Portuguese => lingua_portuguese_language_model::NGRAMS,
 
         #[cfg(feature = "punjabi")]
-        Language::Punjabi => PUNJABI_MODELS_DIRECTORY,
+        Language::Punjabi => lingua_punjabi_language_model::NGRAMS,
 
         #[cfg(feature = "romanian")]
-        Language::Romanian => ROMANIAN_MODELS_DIRECTORY,
+        Language::Romanian => lingua_romanian_language_model::NGRAMS,
 
         #[cfg(feature = "russian")]
-        Language::Russian => RUSSIAN_MODELS_DIRECTORY,
+        Language::Russian => lingua_russian_language_model::NGRAMS,
 
         #[cfg(feature = "serbian")]
-        Language::Serbian => SERBIAN_MODELS_DIRECTORY,
+        Language::Serbian => lingua_serbian_language_model::NGRAMS,
 
         #[cfg(feature = "shona")]
-        Language::Shona => SHONA_MODELS_DIRECTORY,
+        Language::Shona => lingua_shona_language_model::NGRAMS,
 
         #[cfg(feature = "slovak")]
-        Language::Slovak => SLOVAK_MODELS_DIRECTORY,
+        Language::Slovak => lingua_slovak_language_model::NGRAMS,
 
         #[cfg(feature = "slovene")]
-        Language::Slovene => SLOVENE_MODELS_DIRECTORY,
+        Language::Slovene => lingua_slovene_language_model::NGRAMS,
 
         #[cfg(feature = "somali")]
-        Language::Somali => SOMALI_MODELS_DIRECTORY,
+        Language::Somali => lingua_somali_language_model::NGRAMS,
 
         #[cfg(feature = "sotho")]
-        Language::Sotho => SOTHO_MODELS_DIRECTORY,
+        Language::Sotho => lingua_sotho_language_model::NGRAMS,
 
         #[cfg(feature = "spanish")]
-        Language::Spanish => SPANISH_MODELS_DIRECTORY,
+        Language::Spanish => lingua_spanish_language_model::NGRAMS,
 
         #[cfg(feature = "swahili")]
-        Language::Swahili => SWAHILI_MODELS_DIRECTORY,
+        Language::Swahili => lingua_swahili_language_model::NGRAMS,
 
         #[cfg(feature = "swedish")]
-        Language::Swedish => SWEDISH_MODELS_DIRECTORY,
+        Language::Swedish => lingua_swedish_language_model::NGRAMS,
 
         #[cfg(feature = "tagalog")]
-        Language::Tagalog => TAGALOG_MODELS_DIRECTORY,
+        Language::Tagalog => lingua_tagalog_language_model::NGRAMS,
 
         #[cfg(feature = "tamil")]
-        Language::Tamil => TAMIL_MODELS_DIRECTORY,
+        Language::Tamil => lingua_tamil_language_model::NGRAMS,
 
         #[cfg(feature = "telugu")]
-        Language::Telugu => TELUGU_MODELS_DIRECTORY,
+        Language::Telugu => lingua_telugu_language_model::NGRAMS,
 
         #[cfg(feature = "thai")]
-        Language::Thai => THAI_MODELS_DIRECTORY,
+        Language::Thai => lingua_thai_language_model::NGRAMS,
 
         #[cfg(feature = "tsonga")]
-        Language::Tsonga => TSONGA_MODELS_DIRECTORY,
+        Language::Tsonga => lingua_tsonga_language_model::NGRAMS,
 
         #[cfg(feature = "tswana")]
-        Language::Tswana => TSWANA_MODELS_DIRECTORY,
+        Language::Tswana => lingua_tswana_language_model::NGRAMS,
 
         #[cfg(feature = "turkish")]
-        Language::Turkish => TURKISH_MODELS_DIRECTORY,
+        Language::Turkish => lingua_turkish_language_model::NGRAMS,
 
         #[cfg(feature = "ukrainian")]
-        Language::Ukrainian => UKRAINIAN_MODELS_DIRECTORY,
+        Language::Ukrainian => lingua_ukrainian_language_model::NGRAMS,
 
         #[cfg(feature = "urdu")]
-        Language::Urdu => URDU_MODELS_DIRECTORY,
+        Language::Urdu => lingua_urdu_language_model::NGRAMS,
 
         #[cfg(feature = "vietnamese")]
-        Language::Vietnamese => VIETNAMESE_MODELS_DIRECTORY,
+        Language::Vietnamese => lingua_vietnamese_language_model::NGRAMS,
 
         #[cfg(feature = "welsh")]
-        Language::Welsh => WELSH_MODELS_DIRECTORY,
+        Language::Welsh => lingua_welsh_language_model::NGRAMS,
 
         #[cfg(feature = "xhosa")]
-        Language::Xhosa => XHOSA_MODELS_DIRECTORY,
+        Language::Xhosa => lingua_xhosa_language_model::NGRAMS,
 
         #[cfg(feature = "yoruba")]
-        Language::Yoruba => YORUBA_MODELS_DIRECTORY,
+        Language::Yoruba => lingua_yoruba_language_model::NGRAMS,
 
         #[cfg(feature = "zulu")]
-        Language::Zulu => ZULU_MODELS_DIRECTORY,
+        Language::Zulu => lingua_zulu_language_model::NGRAMS,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::minify;
-
     const EXPECTED_UNIGRAM_MODEL: &str = r#"
     {
         "language":"ENGLISH",
@@ -570,11 +335,4 @@ mod tests {
         }
     }
     "#;
-
-    #[test]
-    fn test_load_json() {
-        let result = load_rkyv(Language::English, 1);
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap(), minify(EXPECTED_UNIGRAM_MODEL));
-    }
 }

@@ -53,3 +53,4 @@ ehthumbs.db
 
 src/main.rs
 *.bin
+generated_statics.rs

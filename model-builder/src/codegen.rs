@@ -12,7 +12,15 @@ pub fn generate_statics(model_dir_relative: &str, src_dir: impl AsRef<Path>) {
 
     writeln!(
         &mut file,
-        "//! Auto-generated static data containing n-gram hash maps.\n"
+        "//! Auto-generated static data containing n-gram hash maps.
+
+/// Pseudo-struct used for aligning bytes to a certain type.
+#[repr(C)]
+pub struct AlignedTo<Align, Bytes: ?Sized> {{
+    _align: [Align; 0],
+    bytes: Bytes,
+}}
+"
     )
     .unwrap();
 
@@ -21,7 +29,10 @@ pub fn generate_statics(model_dir_relative: &str, src_dir: impl AsRef<Path>) {
 
         writeln!(
             &mut file,
-            r#"static {}S: &[u8] = include_bytes!("{}/{}s.bin");"#,
+            r#"static {}S: &AlignedTo<u128, [u8]> = &AlignedTo {{
+    _align: [],
+    bytes: *include_bytes!("{}/{}s.bin"),
+}};"#,
             ngram_name.to_uppercase(),
             model_dir_relative,
             ngram_name
@@ -31,7 +42,13 @@ pub fn generate_statics(model_dir_relative: &str, src_dir: impl AsRef<Path>) {
 
     writeln!(
         &mut file,
-        "\npub static NGRAMS: [&[u8]; 5] = [UNIGRAMS, BIGRAMS, TRIGRAMS, QUADRIGRAMS, FIVEGRAMS];"
+        "\npub static NGRAMS: [&[u8]; 5] = [
+    &UNIGRAMS.bytes,
+    &BIGRAMS.bytes,
+    &TRIGRAMS.bytes,
+    &QUADRIGRAMS.bytes,
+    &FIVEGRAMS.bytes,
+];"
     )
     .unwrap();
 }

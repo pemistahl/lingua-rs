@@ -35,3 +35,6 @@ keywords = [
 
 [dependencies]
 include_dir = "0.7.2"
+
+[build-dependencies]
+model-builder = { path = "../../model-builder" }

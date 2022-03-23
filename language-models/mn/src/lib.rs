@@ -19,3 +19,6 @@ use include_dir::{include_dir, Dir};
 pub const MONGOLIAN_MODELS_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/models");
 
 pub const MONGOLIAN_TESTDATA_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/testdata");
+
+mod generated_statics;
+pub use generated_statics::NGRAMS;

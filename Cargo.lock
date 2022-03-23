@@ -512,6 +512,7 @@ name = "lingua-afrikaans-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -519,6 +520,7 @@ name = "lingua-albanian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -526,6 +528,7 @@ name = "lingua-arabic-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -533,6 +536,7 @@ name = "lingua-armenian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -540,6 +544,7 @@ name = "lingua-azerbaijani-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -547,6 +552,7 @@ name = "lingua-basque-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -554,6 +560,7 @@ name = "lingua-belarusian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -561,6 +568,7 @@ name = "lingua-bengali-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -568,6 +576,7 @@ name = "lingua-bokmal-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -575,6 +584,7 @@ name = "lingua-bosnian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -582,6 +592,7 @@ name = "lingua-bulgarian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -589,6 +600,7 @@ name = "lingua-catalan-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -596,6 +608,7 @@ name = "lingua-chinese-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -603,6 +616,7 @@ name = "lingua-croatian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -610,6 +624,7 @@ name = "lingua-czech-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -617,6 +632,7 @@ name = "lingua-danish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -624,6 +640,7 @@ name = "lingua-dutch-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -639,6 +656,7 @@ name = "lingua-esperanto-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -646,6 +664,7 @@ name = "lingua-estonian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -653,6 +672,7 @@ name = "lingua-finnish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -668,6 +688,7 @@ name = "lingua-ganda-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -675,6 +696,7 @@ name = "lingua-georgian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -690,6 +712,7 @@ name = "lingua-greek-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -697,6 +720,7 @@ name = "lingua-gujarati-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -704,6 +728,7 @@ name = "lingua-hebrew-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -711,6 +736,7 @@ name = "lingua-hindi-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -718,6 +744,7 @@ name = "lingua-hungarian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -725,6 +752,7 @@ name = "lingua-icelandic-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -732,6 +760,7 @@ name = "lingua-indonesian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -739,6 +768,7 @@ name = "lingua-irish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -754,6 +784,7 @@ name = "lingua-japanese-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -761,6 +792,7 @@ name = "lingua-kazakh-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -768,6 +800,7 @@ name = "lingua-korean-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -775,6 +808,7 @@ name = "lingua-latin-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -782,6 +816,7 @@ name = "lingua-latvian-language-model"
 version = "1.0.2"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -789,6 +824,7 @@ name = "lingua-lithuanian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -796,6 +832,7 @@ name = "lingua-macedonian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -803,6 +840,7 @@ name = "lingua-malay-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -810,6 +848,7 @@ name = "lingua-maori-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -817,6 +856,7 @@ name = "lingua-marathi-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -824,6 +864,7 @@ name = "lingua-mongolian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -831,6 +872,7 @@ name = "lingua-nynorsk-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -838,6 +880,7 @@ name = "lingua-persian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -845,6 +888,7 @@ name = "lingua-polish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -852,6 +896,7 @@ name = "lingua-portuguese-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -859,6 +904,7 @@ name = "lingua-punjabi-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -866,6 +912,7 @@ name = "lingua-romanian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -873,6 +920,7 @@ name = "lingua-russian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -880,6 +928,7 @@ name = "lingua-serbian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -887,6 +936,7 @@ name = "lingua-shona-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -894,6 +944,7 @@ name = "lingua-slovak-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -901,6 +952,7 @@ name = "lingua-slovene-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -908,6 +960,7 @@ name = "lingua-somali-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -915,6 +968,7 @@ name = "lingua-sotho-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -922,6 +976,7 @@ name = "lingua-spanish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -929,6 +984,7 @@ name = "lingua-swahili-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -936,6 +992,7 @@ name = "lingua-swedish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -943,6 +1000,7 @@ name = "lingua-tagalog-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -950,6 +1008,7 @@ name = "lingua-tamil-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -957,6 +1016,7 @@ name = "lingua-telugu-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -964,6 +1024,7 @@ name = "lingua-thai-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -971,6 +1032,7 @@ name = "lingua-tsonga-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -978,6 +1040,7 @@ name = "lingua-tswana-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -985,6 +1048,7 @@ name = "lingua-turkish-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -992,6 +1056,7 @@ name = "lingua-ukrainian-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -999,6 +1064,7 @@ name = "lingua-urdu-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -1006,6 +1072,7 @@ name = "lingua-vietnamese-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -1013,6 +1080,7 @@ name = "lingua-welsh-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -1020,6 +1088,7 @@ name = "lingua-xhosa-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -1027,6 +1096,7 @@ name = "lingua-yoruba-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]
@@ -1034,6 +1104,7 @@ name = "lingua-zulu-language-model"
 version = "1.0.1"
 dependencies = [
  "include_dir",
+ "model-builder",
 ]
 
 [[package]]

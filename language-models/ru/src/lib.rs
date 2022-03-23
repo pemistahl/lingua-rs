@@ -19,3 +19,6 @@ use include_dir::{include_dir, Dir};
 pub const RUSSIAN_MODELS_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/models");
 
 pub const RUSSIAN_TESTDATA_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/testdata");
+
+mod generated_statics;
+pub use generated_statics::NGRAMS;

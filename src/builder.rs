@@ -19,7 +19,11 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
 use std::collections::HashSet;
 
-const MISSING_LANGUAGE_MESSAGE: &str = "LanguageDetector needs at least 2 languages to choose from";
+pub(crate) const MISSING_LANGUAGE_MESSAGE: &str =
+    "LanguageDetector needs at least 2 languages to choose from";
+
+pub(crate) const MINIMUM_RELATIVE_DISTANCE_MESSAGE: &str =
+    "Minimum relative distance must lie in between 0.0 and 0.99";
 
 /// This struct configures and creates an instance of [LanguageDetector].
 pub struct LanguageDetectorBuilder {
@@ -141,7 +145,7 @@ impl LanguageDetectorBuilder {
     /// ⚠ Panics if `distance` is smaller than 0.0 or greater than 0.99.
     pub fn with_minimum_relative_distance(&mut self, distance: f64) -> &mut Self {
         if !(0.0..=0.99).contains(&distance) {
-            panic!("minimum relative distance must lie in between 0.0 and 0.99");
+            panic!("{}", MINIMUM_RELATIVE_DISTANCE_MESSAGE);
         }
         self.minimum_relative_distance = distance;
         self
@@ -303,13 +307,13 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "minimum relative distance must lie in between 0.0 and 0.99")]
+    #[should_panic(expected = "Minimum relative distance must lie in between 0.0 and 0.99")]
     fn assert_detector_cannot_be_built_from_too_small_minimum_relative_distance() {
         LanguageDetectorBuilder::from_all_languages().with_minimum_relative_distance(-2.3);
     }
 
     #[test]
-    #[should_panic(expected = "minimum relative distance must lie in between 0.0 and 0.99")]
+    #[should_panic(expected = "Minimum relative distance must lie in between 0.0 and 0.99")]
     fn assert_detector_cannot_be_built_from_too_large_minimum_relative_distance() {
         LanguageDetectorBuilder::from_all_languages().with_minimum_relative_distance(1.7);
     }

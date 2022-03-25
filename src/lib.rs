@@ -281,6 +281,9 @@ mod model;
 mod ngram;
 mod writer;
 
+#[cfg(target_family = "wasm")]
+mod wasm;
+
 pub use builder::LanguageDetectorBuilder;
 pub use detector::LanguageDetector;
 pub use isocode::{IsoCode639_1, IsoCode639_3};

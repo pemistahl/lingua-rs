@@ -279,8 +279,9 @@ mod language;
 mod model;
 mod writer;
 
-#[cfg(target_family = "wasm")]
-mod wasm;
+// Need to exclude this for the moment
+// #[cfg(target_family = "wasm")]
+// mod wasm;
 
 pub use builder::LanguageDetectorBuilder;
 pub use detector::LanguageDetector;

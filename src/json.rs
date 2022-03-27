@@ -16,13 +16,13 @@
 
 use crate::Language;
 
-pub(crate) fn load_rkyv(language: Language, ngram_length: usize) -> &'static [u8] {
+pub(crate) fn load_rkyv(language: Language, ngram_length: usize) -> Option<&'static [u8]> {
     let ngrams = get_language_models_ngrams(language);
 
     ngrams[ngram_length - 1]
 }
 
-fn get_language_models_ngrams(language: Language) -> [&'static [u8]; 5] {
+fn get_language_models_ngrams(language: Language) -> [Option<&'static [u8]>; 5] {
     match language {
         #[cfg(feature = "afrikaans")]
         Language::Afrikaans => lingua_afrikaans_language_model::NGRAMS,

@@ -3,7 +3,7 @@ use serde::Deserialize;
 use std::{
     collections::{BTreeMap, HashMap},
     fs::File,
-    io::{BufReader, BufWriter, Read, Write},
+    io::{self, BufReader, BufWriter, Read, Write},
     path::Path,
 };
 use zip::ZipArchive;
@@ -15,20 +15,21 @@ pub fn build_frequencies(models_dir: impl AsRef<Path>) {
     for n in 1..=5 {
         let ngram_name = Ngram::find_ngram_name_by_length(n);
 
-        let json = load_json(models_dir, ngram_name);
-        let frequencies = extract_frequencies(&json);
-        let bytes = rkyv::to_bytes::<_, 256>(&frequencies).unwrap();
+        if let Ok(json) = load_json(models_dir, ngram_name) {
+            let frequencies = extract_frequencies(&json);
+            let bytes = rkyv::to_bytes::<_, 256>(&frequencies).unwrap();
 
-        let file_path = models_dir.join(format!("{}s.bin", ngram_name));
-        let mut file = BufWriter::new(File::create(file_path).unwrap());
-        file.write_all(&bytes).unwrap();
+            let file_path = models_dir.join(format!("{}s.bin", ngram_name));
+            let mut file = BufWriter::new(File::create(file_path).unwrap());
+            file.write_all(&bytes).unwrap();
+        }
     }
 }
 
 /// Reads the JSON language model for the given n-gram and directory.
-fn load_json(models_dir: &Path, ngram_name: &str) -> String {
+fn load_json(models_dir: &Path, ngram_name: &str) -> io::Result<String> {
     let file_path = models_dir.join(format!("{}s.json.zip", ngram_name));
-    let file_reader = BufReader::new(File::open(file_path).unwrap());
+    let file_reader = BufReader::new(File::open(file_path)?);
 
     let mut archive = ZipArchive::new(file_reader).unwrap();
     let mut json_file = archive.by_index(0).unwrap();
@@ -36,7 +37,7 @@ fn load_json(models_dir: &Path, ngram_name: &str) -> String {
     let mut json = String::new();
     json_file.read_to_string(&mut json).unwrap();
 
-    json
+    Ok(json)
 }
 
 /// Turns the language model JSON into the `HashMap` of frequencies that

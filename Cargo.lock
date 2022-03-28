@@ -411,6 +411,7 @@ dependencies = [
  "cld2",
  "common",
  "float-cmp",
+ "fraction",
  "include_dir",
  "indoc",
  "itertools",

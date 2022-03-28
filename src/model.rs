@@ -274,13 +274,6 @@ mod tests {
             ))
         }
 
-        fn expected_unigram_json_relative_frequencies() -> HashMap<Ngram, f64> {
-            expected_unigram_relative_frequencies()
-                .iter()
-                .map(|(ngram, fraction)| (ngram.clone(), fraction.to_f64()))
-                .collect()
-        }
-
         #[fixture]
         fn expected_bigram_absolute_frequencies() -> HashMap<Ngram, u32> {
             map_keys_to_ngrams(hashmap!(
@@ -466,25 +459,6 @@ mod tests {
             assert_eq!(
                 model.relative_frequencies,
                 Some(expected_relative_frequencies)
-            );
-        }
-
-        #[test]
-        fn test_model_serializer_and_deserializer() {
-            let model = TrainingDataLanguageModel {
-                language: Language::English,
-                absolute_frequencies: None,
-                relative_frequencies: Some(expected_unigram_relative_frequencies()),
-                json_relative_frequencies: None,
-            };
-            let deserialized = TrainingDataLanguageModel::from_rkyv(&model.to_json());
-
-            assert_eq!(deserialized.language, Language::English);
-            assert_eq!(deserialized.absolute_frequencies, None);
-            assert_eq!(deserialized.relative_frequencies, None);
-            assert_eq!(
-                deserialized.json_relative_frequencies,
-                Some(expected_unigram_json_relative_frequencies())
             );
         }
     }

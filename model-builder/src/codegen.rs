@@ -36,10 +36,10 @@ pub struct AlignedTo<Align, Bytes: ?Sized> {{
                 &mut file,
                 r#"static {}S: &AlignedTo<u128, [u8]> = &AlignedTo {{
     _align: [],
-    bytes: *include_bytes!("{}"),
+    bytes: *include_bytes!({:?}),
 }};"#,
                 ngram_name.to_uppercase(),
-                fs::canonicalize(file_path).unwrap().display(),
+                fs::canonicalize(file_path).unwrap(),
             )
             .unwrap();
         }

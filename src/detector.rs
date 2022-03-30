@@ -32,7 +32,7 @@ use std::str::FromStr;
 use std::sync::RwLock;
 use strum::IntoEnumIterator;
 
-#[cfg(feature = "parallelism")]
+#[cfg(not(target_family = "wasm"))]
 use rayon::prelude::*;
 
 type BoxedLanguageModel = Box<dyn LanguageModel + Send + Sync>;
@@ -94,9 +94,9 @@ impl LanguageDetector {
     }
 
     fn preload_language_models(&mut self, languages: &HashSet<Language>) {
-        #[cfg(feature = "parallelism")]
+        #[cfg(not(target_family = "wasm"))]
         let languages_iter = languages.par_iter();
-        #[cfg(not(feature = "parallelism"))]
+        #[cfg(target_family = "wasm")]
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
@@ -190,9 +190,9 @@ impl LanguageDetector {
             1..6usize
         };
 
-        #[cfg(feature = "parallelism")]
+        #[cfg(not(target_family = "wasm"))]
         let ngram_length_range_iter = ngram_length_range.into_par_iter();
-        #[cfg(not(feature = "parallelism"))]
+        #[cfg(target_family = "wasm")]
         let ngram_length_range_iter = ngram_length_range.into_iter();
 
         #[allow(clippy::type_complexity)]

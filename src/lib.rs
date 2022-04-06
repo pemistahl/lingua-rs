@@ -290,6 +290,9 @@ pub use isocode::{IsoCode639_1, IsoCode639_3};
 pub use language::Language;
 pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter};
 
+#[cfg(target_family = "wasm")]
+pub use wasm::LanguageDetectorBuilder as WasmLanguageDetectorBuilder;
+
 #[cfg(test)]
 use regex::Regex;
 

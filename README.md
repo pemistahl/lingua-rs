@@ -206,7 +206,7 @@ of the rule-based engine is quite good, however, filtering based on your own kno
 If you want to reproduce the accuracy results above, you can generate the test reports yourself for both classifiers 
 and all languages by doing:
 
-    cargo run --release --example accuracy_reports
+    cargo run --release --bin accuracy_reports --features accuracy-reports
     
 It is important to use the `--release` flag here because loading the language models in debug mode takes too much time. 
 For each detector and language, a test report file is then written into 

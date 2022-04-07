@@ -3,14 +3,14 @@
 <br>
 
 [![build](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml)
-[![dependency status](https://deps.rs/crate/lingua/1.3.3/status.svg)](https://deps.rs/crate/lingua/1.3.3)
+[![dependency status](https://deps.rs/crate/lingua/1.4.0/status.svg)](https://deps.rs/crate/lingua/1.4.0)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
 [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
 [![Downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 
 [![Docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![Crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.3.3-blue)](https://lib.rs/crates/lingua)
+[![Lib.rs](https://img.shields.io/badge/lib.rs-v1.4.0-blue)](https://lib.rs/crates/lingua)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## 1. What does this library do?
@@ -216,17 +216,17 @@ to be found next to the `src` directory. As an example, here is the current outp
 ```
 ##### German #####
 
->>> Accuracy on average: 89.1%
+>>> Accuracy on average: 89.23%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 73.6%
-Erroneously classified as Dutch: 2.3%, Danish: 2.1%, English: 2.1%, Latin: 2%, Bokmal: 1.6%, Basque: 1.2%, French: 1.2%, Italian: 1.2%, Esperanto: 1.1%, Swedish: 1%, Afrikaans: 0.8%, Tsonga: 0.7%, Nynorsk: 0.6%, Portuguese: 0.6%, Estonian: 0.5%, Finnish: 0.5%, Sotho: 0.5%, Welsh: 0.5%, Yoruba: 0.5%, Icelandic: 0.4%, Irish: 0.4%, Polish: 0.4%, Spanish: 0.4%, Swahili: 0.4%, Tswana: 0.4%, Bosnian: 0.3%, Catalan: 0.3%, Tagalog: 0.3%, Albanian: 0.2%, Croatian: 0.2%, Indonesian: 0.2%, Lithuanian: 0.2%, Romanian: 0.2%, Slovak: 0.2%, Xhosa: 0.2%, Zulu: 0.2%, Latvian: 0.1%, Malay: 0.1%, Slovene: 0.1%, Somali: 0.1%, Turkish: 0.1%
+Accuracy: 73.9%
+Erroneously classified as Dutch: 2.3%, Danish: 2.1%, English: 2%, Latin: 1.9%, Bokmal: 1.6%, Basque: 1.2%, French: 1.2%, Italian: 1.2%, Esperanto: 1.1%, Swedish: 1%, Afrikaans: 0.8%, Tsonga: 0.7%, Nynorsk: 0.6%, Portuguese: 0.6%, Yoruba: 0.6%, Finnish: 0.5%, Sotho: 0.5%, Welsh: 0.5%, Estonian: 0.4%, Irish: 0.4%, Polish: 0.4%, Spanish: 0.4%, Swahili: 0.4%, Tswana: 0.4%, Bosnian: 0.3%, Icelandic: 0.3%, Tagalog: 0.3%, Albanian: 0.2%, Catalan: 0.2%, Croatian: 0.2%, Indonesian: 0.2%, Lithuanian: 0.2%, Maori: 0.2%, Romanian: 0.2%, Xhosa: 0.2%, Zulu: 0.2%, Latvian: 0.1%, Malay: 0.1%, Slovak: 0.1%, Slovene: 0.1%, Somali: 0.1%, Turkish: 0.1%
 
 >> Detection of 1000 word pairs (average length: 18 chars)
-Accuracy: 94%
-Erroneously classified as Dutch: 0.9%, Latin: 0.8%, English: 0.7%, Swedish: 0.6%, Danish: 0.5%, French: 0.4%, Bokmal: 0.3%, Irish: 0.2%, Swahili: 0.2%, Tagalog: 0.2%, Afrikaans: 0.1%, Esperanto: 0.1%, Estonian: 0.1%, Finnish: 0.1%, Icelandic: 0.1%, Italian: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Tsonga: 0.1%, Turkish: 0.1%, Welsh: 0.1%, Zulu: 0.1%
+Accuracy: 94.1%
+Erroneously classified as Dutch: 0.9%, Latin: 0.8%, English: 0.7%, Swedish: 0.6%, Danish: 0.5%, French: 0.4%, Bokmal: 0.3%, Irish: 0.2%, Tagalog: 0.2%, Afrikaans: 0.1%, Esperanto: 0.1%, Estonian: 0.1%, Finnish: 0.1%, Italian: 0.1%, Maori: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Swahili: 0.1%, Tsonga: 0.1%, Turkish: 0.1%, Welsh: 0.1%, Zulu: 0.1%
 
->> Detection of 1000 sentences (average length: 112 chars)
+>> Detection of 1000 sentences (average length: 111 chars)
 Accuracy: 99.7%
 Erroneously classified as Dutch: 0.2%, Latin: 0.1%
 ```
@@ -237,17 +237,17 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.3.3"
+lingua = "1.4.0"
 ```
 
 By default, this will download the language model dependencies for all 75 supported languages, 
-a total of approximately 120 MB. If your bandwidth or hard drive space is limited, or you simply 
+a total of approximately 100 MB. If your bandwidth or hard drive space is limited, or you simply 
 do not need all languages, you can specify a subset of the language models to be downloaded as 
 separate features in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-lingua = { version = "1.3.3", default-features = false, features = ["french", "italian", "spanish"] }
+lingua = { version = "1.4.0", default-features = false, features = ["french", "italian", "spanish"] }
 ```
 
 ## 8. How to build?
@@ -407,11 +407,50 @@ LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::EN, IsoCode639_1::
 LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
 ```
 
-## 10. What's next for version 1.4.0?
+## 10. WebAssembly support
 
-Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/6).
+This library can be compiled to [WebAssembly (WASM)](https://webassembly.org) which allows to use *Lingua*
+in any JavaScript-based project, be it in the browser or in the back end running on [Node.js](https://nodejs.org).
 
-## 11. Contributions
+The easiest way to compile is to use [`wasm-pack`](https://rustwasm.github.io/wasm-pack). After the installation,
+you can, for instance, build the library with the web target so that it can be directly used in the browser:
+
+    wasm-pack build --target web
+
+By default, all 75 supported languages are included in the compiled wasm file. If you only need a subset of certain
+languages, you can tell `wasm-pack` which ones to include:
+
+    wasm-pack build --target web -- --no-default-features --features "french,italian,spanish"
+
+This creates a directory named `pkg` on the top-level of this repository, containing the compiled wasm files
+and JavaScript and TypeScript bindings. In an HTML file, you can then call *Lingua* like the following, for instance:
+
+```html
+<script type="module">
+    import init, { LanguageDetectorBuilder } from './pkg/lingua.js';
+
+    init().then(_ => {
+        const detector = LanguageDetectorBuilder.fromAllLanguages().build();
+        console.log(detector.computeLanguageConfidenceValues("languages are awesome"));
+    });
+</script>
+```
+
+There are also some integration tests available both for Node.js and for the browsers Chrome and Firefox.
+To run them, simply say:
+
+    wasm-pack test --node --headless --chrome --firefox
+
+The output of `wasm-pack` will be hosted in a [separate repository](https://github.com/pemistahl/lingua-js) which
+allows to add further JavaScript-related configuration, tests and documentation. *Lingua* will then be added to the 
+[npm registry](https://www.npmjs.com) as well, allowing for an easy download and installation within every JavaScript 
+or TypeScript project.
+
+## 11. What's next for version 1.5.0?
+
+Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/7).
+
+## 12. Contributions
 
 - [Josh Rotenberg](https://github.com/joshrotenberg) has written a [wrapper](https://github.com/joshrotenberg/lingua_ex)
 for using *Lingua* with the [Elixir programming language](https://elixir-lang.org/).

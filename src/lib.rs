@@ -110,17 +110,17 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.3.2"
+//! lingua = "1.4.0"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
-//! a total of approximately 120 MB. If your bandwidth or hard drive space is limited, or you simply
+//! a total of approximately 100 MB. If your bandwidth or hard drive space is limited, or you simply
 //! do not need all languages, you can specify a subset of the language models to be downloaded as
 //! separate features in your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.3.2", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.4.0", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?

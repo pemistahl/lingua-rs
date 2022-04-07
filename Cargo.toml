@@ -17,7 +17,7 @@ members = ["language-models/*"]
 
 [package]
 name = "lingua"
-version = "1.4.0-SNAPSHOT"
+version = "1.4.0"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for long and short text alike

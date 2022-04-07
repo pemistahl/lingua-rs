@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#![cfg(target_family = "wasm")]
+
 use lingua::{IsoCode639_1, IsoCode639_3, Language, WasmLanguageDetectorBuilder};
 use maplit::hashset;
 use wasm_bindgen::JsValue;

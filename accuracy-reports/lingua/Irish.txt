@@ -1,6 +1,6 @@
 ##### Irish #####
 
->>> Accuracy on average: 90.7%
+>>> Accuracy on average: 90.73%
 
 >> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 81.9%
@@ -11,6 +11,6 @@ Accuracy: 94.3%
 Erroneously classified as English: 1.9%, Latin: 0.8%, Yoruba: 0.5%, French: 0.3%, Italian: 0.3%, Welsh: 0.3%, Spanish: 0.2%, Tsonga: 0.2%, Basque: 0.1%, Bokmal: 0.1%, Danish: 0.1%, Dutch: 0.1%, German: 0.1%, Hungarian: 0.1%, Nynorsk: 0.1%, Portuguese: 0.1%, Shona: 0.1%, Slovak: 0.1%, Swahili: 0.1%, Turkish: 0.1%
 
 >> Detection of 1000 sentences (average length: 113 chars)
-Accuracy: 95.9%
-Erroneously classified as English: 2.1%, Yoruba: 0.5%, Esperanto: 0.3%, Welsh: 0.3%, Latin: 0.2%, Slovak: 0.2%, Spanish: 0.2%, Czech: 0.1%, Shona: 0.1%, Tsonga: 0.1%
+Accuracy: 96%
+Erroneously classified as English: 2.1%, Yoruba: 0.5%, Esperanto: 0.3%, Welsh: 0.3%, Latin: 0.2%, Spanish: 0.2%, Czech: 0.1%, Shona: 0.1%, Slovak: 0.1%, Tsonga: 0.1%
 

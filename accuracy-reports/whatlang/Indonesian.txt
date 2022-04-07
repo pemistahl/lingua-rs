@@ -1,16 +1,16 @@
 ##### Indonesian #####
 
->>> Accuracy on average: 70.46%
+>>> Accuracy on average: 69.03%
 
 >> Detection of 1000 single words (average length: 8 chars)
-Accuracy: 44.5%
-Erroneously classified as Unknown: 17.4%, Estonian: 3.2%, Esperanto: 2.2%, German: 2.1%, Latin: 2.1%, Lithuanian: 2%, Afrikaans: 1.9%, Finnish: 1.9%, Turkish: 1.9%, French: 1.6%, Hungarian: 1.6%, Catalan: 1.5%, Portuguese: 1.5%, Bokmal: 1.4%, Dutch: 1.4%, Italian: 1.3%, Swedish: 1.2%, Zulu: 1.2%, Danish: 1%, Romanian: 1%, Shona: 1%, English: 0.8%, Latvian: 0.8%, Croatian: 0.7%, Azerbaijani: 0.5%, Spanish: 0.5%, Polish: 0.4%, Slovak: 0.4%, Slovene: 0.4%, Vietnamese: 0.4%, Czech: 0.2%
+Accuracy: 42.3%
+Erroneously classified as Unknown: 21.1%, Estonian: 3.1%, Esperanto: 2.2%, Latin: 2.1%, German: 2%, Afrikaans: 1.9%, Lithuanian: 1.8%, Turkish: 1.8%, Finnish: 1.7%, Hungarian: 1.6%, Catalan: 1.5%, French: 1.5%, Portuguese: 1.5%, Bokmal: 1.4%, Dutch: 1.4%, Italian: 1.2%, Swedish: 1.2%, Zulu: 1.1%, Danish: 1%, Romanian: 1%, Shona: 1%, English: 0.7%, Latvian: 0.7%, Croatian: 0.6%, Azerbaijani: 0.5%, Spanish: 0.5%, Polish: 0.4%, Slovene: 0.4%, Slovak: 0.3%, Vietnamese: 0.3%, Czech: 0.2%
 
 >> Detection of 1000 word pairs (average length: 15 chars)
-Accuracy: 71.2%
-Erroneously classified as Unknown: 12.9%, Esperanto: 1.2%, Lithuanian: 1%, Catalan: 0.9%, English: 0.9%, Finnish: 0.9%, Italian: 0.9%, Hungarian: 0.8%, Latin: 0.8%, Turkish: 0.8%, Estonian: 0.7%, German: 0.6%, Spanish: 0.6%, Swedish: 0.6%, Afrikaans: 0.5%, Bokmal: 0.5%, French: 0.5%, Latvian: 0.5%, Shona: 0.5%, Danish: 0.4%, Dutch: 0.4%, Portuguese: 0.4%, Slovene: 0.4%, Romanian: 0.3%, Azerbaijani: 0.2%, Croatian: 0.2%, Zulu: 0.2%, Czech: 0.1%, Slovak: 0.1%
+Accuracy: 69.3%
+Erroneously classified as Unknown: 15.6%, Esperanto: 1.1%, English: 0.9%, Finnish: 0.9%, Italian: 0.9%, Lithuanian: 0.9%, Catalan: 0.8%, Hungarian: 0.8%, Latin: 0.8%, Estonian: 0.7%, German: 0.6%, Spanish: 0.6%, Swedish: 0.6%, Turkish: 0.6%, French: 0.5%, Latvian: 0.5%, Afrikaans: 0.4%, Bokmal: 0.4%, Danish: 0.4%, Dutch: 0.4%, Portuguese: 0.4%, Shona: 0.4%, Slovene: 0.4%, Romanian: 0.3%, Azerbaijani: 0.2%, Croatian: 0.2%, Zulu: 0.2%, Czech: 0.1%, Slovak: 0.1%
 
 >> Detection of 1000 sentences (average length: 105 chars)
-Accuracy: 95.7%
-Erroneously classified as Unknown: 3.7%, Italian: 0.2%, Finnish: 0.1%, Portuguese: 0.1%, Slovene: 0.1%, Spanish: 0.1%
+Accuracy: 95.5%
+Erroneously classified as Unknown: 4%, Italian: 0.2%, Portuguese: 0.1%, Slovene: 0.1%, Spanish: 0.1%
 

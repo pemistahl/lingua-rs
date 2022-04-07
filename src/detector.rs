@@ -434,7 +434,9 @@ impl LanguageDetector {
                 for character in characters.chars() {
                     if word.contains(character) {
                         for language in languages.iter() {
-                            self.increment_counter(&mut language_counts, language);
+                            if filtered_languages.contains(language) {
+                                self.increment_counter(&mut language_counts, language);
+                            }
                         }
                     }
                 }
@@ -444,14 +446,11 @@ impl LanguageDetector {
         let languages_subset = language_counts
             .into_iter()
             .filter(|(_, count)| (*count as f64) >= half_word_count)
-            .map(|(language, _)| language)
+            .map(|(language, _)| language.clone())
             .collect::<HashSet<_>>();
 
         if !languages_subset.is_empty() {
-            filtered_languages
-                .into_iter()
-                .filter(|it| languages_subset.contains(&it))
-                .collect::<HashSet<_>>()
+            languages_subset
         } else {
             filtered_languages
         }

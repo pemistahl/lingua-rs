@@ -73,7 +73,7 @@
 //!
 //! The [bar and box plots](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_PLOTS.md)
 //! show the measured accuracy values for all three performed tasks: Single word detection,
-//! word pair detection and sentence detection. *Lingua* clearly outperforms its contender.
+//! word pair detection and sentence detection. *Lingua* clearly outperforms its contenders.
 //! Detailed statistics including mean, median and standard deviation values for each language
 //! and classifier are available in
 //! [tabular form](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_TABLE.md) as well.

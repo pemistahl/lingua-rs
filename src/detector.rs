@@ -431,7 +431,7 @@ impl LanguageDetector {
 
         for (characters, languages) in CHARS_TO_LANGUAGES_MAPPING.iter() {
             let relevant_languages = filtered_languages
-                .intersection(&languages)
+                .intersection(languages)
                 .collect::<HashSet<_>>();
 
             for word in words.iter() {

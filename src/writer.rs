@@ -236,7 +236,7 @@ impl TestDataFilesWriter {
 
         for line in input_lines {
             let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&line, " ");
-            let removed_quotes = normalized_whitespace.replace("\"", "");
+            let removed_quotes = normalized_whitespace.replace('\"', "");
 
             if line_counter < maximum_lines {
                 sentences_writer.write_all(removed_quotes.as_bytes())?;
@@ -276,7 +276,7 @@ impl TestDataFilesWriter {
             let removed_punctuation = PUNCTUATION.replace_all(&line, "");
             let removed_numbers = NUMBERS.replace_all(&removed_punctuation, "");
             let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&removed_numbers, " ");
-            let removed_quotes = normalized_whitespace.replace("\"", "");
+            let removed_quotes = normalized_whitespace.replace('\"', "");
             let mut single_words = removed_quotes
                 .split(' ')
                 .map(|word| word.trim().to_lowercase())

@@ -429,14 +429,16 @@ impl LanguageDetector {
 
         let mut language_counts = HashMap::<&Language, u32>::new();
 
-        for word in words.iter() {
-            for (characters, languages) in CHARS_TO_LANGUAGES_MAPPING.iter() {
+        for (characters, languages) in CHARS_TO_LANGUAGES_MAPPING.iter() {
+            let relevant_languages = filtered_languages
+                .intersection(&languages)
+                .collect::<HashSet<_>>();
+
+            for word in words.iter() {
                 for character in characters.chars() {
                     if word.contains(character) {
-                        for language in languages.iter() {
-                            if filtered_languages.contains(language) {
-                                self.increment_counter(&mut language_counts, language);
-                            }
+                        for language in relevant_languages.iter() {
+                            self.increment_counter(&mut language_counts, language);
                         }
                     }
                 }

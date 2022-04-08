@@ -170,15 +170,45 @@ Given the generated test data, I have compared the detection results of *Lingua*
 running over the data of *Lingua's* supported 75 languages. Languages that are not supported
 by *CLD2* or *Whatlang* are simply ignored for the respective library during the detection process.
 
-The box plot below shows the distribution of the averaged accuracy values for all three performed tasks: 
-Single word detection, word pair detection and sentence detection. *Lingua* clearly outperforms its contender.
-Bar plots for each language and further box plots for the separate detection tasks can be found in the file 
-[ACCURACY_PLOTS.md](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_PLOTS.md). 
+The box plots below illustrate the distributions of the accuracy values for each classifier. The boxes 
+themselves represent the areas which the middle 50 % of data lie within. Within the colored boxes, the 
+horizontal lines mark the median of the distributions. All these plots demonstrate that *Lingua* clearly 
+outperforms its contenders. Bar plots for each language can be found
+in the file [ACCURACY_PLOTS.md](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_PLOTS.md). 
 Detailed statistics including mean, median and standard deviation values for each language and classifier are 
-available in the file 
-[ACCURACY_TABLE.md](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_TABLE.md).
+available in the file [ACCURACY_TABLE.md](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_TABLE.md).
+
+### 4.1 Single word detection
+
+<br/>
+
+<img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/plots/boxplot-single-words.png" alt="Single Word Detection Performance" />
+
+<br/><br/>
+
+### 4.2 Word pair detection
+
+<br/>
+
+<img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/plots/boxplot-word-pairs.png" alt="Word Pair Detection Performance" />
+
+<br/><br/>
+
+### 4.3 Sentence detection
+
+<br/>
+
+<img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/plots/boxplot-sentences.png" alt="Sentence Detection Performance" />
+
+<br/><br/>
+
+### 4.4 Average detection
+
+<br/>
 
 <img src="https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/plots/boxplot-average.png" alt="Average Detection Performance" />
+
+<br/><br/>
 
 ## 5. Why is it better than other libraries?
 

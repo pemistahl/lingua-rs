@@ -175,7 +175,7 @@ fn assert_detector_cannot_be_built_from_too_short_whitelist() {
 fn assert_detector_can_be_built_from_iso_639_1_codes() {
     let result = WasmLanguageDetectorBuilder::fromISOCodes6391(Box::new([
         JsValue::from(IsoCode639_1::DE.to_string()),
-        JsValue::from(IsoCode639_1::SV.to_string()),
+        JsValue::from(IsoCode639_1::ZU.to_string()),
     ]));
     assert!(result.is_ok());
 }
@@ -197,7 +197,7 @@ fn assert_detector_cannot_be_built_from_too_few_iso_639_1_codes() {
 fn assert_detector_can_be_built_from_iso_639_3_codes() {
     let result = WasmLanguageDetectorBuilder::fromISOCodes6393(Box::new([
         JsValue::from(IsoCode639_3::DEU.to_string()),
-        JsValue::from(IsoCode639_3::SWE.to_string()),
+        JsValue::from(IsoCode639_3::ZUL.to_string()),
     ]));
     assert!(result.is_ok());
 }

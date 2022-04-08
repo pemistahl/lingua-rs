@@ -275,11 +275,11 @@ mod tests {
     #[test]
     fn assert_detector_can_be_built_from_iso_639_1_codes() {
         let builder =
-            LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::DE, IsoCode639_1::SV]);
+            LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::DE, IsoCode639_1::ZU]);
 
         assert_eq!(
             builder.languages,
-            hashset!(Language::German, Language::Swedish)
+            hashset!(Language::German, Language::Zulu)
         );
     }
 
@@ -292,11 +292,11 @@ mod tests {
     #[test]
     fn assert_detector_can_be_built_from_iso_639_3_codes() {
         let builder =
-            LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::DEU, IsoCode639_3::SWE]);
+            LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::DEU, IsoCode639_3::ZUL]);
 
         assert_eq!(
             builder.languages,
-            hashset!(Language::German, Language::Swedish)
+            hashset!(Language::German, Language::Zulu)
         );
     }
 

@@ -1,3 +1,15 @@
+## Lingua 1.4.0 (released on 08 Apr 2022)
+
+### Features
+
+- The library can now be compiled to WebAssembly and be used in any
+  JavaScript project. Big thanks to @martindisch for bringing this
+  forward. (#14)
+
+### Improvements
+
+- Some minor performance tweaks have been applied to the rule engine.
+
 ## Lingua 1.3.3 (released on 22 Feb 2022)
 
 ### Bug Fixes

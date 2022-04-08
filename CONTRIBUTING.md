@@ -37,25 +37,25 @@ how it looks like. It should be pretty self-explanatory.
 8. Add the new crate as an optional dependency to the main [`Cargo.toml`][cargo toml url].
 Do not forget to add a separate Cargo feature for the new language as well.
 9. Add the new language to the functions in [`/src/json.rs`][json rs url] and 
-[`/examples/accuracy_reports.rs`][accuracy reports url] so that *Lingua* can find the language
+[`/src/bin/accuracy_reports.rs`][accuracy reports url] so that *Lingua* can find the language
 model and test data directories.
 10. Fix the existing unit tests by adding your new language.
-11. For accuracy report generation, run `cargo run --release --example accuracy_reports`.
+11. For accuracy report generation, run `cargo run --release --bin accuracy_reports --features accuracy-reports`.
 12. Be happy! :-) You have successfully contributed a new language and have thereby significantly widened
 this library's fields of application. 
 
-[library build url]: https://github.com/pemistahl/lingua-rs#library-build
+[library build url]: https://github.com/pemistahl/lingua-rs#8-how-to-build
 [isocode639_1 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L26
 [isocode639_3 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L334
 [wikipedia isocodes list]: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 [language url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L30
-[language method url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L991
+[language method url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L777
 [alphabet url]: https://github.com/pemistahl/lingua-rs/blob/main/src/alphabet.rs#L25
-[chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/main/src/constant.rs#L34
+[chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/main/src/constant.rs#L44
 [language model files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L38
 [language models directory url]: https://github.com/pemistahl/lingua-rs/tree/main/language-models
 [test data files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L172
 [test data directory url]: https://github.com/pemistahl/lingua-rs/tree/main/assets/test/language-testdata
 [cargo toml url]: https://github.com/pemistahl/lingua-rs/blob/main/Cargo.toml
 [json rs url]: https://github.com/pemistahl/lingua-rs/blob/main/src/json.rs#L262
-[accuracy reports url]: https://github.com/pemistahl/lingua-rs/blob/main/examples/accuracy_reports.rs
+[accuracy reports url]: https://github.com/pemistahl/lingua-rs/blob/main/src/bin/accuracy_reports.rs

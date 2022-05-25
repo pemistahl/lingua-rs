@@ -1027,9 +1027,9 @@ dependencies = [
 
 [[package]]
 name = "mockall"
-version = "0.11.0"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d4d70639a72f972725db16350db56da68266ca368b2a1fe26724a903ad3d6b8"
+checksum = "5641e476bbaf592a3939a7485fa079f427b4db21407d5ebfd5bba4e07a1f6f4c"
 dependencies = [
  "cfg-if",
  "downcast",
@@ -1042,9 +1042,9 @@ dependencies = [
 
 [[package]]
 name = "mockall_derive"
-version = "0.11.0"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79ef208208a0dea3f72221e26e904cdc6db2e481d9ade89081ddd494f1dbaa6b"
+checksum = "262d56735932ee0240d515656e5a7667af3af2a5b0af4da558c4cff2b2aeb0c7"
 dependencies = [
  "cfg-if",
  "proc-macro2",
@@ -1201,9 +1201,9 @@ dependencies = [
 
 [[package]]
 name = "rayon"
-version = "1.5.2"
+version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd249e82c21598a9a426a4e00dd7adc1d640b22445ec8545feef801d1a74c221"
+checksum = "bd99e5772ead8baa5215278c9b15bf92087709e9c1b2d1f97cdb5a183c933a7d"
 dependencies = [
  "autocfg",
  "crossbeam-deque",

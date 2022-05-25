@@ -145,7 +145,7 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 float-cmp = "0.9"
 indoc = "1.0"
 mockall = "0.11"
-rstest = "0.12"
+rstest = "0.13"
 tempfile = "3.3"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]

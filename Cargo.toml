@@ -135,7 +135,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "=1.0.1", 
 cld2 = { version = "1.0", optional = true }
 indoc = { version = "1.0", optional = true }
 rayon = "1.5"
-titlecase = { version = "1.1", optional = true }
+titlecase = { version = "2.0", optional = true }
 whatlang = { version = "0.16", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]

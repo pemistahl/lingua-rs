@@ -29,13 +29,13 @@ use once_cell::sync::Lazy;
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use std::str::FromStr;
-use std::sync::RwLock;
+use std::sync::{Arc, RwLock};
 use strum::IntoEnumIterator;
 
 #[cfg(not(target_family = "wasm"))]
 use rayon::prelude::*;
 
-type BoxedLanguageModel = Box<dyn LanguageModel + Send + Sync>;
+type BoxedLanguageModel = Arc<dyn LanguageModel + Send + Sync>;
 type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, BoxedLanguageModel>>>;
 type StaticLanguageModelMap = &'static RwLock<HashMap<Language, BoxedLanguageModel>>;
 
@@ -478,7 +478,7 @@ impl LanguageDetector {
             } else {
                 filtered_languages.clone()
             };
-            Some(self.count_unigrams(&test_data_model, &intersected_languages))
+            Some(self.count_unigrams(&test_data_model, &intersected_languages, ngram_length))
         } else {
             None
         };
@@ -535,22 +535,48 @@ impl LanguageDetector {
         language: &Language,
         ngrams: &HashSet<Ngram>,
     ) -> f64 {
+        let language_models = self.get_language_models(language);
         let mut sum = 0.0;
         for ngram in ngrams.iter() {
             for elem in ngram.range_of_lower_order_ngrams() {
-                let probability = self.look_up_ngram_probability(language, &elem);
-
-                if probability > 0.0 {
-                    sum += probability.ln();
-                    break;
+                let ngram_length = elem.value.chars().count();
+                if let Some(model) = &language_models[ngram_length - 1] {
+                    let probability = model.get_relative_frequency(&elem);
+                    if probability > 0.0 {
+                        sum += probability.ln();
+                        break;
+                    }
                 }
             }
         }
         sum
     }
 
-    fn look_up_ngram_probability(&self, language: &Language, ngram: &Ngram) -> f64 {
-        let ngram_length = ngram.value.chars().count();
+    fn get_language_models(&self, language: &Language) -> [Option<BoxedLanguageModel>; 5] {
+        let models: [StaticLanguageModelMap; 5] = [
+            self.unigram_language_models,
+            self.bigram_language_models,
+            self.trigram_language_models,
+            self.quadrigram_language_models,
+            self.fivegram_language_models,
+        ];
+        for (i, model) in models.iter().enumerate() {
+            self.load_language_models(model, language, i + 1);
+        }
+        let mut language_models: [Option<BoxedLanguageModel>; 5] = Default::default();
+        for (i, model) in models.iter().enumerate() {
+            if let Some(language_model) = model.read().unwrap().get(language) {
+                language_models[i] = Some(language_model.clone());
+            }
+        }
+        language_models
+    }
+
+    fn get_language_model(
+        &self,
+        language: &Language,
+        ngram_length: usize,
+    ) -> Option<BoxedLanguageModel> {
         let language_models = match ngram_length {
             5 => self.fivegram_language_models,
             4 => self.quadrigram_language_models,
@@ -558,17 +584,13 @@ impl LanguageDetector {
             2 => self.bigram_language_models,
             1 => self.unigram_language_models,
             0 => panic!("zerogram detected"),
-            _ => panic!(
-                "unsupported ngram length detected: {}",
-                ngram.value.chars().count()
-            ),
+            _ => panic!("unsupported ngram length detected: {}", ngram_length),
         };
 
         self.load_language_models(language_models, language, ngram_length);
-
         match language_models.read().unwrap().get(language) {
-            Some(model) => model.get_relative_frequency(ngram),
-            None => 0.0,
+            Some(language_model) => Some(language_model.clone()),
+            None => None,
         }
     }
 
@@ -576,12 +598,15 @@ impl LanguageDetector {
         &self,
         unigram_model: &TestDataLanguageModel,
         filtered_languages: &HashSet<Language>,
+        ngram_length: usize,
     ) -> HashMap<Language, u32> {
         let mut unigram_counts = HashMap::new();
         for language in filtered_languages.iter() {
-            for unigram in unigram_model.ngrams.iter() {
-                if self.look_up_ngram_probability(language, unigram) > 0.0 {
-                    self.increment_counter(&mut unigram_counts, language.clone());
+            if let Some(language_model) = self.get_language_model(language, ngram_length) {
+                for unigram in unigram_model.ngrams.iter() {
+                    if language_model.get_relative_frequency(unigram) > 0.0 {
+                        self.increment_counter(&mut unigram_counts, language.clone());
+                    }
                 }
             }
         }
@@ -632,7 +657,7 @@ impl LanguageDetector {
             if let Ok(json_content) = json {
                 models.insert(
                     language.clone(),
-                    Box::new(TrainingDataLanguageModel::from_json(&json_content)),
+                    Arc::new(TrainingDataLanguageModel::from_json(&json_content)),
                 );
             }
         }
@@ -665,7 +690,7 @@ mod tests {
                 .withf(move |n| n == &Ngram::new(ngram))
                 .return_const(probability);
         }
-        Box::new(mock)
+        Arc::new(mock)
     }
 
     // ##############################
@@ -1005,8 +1030,11 @@ mod tests {
         ngram: &str,
         expected_probability: f64,
     ) {
-        let probability = detector_for_english_and_german
-            .look_up_ngram_probability(&language, &Ngram::new(ngram));
+        let ngram_length = ngram.chars().count();
+        let model = detector_for_english_and_german
+            .get_language_model(&language, ngram_length)
+            .unwrap();
+        let probability = model.get_relative_frequency(&Ngram::new(ngram));
         assert_eq!(
             probability, expected_probability,
             "expected probability {} for language '{:?}' and ngram '{}', got {}",
@@ -1016,10 +1044,10 @@ mod tests {
 
     #[rstest]
     #[should_panic(expected = "zerogram detected")]
-    fn assert_ngram_probability_lookup_does_not_work_for_zerogram(
+    fn assert_get_language_model_does_not_work_for_zerogram(
         detector_for_english_and_german: LanguageDetector,
     ) {
-        detector_for_english_and_german.look_up_ngram_probability(&English, &Ngram::new(""));
+        detector_for_english_and_german.get_language_model(&English, 0);
     }
 
     #[rstest(

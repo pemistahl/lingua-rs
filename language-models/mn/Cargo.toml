@@ -34,4 +34,4 @@ keywords = [
 ]
 
 [dependencies]
-include_dir = "0.7.2"
+include_dir = "0.7.3"

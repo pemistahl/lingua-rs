@@ -44,7 +44,7 @@ name = "accuracy_reports"
 required-features = ["accuracy-reports"]
 
 [dependencies]
-fraction = "0.11"
+fraction = "0.12"
 include_dir = "0.7"
 itertools = "0.10"
 maplit = "1.0"

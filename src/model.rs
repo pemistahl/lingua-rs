@@ -17,7 +17,7 @@
 use crate::constant::LETTER;
 use crate::fraction::Fraction;
 use crate::language::Language;
-use crate::ngram::Ngram;
+use crate::ngram::{Ngram, NgramRef};
 use itertools::Itertools;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -25,7 +25,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 
 #[cfg_attr(test, mockall::automock)]
 pub(crate) trait LanguageModel {
-    fn get_relative_frequency(&self, ngram: &Ngram) -> f64;
+    fn get_relative_frequency<'a>(&self, ngram: &'a NgramRef<'a>) -> f64;
 }
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -42,9 +42,9 @@ pub(crate) struct TrainingDataLanguageModel {
 }
 
 impl LanguageModel for TrainingDataLanguageModel {
-    fn get_relative_frequency(&self, ngram: &Ngram) -> f64 {
+    fn get_relative_frequency<'a>(&self, ngram: &'a NgramRef) -> f64 {
         match &self.json_relative_frequencies {
-            Some(frequencies) => *frequencies.get(ngram).unwrap_or(&0.0),
+            Some(frequencies) => *frequencies.get(ngram.value).unwrap_or(&0.0),
             None => 0.0,
         }
     }
@@ -172,24 +172,30 @@ impl TrainingDataLanguageModel {
     }
 }
 
-pub(crate) struct TestDataLanguageModel {
-    pub(crate) ngrams: HashSet<Ngram>,
+pub(crate) struct TestDataLanguageModel<'a> {
+    pub(crate) ngrams: HashSet<NgramRef<'a>>,
 }
 
-impl TestDataLanguageModel {
-    pub(crate) fn from(text: &str, ngram_length: usize) -> Self {
+impl<'a> TestDataLanguageModel<'a> {
+    pub(crate) fn from(text: &'a str, ngram_length: usize) -> Self {
         if !(1..6).contains(&ngram_length) {
             panic!("ngram length {} is not in range 1..6", ngram_length);
         }
-
-        let mut ngrams = hashset!();
-        let chars = text.chars().collect_vec();
+        let chars: Vec<(usize, char)> = text.char_indices().collect_vec();
+        let mut ngrams = HashSet::with_capacity(chars.len());
+        let stop_index = chars.len() - ngram_length;
 
         if chars.len() >= ngram_length {
-            for i in 0..=chars.len() - ngram_length {
-                let slice = &chars[i..i + ngram_length].iter().collect::<String>();
+            for i in 0..=stop_index {
+                let from = chars[i].0;
+                let to = if i == stop_index {
+                    text.len()
+                } else {
+                    chars[i + ngram_length].0
+                };
+                let slice = &text[from..to];
                 if LETTER.is_match(slice) {
-                    ngrams.insert(Ngram::new(slice));
+                    ngrams.insert(NgramRef::new(slice));
                 }
             }
         }
@@ -494,12 +500,12 @@ mod tests {
     mod test_data {
         use super::*;
 
-        fn map_strs_to_ngrams(strs: HashSet<&'static str>) -> HashSet<Ngram> {
-            strs.iter().map(|&it| Ngram::new(it)).collect()
+        fn map_strs_to_ngrams(strs: HashSet<&'static str>) -> HashSet<NgramRef<'static>> {
+            strs.iter().map(|&it| NgramRef::new(it)).collect()
         }
 
         #[fixture]
-        fn expected_unigrams() -> HashSet<Ngram> {
+        fn expected_unigrams() -> HashSet<NgramRef<'static>> {
             map_strs_to_ngrams(hashset!(
                 "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "r", "s",
                 "t", "u", "w", "y"
@@ -507,7 +513,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_bigrams() -> HashSet<Ngram> {
+        fn expected_bigrams<>() -> HashSet<NgramRef<'static>> {
             map_strs_to_ngrams(hashset!(
                 "de", "pr", "pu", "do", "uc", "ds", "du", "ur", "us", "ed", "in", "io", "em", "en",
                 "is", "al", "es", "ar", "rd", "re", "ey", "nc", "nd", "ay", "ng", "ro", "rp", "no",
@@ -517,7 +523,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_trigrams() -> HashSet<Ngram> {
+        fn expected_trigrams() -> HashSet<NgramRef<'static>> {
             map_strs_to_ngrams(hashset!(
                 "rds", "ose", "ded", "con", "use", "est", "ion", "ist", "pur", "hem", "hes", "tin",
                 "cti", "tio", "wor", "ten", "hey", "ota", "tal", "tes", "uct", "sti", "pro", "odu",
@@ -528,7 +534,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_quadrigrams() -> HashSet<Ngram> {
+        fn expected_quadrigrams() -> HashSet<NgramRef<'static>> {
             map_strs_to_ngrams(hashset!(
                 "onsi", "sist", "ende", "ords", "esti", "tenc", "nces", "oduc", "tend", "thes",
                 "rpos", "ting", "nten", "nsis", "they", "tota", "cons", "tion", "prod", "ence",
@@ -538,7 +544,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_fivegrams() -> HashSet<Ngram> {
+        fn expected_fivegrams() -> HashSet<NgramRef<'static>> {
             map_strs_to_ngrams(hashset!(
                 "testi", "sente", "ences", "tende", "these", "ntenc", "ducti", "ntend", "onsis",
                 "total", "uctio", "enten", "poses", "ction", "produ", "inten", "nsist", "words",
@@ -556,8 +562,9 @@ mod tests {
             case::quadrigram_model(4, expected_quadrigrams()),
             case::fivegram_model(5, expected_fivegrams())
         )]
-        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: HashSet<Ngram>) {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), ngram_length);
+        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: HashSet<NgramRef<'static>>) {
+            let text = &TEXT.to_lowercase();
+            let model = TestDataLanguageModel::from(text, ngram_length);
             assert_eq!(model.ngrams, expected_ngrams);
         }
     }

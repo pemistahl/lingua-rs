@@ -120,12 +120,14 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: wasm-pack test --headless --firefox
 
-      - name: Create code coverage report
-        if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}
-        uses: caizixian/tarpaulin@v0.1.3
-        with:
-          args: '--lib --ignore-config --ignore-panics --ignore-tests --exclude-files src/wasm.rs'
+      # fixme: fork and fix tarpaulin action or find a replacement
+      #
+      # - name: Create code coverage report
+      #   if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}
+      #   uses: actions-rs/tarpaulin@v0.1
+      #   with:
+      #     args: '--lib --ignore-config --ignore-panics --ignore-tests --exclude-files src/wasm.rs'
 
-      - name: Upload code coverage report to Codecov
-        if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}
-        uses: codecov/codecov-action@v3
+      # - name: Upload code coverage report to Codecov
+      #   if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}
+      #   uses: codecov/codecov-action@v3

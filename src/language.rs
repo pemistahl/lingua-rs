@@ -258,7 +258,7 @@ pub enum Language {
 
 impl Display for Language {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        let debug_repr = format!("{:?}", self);
+        let debug_repr = format!("{self:?}");
         write!(f, "{}", debug_repr.to_lowercase())
     }
 }

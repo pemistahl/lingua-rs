@@ -51,8 +51,8 @@ impl LanguageModel for TrainingDataLanguageModel {
 }
 
 impl TrainingDataLanguageModel {
-    pub(crate) fn from_text<'a>(
-        text: &[&'a str],
+    pub(crate) fn from_text(
+        text: &[&str],
         language: &Language,
         ngram_length: usize,
         char_class: &str,
@@ -117,16 +117,15 @@ impl TrainingDataLanguageModel {
         serde_json::to_string(&model).unwrap()
     }
 
-    fn compute_absolute_frequencies<'a>(
-        text: &[&'a str],
+    fn compute_absolute_frequencies(
+        text: &[&str],
         ngram_length: usize,
         char_class: &str,
     ) -> HashMap<Ngram, u32> {
         let mut absolute_frequencies = hashmap!();
-        let regex = Regex::new(&format!("^[{}]+$", char_class)).unwrap_or_else(|_| {
+        let regex = Regex::new(&format!("^[{char_class}]+$")).unwrap_or_else(|_| {
             panic!(
-                "The character class '{}' cannot be compiled to a valid regular expression",
-                char_class
+                "The character class '{char_class}' cannot be compiled to a valid regular expression"
             )
         });
 
@@ -179,7 +178,7 @@ pub(crate) struct TestDataLanguageModel {
 impl TestDataLanguageModel {
     pub(crate) fn from(text: &str, ngram_length: usize) -> Self {
         if !(1..6).contains(&ngram_length) {
-            panic!("ngram length {} is not in range 1..6", ngram_length);
+            panic!("ngram length {ngram_length} is not in range 1..6");
         }
 
         let mut ngrams = hashset!();

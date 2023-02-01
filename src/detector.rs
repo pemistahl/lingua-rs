@@ -349,7 +349,7 @@ impl LanguageDetector {
             }
         }
 
-        let unknown_language_count = *total_language_counts.get(&None).or(Some(&0)).unwrap() as f64;
+        let unknown_language_count = *total_language_counts.get(&None).unwrap_or(&0) as f64;
 
         if unknown_language_count < half_word_count {
             total_language_counts.remove(&None);

@@ -109,5 +109,5 @@ static TELUGU: Lazy<Regex> = Lazy::new(|| create_regex("Telugu"));
 static THAI: Lazy<Regex> = Lazy::new(|| create_regex("Thai"));
 
 fn create_regex(char_class: &str) -> Regex {
-    Regex::new(&format!("^\\p{{{}}}+$", char_class)).unwrap()
+    Regex::new(&format!("^\\p{{{char_class}}}+$")).unwrap()
 }

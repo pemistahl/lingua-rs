@@ -248,7 +248,7 @@ use zip::ZipArchive;
 
 pub(crate) fn load_json(language: Language, ngram_length: usize) -> std::io::Result<String> {
     let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
-    let file_path = format!("{}s.json.zip", ngram_name);
+    let file_path = format!("{ngram_name}s.json.zip");
     let directory = get_language_models_directory(language);
     let zip_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
     let zip_file_reader = Cursor::new(zip_file.contents());

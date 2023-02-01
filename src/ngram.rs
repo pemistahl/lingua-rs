@@ -29,10 +29,7 @@ impl Ngram {
     pub(crate) fn new(value: &str) -> Self {
         let char_count = value.chars().count();
         if !(0..6).contains(&char_count) {
-            panic!(
-                "length {} of ngram '{}' is not in range 0..6",
-                char_count, value
-            );
+            panic!("length {char_count} of ngram '{value}' is not in range 0..6");
         }
         Self {
             value: value.to_string(),
@@ -46,7 +43,7 @@ impl Ngram {
             3 => "trigram",
             4 => "quadrigram",
             5 => "fivegram",
-            _ => panic!("ngram length {} is not in range 1..6", ngram_length),
+            _ => panic!("ngram length {ngram_length} is not in range 1..6"),
         }
     }
 

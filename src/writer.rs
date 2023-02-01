@@ -157,7 +157,7 @@ impl LanguageModelFilesWriter {
         output_directory_path: &Path,
         file_name: &str,
     ) -> io::Result<()> {
-        let zip_file_name = format!("{}.zip", file_name);
+        let zip_file_name = format!("{file_name}.zip");
         let zip_file_path = output_directory_path.join(zip_file_name);
         let zip_file = File::create(zip_file_path)?;
         let mut zip = ZipWriter::new(zip_file);
@@ -257,7 +257,7 @@ impl TestDataFilesWriter {
         maximum_lines: u32,
     ) -> io::Result<Vec<String>> {
         let single_words_file_path = output_directory_path.join("single-words.txt");
-        let word_regex = Regex::new(&format!("[{}]{{5,}}", char_class)).unwrap();
+        let word_regex = Regex::new(&format!("[{char_class}]{{5,}}")).unwrap();
         let mut words = vec![];
 
         if single_words_file_path.is_file() {

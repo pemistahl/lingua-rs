@@ -635,14 +635,14 @@ pub enum IsoCode639_3 {
 
 impl Display for IsoCode639_1 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        let debug_repr = format!("{:?}", self);
+        let debug_repr = format!("{self:?}");
         write!(f, "{}", debug_repr.to_lowercase())
     }
 }
 
 impl Display for IsoCode639_3 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        let debug_repr = format!("{:?}", self);
+        let debug_repr = format!("{self:?}");
         write!(f, "{}", debug_repr.to_lowercase())
     }
 }

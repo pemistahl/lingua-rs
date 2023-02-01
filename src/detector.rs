@@ -21,8 +21,7 @@ use crate::constant::{
 };
 use crate::json::load_json;
 use crate::language::Language;
-use crate::model::TrainingDataLanguageModel;
-use crate::model::{LanguageModel, TestDataLanguageModel};
+use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
 use crate::ngram::Ngram;
 use itertools::Itertools;
 use once_cell::sync::Lazy;
@@ -35,9 +34,8 @@ use strum::IntoEnumIterator;
 #[cfg(not(target_family = "wasm"))]
 use rayon::prelude::*;
 
-type BoxedLanguageModel = Box<dyn LanguageModel + Send + Sync>;
-type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, BoxedLanguageModel>>>;
-type StaticLanguageModelMap = &'static RwLock<HashMap<Language, BoxedLanguageModel>>;
+type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, HashMap<String, f64>>>>;
+type StaticLanguageModelMap = &'static RwLock<HashMap<Language, HashMap<String, f64>>>;
 
 static UNIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
 static BIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -567,7 +565,7 @@ impl LanguageDetector {
         self.load_language_models(language_models, language, ngram_length);
 
         match language_models.read().unwrap().get(language) {
-            Some(model) => model.get_relative_frequency(ngram),
+            Some(model) => *model.get(&ngram.value).unwrap_or(&0.0),
             None => 0.0,
         }
     }
@@ -626,13 +624,13 @@ impl LanguageDetector {
     ) {
         let models = language_models.read().unwrap();
         if !models.contains_key(language) {
-            std::mem::drop(models);
+            drop(models);
             let mut models = language_models.write().unwrap();
             let json = load_json(language.clone(), ngram_length);
             if let Ok(json_content) = json {
                 models.insert(
                     language.clone(),
-                    Box::new(TrainingDataLanguageModel::from_json(&json_content)),
+                    TrainingDataLanguageModel::from_json(&json_content),
                 );
             }
         }
@@ -648,24 +646,17 @@ impl LanguageDetector {
 mod tests {
     use super::*;
     use crate::language::Language::*;
-    use crate::model::MockLanguageModel;
     use crate::LanguageDetectorBuilder;
     use float_cmp::approx_eq;
     use once_cell::sync::OnceCell;
     use rstest::*;
 
     // ##############################
-    // MOCKS
+    // HELPER FUNCTIONS
     // ##############################
 
-    fn create_training_model_mock(data: HashMap<&'static str, f64>) -> BoxedLanguageModel {
-        let mut mock = MockLanguageModel::new();
-        for (ngram, probability) in data {
-            mock.expect_get_relative_frequency()
-                .withf(move |n| n == &Ngram::new(ngram))
-                .return_const(probability);
-        }
-        Box::new(mock)
+    fn create_language_model_map(data: HashMap<&'static str, f64>) -> HashMap<String, f64> {
+        data.iter().map(|(&k, &v)| (k.to_string(), v)).collect()
     }
 
     // ##############################
@@ -673,8 +664,8 @@ mod tests {
     // ##############################
 
     #[fixture]
-    fn unigram_language_model_for_english() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn unigram_language_model_for_english() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "a" => 0.01,
             "l" => 0.02,
             "t" => 0.03,
@@ -686,8 +677,8 @@ mod tests {
     }
 
     #[fixture]
-    fn bigram_language_model_for_english() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn bigram_language_model_for_english() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "al" => 0.11,
             "lt" => 0.12,
             "te" => 0.13,
@@ -699,8 +690,8 @@ mod tests {
     }
 
     #[fixture]
-    fn trigram_language_model_for_english() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn trigram_language_model_for_english() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "alt" => 0.19,
             "lte" => 0.2,
             "ter" => 0.21,
@@ -712,8 +703,8 @@ mod tests {
     }
 
     #[fixture]
-    fn quadrigram_language_model_for_english() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn quadrigram_language_model_for_english() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "alte" => 0.25,
             "lter" => 0.26,
             // unknown quadrigrams
@@ -723,8 +714,8 @@ mod tests {
     }
 
     #[fixture]
-    fn fivegram_language_model_for_english() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn fivegram_language_model_for_english() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "alter" => 0.29,
             // unknown fivegrams
             "aquas" => 0.0
@@ -736,8 +727,8 @@ mod tests {
     // ##############################
 
     #[fixture]
-    fn unigram_language_model_for_german() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn unigram_language_model_for_german() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "a" => 0.06,
             "l" => 0.07,
             "t" => 0.08,
@@ -749,8 +740,8 @@ mod tests {
     }
 
     #[fixture]
-    fn bigram_language_model_for_german() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn bigram_language_model_for_german() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "al" => 0.15,
             "lt" => 0.16,
             "te" => 0.17,
@@ -761,8 +752,8 @@ mod tests {
     }
 
     #[fixture]
-    fn trigram_language_model_for_german() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn trigram_language_model_for_german() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "alt" => 0.22,
             "lte" => 0.23,
             "ter" => 0.24,
@@ -772,8 +763,8 @@ mod tests {
     }
 
     #[fixture]
-    fn quadrigram_language_model_for_german() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!(
+    fn quadrigram_language_model_for_german() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!(
             "alte" => 0.27,
             "lter" => 0.28,
             // unknown quadrigrams
@@ -782,8 +773,8 @@ mod tests {
     }
 
     #[fixture]
-    fn fivegram_language_model_for_german() -> BoxedLanguageModel {
-        create_training_model_mock(hashmap!("alter" => 0.3))
+    fn fivegram_language_model_for_german() -> HashMap<String, f64> {
+        create_language_model_map(hashmap!("alter" => 0.3))
     }
 
     // ##############################
@@ -792,10 +783,10 @@ mod tests {
 
     #[fixture]
     fn unigram_language_models(
-        unigram_language_model_for_english: BoxedLanguageModel,
-        unigram_language_model_for_german: BoxedLanguageModel,
+        unigram_language_model_for_english: HashMap<String, f64>,
+        unigram_language_model_for_german: HashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static UNIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, BoxedLanguageModel>>> =
+        static UNIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
             OnceCell::new();
         UNIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -807,10 +798,10 @@ mod tests {
 
     #[fixture]
     fn bigram_language_models(
-        bigram_language_model_for_english: BoxedLanguageModel,
-        bigram_language_model_for_german: BoxedLanguageModel,
+        bigram_language_model_for_english: HashMap<String, f64>,
+        bigram_language_model_for_german: HashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static BIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, BoxedLanguageModel>>> =
+        static BIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
             OnceCell::new();
         BIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -822,10 +813,10 @@ mod tests {
 
     #[fixture]
     fn trigram_language_models(
-        trigram_language_model_for_english: BoxedLanguageModel,
-        trigram_language_model_for_german: BoxedLanguageModel,
+        trigram_language_model_for_english: HashMap<String, f64>,
+        trigram_language_model_for_german: HashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static TRIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, BoxedLanguageModel>>> =
+        static TRIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
             OnceCell::new();
         TRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -837,11 +828,12 @@ mod tests {
 
     #[fixture]
     fn quadrigram_language_models(
-        quadrigram_language_model_for_english: BoxedLanguageModel,
-        quadrigram_language_model_for_german: BoxedLanguageModel,
+        quadrigram_language_model_for_english: HashMap<String, f64>,
+        quadrigram_language_model_for_german: HashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static QUADRIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, BoxedLanguageModel>>> =
-            OnceCell::new();
+        static QUADRIGRAM_MODELS_FIXTURE: OnceCell<
+            RwLock<HashMap<Language, HashMap<String, f64>>>,
+        > = OnceCell::new();
         QUADRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => quadrigram_language_model_for_english,
@@ -852,10 +844,10 @@ mod tests {
 
     #[fixture]
     fn fivegram_language_models(
-        fivegram_language_model_for_english: BoxedLanguageModel,
-        fivegram_language_model_for_german: BoxedLanguageModel,
+        fivegram_language_model_for_english: HashMap<String, f64>,
+        fivegram_language_model_for_german: HashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static FIVEGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, BoxedLanguageModel>>> =
+        static FIVEGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
             OnceCell::new();
         FIVEGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -871,7 +863,7 @@ mod tests {
 
     #[fixture]
     fn empty_language_models() -> StaticLanguageModelMap {
-        static EMPTY_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, BoxedLanguageModel>>> =
+        static EMPTY_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
             OnceCell::new();
         EMPTY_MODELS_FIXTURE.get_or_init(|| RwLock::new(hashmap!()))
     }

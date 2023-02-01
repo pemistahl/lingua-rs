@@ -23,11 +23,6 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap, HashSet};
 
-#[cfg_attr(test, mockall::automock)]
-pub(crate) trait LanguageModel {
-    fn get_relative_frequency(&self, ngram: &Ngram) -> f64;
-}
-
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 struct JsonLanguageModel {
     language: Language,
@@ -38,16 +33,6 @@ pub(crate) struct TrainingDataLanguageModel {
     language: Language,
     pub(crate) absolute_frequencies: Option<HashMap<Ngram, u32>>,
     relative_frequencies: Option<HashMap<Ngram, Fraction>>,
-    json_relative_frequencies: Option<HashMap<Ngram, f64>>,
-}
-
-impl LanguageModel for TrainingDataLanguageModel {
-    fn get_relative_frequency(&self, ngram: &Ngram) -> f64 {
-        match &self.json_relative_frequencies {
-            Some(frequencies) => *frequencies.get(ngram).unwrap_or(&0.0),
-            None => 0.0,
-        }
-    }
 }
 
 impl TrainingDataLanguageModel {
@@ -71,27 +56,21 @@ impl TrainingDataLanguageModel {
             language: language.clone(),
             absolute_frequencies: Some(absolute_frequencies),
             relative_frequencies: Some(relative_frequencies),
-            json_relative_frequencies: None,
         }
     }
 
-    pub(crate) fn from_json(json: &str) -> Self {
+    pub(crate) fn from_json(json: &str) -> HashMap<String, f64> {
         let json_language_model = serde_json::from_str::<JsonLanguageModel>(json).unwrap();
         let mut json_relative_frequencies = hashmap!();
 
         for (fraction, ngrams) in json_language_model.ngrams {
             let floating_point_value = fraction.to_f64();
             for ngram in ngrams.split(' ') {
-                json_relative_frequencies.insert(Ngram::new(ngram), floating_point_value);
+                json_relative_frequencies.insert(ngram.to_string(), floating_point_value);
             }
         }
 
-        TrainingDataLanguageModel {
-            language: json_language_model.language,
-            absolute_frequencies: None,
-            relative_frequencies: None,
-            json_relative_frequencies: Some(json_relative_frequencies),
-        }
+        json_relative_frequencies
     }
 
     pub(crate) fn to_json(&self) -> String {
@@ -275,10 +254,10 @@ mod tests {
             ))
         }
 
-        fn expected_unigram_json_relative_frequencies() -> HashMap<Ngram, f64> {
+        fn expected_unigram_json_relative_frequencies() -> HashMap<String, f64> {
             expected_unigram_relative_frequencies()
                 .iter()
-                .map(|(ngram, fraction)| (ngram.clone(), fraction.to_f64()))
+                .map(|(ngram, fraction)| (ngram.value.clone(), fraction.to_f64()))
                 .collect()
         }
 
@@ -476,17 +455,9 @@ mod tests {
                 language: Language::English,
                 absolute_frequencies: None,
                 relative_frequencies: Some(expected_unigram_relative_frequencies()),
-                json_relative_frequencies: None,
             };
             let deserialized = TrainingDataLanguageModel::from_json(&model.to_json());
-
-            assert_eq!(deserialized.language, Language::English);
-            assert_eq!(deserialized.absolute_frequencies, None);
-            assert_eq!(deserialized.relative_frequencies, None);
-            assert_eq!(
-                deserialized.json_relative_frequencies,
-                Some(expected_unigram_json_relative_frequencies())
-            );
+            assert_eq!(deserialized, expected_unigram_json_relative_frequencies());
         }
     }
 

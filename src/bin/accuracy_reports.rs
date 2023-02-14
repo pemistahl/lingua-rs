@@ -329,18 +329,32 @@ impl Statistic {
 fn main() {
     let now = Instant::now();
 
-    let lingua_detector = LanguageDetectorBuilder::from_all_languages()
+    let lingua_detector_with_high_accuracy = LanguageDetectorBuilder::from_all_languages()
         .with_preloaded_language_models()
         .build();
+
+    let lingua_detector_with_low_accuracy = LanguageDetectorBuilder::from_all_languages()
+        .with_low_accuracy_mode()
+        .with_preloaded_language_models()
+        .build();
+
     let whatlang_detector = Detector::new();
 
     let accuracy_reports_directory = Path::new("accuracy-reports");
-    let lingua_reports_directory = accuracy_reports_directory.join("lingua");
+    let lingua_high_accuracy_reports_directory =
+        accuracy_reports_directory.join("lingua-high-accuracy");
+    let lingua_low_accuracy_reports_directory =
+        accuracy_reports_directory.join("lingua-low-accuracy");
     let cld2_reports_directory = accuracy_reports_directory.join("cld2");
     let whatlang_reports_directory = accuracy_reports_directory.join("whatlang");
 
-    if !lingua_reports_directory.is_dir() {
-        fs::create_dir_all(&lingua_reports_directory)
+    if !lingua_high_accuracy_reports_directory.is_dir() {
+        fs::create_dir_all(&lingua_high_accuracy_reports_directory)
+            .expect("Lingua reports directory could not be created");
+    }
+
+    if !lingua_low_accuracy_reports_directory.is_dir() {
+        fs::create_dir_all(&lingua_low_accuracy_reports_directory)
             .expect("Lingua reports directory could not be created");
     }
 
@@ -368,10 +382,14 @@ fn main() {
         "single-words-whatlang",
         "word-pairs-whatlang",
         "sentences-whatlang",
-        "average-lingua",
-        "single-words-lingua",
-        "word-pairs-lingua",
-        "sentences-lingua\n",
+        "average-lingua-low",
+        "single-words-lingua-low",
+        "word-pairs-lingua-low",
+        "sentences-lingua-low",
+        "average-lingua-high",
+        "single-words-lingua-high",
+        "word-pairs-lingua-high",
+        "sentences-lingua-high\n",
     ];
 
     aggregated_report_file
@@ -392,13 +410,21 @@ fn main() {
         let word_pairs = get_file_content("word-pairs.txt", &language);
         let sentences = get_file_content("sentences.txt", &language);
 
-        let mut lingua_statistics = DetectorStatistics::new();
+        let mut lingua_high_accuracy_statistics = DetectorStatistics::new();
+        let mut lingua_low_accuracy_statistics = DetectorStatistics::new();
         let mut cld2_statistics = DetectorStatistics::new();
         let mut whatlang_statistics = DetectorStatistics::new();
 
         for single_word in single_words {
-            let lingua_language = lingua_detector.detect_language_of(single_word);
-            lingua_statistics.add_single_word_counts(lingua_language, single_word);
+            let lingua_language_in_high_accuracy_mode =
+                lingua_detector_with_high_accuracy.detect_language_of(single_word);
+            lingua_high_accuracy_statistics
+                .add_single_word_counts(lingua_language_in_high_accuracy_mode, single_word);
+
+            let lingua_language_in_low_accuracy_mode =
+                lingua_detector_with_low_accuracy.detect_language_of(single_word);
+            lingua_low_accuracy_statistics
+                .add_single_word_counts(lingua_language_in_low_accuracy_mode, single_word);
 
             let cld2_language = map_cld2_to_lingua(detect_language(single_word, Format::Text).0);
             cld2_statistics.add_single_word_counts(cld2_language, single_word);
@@ -409,8 +435,15 @@ fn main() {
         }
 
         for word_pair in word_pairs {
-            let lingua_language = lingua_detector.detect_language_of(word_pair);
-            lingua_statistics.add_word_pair_counts(lingua_language, word_pair);
+            let lingua_language_in_high_accuracy_mode =
+                lingua_detector_with_high_accuracy.detect_language_of(word_pair);
+            lingua_high_accuracy_statistics
+                .add_word_pair_counts(lingua_language_in_high_accuracy_mode, word_pair);
+
+            let lingua_language_in_low_accuracy_mode =
+                lingua_detector_with_low_accuracy.detect_language_of(word_pair);
+            lingua_low_accuracy_statistics
+                .add_word_pair_counts(lingua_language_in_low_accuracy_mode, word_pair);
 
             let cld2_language = map_cld2_to_lingua(detect_language(word_pair, Format::Text).0);
             cld2_statistics.add_word_pair_counts(cld2_language, word_pair);
@@ -421,8 +454,15 @@ fn main() {
         }
 
         for sentence in sentences {
-            let lingua_language = lingua_detector.detect_language_of(sentence);
-            lingua_statistics.add_sentence_counts(lingua_language, sentence);
+            let lingua_language_in_high_accuracy_mode =
+                lingua_detector_with_high_accuracy.detect_language_of(sentence);
+            lingua_high_accuracy_statistics
+                .add_sentence_counts(lingua_language_in_high_accuracy_mode, sentence);
+
+            let lingua_language_in_low_accuracy_mode =
+                lingua_detector_with_low_accuracy.detect_language_of(sentence);
+            lingua_low_accuracy_statistics
+                .add_sentence_counts(lingua_language_in_low_accuracy_mode, sentence);
 
             let cld2_language = map_cld2_to_lingua(detect_language(sentence, Format::Text).0);
             cld2_statistics.add_sentence_counts(cld2_language, sentence);
@@ -431,25 +471,32 @@ fn main() {
             whatlang_statistics.add_sentence_counts(whatlang_language, sentence);
         }
 
-        lingua_statistics.compute_accuracy_values();
+        lingua_high_accuracy_statistics.compute_accuracy_values();
+        lingua_low_accuracy_statistics.compute_accuracy_values();
         cld2_statistics.compute_accuracy_values();
         whatlang_statistics.compute_accuracy_values();
 
-        let lingua_report = lingua_statistics.create_report_data(&language);
+        let lingua_high_accuracy_report =
+            lingua_high_accuracy_statistics.create_report_data(&language);
+        let lingua_low_accuracy_report =
+            lingua_low_accuracy_statistics.create_report_data(&language);
         let cld2_report = cld2_statistics.create_report_data(&language);
         let whatlang_report = whatlang_statistics.create_report_data(&language);
 
-        let lingua_aggregated_report_row =
-            lingua_statistics.create_aggregated_report_row(&language);
+        let lingua_high_accuracy_aggregated_report_row =
+            lingua_high_accuracy_statistics.create_aggregated_report_row(&language);
+        let lingua_low_accuracy_aggregated_report_row =
+            lingua_low_accuracy_statistics.create_aggregated_report_row(&language);
         let cld2_aggregated_report_row = cld2_statistics.create_aggregated_report_row(&language);
         let whatlang_aggregated_report_row =
             whatlang_statistics.create_aggregated_report_row(&language);
         let total_aggregated_report_row = format!(
-            "{:?},{},{},{}\n",
+            "{:?},{},{},{},{}\n",
             &language,
             cld2_aggregated_report_row,
             whatlang_aggregated_report_row,
-            lingua_aggregated_report_row
+            lingua_low_accuracy_aggregated_report_row,
+            lingua_high_accuracy_aggregated_report_row
         );
 
         aggregated_report_file
@@ -457,12 +504,20 @@ fn main() {
             .expect("CSV data row could not be written");
 
         let report_file_name = titlecase(&format!("{:?}.txt", &language));
-        let lingua_reports_file_path = lingua_reports_directory.join(&report_file_name);
+        let lingua_high_accuracy_reports_file_path =
+            lingua_high_accuracy_reports_directory.join(&report_file_name);
+        let lingua_low_accuracy_reports_file_path =
+            lingua_low_accuracy_reports_directory.join(&report_file_name);
         let cld2_reports_file_path = cld2_reports_directory.join(&report_file_name);
         let whatlang_reports_file_path = whatlang_reports_directory.join(&report_file_name);
 
-        if let Some(report) = lingua_report {
-            fs::write(lingua_reports_file_path, report)
+        if let Some(report) = lingua_high_accuracy_report {
+            fs::write(lingua_high_accuracy_reports_file_path, report)
+                .expect("Lingua reports file could not be written");
+        }
+
+        if let Some(report) = lingua_low_accuracy_report {
+            fs::write(lingua_low_accuracy_reports_file_path, report)
                 .expect("Lingua reports file could not be written");
         }
 

@@ -47,6 +47,7 @@ static FIVEGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap:
 pub struct LanguageDetector {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,
+    is_low_accuracy_mode_enabled: bool,
     languages_with_unique_characters: HashSet<Language>,
     one_language_alphabets: HashMap<Alphabet, Language>,
     unigram_language_models: StaticLanguageModelMap,
@@ -61,6 +62,7 @@ impl LanguageDetector {
         languages: HashSet<Language>,
         minimum_relative_distance: f64,
         is_every_language_model_preloaded: bool,
+        is_low_accuracy_mode_enabled: bool,
     ) -> Self {
         let languages_with_unique_characters = languages
             .iter()
@@ -75,6 +77,7 @@ impl LanguageDetector {
         let mut detector = Self {
             languages: languages.clone(),
             minimum_relative_distance,
+            is_low_accuracy_mode_enabled,
             languages_with_unique_characters,
             one_language_alphabets,
             unigram_language_models: &UNIGRAM_MODELS,
@@ -98,11 +101,14 @@ impl LanguageDetector {
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
-            self.load_language_models(self.unigram_language_models, language, 1);
-            self.load_language_models(self.bigram_language_models, language, 2);
             self.load_language_models(self.trigram_language_models, language, 3);
-            self.load_language_models(self.quadrigram_language_models, language, 4);
-            self.load_language_models(self.fivegram_language_models, language, 5);
+
+            if !self.is_low_accuracy_mode_enabled {
+                self.load_language_models(self.unigram_language_models, language, 1);
+                self.load_language_models(self.bigram_language_models, language, 2);
+                self.load_language_models(self.quadrigram_language_models, language, 4);
+                self.load_language_models(self.fivegram_language_models, language, 5);
+            }
         });
     }
 
@@ -182,7 +188,12 @@ impl LanguageDetector {
         }
 
         let character_count = cleaned_up_text.chars().count();
-        let ngram_length_range = if character_count >= 120 {
+
+        if self.is_low_accuracy_mode_enabled && character_count < 3 {
+            return values;
+        }
+
+        let ngram_length_range = if character_count >= 120 || self.is_low_accuracy_mode_enabled {
             3..4usize
         } else {
             1..6usize
@@ -897,6 +908,7 @@ mod tests {
         LanguageDetector {
             languages: hashset!(English, German),
             minimum_relative_distance: 0.0,
+            is_low_accuracy_mode_enabled: false,
             languages_with_unique_characters: hashset!(),
             one_language_alphabets: hashmap!(),
             unigram_language_models,
@@ -926,6 +938,7 @@ mod tests {
         LanguageDetector {
             languages,
             minimum_relative_distance: 0.0,
+            is_low_accuracy_mode_enabled: false,
             languages_with_unique_characters,
             one_language_alphabets,
             unigram_language_models: empty_language_models,
@@ -1480,5 +1493,18 @@ mod tests {
             "language detector is non-deterministic for languages {:?}",
             languages
         );
+    }
+
+    #[rstest]
+    fn assert_low_accuracy_mode_returns_no_language_for_unigrams_and_bigrams() {
+        let detector = LanguageDetectorBuilder::from_languages(&[English, German])
+            .with_preloaded_language_models()
+            .with_low_accuracy_mode()
+            .build();
+
+        assert_ne!(detector.detect_language_of("bed"), None);
+        assert_eq!(detector.detect_language_of("be"), None);
+        assert_eq!(detector.detect_language_of("b"), None);
+        assert_eq!(detector.detect_language_of(""), None);
     }
 }

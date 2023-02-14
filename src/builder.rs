@@ -30,6 +30,7 @@ pub struct LanguageDetectorBuilder {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,
     is_every_language_model_preloaded: bool,
+    is_low_accuracy_mode_enabled: bool,
 }
 
 impl LanguageDetectorBuilder {
@@ -164,12 +165,29 @@ impl LanguageDetectorBuilder {
         self
     }
 
+    /// Disables the high accuracy mode in order to save memory and increase performance.
+    ///
+    /// By default, *Lingua's* high detection accuracy comes at the cost of loading large
+    /// language models into memory which might not be feasible for systems running low on
+    /// resources.
+    ///
+    /// This method disables the high accuracy mode so that only a small subset of language
+    /// models is loaded into memory. The downside of this approach is that detection accuracy
+    /// for short texts consisting of less than 120 characters will drop significantly. However,
+    /// detection accuracy for texts which are longer than 120 characters will remain mostly
+    /// unaffected.
+    pub fn with_low_accuracy_mode(&mut self) -> &mut Self {
+        self.is_low_accuracy_mode_enabled = true;
+        self
+    }
+
     /// Creates and returns the configured instance of [LanguageDetector].
     pub fn build(&mut self) -> LanguageDetector {
         LanguageDetector::from(
             self.languages.clone(),
             self.minimum_relative_distance,
             self.is_every_language_model_preloaded,
+            self.is_low_accuracy_mode_enabled,
         )
     }
 
@@ -178,6 +196,7 @@ impl LanguageDetectorBuilder {
             languages,
             minimum_relative_distance: 0.0,
             is_every_language_model_preloaded: false,
+            is_low_accuracy_mode_enabled: false,
         }
     }
 }

@@ -152,7 +152,7 @@
 //! use lingua::Language::{English, French, German, Spanish};
 //!
 //! let detector = LanguageDetectorBuilder::from_languages(&[English, French, German, Spanish])
-//!     .with_minimum_relative_distance(0.25) // minimum: 0.00 maximum: 0.99 default: 0.00
+//!     .with_minimum_relative_distance(0.9) // minimum: 0.00 maximum: 0.99 default: 0.00
 //!     .build();
 //! let detected_language = detector.detect_language_of("languages are awesome");
 //!
@@ -175,45 +175,29 @@
 //! ```
 //! use lingua::{LanguageDetectorBuilder, Language};
 //! use lingua::Language::{English, French, German, Spanish};
-//! use float_cmp::approx_eq;
 //!
 //! let languages = vec![English, French, German, Spanish];
 //! let detector = LanguageDetectorBuilder::from_languages(&languages).build();
-//! let confidence_values: Vec<(Language, f64)> = detector.compute_language_confidence_values(
-//!     "languages are awesome"
+//! let confidence_values: Vec<(Language, f64)> = detector
+//!     .compute_language_confidence_values("languages are awesome")
+//!     .iter()
+//!     // Let's round the values to two decimal places for easier assertions
+//!     .map(|(language, value)| (language.clone(), (value * 100.0).round() / 100.0))
+//!     .collect();
+//!
+//! assert_eq!(
+//!     confidence_values,
+//!     vec![(English, 0.93), (French, 0.04), (German, 0.02), (Spanish, 0.01)]
 //! );
-//!
-//! // The more readable version of the assertions below:
-//! // assert_eq!(
-//! //     confidence_values,
-//! //     vec![(English, 1.0), (French, 0.79), (German, 0.75), (Spanish, 0.72)]
-//! // );
-//!
-//! assert_eq!(confidence_values[0], (English, 1.0_f64));
-//!
-//! assert_eq!(confidence_values[1].0, French);
-//! assert!(approx_eq!(f64, confidence_values[1].1, 0.7917282993701181, ulps = 2));
-//!
-//! assert_eq!(confidence_values[2].0, German);
-//! assert!(approx_eq!(f64, confidence_values[2].1, 0.7532048914992281, ulps = 2));
-//!
-//! assert_eq!(confidence_values[3].0, Spanish);
-//! assert!(approx_eq!(f64, confidence_values[3].1, 0.7229637749926444, ulps = 2));
 //! ```
 //!
-//! In the example above, a vector of all possible languages is returned, sorted by their confidence
-//! value in descending order. The values that the detector computes are part of a **relative**
-//! confidence metric, not of an absolute one. Each value is a number between 0.0 and 1.0.
-//! The most likely language is always returned with value 1.0. All other languages get values
-//! assigned which are lower than 1.0, denoting how less likely those languages are in comparison
-//! to the most likely language.
-//!
-//! The vector returned by this method does not necessarily contain all languages which the calling
-//! instance of [LanguageDetector] was built from. If the rule-based engine decides that a specific
-//! language is truly impossible, then it will not be part of the returned vector. Likewise, if no
-//! ngram probabilities can be found within the detector's languages for the given input text, the
-//! returned vector will be empty. The confidence value for each language not being part of the
-//! returned vector is assumed to be 0.0.
+//! In the example above, a vector of two-element tuples is returned containing those languages
+//! which the calling instance of `LanguageDetector` has been built from, together with their
+//! confidence values. The entries are sorted by their confidence value in descending order.
+//! Each value is a probability between 0.0 and 1.0. The probabilities of all languages will
+//! sum to 1.0. If the language is unambiguously identified by the rule engine, the value
+//! 1.0 will always be returned for this language. The other languages will receive a value
+//! of 0.0.
 //!
 //! ### 7.4 Eager loading versus lazy loading
 //!

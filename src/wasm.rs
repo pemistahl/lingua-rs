@@ -255,21 +255,17 @@ impl LanguageDetector {
         }
     }
 
-    /// Computes confidence values for each language considered possible for the given input text.
+    /// Computes confidence values for each language supported by this detector for the given
+    /// input text. These values denote how likely it is that the given text has been written
+    /// in any of the languages supported by this detector.
     ///
-    /// An object of all possible languages is returned, sorted by their confidence value in
-    /// descending order. The values that this method computes are part of a **relative**
-    /// confidence metric, not of an absolute one. Each value is a number between 0.0 and 1.0.
-    /// The most likely language is always returned with value 1.0. All other languages get values
-    /// assigned which are lower than 1.0, denoting how less likely those languages are in
-    /// comparison to the most likely language.
-    ///
-    /// The object returned by this method does not necessarily contain all languages which the
-    /// calling instance of `LanguageDetector` was built from. If the rule-based engine decides
-    /// that a specific language is truly impossible, then it will not be part of the returned
-    /// object. Likewise, if no ngram probabilities can be found within the detector's languages
-    /// for the given input text, the returned object will be empty. The confidence value for
-    /// each language not being part of the returned object is assumed to be 0.0.
+    /// A vector of two-element tuples is returned containing those languages which the
+    /// calling instance of `LanguageDetector` has been built from, together with their
+    /// confidence values. The entries are sorted by their confidence value in descending order.
+    /// Each value is a probability between 0.0 and 1.0. The probabilities of all languages will
+    /// sum to 1.0. If the language is unambiguously identified by the rule engine, the value
+    /// 1.0 will always be returned for this language. The other languages will receive a value
+    /// of 0.0.
     pub fn computeLanguageConfidenceValues(&self, text: &str) -> JsValue {
         let confidence_values = self
             .detector

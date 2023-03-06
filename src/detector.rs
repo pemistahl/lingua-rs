@@ -232,6 +232,23 @@ impl LanguageDetector {
         values
     }
 
+    /// Computes the confidence value for the given language and input text. This value denotes
+    /// how likely it is that the given text has been written in the given language.
+    ///
+    /// The value that this method computes is a number between 0.0 and 1.0. If the language is
+    /// unambiguously identified by the rule engine, the value 1.0 will always be returned.
+    /// If the given language is not supported by this detector instance, the value 0.0 will
+    /// always be returned.
+    pub fn compute_language_confidence<T: Into<String>>(&self, text: T, language: Language) -> f64 {
+        let confidence_values = self.compute_language_confidence_values(text);
+        for (lang, confidence_value) in confidence_values {
+            if lang == language {
+                return confidence_value;
+            }
+        }
+        0.0
+    }
+
     fn clean_up_input_text(&self, text: String) -> String {
         let trimmed = text.trim().to_lowercase();
         let without_punctuation = PUNCTUATION.replace_all(&trimmed, "");
@@ -1168,100 +1185,52 @@ mod tests {
         }
     }
 
-    #[rstest]
-    fn test_compute_language_confidence_values_for_language_detected_by_rules(
+    #[rstest(
+        text,
+        expected_confidence_values,
+        case::language_detected_by_rules("groß", vec![(German, 1.0), (English, 0.0)]),
+        case::known_ngrams("Alter", vec![(German, 0.81), (English, 0.19)]),
+        case::unknown_ngrams("проарплап", vec![(English, 0.0), (German, 0.0)]),
+        case::very_large_input_text(VERY_LARGE_INPUT_TEXT, vec![(German, 1.0), (English, 0.0)])
+    )]
+    fn test_compute_language_confidence_values(
         detector_for_english_and_german: LanguageDetector,
-    ) {
-        let confidence_values =
-            detector_for_english_and_german.compute_language_confidence_values("groß");
-
-        assert_eq!(
-            confidence_values.len(),
-            2,
-            "expected 2 confidence values, got {}",
-            confidence_values.len()
-        );
-
-        let (first_language, first_value) = &confidence_values[0];
-        let (second_language, second_value) = &confidence_values[1];
-
-        assert_eq!(first_language, &German);
-        assert_eq!(*first_value, 1.0);
-
-        assert_eq!(second_language, &English);
-        assert_eq!(*second_value, 0.0);
-    }
-
-    #[rstest]
-    fn test_compute_language_confidence_values_for_known_ngrams(
-        detector_for_english_and_german: LanguageDetector,
-    ) {
-        let confidence_values =
-            detector_for_english_and_german.compute_language_confidence_values("Alter");
-
-        assert_eq!(
-            confidence_values.len(),
-            2,
-            "expected 2 confidence values, got {}",
-            confidence_values.len()
-        );
-
-        let (first_language, first_value) = &confidence_values[0];
-        let (second_language, second_value) = &confidence_values[1];
-
-        assert_eq!(first_language, &German);
-        assert_eq!(round_to_two_decimal_places(*first_value), 0.81);
-
-        assert_eq!(second_language, &English);
-        assert_eq!(round_to_two_decimal_places(*second_value), 0.19);
-    }
-
-    #[rstest]
-    fn test_compute_language_confidence_values_for_unknown_ngrams(
-        detector_for_english_and_german: LanguageDetector,
-    ) {
-        let confidence_values =
-            detector_for_english_and_german.compute_language_confidence_values("проарплап");
-
-        assert_eq!(
-            confidence_values.len(),
-            2,
-            "expected 2 confidence values, got {}",
-            confidence_values.len()
-        );
-
-        let (first_language, first_value) = &confidence_values[0];
-        let (second_language, second_value) = &confidence_values[1];
-
-        assert_eq!(first_language, &English);
-        assert_eq!(*first_value, 0.0);
-
-        assert_eq!(second_language, &German);
-        assert_eq!(*second_value, 0.0);
-    }
-
-    #[rstest]
-    fn test_compute_language_confidence_values_for_very_large_input_text(
-        detector_for_english_and_german: LanguageDetector,
+        text: &str,
+        expected_confidence_values: Vec<(Language, f64)>,
     ) {
         let confidence_values = detector_for_english_and_german
-            .compute_language_confidence_values(VERY_LARGE_INPUT_TEXT);
+            .compute_language_confidence_values(text)
+            .iter()
+            .map(|(language, value)| (language.clone(), round_to_two_decimal_places(*value)))
+            .collect::<Vec<(Language, f64)>>();
 
-        assert_eq!(
-            confidence_values.len(),
-            2,
-            "expected 2 confidence values, got {}",
-            confidence_values.len()
-        );
+        assert_eq!(confidence_values, expected_confidence_values);
+    }
 
-        let (first_language, first_value) = &confidence_values[0];
-        let (second_language, second_value) = &confidence_values[1];
+    #[rstest(
+        text,
+        language,
+        expected_confidence,
+        case::german_detected_by_rules("groß", German, 1.0),
+        case::english_detected_by_rules("groß", English, 0.0),
+        case::german_known_ngrams("Alter", German, 0.81),
+        case::english_known_ngrams("Alter", English, 0.19),
+        case::german_unknown_ngrams("проарплап", German, 0.0),
+        case::english_unknown_ngrams("проарплап", English, 0.0),
+        case::unknown_language("groß", French, 0.0),
+        case::german_very_large_input_text(VERY_LARGE_INPUT_TEXT, German, 1.0),
+        case::english_very_large_input_text(VERY_LARGE_INPUT_TEXT, English, 0.0)
+    )]
+    fn test_compute_language_confidence(
+        detector_for_english_and_german: LanguageDetector,
+        text: &str,
+        language: Language,
+        expected_confidence: f64,
+    ) {
+        let confidence =
+            detector_for_english_and_german.compute_language_confidence(text, language);
 
-        assert_eq!(first_language, &German);
-        assert_eq!(*first_value, 1.0);
-
-        assert_eq!(second_language, &English);
-        assert_eq!(*second_value, 0.0);
+        assert_eq!(round_to_two_decimal_places(confidence), expected_confidence);
     }
 
     #[rstest]

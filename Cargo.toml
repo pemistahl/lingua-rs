@@ -36,6 +36,9 @@ keywords = [
     "nlp"
 ]
 
+[profile.dev]
+opt-level = 1
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 

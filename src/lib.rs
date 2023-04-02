@@ -253,6 +253,17 @@
 #[macro_use]
 extern crate maplit;
 
+#[cfg(test)]
+use regex::Regex;
+
+pub use builder::LanguageDetectorBuilder;
+pub use detector::LanguageDetector;
+pub use isocode::{IsoCode639_1, IsoCode639_3};
+pub use language::Language;
+#[cfg(target_family = "wasm")]
+pub use wasm::LanguageDetectorBuilder as WasmLanguageDetectorBuilder;
+pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter};
+
 mod alphabet;
 mod builder;
 mod constant;
@@ -263,22 +274,11 @@ mod json;
 mod language;
 mod model;
 mod ngram;
+mod result;
 mod writer;
 
 #[cfg(target_family = "wasm")]
 mod wasm;
-
-pub use builder::LanguageDetectorBuilder;
-pub use detector::LanguageDetector;
-pub use isocode::{IsoCode639_1, IsoCode639_3};
-pub use language::Language;
-pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter};
-
-#[cfg(target_family = "wasm")]
-pub use wasm::LanguageDetectorBuilder as WasmLanguageDetectorBuilder;
-
-#[cfg(test)]
-use regex::Regex;
 
 #[cfg(test)]
 pub(crate) fn minify(json: &str) -> String {

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-use crate::language::Language;
-use once_cell::sync::Lazy;
-use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
+
+use once_cell::sync::Lazy;
+use regex::Regex;
+
+use crate::language::Language;
 
 pub(crate) static JAPANESE_CHARACTER_SET: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap());
@@ -27,6 +29,14 @@ pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\
 pub(crate) static NO_LETTER: Lazy<Regex> = Lazy::new(|| Regex::new("^[^\\p{L}]+$").unwrap());
 pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
 pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());
+pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(
+        "\\s*(?:\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|[\\p{L}'-]+)[\\p{N}\\p{P}]*\\s*",
+    )
+    .unwrap()
+});
+pub(crate) static TOKENS_WITHOUT_WHITESPACE: Lazy<Regex> =
+    Lazy::new(|| Regex::new("\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|\\p{L}+").unwrap());
 pub(crate) static LANGUAGES_SUPPORTING_LOGOGRAMS: Lazy<HashSet<Language>> = Lazy::new(|| {
     let mut languages = hashset!();
     if cfg!(feature = "chinese") {

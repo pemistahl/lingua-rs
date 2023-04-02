@@ -99,14 +99,8 @@ jobs:
       - name: Build in debug mode
         run: cargo build --target ${{ matrix.target }} --locked
 
-      - name: Build in release mode
-        run: cargo build --release --target ${{ matrix.target }} --locked
-
-      - name: Run unit tests in debug mode
-        run: cargo test --lib --target ${{ matrix.target }}
-
-      - name: Run doc tests in release mode
-        run: cargo test --release --doc --target ${{ matrix.target }}
+      - name: Run unit tests
+        run: cargo test --target ${{ matrix.target }}
 
       - name: Run WASM integration tests on NodeJS
         if: ${{ matrix.os == 'ubuntu-latest' }}

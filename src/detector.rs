@@ -915,7 +915,6 @@ mod tests {
     use rstest::*;
 
     use crate::language::Language::*;
-    use crate::LanguageDetectorBuilder;
 
     use super::*;
 
@@ -1181,9 +1180,7 @@ mod tests {
 
     #[fixture]
     fn detector_for_all_languages() -> LanguageDetector {
-        LanguageDetectorBuilder::from_all_languages()
-            .with_preloaded_language_models()
-            .build()
+        LanguageDetector::from(Language::all(), 0.0, true, false)
     }
 
     // ##############################
@@ -1361,7 +1358,6 @@ mod tests {
         case::language_detected_by_rules("groß", vec![(German, 1.0), (English, 0.0)]),
         case::known_ngrams("Alter", vec![(German, 0.81), (English, 0.19)]),
         case::unknown_ngrams("проарплап", vec![(English, 0.0), (German, 0.0)]),
-        case::very_large_input_text(VERY_LARGE_INPUT_TEXT, vec![(German, 1.0), (English, 0.0)])
     )]
     fn test_compute_language_confidence_values(
         detector_for_english_and_german: LanguageDetector,
@@ -1377,6 +1373,14 @@ mod tests {
         assert_eq!(confidence_values, expected_confidence_values);
     }
 
+    #[rstest]
+    fn test_compute_language_confidence_values_for_very_large_input_text() {
+        let detector = LanguageDetector::from(hashset!(English, German), 0.0, true, false);
+        let confidence_values = detector.compute_language_confidence_values(VERY_LARGE_INPUT_TEXT);
+        let expected_confidence_values = vec![(German, 1.0), (English, 0.0)];
+        assert_eq!(confidence_values, expected_confidence_values);
+    }
+
     #[rstest(
         text,
         language,
@@ -1387,9 +1391,7 @@ mod tests {
         case::english_known_ngrams("Alter", English, 0.19),
         case::german_unknown_ngrams("проарплап", German, 0.0),
         case::english_unknown_ngrams("проарплап", English, 0.0),
-        case::unknown_language("groß", French, 0.0),
-        case::german_very_large_input_text(VERY_LARGE_INPUT_TEXT, German, 1.0),
-        case::english_very_large_input_text(VERY_LARGE_INPUT_TEXT, English, 0.0)
+        case::unknown_language("groß", French, 0.0)
     )]
     fn test_compute_language_confidence(
         detector_for_english_and_german: LanguageDetector,
@@ -1826,9 +1828,8 @@ mod tests {
         )
     )]
     fn assert_language_detection_is_deterministic(text: &str, languages: Vec<Language>) {
-        let detector = LanguageDetectorBuilder::from_languages(&languages)
-            .with_preloaded_language_models()
-            .build();
+        let detector =
+            LanguageDetector::from(languages.iter().cloned().collect(), 0.0, true, false);
         let mut detected_languages = hashset!();
         for _ in 0..100 {
             let language = detector.detect_language_of(text);
@@ -1844,10 +1845,7 @@ mod tests {
 
     #[rstest]
     fn assert_low_accuracy_mode_returns_no_language_for_unigrams_and_bigrams() {
-        let detector = LanguageDetectorBuilder::from_languages(&[English, German])
-            .with_preloaded_language_models()
-            .with_low_accuracy_mode()
-            .build();
+        let detector = LanguageDetector::from(hashset!(English, German), 0.0, true, true);
 
         assert_ne!(detector.detect_language_of("bed"), None);
         assert_eq!(detector.detect_language_of("be"), None);

@@ -151,7 +151,7 @@ rstest = "0.17.0"
 tempfile = "3.5.0"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
-wasm-bindgen-test = "0.3.33"
+wasm-bindgen-test = "0.3.34"
 
 [features]
 default = [

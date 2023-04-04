@@ -136,7 +136,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "=1.0.1", 
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 cld2 = { version = "1.0.2", optional = true }
-indoc = { version = "2.0.0", optional = true }
+indoc = { version = "2.0.1", optional = true }
 rayon = "1.7.0"
 titlecase = { version = "2.2.0", optional = true }
 whatlang = { version = "0.16.2", optional = true }
@@ -146,7 +146,7 @@ wasm-bindgen = { version = "0.2.84", features = ["serde-serialize"] }
 
 [dev-dependencies]
 float-cmp = "0.9.0"
-indoc = "2.0.0"
+indoc = "2.0.1"
 rstest = "0.17.0"
 tempfile = "3.5.0"
 

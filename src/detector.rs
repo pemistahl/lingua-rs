@@ -107,6 +107,62 @@ impl LanguageDetector {
         });
     }
 
+    /// Clears all language models loaded by this [LanguageDetector] instance and frees
+    /// allocated memory previously consumed by the models.
+    pub fn clear_language_models(&self) {
+        #[cfg(not(target_family = "wasm"))]
+        let languages_iter = self.languages.par_iter();
+        #[cfg(target_family = "wasm")]
+        let languages_iter = self.languages.iter();
+
+        languages_iter.for_each(|language| {
+            self.trigram_language_models
+                .write()
+                .unwrap()
+                .remove(language);
+
+            if !self.is_low_accuracy_mode_enabled {
+                self.unigram_language_models
+                    .write()
+                    .unwrap()
+                    .remove(language);
+                self.bigram_language_models
+                    .write()
+                    .unwrap()
+                    .remove(language);
+                self.quadrigram_language_models
+                    .write()
+                    .unwrap()
+                    .remove(language);
+                self.fivegram_language_models
+                    .write()
+                    .unwrap()
+                    .remove(language);
+            }
+        });
+
+        self.trigram_language_models
+            .write()
+            .unwrap()
+            .shrink_to_fit();
+
+        if !self.is_low_accuracy_mode_enabled {
+            self.unigram_language_models
+                .write()
+                .unwrap()
+                .shrink_to_fit();
+            self.bigram_language_models.write().unwrap().shrink_to_fit();
+            self.quadrigram_language_models
+                .write()
+                .unwrap()
+                .shrink_to_fit();
+            self.fivegram_language_models
+                .write()
+                .unwrap()
+                .shrink_to_fit();
+        }
+    }
+
     /// Detects the language of given input text.
     /// If the language cannot be reliably detected, [None] is returned.
     pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {

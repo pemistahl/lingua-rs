@@ -46,6 +46,10 @@ crate-type = ["cdylib", "rlib"]
 name = "accuracy_reports"
 required-features = ["accuracy-reports"]
 
+[[bench]]
+name = "benchmark"
+harness = false
+
 [dependencies]
 fraction = "0.13.1"
 include_dir = "0.7.3"
@@ -149,6 +153,9 @@ float-cmp = "0.9.0"
 indoc = "2.0.1"
 rstest = "0.17.0"
 tempfile = "3.5.0"
+
+[target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
+criterion = "0.4.0"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
 wasm-bindgen-test = "0.3.34"

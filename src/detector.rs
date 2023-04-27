@@ -29,8 +29,7 @@ use strum::IntoEnumIterator;
 
 use crate::alphabet::Alphabet;
 use crate::constant::{
-    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, LANGUAGES_SUPPORTING_LOGOGRAMS,
-    MULTIPLE_WHITESPACE, NO_LETTER, NUMBERS, PUNCTUATION, TOKENS_WITHOUT_WHITESPACE,
+    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, LETTERS, TOKENS_WITHOUT_WHITESPACE,
     TOKENS_WITH_OPTIONAL_WHITESPACE,
 };
 use crate::json::load_json;
@@ -367,14 +366,14 @@ impl LanguageDetector {
             values.push((language.clone(), 0.0));
         }
 
-        let cleaned_up_text = self.clean_up_input_text(text.into());
+        let text_str = text.into();
+        let words = split_text_into_words(&text_str);
 
-        if cleaned_up_text.is_empty() || NO_LETTER.is_match(&cleaned_up_text) {
+        if words.is_empty() {
             values.sort_by(confidence_values_comparator);
             return values;
         }
 
-        let words = self.split_text_into_words(&cleaned_up_text);
         let language_detected_by_rules = self.detect_language_with_rules(&words, languages);
 
         if let Some(language) = language_detected_by_rules {
@@ -383,7 +382,7 @@ impl LanguageDetector {
             return values;
         }
 
-        let filtered_languages = self.filter_languages_by_rules(words, languages);
+        let filtered_languages = self.filter_languages_by_rules(&words, languages);
 
         if filtered_languages.len() == 1 {
             let filtered_language = filtered_languages.into_iter().next().unwrap();
@@ -392,7 +391,7 @@ impl LanguageDetector {
             return values;
         }
 
-        let character_count = cleaned_up_text.chars().count();
+        let character_count: usize = words.iter().map(|word| word.chars().count()).sum();
 
         if self.is_low_accuracy_mode_enabled && character_count < 3 {
             values.sort_by(confidence_values_comparator);
@@ -417,7 +416,7 @@ impl LanguageDetector {
         )> = ngram_length_range_iter
             .filter(|i| character_count >= *i)
             .map(|ngram_length| {
-                self.look_up_language_models(&cleaned_up_text, ngram_length, &filtered_languages)
+                self.look_up_language_models(&words, ngram_length, &filtered_languages)
             })
             .collect();
 
@@ -456,45 +455,6 @@ impl LanguageDetector {
             }
         }
         0.0
-    }
-
-    fn clean_up_input_text(&self, text: String) -> String {
-        let trimmed = text.trim().to_lowercase();
-        let without_punctuation = PUNCTUATION.replace_all(&trimmed, "");
-        let without_numbers = NUMBERS.replace_all(&without_punctuation, "");
-        let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&without_numbers, " ");
-        normalized_whitespace.to_string()
-    }
-
-    fn split_text_into_words(&self, text: &str) -> Vec<String> {
-        let mut normalized_text_builder = vec![];
-        for chr in text.chars() {
-            normalized_text_builder.push(chr.to_string());
-            if self.is_logogram(chr) {
-                normalized_text_builder.push(' '.to_string());
-            }
-        }
-        let normalized_text: String = normalized_text_builder.join("");
-        if normalized_text.contains(' ') {
-            normalized_text
-                .split(' ')
-                .filter(|it| !it.is_empty())
-                .map(|it| it.to_string())
-                .collect_vec()
-        } else {
-            vec![normalized_text]
-        }
-    }
-
-    fn is_logogram(&self, chr: char) -> bool {
-        if chr.is_whitespace() {
-            false
-        } else {
-            LANGUAGES_SUPPORTING_LOGOGRAMS
-                .iter()
-                .flat_map(|it| it.alphabets())
-                .any(|it| it.matches(&chr.to_string()))
-        }
     }
 
     fn detect_language_with_rules(
@@ -625,7 +585,7 @@ impl LanguageDetector {
 
     fn filter_languages_by_rules(
         &self,
-        words: Vec<String>,
+        words: &[String],
         languages: &HashSet<Language>,
     ) -> HashSet<Language> {
         let mut detected_alphabets = HashMap::<Alphabet, u32>::new();
@@ -700,11 +660,11 @@ impl LanguageDetector {
 
     fn look_up_language_models(
         &self,
-        text: &str,
+        words: &[String],
         ngram_length: usize,
         filtered_languages: &HashSet<Language>,
     ) -> (HashMap<Language, f64>, Option<HashMap<Language, u32>>) {
-        let test_data_model = TestDataLanguageModel::from(text, ngram_length);
+        let test_data_model = TestDataLanguageModel::from(words, ngram_length);
         let probabilities =
             self.compute_language_probabilities(&test_data_model, filtered_languages);
         let unigram_counts = if ngram_length == 1 {
@@ -894,6 +854,13 @@ impl LanguageDetector {
         let counter = counts.entry(key).or_insert(0);
         *counter += 1;
     }
+}
+
+pub(crate) fn split_text_into_words(text: &str) -> Vec<String> {
+    LETTERS
+        .find_iter(&text.trim().to_lowercase())
+        .map(|mat| mat.as_str().to_string())
+        .collect()
 }
 
 fn collect_languages_with_unique_characters(languages: &HashSet<Language>) -> HashSet<Language> {
@@ -1243,40 +1210,25 @@ mod tests {
     // TESTS
     // ##############################
 
-    #[rstest]
-    fn assert_text_is_cleaned_up_properly(detector_for_all_languages: LanguageDetector) {
-        let text = "Weltweit    gibt es ungefähr 6.000 Sprachen,
-        wobei laut Schätzungen zufolge ungefähr 90  Prozent davon
-        am Ende dieses Jahrhunderts verdrängt sein werden.";
-
-        let expected_cleaned_text =
-            "weltweit gibt es ungefähr sprachen wobei laut schätzungen zufolge ungefähr \
-            prozent davon am ende dieses jahrhunderts verdrängt sein werden";
-
-        assert_eq!(
-            detector_for_all_languages.clean_up_input_text(text.to_string()),
-            expected_cleaned_text
-        );
-    }
-
-    #[rstest]
-    fn assert_text_is_split_into_words_correctly(detector_for_all_languages: LanguageDetector) {
-        assert_eq!(
-            detector_for_all_languages.split_text_into_words("this is a sentence"),
-            vec!["this", "is", "a", "sentence"]
-        );
-        assert_eq!(
-            detector_for_all_languages.split_text_into_words("sentence"),
-            vec!["sentence"]
-        );
-        assert_eq!(
-            detector_for_all_languages
-                .split_text_into_words("上海大学是一个好大学 this is a sentence"),
+    #[rstest(
+        text,
+        expected_words,
+        case("this is a sentence", vec!["this", "is", "a", "sentence"]),
+        case("sentence", vec!["sentence"]),
+        case(
+            "上海大学是一个好大学 this is a sentence",
             vec![
-                "上", "海", "大", "学", "是", "一", "个", "好", "大", "学", "this", "is", "a",
-                "sentence"
+                "上", "海", "大", "学", "是", "一", "个", "好", "大", "学",
+                "this", "is", "a", "sentence"
             ]
-        );
+        ),
+        case(
+            "Weltweit    gibt es ungefähr 6.000 Sprachen.",
+            vec!["weltweit", "gibt", "es", "ungefähr", "sprachen"]
+        )
+    )]
+    fn test_split_text_into_words(text: &str, expected_words: Vec<&str>) {
+        assert_eq!(split_text_into_words(text), expected_words);
     }
 
     #[rstest(
@@ -1852,7 +1804,7 @@ mod tests {
         expected_languages: HashSet<Language>,
     ) {
         let filtered_languages = detector_for_all_languages.filter_languages_by_rules(
-            vec![word.to_string()],
+            &vec![word.to_string()],
             &detector_for_all_languages.languages,
         );
         assert_eq!(

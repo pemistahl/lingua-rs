@@ -24,11 +24,11 @@ use crate::language::Language;
 
 pub(crate) static JAPANESE_CHARACTER_SET: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[\\p{Hiragana}\\p{Katakana}\\p{Han}]+$").unwrap());
-pub(crate) static LETTER: Lazy<Regex> = Lazy::new(|| Regex::new("^\\p{L}+$").unwrap());
 pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\s+").unwrap());
-pub(crate) static NO_LETTER: Lazy<Regex> = Lazy::new(|| Regex::new("^[^\\p{L}]+$").unwrap());
 pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
 pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());
+pub(crate) static LETTERS: Lazy<Regex> =
+    Lazy::new(|| Regex::new("\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|\\p{L}+").unwrap());
 pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
     Regex::new(
         "\\s*(?:\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|[\\p{L}'-]+)[\\p{N}\\p{P}]*\\s*",
@@ -37,19 +37,6 @@ pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
 });
 pub(crate) static TOKENS_WITHOUT_WHITESPACE: Lazy<Regex> =
     Lazy::new(|| Regex::new("\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|\\p{L}+").unwrap());
-pub(crate) static LANGUAGES_SUPPORTING_LOGOGRAMS: Lazy<HashSet<Language>> = Lazy::new(|| {
-    let mut languages = hashset!();
-    if cfg!(feature = "chinese") {
-        languages.insert(Language::from_str("Chinese").unwrap());
-    }
-    if cfg!(feature = "japanese") {
-        languages.insert(Language::from_str("Japanese").unwrap());
-    }
-    if cfg!(feature = "korean") {
-        languages.insert(Language::from_str("Korean").unwrap());
-    }
-    languages
-});
 
 pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet<Language>>> =
     Lazy::new(|| {

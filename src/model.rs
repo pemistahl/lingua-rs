@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-use crate::constant::LETTER;
-use crate::fraction::Fraction;
-use crate::language::Language;
-use crate::ngram::Ngram;
+use std::collections::{BTreeMap, HashMap, HashSet};
+
 use itertools::Itertools;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap, HashSet};
+
+use crate::fraction::Fraction;
+use crate::language::Language;
+use crate::ngram::Ngram;
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 struct JsonLanguageModel {
@@ -155,18 +156,20 @@ pub(crate) struct TestDataLanguageModel {
 }
 
 impl TestDataLanguageModel {
-    pub(crate) fn from(text: &str, ngram_length: usize) -> Self {
+    pub(crate) fn from(words: &[String], ngram_length: usize) -> Self {
         if !(1..6).contains(&ngram_length) {
             panic!("ngram length {ngram_length} is not in range 1..6");
         }
 
         let mut ngrams = hashset!();
-        let chars = text.chars().collect_vec();
 
-        if chars.len() >= ngram_length {
-            for i in 0..=chars.len() - ngram_length {
-                let slice = &chars[i..i + ngram_length].iter().collect::<String>();
-                if LETTER.is_match(slice) {
+        for word in words.iter() {
+            let chars = word.chars().collect_vec();
+            let chars_count = chars.len();
+
+            if chars_count >= ngram_length {
+                for i in 0..=chars_count - ngram_length {
+                    let slice = &chars[i..i + ngram_length].iter().collect::<String>();
                     ngrams.insert(Ngram::new(slice));
                 }
             }
@@ -178,9 +181,10 @@ impl TestDataLanguageModel {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use itertools::Itertools;
     use rstest::*;
+
+    use super::*;
 
     const TEXT: &str = "
         These sentences are intended for testing purposes.
@@ -462,6 +466,8 @@ mod tests {
     }
 
     mod test_data {
+        use crate::detector::split_text_into_words;
+
         use super::*;
 
         fn map_strs_to_ngrams(strs: HashSet<&'static str>) -> HashSet<Ngram> {
@@ -527,7 +533,7 @@ mod tests {
             case::fivegram_model(5, expected_fivegrams())
         )]
         fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: HashSet<Ngram>) {
-            let model = TestDataLanguageModel::from(&TEXT.to_lowercase(), ngram_length);
+            let model = TestDataLanguageModel::from(&split_text_into_words(TEXT), ngram_length);
             assert_eq!(model.ngrams, expected_ngrams);
         }
     }

@@ -18,10 +18,10 @@ use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::fmt::{Debug, Display, Formatter, Result};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
-use std::fmt::{Debug, Display, Formatter, Result};
 
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
 #[derive(

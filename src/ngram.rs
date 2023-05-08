@@ -14,11 +14,43 @@
  * limitations under the License.
  */
 
-use itertools::Itertools;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::fmt::Display;
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub(crate) struct NgramRef<'a> {
+    pub(crate) value: &'a str,
+}
+
+impl<'a> NgramRef<'a> {
+    pub(crate) fn new(value: &'a str) -> Self {
+        debug_assert!((0..6).contains(&value.chars().count()));
+        Self { value }
+    }
+
+    pub(crate) fn range_of_lower_order_ngrams(&self) -> NgramRangeRef {
+        NgramRangeRef {
+            start: self.clone(),
+        }
+    }
+}
+
+pub(crate) struct NgramRangeRef<'a> {
+    start: NgramRef<'a>,
+}
+
+impl<'a> Iterator for NgramRangeRef<'a> {
+    type Item = NgramRef<'a>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let last_ch = self.start.value.chars().rev().next()?;
+        let result = self.start;
+        self.start.value = &self.start.value[..self.start.value.len() - last_ch.len_utf8()];
+        Some(result)
+    }
+}
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub(crate) struct Ngram {
@@ -44,12 +76,6 @@ impl Ngram {
             4 => "quadrigram",
             5 => "fivegram",
             _ => panic!("ngram length {ngram_length} is not in range 1..6"),
-        }
-    }
-
-    pub(crate) fn range_of_lower_order_ngrams(&self) -> NgramRange {
-        NgramRange {
-            start: self.clone(),
         }
     }
 }
@@ -86,28 +112,6 @@ impl<'de> Deserialize<'de> for Ngram {
     }
 }
 
-pub(crate) struct NgramRange {
-    start: Ngram,
-}
-
-impl Iterator for NgramRange {
-    type Item = Ngram;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let value = &self.start.value;
-        let length = value.chars().count();
-        if length == 0 {
-            None
-        } else {
-            let result = Some(self.start.clone());
-            let chars = value.chars().collect_vec();
-            let new_value = &chars[0..length - 1].iter().collect::<String>();
-            self.start = Ngram::new(new_value);
-            result
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -127,13 +131,13 @@ mod tests {
 
     #[test]
     fn test_ngram_iterator() {
-        let ngram = Ngram::new("äbcde");
+        let ngram = NgramRef::new("äbcde");
         let mut range = ngram.range_of_lower_order_ngrams();
-        assert_eq!(range.next(), Some(Ngram::new("äbcde")));
-        assert_eq!(range.next(), Some(Ngram::new("äbcd")));
-        assert_eq!(range.next(), Some(Ngram::new("äbc")));
-        assert_eq!(range.next(), Some(Ngram::new("äb")));
-        assert_eq!(range.next(), Some(Ngram::new("ä")));
+        assert_eq!(range.next(), Some(NgramRef::new("äbcde")));
+        assert_eq!(range.next(), Some(NgramRef::new("äbcd")));
+        assert_eq!(range.next(), Some(NgramRef::new("äbc")));
+        assert_eq!(range.next(), Some(NgramRef::new("äb")));
+        assert_eq!(range.next(), Some(NgramRef::new("ä")));
         assert_eq!(range.next(), None);
     }
 }

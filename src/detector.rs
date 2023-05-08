@@ -35,7 +35,7 @@ use crate::constant::{
 use crate::json::load_json;
 use crate::language::Language;
 use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
-use crate::ngram::Ngram;
+use crate::ngram::NgramRef;
 use crate::result::DetectionResult;
 
 type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, HashMap<String, f64>>>>;
@@ -745,7 +745,7 @@ impl LanguageDetector {
     fn compute_sum_of_ngram_probabilities(
         &self,
         language: &Language,
-        ngrams: &HashSet<Ngram>,
+        ngrams: &HashSet<NgramRef>,
     ) -> f64 {
         let mut sum = 0.0;
         for ngram in ngrams.iter() {
@@ -761,7 +761,7 @@ impl LanguageDetector {
         sum
     }
 
-    fn look_up_ngram_probability(&self, language: &Language, ngram: &Ngram) -> f64 {
+    fn look_up_ngram_probability(&self, language: &Language, ngram: &NgramRef) -> f64 {
         let ngram_length = ngram.value.chars().count();
         let language_models = match ngram_length {
             5 => self.fivegram_language_models,
@@ -779,7 +779,7 @@ impl LanguageDetector {
         self.load_language_models(language_models, language, ngram_length);
 
         match language_models.read().unwrap().get(language) {
-            Some(model) => *model.get(&ngram.value).unwrap_or(&0.0),
+            Some(model) => *model.get(ngram.value).unwrap_or(&0.0),
             None => 0.0,
         }
     }
@@ -1162,10 +1162,10 @@ mod tests {
     // ##############################
 
     #[fixture(strs=hashset!())]
-    fn test_data_model(strs: HashSet<&'static str>) -> TestDataLanguageModel {
+    fn test_data_model(strs: HashSet<&'static str>) -> TestDataLanguageModel<'static> {
         let ngrams = strs
             .iter()
-            .map(|&it| Ngram::new(it))
+            .map(|&it| NgramRef::new(it))
             .collect::<HashSet<_>>();
 
         TestDataLanguageModel { ngrams }
@@ -1253,7 +1253,7 @@ mod tests {
         expected_probability: f64,
     ) {
         let probability = detector_for_english_and_german
-            .look_up_ngram_probability(&language, &Ngram::new(ngram));
+            .look_up_ngram_probability(&language, &NgramRef::new(ngram));
         assert_eq!(
             probability, expected_probability,
             "expected probability {} for language '{:?}' and ngram '{}', got {}",
@@ -1266,7 +1266,7 @@ mod tests {
     fn assert_ngram_probability_lookup_does_not_work_for_zerogram(
         detector_for_english_and_german: LanguageDetector,
     ) {
-        detector_for_english_and_german.look_up_ngram_probability(&English, &Ngram::new(""));
+        detector_for_english_and_german.look_up_ngram_probability(&English, &NgramRef::new(""));
     }
 
     #[rstest(
@@ -1293,7 +1293,7 @@ mod tests {
     ) {
         let mapped_ngrams = ngrams
             .iter()
-            .map(|&it| Ngram::new(it))
+            .map(|&it| NgramRef::new(it))
             .collect::<HashSet<_>>();
 
         let sum_of_probabilities = detector_for_english_and_german

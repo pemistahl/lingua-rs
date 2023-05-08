@@ -51,6 +51,7 @@ name = "benchmark"
 harness = false
 
 [dependencies]
+ahash = "0.8.3"
 fraction = "0.13.1"
 include_dir = "0.7.3"
 itertools = "0.10.5"

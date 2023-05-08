@@ -16,6 +16,7 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet};
 
+use ahash::AHashMap;
 use itertools::Itertools;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -60,9 +61,9 @@ impl TrainingDataLanguageModel {
         }
     }
 
-    pub(crate) fn from_json(json: &str) -> HashMap<String, f64> {
+    pub(crate) fn from_json(json: &str) -> AHashMap<String, f64> {
         let json_language_model = serde_json::from_str::<JsonLanguageModel>(json).unwrap();
-        let mut json_relative_frequencies = hashmap!();
+        let mut json_relative_frequencies = AHashMap::new();
 
         for (fraction, ngrams) in json_language_model.ngrams {
             let floating_point_value = fraction.to_f64();
@@ -294,7 +295,7 @@ mod tests {
             ))
         }
 
-        fn expected_unigram_json_relative_frequencies() -> HashMap<String, f64> {
+        fn expected_unigram_json_relative_frequencies() -> AHashMap<String, f64> {
             expected_unigram_relative_frequencies()
                 .iter()
                 .map(|(ngram, fraction)| (ngram.value.clone(), fraction.to_f64()))

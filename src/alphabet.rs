@@ -15,9 +15,9 @@
  */
 
 use crate::language::Language;
+use ahash::AHashMap as HashMap;
+use ahash::AHashSet as HashSet;
 use once_cell::sync::Lazy;
-use std::collections::HashMap;
-use std::collections::HashSet;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 

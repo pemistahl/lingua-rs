@@ -278,6 +278,10 @@ mod ngram;
 mod result;
 mod writer;
 
+// Copied from: https://github.com/rust-lang/regex/blob/1872bdf3cefa5dbc4cb49b631b884d342a47364a/regex-syntax/src/unicode_tables/script.rs#L63
+#[allow(dead_code)]
+mod script;
+
 #[cfg(target_family = "wasm")]
 mod wasm;
 

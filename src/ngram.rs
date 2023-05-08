@@ -22,18 +22,24 @@ use std::fmt::Display;
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub(crate) struct NgramRef<'a> {
     pub(crate) value: &'a str,
+    char_count: usize,
 }
 
 impl<'a> NgramRef<'a> {
     pub(crate) fn new(value: &'a str) -> Self {
-        debug_assert!((0..6).contains(&value.chars().count()));
-        Self { value }
+        let char_count = value.chars().count();
+        debug_assert!((0..6).contains(&char_count));
+        Self { value, char_count }
     }
 
     pub(crate) fn range_of_lower_order_ngrams(&self) -> NgramRangeRef {
         NgramRangeRef {
             start: self.clone(),
         }
+    }
+
+    pub(crate) fn char_count(&self) -> usize {
+        self.char_count
     }
 }
 
@@ -48,6 +54,7 @@ impl<'a> Iterator for NgramRangeRef<'a> {
         let last_ch = self.start.value.chars().rev().next()?;
         let result = self.start;
         self.start.value = &self.start.value[..self.start.value.len() - last_ch.len_utf8()];
+        self.start.char_count -= 1;
         Some(result)
     }
 }

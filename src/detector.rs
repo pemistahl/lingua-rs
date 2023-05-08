@@ -658,6 +658,53 @@ impl LanguageDetector {
         }
     }
 
+    fn load_models<R>(
+        &self,
+        ngram_length: usize,
+        filtered_languages: &HashSet<Language>,
+        callback: impl FnOnce([Option<&HashMap<Language, HashMap<String, f64>>>; 5]) -> R,
+    ) -> R {
+        let mut models = [None, None, None, None, None];
+        if ngram_length >= 5 {
+            for language in filtered_languages {
+                self.load_language_models(self.fivegram_language_models, language, 5);
+            }
+            models[4] = Some(self.fivegram_language_models.read().unwrap());
+        }
+        if ngram_length >= 4 {
+            for language in filtered_languages {
+                self.load_language_models(self.quadrigram_language_models, language, 4);
+            }
+            models[3] = Some(self.quadrigram_language_models.read().unwrap());
+        }
+        if ngram_length >= 3 {
+            for language in filtered_languages {
+                self.load_language_models(self.trigram_language_models, language, 3);
+            }
+            models[2] = Some(self.trigram_language_models.read().unwrap());
+        }
+        if ngram_length >= 2 {
+            for language in filtered_languages {
+                self.load_language_models(self.bigram_language_models, language, 2);
+            }
+            models[1] = Some(self.bigram_language_models.read().unwrap());
+        }
+        for language in filtered_languages {
+            self.load_language_models(self.unigram_language_models, language, 1);
+        }
+        models[0] = Some(self.unigram_language_models.read().unwrap());
+
+        let models = [
+            models[0].as_ref().map(|m| &**m),
+            models[1].as_ref().map(|m| &**m),
+            models[2].as_ref().map(|m| &**m),
+            models[3].as_ref().map(|m| &**m),
+            models[4].as_ref().map(|m| &**m),
+        ];
+
+        callback(models)
+    }
+
     fn look_up_language_models(
         &self,
         words: &[String],
@@ -665,35 +712,44 @@ impl LanguageDetector {
         filtered_languages: &HashSet<Language>,
     ) -> (HashMap<Language, f64>, Option<HashMap<Language, u32>>) {
         let test_data_model = TestDataLanguageModel::from(words, ngram_length);
-        let probabilities =
-            self.compute_language_probabilities(&test_data_model, filtered_languages);
-        let unigram_counts = if ngram_length == 1 {
-            let languages = probabilities.keys().collect_vec();
-            let intersected_languages = if !languages.is_empty() {
-                filtered_languages
-                    .iter()
-                    .cloned()
-                    .filter(|it| languages.contains(&it))
-                    .collect()
-            } else {
-                filtered_languages.clone()
-            };
-            Some(self.count_unigrams(&test_data_model, &intersected_languages))
-        } else {
-            None
-        };
 
-        (probabilities, unigram_counts)
+        self.load_models(ngram_length, filtered_languages, |models| {
+            let probabilities =
+                self.compute_language_probabilities(&test_data_model, filtered_languages, &models);
+
+            let unigram_counts = if ngram_length == 1 {
+                let languages = probabilities.keys().collect_vec();
+                let intersected_languages = if !languages.is_empty() {
+                    filtered_languages
+                        .iter()
+                        .cloned()
+                        .filter(|it| languages.contains(&it))
+                        .collect()
+                } else {
+                    filtered_languages.clone()
+                };
+                Some(self.count_unigrams(
+                    &test_data_model,
+                    &intersected_languages,
+                    models[0].unwrap(),
+                ))
+            } else {
+                None
+            };
+
+            (probabilities, unigram_counts)
+        })
     }
 
     fn compute_language_probabilities(
         &self,
         model: &TestDataLanguageModel,
         filtered_languages: &HashSet<Language>,
+        models: &[Option<&HashMap<Language, HashMap<String, f64>>>; 5],
     ) -> HashMap<Language, f64> {
         let mut probabilities = hashmap!();
         for language in filtered_languages.iter() {
-            let sum = self.compute_sum_of_ngram_probabilities(language, &model.ngrams);
+            let sum = self.compute_sum_of_ngram_probabilities(language, &model.ngrams, models);
             if sum < 0.0 {
                 probabilities.insert(language.clone(), sum);
             }
@@ -746,11 +802,23 @@ impl LanguageDetector {
         &self,
         language: &Language,
         ngrams: &HashSet<NgramRef>,
+        models: &[Option<&HashMap<Language, HashMap<String, f64>>>; 5],
     ) -> f64 {
+        let models = [
+            models[0].as_ref().and_then(|m| m.get(language)),
+            models[1].as_ref().and_then(|m| m.get(language)),
+            models[2].as_ref().and_then(|m| m.get(language)),
+            models[3].as_ref().and_then(|m| m.get(language)),
+            models[4].as_ref().and_then(|m| m.get(language)),
+        ];
+
         let mut sum = 0.0;
-        for ngram in ngrams.iter() {
-            for elem in ngram.range_of_lower_order_ngrams() {
-                let probability = self.look_up_ngram_probability(language, &elem);
+        for full_ngram in ngrams {
+            for ngram in full_ngram.range_of_lower_order_ngrams() {
+                let probability = models[ngram.char_count() - 1]
+                    .and_then(|m| m.get(ngram.value))
+                    .copied()
+                    .unwrap_or(0.0);
 
                 if probability > 0.0 {
                     sum += probability.ln();
@@ -761,38 +829,22 @@ impl LanguageDetector {
         sum
     }
 
-    fn look_up_ngram_probability(&self, language: &Language, ngram: &NgramRef) -> f64 {
-        let ngram_length = ngram.value.chars().count();
-        let language_models = match ngram_length {
-            5 => self.fivegram_language_models,
-            4 => self.quadrigram_language_models,
-            3 => self.trigram_language_models,
-            2 => self.bigram_language_models,
-            1 => self.unigram_language_models,
-            0 => panic!("zerogram detected"),
-            _ => panic!(
-                "unsupported ngram length detected: {}",
-                ngram.value.chars().count()
-            ),
-        };
-
-        self.load_language_models(language_models, language, ngram_length);
-
-        match language_models.read().unwrap().get(language) {
-            Some(model) => *model.get(ngram.value).unwrap_or(&0.0),
-            None => 0.0,
-        }
-    }
-
     fn count_unigrams(
         &self,
         unigram_model: &TestDataLanguageModel,
         filtered_languages: &HashSet<Language>,
+        models: &HashMap<Language, HashMap<String, f64>>,
     ) -> HashMap<Language, u32> {
         let mut unigram_counts = HashMap::new();
-        for language in filtered_languages.iter() {
+        for language in filtered_languages {
+            let model = match models.get(language) {
+                Some(model) => model,
+                None => continue,
+            };
+
             for unigram in unigram_model.ngrams.iter() {
-                if self.look_up_ngram_probability(language, unigram) > 0.0 {
+                let probability = model.get(unigram.value).copied().unwrap_or(0.0);
+                if probability > 0.0 {
                     self.increment_counter(&mut unigram_counts, language.clone());
                 }
             }
@@ -1246,27 +1298,32 @@ mod tests {
         case(German, "lter", 0.28),
         case(German, "alter", 0.3)
     )]
-    fn assert_ngram_probability_lookup_works_correctly(
+    fn assert_load_models_works_correctly(
         detector_for_english_and_german: LanguageDetector,
         language: Language,
         ngram: &str,
         expected_probability: f64,
     ) {
-        let probability = detector_for_english_and_german
-            .look_up_ngram_probability(&language, &NgramRef::new(ngram));
+        let char_count = ngram.chars().count();
+        let probability = detector_for_english_and_german.load_models(
+            char_count,
+            &hashset!(language.clone()),
+            |models| {
+                models[char_count - 1]
+                    .unwrap()
+                    .get(&language)
+                    .unwrap()
+                    .get(ngram)
+                    .copied()
+                    .unwrap_or(0.0)
+            },
+        );
+
         assert_eq!(
             probability, expected_probability,
             "expected probability {} for language '{:?}' and ngram '{}', got {}",
             expected_probability, language, ngram, probability
         );
-    }
-
-    #[rstest]
-    #[should_panic(expected = "zerogram detected")]
-    fn assert_ngram_probability_lookup_does_not_work_for_zerogram(
-        detector_for_english_and_german: LanguageDetector,
-    ) {
-        detector_for_english_and_german.look_up_ngram_probability(&English, &NgramRef::new(""));
     }
 
     #[rstest(
@@ -1296,8 +1353,18 @@ mod tests {
             .map(|&it| NgramRef::new(it))
             .collect::<HashSet<_>>();
 
-        let sum_of_probabilities = detector_for_english_and_german
-            .compute_sum_of_ngram_probabilities(&English, &mapped_ngrams);
+        let ngram_length = mapped_ngrams.iter().next().unwrap().char_count();
+        let sum_of_probabilities = detector_for_english_and_german.load_models(
+            ngram_length,
+            &hashset!(English),
+            |models| {
+                detector_for_english_and_german.compute_sum_of_ngram_probabilities(
+                    &English,
+                    &mapped_ngrams,
+                    &models,
+                )
+            },
+        );
 
         assert!(
             approx_eq!(
@@ -1344,8 +1411,16 @@ mod tests {
         test_data_model: TestDataLanguageModel,
         expected_probabilities: HashMap<Language, f64>,
     ) {
-        let probabilities = detector_for_english_and_german
-            .compute_language_probabilities(&test_data_model, &hashset!(English, German));
+        let ngram_length = test_data_model.ngrams.iter().next().unwrap().char_count();
+        let languages = hashset!(English, German);
+        let probabilities =
+            detector_for_english_and_german.load_models(ngram_length, &languages, |models| {
+                detector_for_english_and_german.compute_language_probabilities(
+                    &test_data_model,
+                    &languages,
+                    &models,
+                )
+            });
 
         for (language, probability) in probabilities {
             let expected_probability = expected_probabilities[&language];

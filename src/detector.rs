@@ -693,7 +693,7 @@ impl LanguageDetector {
     ) -> HashMap<Language, f64> {
         let mut probabilities = hashmap!();
         for language in filtered_languages.iter() {
-            let sum = self.compute_sum_of_ngram_probabilities(language, &model.ngrams);
+            let sum = self.compute_sum_of_ngram_probabilities(language, model);
             if sum < 0.0 {
                 probabilities.insert(language.clone(), sum);
             }
@@ -745,12 +745,12 @@ impl LanguageDetector {
     fn compute_sum_of_ngram_probabilities(
         &self,
         language: &Language,
-        ngrams: &HashSet<Ngram>,
+        ngram_model: &TestDataLanguageModel,
     ) -> f64 {
         let mut sum = 0.0;
-        for ngram in ngrams.iter() {
-            for elem in ngram.range_of_lower_order_ngrams() {
-                let probability = self.look_up_ngram_probability(language, &elem);
+        for ngrams in ngram_model.ngrams.iter() {
+            for ngram in ngrams {
+                let probability = self.look_up_ngram_probability(language, ngram);
 
                 if probability > 0.0 {
                     sum += probability.ln();
@@ -791,8 +791,8 @@ impl LanguageDetector {
     ) -> HashMap<Language, u32> {
         let mut unigram_counts = HashMap::new();
         for language in filtered_languages.iter() {
-            for unigram in unigram_model.ngrams.iter() {
-                if self.look_up_ngram_probability(language, unigram) > 0.0 {
+            for unigrams in unigram_model.ngrams.iter() {
+                if self.look_up_ngram_probability(language, unigrams.get(0).unwrap()) > 0.0 {
                     self.increment_counter(&mut unigram_counts, language.clone());
                 }
             }
@@ -1161,12 +1161,17 @@ mod tests {
     // TEST DATA MODELS
     // ##############################
 
-    #[fixture(strs=hashset!())]
-    fn test_data_model(strs: HashSet<&'static str>) -> TestDataLanguageModel {
+    #[fixture(strs=vec![])]
+    fn test_data_model(strs: Vec<Vec<&'static str>>) -> TestDataLanguageModel {
         let ngrams = strs
             .iter()
-            .map(|&it| Ngram::new(it))
-            .collect::<HashSet<_>>();
+            .map(|ngram_strs| {
+                ngram_strs
+                    .iter()
+                    .map(|&it| Ngram::new(it))
+                    .collect::<Vec<Ngram>>()
+            })
+            .collect::<Vec<_>>();
 
         TestDataLanguageModel { ngrams }
     }
@@ -1270,34 +1275,30 @@ mod tests {
     }
 
     #[rstest(
-        ngrams, expected_sum_of_probabilities,
+        test_data_model,
+        expected_sum_of_probabilities,
         case(
-            hashset!("a", "l", "t", "e", "r"),
+            test_data_model(vec![vec!["a"], vec!["l"], vec!["t"], vec!["e"], vec!["r"]]),
             0.01_f64.ln() + 0.02_f64.ln() + 0.03_f64.ln() + 0.04_f64.ln() + 0.05_f64.ln()
         ),
         case(
             // back off unknown Trigram("tez") to known Bigram("te")
-            hashset!("alt", "lte", "tez"),
+            test_data_model(vec![vec!["alt", "al", "a"], vec!["lte", "lt", "l"], vec!["tez", "te", "t"]]),
             0.19_f64.ln() + 0.2_f64.ln() + 0.13_f64.ln()
         ),
         case(
             // back off unknown Fivegram("aquas") to known Unigram("a")
-            hashset!("aquas"),
+            test_data_model(vec![vec!["aquas", "aqua", "aqu", "aq", "a"]]),
             0.01_f64.ln()
         )
     )]
     fn assert_summation_of_ngram_probabilities_works_correctly(
         detector_for_english_and_german: LanguageDetector,
-        ngrams: HashSet<&str>,
+        test_data_model: TestDataLanguageModel,
         expected_sum_of_probabilities: f64,
     ) {
-        let mapped_ngrams = ngrams
-            .iter()
-            .map(|&it| Ngram::new(it))
-            .collect::<HashSet<_>>();
-
         let sum_of_probabilities = detector_for_english_and_german
-            .compute_sum_of_ngram_probabilities(&English, &mapped_ngrams);
+            .compute_sum_of_ngram_probabilities(&English, &test_data_model);
 
         assert!(
             approx_eq!(
@@ -1309,7 +1310,7 @@ mod tests {
             "expected sum {} for language '{:?}' and ngrams {:?}, got {}",
             expected_sum_of_probabilities,
             English,
-            ngrams,
+            test_data_model.ngrams,
             sum_of_probabilities
         );
     }
@@ -1318,21 +1319,21 @@ mod tests {
         test_data_model,
         expected_probabilities,
         case::unigram_model(
-            test_data_model(hashset!("a", "l", "t", "e", "r")),
+            test_data_model(vec![vec!["a"], vec!["l"], vec!["t"], vec!["e"], vec!["r"]]),
             hashmap!(
                 English => 0.01_f64.ln() + 0.02_f64.ln() + 0.03_f64.ln() + 0.04_f64.ln() + 0.05_f64.ln(),
                 German => 0.06_f64.ln() + 0.07_f64.ln() + 0.08_f64.ln() + 0.09_f64.ln() + 0.1_f64.ln()
             )
         ),
         case::trigram_model(
-            test_data_model(hashset!("alt", "lte", "ter", "wxy")),
+            test_data_model(vec![vec!["alt", "al", "a"], vec!["lte", "lt", "l"], vec!["ter", "te", "t"], vec!["wxy", "wx", "w"]]),
             hashmap!(
                 English => 0.19_f64.ln() + 0.2_f64.ln() + 0.21_f64.ln(),
                 German => 0.22_f64.ln() + 0.23_f64.ln() + 0.24_f64.ln()
             )
         ),
         case::quadrigram_model(
-            test_data_model(hashset!("alte", "lter", "wxyz")),
+            test_data_model(vec![vec!["alte", "alt", "al", "a"], vec!["lter", "lte", "lt", "l"], vec!["wxyz", "wxy", "wx", "w"]]),
             hashmap!(
                 English => 0.25_f64.ln() + 0.26_f64.ln(),
                 German => 0.27_f64.ln() + 0.28_f64.ln()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 
 use itertools::Itertools;
 use regex::Regex;
@@ -152,7 +152,7 @@ impl TrainingDataLanguageModel {
 }
 
 pub(crate) struct TestDataLanguageModel {
-    pub(crate) ngrams: HashSet<Ngram>,
+    pub(crate) ngrams: Vec<Vec<Ngram>>,
 }
 
 impl TestDataLanguageModel {
@@ -175,7 +175,15 @@ impl TestDataLanguageModel {
             }
         }
 
-        Self { ngrams }
+        let mut lower_order_ngrams = Vec::with_capacity(ngrams.len());
+
+        for ngram in ngrams {
+            lower_order_ngrams.push(ngram.range_of_lower_order_ngrams().collect_vec());
+        }
+
+        Self {
+            ngrams: lower_order_ngrams,
+        }
     }
 }
 
@@ -470,57 +478,230 @@ mod tests {
 
         use super::*;
 
-        fn map_strs_to_ngrams(strs: HashSet<&'static str>) -> HashSet<Ngram> {
-            strs.iter().map(|&it| Ngram::new(it)).collect()
+        fn map_strs_to_ngrams(strs: Vec<Vec<&'static str>>) -> Vec<Vec<Ngram>> {
+            strs.iter()
+                .map(|ngram_strs| ngram_strs.iter().map(|&it| Ngram::new(it)).collect())
+                .collect()
         }
 
         #[fixture]
-        fn expected_unigrams() -> HashSet<Ngram> {
-            map_strs_to_ngrams(hashset!(
-                "a", "b", "c", "d", "e", "f", "g", "h", "i", "l", "m", "n", "o", "p", "r", "s",
-                "t", "u", "w", "y"
-            ))
+        fn expected_unigrams() -> Vec<Vec<Ngram>> {
+            map_strs_to_ngrams(vec![
+                vec!["a"],
+                vec!["b"],
+                vec!["c"],
+                vec!["d"],
+                vec!["e"],
+                vec!["f"],
+                vec!["g"],
+                vec!["h"],
+                vec!["i"],
+                vec!["l"],
+                vec!["m"],
+                vec!["n"],
+                vec!["o"],
+                vec!["p"],
+                vec!["r"],
+                vec!["s"],
+                vec!["t"],
+                vec!["u"],
+                vec!["w"],
+                vec!["y"],
+            ])
         }
 
         #[fixture]
-        fn expected_bigrams() -> HashSet<Ngram> {
-            map_strs_to_ngrams(hashset!(
-                "de", "pr", "pu", "do", "uc", "ds", "du", "ur", "us", "ed", "in", "io", "em", "en",
-                "is", "al", "es", "ar", "rd", "re", "ey", "nc", "nd", "ay", "ng", "ro", "rp", "no",
-                "ns", "nt", "fo", "wa", "se", "od", "si", "by", "of", "wo", "on", "st", "ce", "or",
-                "os", "ot", "co", "ta", "te", "ct", "th", "ti", "to", "he", "po"
-            ))
+        fn expected_bigrams() -> Vec<Vec<Ngram>> {
+            map_strs_to_ngrams(vec![
+                vec!["al", "a"],
+                vec!["ar", "a"],
+                vec!["ay", "a"],
+                vec!["by", "b"],
+                vec!["ce", "c"],
+                vec!["co", "c"],
+                vec!["ct", "c"],
+                vec!["de", "d"],
+                vec!["do", "d"],
+                vec!["ds", "d"],
+                vec!["du", "d"],
+                vec!["ed", "e"],
+                vec!["em", "e"],
+                vec!["en", "e"],
+                vec!["es", "e"],
+                vec!["ey", "e"],
+                vec!["fo", "f"],
+                vec!["he", "h"],
+                vec!["in", "i"],
+                vec!["io", "i"],
+                vec!["is", "i"],
+                vec!["nc", "n"],
+                vec!["nd", "n"],
+                vec!["ng", "n"],
+                vec!["no", "n"],
+                vec!["ns", "n"],
+                vec!["nt", "n"],
+                vec!["od", "o"],
+                vec!["of", "o"],
+                vec!["on", "o"],
+                vec!["or", "o"],
+                vec!["os", "o"],
+                vec!["ot", "o"],
+                vec!["po", "p"],
+                vec!["pr", "p"],
+                vec!["pu", "p"],
+                vec!["rd", "r"],
+                vec!["re", "r"],
+                vec!["ro", "r"],
+                vec!["rp", "r"],
+                vec!["se", "s"],
+                vec!["si", "s"],
+                vec!["st", "s"],
+                vec!["ta", "t"],
+                vec!["te", "t"],
+                vec!["th", "t"],
+                vec!["ti", "t"],
+                vec!["to", "t"],
+                vec!["uc", "u"],
+                vec!["ur", "u"],
+                vec!["us", "u"],
+                vec!["wa", "w"],
+                vec!["wo", "w"],
+            ])
         }
 
         #[fixture]
-        fn expected_trigrams() -> HashSet<Ngram> {
-            map_strs_to_ngrams(hashset!(
-                "rds", "ose", "ded", "con", "use", "est", "ion", "ist", "pur", "hem", "hes", "tin",
-                "cti", "tio", "wor", "ten", "hey", "ota", "tal", "tes", "uct", "sti", "pro", "odu",
-                "nsi", "rod", "for", "ces", "nce", "not", "are", "pos", "tot", "end", "enc", "sis",
-                "sen", "nte", "ses", "ord", "ing", "ent", "int", "nde", "way", "the", "rpo", "urp",
-                "duc", "ons", "ese"
-            ))
+        fn expected_trigrams() -> Vec<Vec<Ngram>> {
+            map_strs_to_ngrams(vec![
+                vec!["are", "ar", "a"],
+                vec!["ces", "ce", "c"],
+                vec!["con", "co", "c"],
+                vec!["cti", "ct", "c"],
+                vec!["ded", "de", "d"],
+                vec!["duc", "du", "d"],
+                vec!["enc", "en", "e"],
+                vec!["end", "en", "e"],
+                vec!["ent", "en", "e"],
+                vec!["ese", "es", "e"],
+                vec!["est", "es", "e"],
+                vec!["for", "fo", "f"],
+                vec!["hem", "he", "h"],
+                vec!["hes", "he", "h"],
+                vec!["hey", "he", "h"],
+                vec!["ing", "in", "i"],
+                vec!["int", "in", "i"],
+                vec!["ion", "io", "i"],
+                vec!["ist", "is", "i"],
+                vec!["nce", "nc", "n"],
+                vec!["nde", "nd", "n"],
+                vec!["not", "no", "n"],
+                vec!["nsi", "ns", "n"],
+                vec!["nte", "nt", "n"],
+                vec!["odu", "od", "o"],
+                vec!["ons", "on", "o"],
+                vec!["ord", "or", "o"],
+                vec!["ose", "os", "o"],
+                vec!["ota", "ot", "o"],
+                vec!["pos", "po", "p"],
+                vec!["pro", "pr", "p"],
+                vec!["pur", "pu", "p"],
+                vec!["rds", "rd", "r"],
+                vec!["rod", "ro", "r"],
+                vec!["rpo", "rp", "r"],
+                vec!["sen", "se", "s"],
+                vec!["ses", "se", "s"],
+                vec!["sis", "si", "s"],
+                vec!["sti", "st", "s"],
+                vec!["tal", "ta", "t"],
+                vec!["ten", "te", "t"],
+                vec!["tes", "te", "t"],
+                vec!["the", "th", "t"],
+                vec!["tin", "ti", "t"],
+                vec!["tio", "ti", "t"],
+                vec!["tot", "to", "t"],
+                vec!["uct", "uc", "u"],
+                vec!["urp", "ur", "u"],
+                vec!["use", "us", "u"],
+                vec!["way", "wa", "w"],
+                vec!["wor", "wo", "w"],
+            ])
         }
 
         #[fixture]
-        fn expected_quadrigrams() -> HashSet<Ngram> {
-            map_strs_to_ngrams(hashset!(
-                "onsi", "sist", "ende", "ords", "esti", "tenc", "nces", "oduc", "tend", "thes",
-                "rpos", "ting", "nten", "nsis", "they", "tota", "cons", "tion", "prod", "ence",
-                "test", "otal", "pose", "nded", "oses", "inte", "urpo", "them", "sent", "duct",
-                "stin", "ente", "ucti", "purp", "ctio", "rodu", "word", "hese"
-            ))
+        fn expected_quadrigrams() -> Vec<Vec<Ngram>> {
+            map_strs_to_ngrams(vec![
+                vec!["cons", "con", "co", "c"],
+                vec!["ctio", "cti", "ct", "c"],
+                vec!["duct", "duc", "du", "d"],
+                vec!["ence", "enc", "en", "e"],
+                vec!["ende", "end", "en", "e"],
+                vec!["ente", "ent", "en", "e"],
+                vec!["esti", "est", "es", "e"],
+                vec!["hese", "hes", "he", "h"],
+                vec!["inte", "int", "in", "i"],
+                vec!["nces", "nce", "nc", "n"],
+                vec!["nded", "nde", "nd", "n"],
+                vec!["nsis", "nsi", "ns", "n"],
+                vec!["nten", "nte", "nt", "n"],
+                vec!["oduc", "odu", "od", "o"],
+                vec!["onsi", "ons", "on", "o"],
+                vec!["ords", "ord", "or", "o"],
+                vec!["oses", "ose", "os", "o"],
+                vec!["otal", "ota", "ot", "o"],
+                vec!["pose", "pos", "po", "p"],
+                vec!["prod", "pro", "pr", "p"],
+                vec!["purp", "pur", "pu", "p"],
+                vec!["rodu", "rod", "ro", "r"],
+                vec!["rpos", "rpo", "rp", "r"],
+                vec!["sent", "sen", "se", "s"],
+                vec!["sist", "sis", "si", "s"],
+                vec!["stin", "sti", "st", "s"],
+                vec!["tenc", "ten", "te", "t"],
+                vec!["tend", "ten", "te", "t"],
+                vec!["test", "tes", "te", "t"],
+                vec!["them", "the", "th", "t"],
+                vec!["thes", "the", "th", "t"],
+                vec!["they", "the", "th", "t"],
+                vec!["ting", "tin", "ti", "t"],
+                vec!["tion", "tio", "ti", "t"],
+                vec!["tota", "tot", "to", "t"],
+                vec!["ucti", "uct", "uc", "u"],
+                vec!["urpo", "urp", "ur", "u"],
+                vec!["word", "wor", "wo", "w"],
+            ])
         }
 
         #[fixture]
-        fn expected_fivegrams() -> HashSet<Ngram> {
-            map_strs_to_ngrams(hashset!(
-                "testi", "sente", "ences", "tende", "these", "ntenc", "ducti", "ntend", "onsis",
-                "total", "uctio", "enten", "poses", "ction", "produ", "inten", "nsist", "words",
-                "sting", "tence", "purpo", "estin", "roduc", "urpos", "ended", "rpose", "oduct",
-                "consi"
-            ))
+        fn expected_fivegrams() -> Vec<Vec<Ngram>> {
+            map_strs_to_ngrams(vec![
+                vec!["consi", "cons", "con", "co", "c"],
+                vec!["ction", "ctio", "cti", "ct", "c"],
+                vec!["ducti", "duct", "duc", "du", "d"],
+                vec!["ences", "ence", "enc", "en", "e"],
+                vec!["ended", "ende", "end", "en", "e"],
+                vec!["enten", "ente", "ent", "en", "e"],
+                vec!["estin", "esti", "est", "es", "e"],
+                vec!["inten", "inte", "int", "in", "i"],
+                vec!["nsist", "nsis", "nsi", "ns", "n"],
+                vec!["ntenc", "nten", "nte", "nt", "n"],
+                vec!["ntend", "nten", "nte", "nt", "n"],
+                vec!["oduct", "oduc", "odu", "od", "o"],
+                vec!["onsis", "onsi", "ons", "on", "o"],
+                vec!["poses", "pose", "pos", "po", "p"],
+                vec!["produ", "prod", "pro", "pr", "p"],
+                vec!["purpo", "purp", "pur", "pu", "p"],
+                vec!["roduc", "rodu", "rod", "ro", "r"],
+                vec!["rpose", "rpos", "rpo", "rp", "r"],
+                vec!["sente", "sent", "sen", "se", "s"],
+                vec!["sting", "stin", "sti", "st", "s"],
+                vec!["tence", "tenc", "ten", "te", "t"],
+                vec!["tende", "tend", "ten", "te", "t"],
+                vec!["testi", "test", "tes", "te", "t"],
+                vec!["these", "thes", "the", "th", "t"],
+                vec!["total", "tota", "tot", "to", "t"],
+                vec!["uctio", "ucti", "uct", "uc", "u"],
+                vec!["urpos", "urpo", "urp", "ur", "u"],
+                vec!["words", "word", "wor", "wo", "w"],
+            ])
         }
 
         #[rstest(
@@ -532,8 +713,11 @@ mod tests {
             case::quadrigram_model(4, expected_quadrigrams()),
             case::fivegram_model(5, expected_fivegrams())
         )]
-        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: HashSet<Ngram>) {
-            let model = TestDataLanguageModel::from(&split_text_into_words(TEXT), ngram_length);
+        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: Vec<Vec<Ngram>>) {
+            let mut model = TestDataLanguageModel::from(&split_text_into_words(TEXT), ngram_length);
+            model
+                .ngrams
+                .sort_by(|first, second| first[0].value.cmp(&second[0].value));
             assert_eq!(model.ngrams, expected_ngrams);
         }
     }

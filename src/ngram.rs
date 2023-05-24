@@ -83,7 +83,7 @@ impl<'de> Deserialize<'de> for Ngram {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 pub(crate) struct NgramRef<'a> {
     pub(crate) value: &'a str,
-    char_count: usize,
+    pub(crate) char_count: usize,
 }
 
 impl<'a> NgramRef<'a> {

@@ -22,7 +22,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::fraction::Fraction;
 use crate::language::Language;
-use crate::ngram::Ngram;
+use crate::ngram::{Ngram, NgramRef};
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 struct JsonLanguageModel {
@@ -151,12 +151,12 @@ impl TrainingDataLanguageModel {
     }
 }
 
-pub(crate) struct TestDataLanguageModel {
-    pub(crate) ngrams: Vec<Vec<Ngram>>,
+pub(crate) struct TestDataLanguageModel<'a> {
+    pub(crate) ngrams: Vec<Vec<NgramRef<'a>>>,
 }
 
-impl TestDataLanguageModel {
-    pub(crate) fn from(words: &[String], ngram_length: usize) -> Self {
+impl<'a> TestDataLanguageModel<'a> {
+    pub(crate) fn from(words: &'a [String], ngram_length: usize) -> Self {
         if !(1..6).contains(&ngram_length) {
             panic!("ngram length {ngram_length} is not in range 1..6");
         }
@@ -164,13 +164,12 @@ impl TestDataLanguageModel {
         let mut ngrams = hashset!();
 
         for word in words.iter() {
-            let chars = word.chars().collect_vec();
-            let chars_count = chars.len();
+            let chars_count = word.chars().count();
 
             if chars_count >= ngram_length {
                 for i in 0..=chars_count - ngram_length {
-                    let slice = &chars[i..i + ngram_length].iter().collect::<String>();
-                    ngrams.insert(Ngram::new(slice));
+                    let slice = get_utf8_slice(word, i, i + ngram_length);
+                    ngrams.insert(NgramRef::new(slice));
                 }
             }
         }
@@ -185,6 +184,22 @@ impl TestDataLanguageModel {
             ngrams: lower_order_ngrams,
         }
     }
+}
+
+fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
+    string
+        .char_indices()
+        .nth(start)
+        .map(|(start_pos, _)| {
+            string[start_pos..]
+                .char_indices()
+                .nth(end - start)
+                .map_or_else(
+                    || &string[start_pos..],
+                    |(end_pos, _)| &string[start_pos..start_pos + end_pos],
+                )
+        })
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -478,14 +493,14 @@ mod tests {
 
         use super::*;
 
-        fn map_strs_to_ngrams(strs: Vec<Vec<&'static str>>) -> Vec<Vec<Ngram>> {
+        fn map_strs_to_ngrams(strs: Vec<Vec<&'static str>>) -> Vec<Vec<NgramRef>> {
             strs.iter()
-                .map(|ngram_strs| ngram_strs.iter().map(|&it| Ngram::new(it)).collect())
+                .map(|ngram_strs| ngram_strs.iter().map(|&it| NgramRef::new(it)).collect())
                 .collect()
         }
 
         #[fixture]
-        fn expected_unigrams() -> Vec<Vec<Ngram>> {
+        fn expected_unigrams() -> Vec<Vec<NgramRef<'static>>> {
             map_strs_to_ngrams(vec![
                 vec!["a"],
                 vec!["b"],
@@ -511,7 +526,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_bigrams() -> Vec<Vec<Ngram>> {
+        fn expected_bigrams() -> Vec<Vec<NgramRef<'static>>> {
             map_strs_to_ngrams(vec![
                 vec!["al", "a"],
                 vec!["ar", "a"],
@@ -570,7 +585,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_trigrams() -> Vec<Vec<Ngram>> {
+        fn expected_trigrams() -> Vec<Vec<NgramRef<'static>>> {
             map_strs_to_ngrams(vec![
                 vec!["are", "ar", "a"],
                 vec!["ces", "ce", "c"],
@@ -627,7 +642,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_quadrigrams() -> Vec<Vec<Ngram>> {
+        fn expected_quadrigrams() -> Vec<Vec<NgramRef<'static>>> {
             map_strs_to_ngrams(vec![
                 vec!["cons", "con", "co", "c"],
                 vec!["ctio", "cti", "ct", "c"],
@@ -671,7 +686,7 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_fivegrams() -> Vec<Vec<Ngram>> {
+        fn expected_fivegrams() -> Vec<Vec<NgramRef<'static>>> {
             map_strs_to_ngrams(vec![
                 vec!["consi", "cons", "con", "co", "c"],
                 vec!["ction", "ctio", "cti", "ct", "c"],
@@ -713,8 +728,9 @@ mod tests {
             case::quadrigram_model(4, expected_quadrigrams()),
             case::fivegram_model(5, expected_fivegrams())
         )]
-        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: Vec<Vec<Ngram>>) {
-            let mut model = TestDataLanguageModel::from(&split_text_into_words(TEXT), ngram_length);
+        fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: Vec<Vec<NgramRef>>) {
+            let words = split_text_into_words(TEXT);
+            let mut model = TestDataLanguageModel::from(&words, ngram_length);
             model
                 .ngrams
                 .sort_by(|first, second| first[0].value.cmp(&second[0].value));

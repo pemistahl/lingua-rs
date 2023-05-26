@@ -139,6 +139,7 @@ lingua-yoruba-language-model = { path = "language-models/yo", version = "=1.0.1"
 lingua-zulu-language-model = { path = "language-models/zu", version = "=1.0.1", optional = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
+ahash = "0.8.3"
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.1", optional = true }
 rayon = "1.7.0"
@@ -146,6 +147,7 @@ titlecase = { version = "2.2.0", optional = true }
 whatlang = { version = "0.16.2", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
+ahash = { version = "0.8.3", default-features = false, features = ["std", "compile-time-rng"] }
 wasm-bindgen = { version = "0.2.86", features = ["serde-serialize"] }
 
 [dev-dependencies]

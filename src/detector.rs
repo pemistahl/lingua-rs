@@ -20,6 +20,7 @@ use std::hash::Hash;
 use std::str::FromStr;
 use std::sync::RwLock;
 
+use ahash::AHashMap;
 use fraction::Zero;
 use itertools::Itertools;
 use once_cell::sync::Lazy;
@@ -37,9 +38,9 @@ use crate::language::Language;
 use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
 use crate::result::DetectionResult;
 
-type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, HashMap<String, f64>>>>;
-type StaticLanguageModelMap = &'static RwLock<HashMap<Language, HashMap<String, f64>>>;
-type LanguageModelArray<'a> = [Option<&'a HashMap<Language, HashMap<String, f64>>>; 5];
+type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, AHashMap<String, f64>>>>;
+type StaticLanguageModelMap = &'static RwLock<HashMap<Language, AHashMap<String, f64>>>;
+type LanguageModelArray<'a> = [Option<&'a HashMap<Language, AHashMap<String, f64>>>; 5];
 
 static UNIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
 static BIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -842,7 +843,7 @@ impl LanguageDetector {
         &self,
         unigram_model: &TestDataLanguageModel,
         filtered_languages: &HashSet<Language>,
-        language_models: &HashMap<Language, HashMap<String, f64>>,
+        language_models: &HashMap<Language, AHashMap<String, f64>>,
     ) -> HashMap<Language, u32> {
         let mut unigram_counts = HashMap::new();
         for language in filtered_languages.iter() {
@@ -1017,7 +1018,7 @@ mod tests {
     // HELPER FUNCTIONS
     // ##############################
 
-    fn create_language_model_map(data: HashMap<&'static str, f64>) -> HashMap<String, f64> {
+    fn create_language_model_map(data: HashMap<&'static str, f64>) -> AHashMap<String, f64> {
         data.iter().map(|(&k, &v)| (k.to_string(), v)).collect()
     }
 
@@ -1030,7 +1031,7 @@ mod tests {
     // ##############################
 
     #[fixture]
-    fn unigram_language_model_for_english() -> HashMap<String, f64> {
+    fn unigram_language_model_for_english() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "a" => 0.01,
             "l" => 0.02,
@@ -1043,7 +1044,7 @@ mod tests {
     }
 
     #[fixture]
-    fn bigram_language_model_for_english() -> HashMap<String, f64> {
+    fn bigram_language_model_for_english() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "al" => 0.11,
             "lt" => 0.12,
@@ -1056,7 +1057,7 @@ mod tests {
     }
 
     #[fixture]
-    fn trigram_language_model_for_english() -> HashMap<String, f64> {
+    fn trigram_language_model_for_english() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "alt" => 0.19,
             "lte" => 0.2,
@@ -1069,7 +1070,7 @@ mod tests {
     }
 
     #[fixture]
-    fn quadrigram_language_model_for_english() -> HashMap<String, f64> {
+    fn quadrigram_language_model_for_english() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "alte" => 0.25,
             "lter" => 0.26,
@@ -1080,7 +1081,7 @@ mod tests {
     }
 
     #[fixture]
-    fn fivegram_language_model_for_english() -> HashMap<String, f64> {
+    fn fivegram_language_model_for_english() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "alter" => 0.29,
             // unknown fivegrams
@@ -1093,7 +1094,7 @@ mod tests {
     // ##############################
 
     #[fixture]
-    fn unigram_language_model_for_german() -> HashMap<String, f64> {
+    fn unigram_language_model_for_german() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "a" => 0.06,
             "l" => 0.07,
@@ -1106,7 +1107,7 @@ mod tests {
     }
 
     #[fixture]
-    fn bigram_language_model_for_german() -> HashMap<String, f64> {
+    fn bigram_language_model_for_german() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "al" => 0.15,
             "lt" => 0.16,
@@ -1118,7 +1119,7 @@ mod tests {
     }
 
     #[fixture]
-    fn trigram_language_model_for_german() -> HashMap<String, f64> {
+    fn trigram_language_model_for_german() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "alt" => 0.22,
             "lte" => 0.23,
@@ -1129,7 +1130,7 @@ mod tests {
     }
 
     #[fixture]
-    fn quadrigram_language_model_for_german() -> HashMap<String, f64> {
+    fn quadrigram_language_model_for_german() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!(
             "alte" => 0.27,
             "lter" => 0.28,
@@ -1139,7 +1140,7 @@ mod tests {
     }
 
     #[fixture]
-    fn fivegram_language_model_for_german() -> HashMap<String, f64> {
+    fn fivegram_language_model_for_german() -> AHashMap<String, f64> {
         create_language_model_map(hashmap!("alter" => 0.3))
     }
 
@@ -1149,10 +1150,10 @@ mod tests {
 
     #[fixture]
     fn unigram_language_models(
-        unigram_language_model_for_english: HashMap<String, f64>,
-        unigram_language_model_for_german: HashMap<String, f64>,
+        unigram_language_model_for_english: AHashMap<String, f64>,
+        unigram_language_model_for_german: AHashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static UNIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
+        static UNIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
             OnceCell::new();
         UNIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -1164,10 +1165,10 @@ mod tests {
 
     #[fixture]
     fn bigram_language_models(
-        bigram_language_model_for_english: HashMap<String, f64>,
-        bigram_language_model_for_german: HashMap<String, f64>,
+        bigram_language_model_for_english: AHashMap<String, f64>,
+        bigram_language_model_for_german: AHashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static BIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
+        static BIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
             OnceCell::new();
         BIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -1179,10 +1180,10 @@ mod tests {
 
     #[fixture]
     fn trigram_language_models(
-        trigram_language_model_for_english: HashMap<String, f64>,
-        trigram_language_model_for_german: HashMap<String, f64>,
+        trigram_language_model_for_english: AHashMap<String, f64>,
+        trigram_language_model_for_german: AHashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static TRIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
+        static TRIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
             OnceCell::new();
         TRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -1194,11 +1195,11 @@ mod tests {
 
     #[fixture]
     fn quadrigram_language_models(
-        quadrigram_language_model_for_english: HashMap<String, f64>,
-        quadrigram_language_model_for_german: HashMap<String, f64>,
+        quadrigram_language_model_for_english: AHashMap<String, f64>,
+        quadrigram_language_model_for_german: AHashMap<String, f64>,
     ) -> StaticLanguageModelMap {
         static QUADRIGRAM_MODELS_FIXTURE: OnceCell<
-            RwLock<HashMap<Language, HashMap<String, f64>>>,
+            RwLock<HashMap<Language, AHashMap<String, f64>>>,
         > = OnceCell::new();
         QUADRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -1210,10 +1211,10 @@ mod tests {
 
     #[fixture]
     fn fivegram_language_models(
-        fivegram_language_model_for_english: HashMap<String, f64>,
-        fivegram_language_model_for_german: HashMap<String, f64>,
+        fivegram_language_model_for_english: AHashMap<String, f64>,
+        fivegram_language_model_for_german: AHashMap<String, f64>,
     ) -> StaticLanguageModelMap {
-        static FIVEGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, HashMap<String, f64>>>> =
+        static FIVEGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
             OnceCell::new();
         FIVEGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(

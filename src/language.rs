@@ -18,10 +18,10 @@ use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::fmt::{Debug, Display, Formatter, Result};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
-use std::fmt::{Debug, Display, Formatter, Result};
 
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
 #[derive(
@@ -774,6 +774,235 @@ impl Language {
         }
     }
 
+    pub fn native_name(&self) -> String {
+        match self {
+            #[cfg(feature = "afrikaans")]
+            Language::Afrikaans => "Afrikaans".to_string(),
+
+            #[cfg(feature = "albanian")]
+            Language::Albanian => "Shqip".to_string(),
+
+            #[cfg(feature = "arabic")]
+            Language::Arabic => "العربية".to_string(),
+
+            #[cfg(feature = "armenian")]
+            Language::Armenian => "Հայերեն".to_string(),
+
+            #[cfg(feature = "azerbaijani")]
+            Language::Azerbaijani => "Azərbaycanca".to_string(),
+
+            #[cfg(feature = "basque")]
+            Language::Basque => "Euskara".to_string(),
+
+            #[cfg(feature = "belarusian")]
+            Language::Belarusian => "Беларуская".to_string(),
+
+            #[cfg(feature = "bengali")]
+            Language::Bengali => "বাংলা".to_string(),
+
+            #[cfg(feature = "bokmal")]
+            Language::Bokmal => "Bokmål".to_string(),
+
+            #[cfg(feature = "bosnian")]
+            Language::Bosnian => "Bosanski".to_string(),
+
+            #[cfg(feature = "bulgarian")]
+            Language::Bulgarian => "Български".to_string(),
+
+            #[cfg(feature = "catalan")]
+            Language::Catalan => "Català".to_string(),
+
+            #[cfg(feature = "chinese")]
+            Language::Chinese => "中文".to_string(),
+
+            #[cfg(feature = "croatian")]
+            Language::Croatian => "Hrvatski".to_string(),
+
+            #[cfg(feature = "czech")]
+            Language::Czech => "Čeština".to_string(),
+
+            #[cfg(feature = "danish")]
+            Language::Danish => "Dansk".to_string(),
+
+            #[cfg(feature = "dutch")]
+            Language::Dutch => "Nederlands".to_string(),
+
+            #[cfg(feature = "english")]
+            Language::English => "English".to_string(),
+
+            #[cfg(feature = "esperanto")]
+            Language::Esperanto => "Esperanto".to_string(),
+
+            #[cfg(feature = "estonian")]
+            Language::Estonian => "Eesti".to_string(),
+
+            #[cfg(feature = "finnish")]
+            Language::Finnish => "Suomi".to_string(),
+
+            #[cfg(feature = "french")]
+            Language::French => "Français".to_string(),
+
+            #[cfg(feature = "ganda")]
+            Language::Ganda => "Luganda".to_string(),
+
+            #[cfg(feature = "georgian")]
+            Language::Georgian => "ქართული".to_string(),
+
+            #[cfg(feature = "german")]
+            Language::German => "Deutsch".to_string(),
+
+            #[cfg(feature = "greek")]
+            Language::Greek => "Ελληνικά".to_string(),
+
+            #[cfg(feature = "gujarati")]
+            Language::Gujarati => "ગુજરાતી".to_string(),
+
+            #[cfg(feature = "hebrew")]
+            Language::Hebrew => "עברית".to_string(),
+
+            #[cfg(feature = "hindi")]
+            Language::Hindi => "हिन्दी".to_string(),
+
+            #[cfg(feature = "hungarian")]
+            Language::Hungarian => "Magyar".to_string(),
+
+            #[cfg(feature = "icelandic")]
+            Language::Icelandic => "Íslenska".to_string(),
+
+            #[cfg(feature = "indonesian")]
+            Language::Indonesian => "Bahasa Indonesia".to_string(),
+
+            #[cfg(feature = "irish")]
+            Language::Irish => "Gaeilge".to_string(),
+
+            #[cfg(feature = "italian")]
+            Language::Italian => "Italiano".to_string(),
+
+            #[cfg(feature = "japanese")]
+            Language::Japanese => "日本語".to_string(),
+
+            #[cfg(feature = "kazakh")]
+            Language::Kazakh => "Қазақ".to_string(),
+
+            #[cfg(feature = "korean")]
+            Language::Korean => "한국어".to_string(),
+
+            #[cfg(feature = "latin")]
+            Language::Latin => "Latina".to_string(),
+
+            #[cfg(feature = "latvian")]
+            Language::Latvian => "Latviešu".to_string(),
+
+            #[cfg(feature = "lithuanian")]
+            Language::Lithuanian => "Lietuvių".to_string(),
+
+            #[cfg(feature = "macedonian")]
+            Language::Macedonian => "Македонски".to_string(),
+
+            #[cfg(feature = "malay")]
+            Language::Malay => "Bahasa Melayu".to_string(),
+
+            #[cfg(feature = "maori")]
+            Language::Maori => "Te Reo Māori".to_string(),
+
+            #[cfg(feature = "marathi")]
+            Language::Marathi => "मराठी".to_string(),
+
+            #[cfg(feature = "mongolian")]
+            Language::Mongolian => "Монгол".to_string(),
+
+            #[cfg(feature = "nynorsk")]
+            Language::Nynorsk => "Nynorsk".to_string(),
+
+            #[cfg(feature = "persian")]
+            Language::Persian => "فارسی".to_string(),
+
+            #[cfg(feature = "polish")]
+            Language::Polish => "Polski".to_string(),
+
+            #[cfg(feature = "portuguese")]
+            Language::Portuguese => "Português".to_string(),
+
+            #[cfg(feature = "punjabi")]
+            Language::Punjabi => "ਪੰਜਾਬੀ".to_string(),
+
+            #[cfg(feature = "romanian")]
+            Language::Romanian => "Română".to_string(),
+
+            #[cfg(feature = "russian")]
+            Language::Russian => "Русский".to_string(),
+
+            #[cfg(feature = "serbian")]
+            Language::Serbian => "Српски".to_string(),
+
+            #[cfg(feature = "shona")]
+            Language::Shona => "Shona".to_string(),
+
+            #[cfg(feature = "slovak")]
+            Language::Slovak => "Slovenčina".to_string(),
+
+            #[cfg(feature = "slovene")]
+            Language::Slovene => "Slovenščina".to_string(),
+
+            #[cfg(feature = "somali")]
+            Language::Somali => "Soomaali".to_string(),
+
+            #[cfg(feature = "sotho")]
+            Language::Sotho => "Sesotho".to_string(),
+
+            #[cfg(feature = "spanish")]
+            Language::Spanish => "Español".to_string(),
+
+            #[cfg(feature = "swahili")]
+            Language::Swahili => "Kiswahili".to_string(),
+
+            #[cfg(feature = "swedish")]
+            Language::Swedish => "Svenska".to_string(),
+
+            #[cfg(feature = "tagalog")]
+            Language::Tagalog => "Tagalog".to_string(),
+
+            #[cfg(feature = "tamil")]
+            Language::Tamil => "தமிழ்".to_string(),
+
+            #[cfg(feature = "telugu")]
+            Language::Telugu => "తెలుగు".to_string(),
+
+            #[cfg(feature = "thai")]
+            Language::Thai => "ไทย".to_string(),
+
+            #[cfg(feature = "tsonga")]
+            Language::Tsonga => "Xitsonga".to_string(),
+
+            #[cfg(feature = "tswana")]
+            Language::Tswana => "Setswana".to_string(),
+
+            #[cfg(feature = "turkish")]
+            Language::Turkish => "Türkçe".to_string(),
+
+            #[cfg(feature = "ukrainian")]
+            Language::Ukrainian => "Українська".to_string(),
+
+            #[cfg(feature = "urdu")]
+            Language::Urdu => "اردو".to_string(),
+
+            #[cfg(feature = "vietnamese")]
+            Language::Vietnamese => "Tiếng Việt".to_string(),
+
+            #[cfg(feature = "welsh")]
+            Language::Welsh => "Cymraeg".to_string(),
+
+            #[cfg(feature = "xhosa")]
+            Language::Xhosa => "IsiXhosa".to_string(),
+
+            #[cfg(feature = "yoruba")]
+            Language::Yoruba => "Yorùbá".to_string(),
+
+            #[cfg(feature = "zulu")]
+            Language::Zulu => "IsiZulu".to_string(),
+        }
+    }
+
     pub(crate) fn alphabets(&self) -> HashSet<Alphabet> {
         match self {
             #[cfg(feature = "afrikaans")]
@@ -1079,6 +1308,13 @@ mod tests {
     #[test]
     fn assert_language_string_representation_is_correct() {
         assert_eq!(Language::English.to_string(), "english");
+    }
+
+    #[test]
+    fn assert_language_native_name_representation_is_correct() {
+        assert_eq!(Language::English.native_name(), "English");
+        assert_eq!(Language::Chinese.native_name(), "中文");
+        assert_eq!(Language::Persian.native_name(), "فارسی");
     }
 
     #[test]

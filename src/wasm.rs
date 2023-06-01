@@ -16,13 +16,16 @@
 
 #![allow(non_snake_case)]
 
-use crate::builder::{MINIMUM_RELATIVE_DISTANCE_MESSAGE, MISSING_LANGUAGE_MESSAGE};
-use crate::{IsoCode639_1, IsoCode639_3, Language, LanguageDetector as Detector};
-use itertools::Itertools;
-use serde::Serialize;
 use std::collections::HashSet;
 use std::str::FromStr;
+
+use itertools::Itertools;
+use serde::Serialize;
+
 use wasm_bindgen::prelude::*;
+
+use crate::builder::{MINIMUM_RELATIVE_DISTANCE_MESSAGE, MISSING_LANGUAGE_MESSAGE};
+use crate::{IsoCode639_1, IsoCode639_3, Language, LanguageDetector as Detector};
 
 #[wasm_bindgen]
 pub struct LanguageDetectorBuilder {
@@ -277,6 +280,6 @@ impl LanguageDetector {
             })
             .collect_vec();
 
-        JsValue::from_serde(&confidence_values).unwrap()
+        serde_wasm_bindgen::to_value(&confidence_values).unwrap()
     }
 }

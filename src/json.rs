@@ -14,249 +14,175 @@
  * limitations under the License.
  */
 
-use crate::ngram::Ngram;
-use crate::Language;
+use std::io::{Cursor, ErrorKind, Read};
+
+use brotli::Decompressor;
 use include_dir::Dir;
 
 #[cfg(feature = "afrikaans")]
 use lingua_afrikaans_language_model::AFRIKAANS_MODELS_DIRECTORY;
-
 #[cfg(feature = "albanian")]
 use lingua_albanian_language_model::ALBANIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "arabic")]
 use lingua_arabic_language_model::ARABIC_MODELS_DIRECTORY;
-
 #[cfg(feature = "armenian")]
 use lingua_armenian_language_model::ARMENIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "azerbaijani")]
 use lingua_azerbaijani_language_model::AZERBAIJANI_MODELS_DIRECTORY;
-
 #[cfg(feature = "basque")]
 use lingua_basque_language_model::BASQUE_MODELS_DIRECTORY;
-
 #[cfg(feature = "belarusian")]
 use lingua_belarusian_language_model::BELARUSIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "bengali")]
 use lingua_bengali_language_model::BENGALI_MODELS_DIRECTORY;
-
 #[cfg(feature = "bokmal")]
 use lingua_bokmal_language_model::BOKMAL_MODELS_DIRECTORY;
-
 #[cfg(feature = "bosnian")]
 use lingua_bosnian_language_model::BOSNIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "bulgarian")]
 use lingua_bulgarian_language_model::BULGARIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "catalan")]
 use lingua_catalan_language_model::CATALAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "chinese")]
 use lingua_chinese_language_model::CHINESE_MODELS_DIRECTORY;
-
 #[cfg(feature = "croatian")]
 use lingua_croatian_language_model::CROATIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "czech")]
 use lingua_czech_language_model::CZECH_MODELS_DIRECTORY;
-
 #[cfg(feature = "danish")]
 use lingua_danish_language_model::DANISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "dutch")]
 use lingua_dutch_language_model::DUTCH_MODELS_DIRECTORY;
-
 #[cfg(feature = "english")]
 use lingua_english_language_model::ENGLISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "esperanto")]
 use lingua_esperanto_language_model::ESPERANTO_MODELS_DIRECTORY;
-
 #[cfg(feature = "estonian")]
 use lingua_estonian_language_model::ESTONIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "finnish")]
 use lingua_finnish_language_model::FINNISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "french")]
 use lingua_french_language_model::FRENCH_MODELS_DIRECTORY;
-
 #[cfg(feature = "ganda")]
 use lingua_ganda_language_model::GANDA_MODELS_DIRECTORY;
-
 #[cfg(feature = "georgian")]
 use lingua_georgian_language_model::GEORGIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "german")]
 use lingua_german_language_model::GERMAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "greek")]
 use lingua_greek_language_model::GREEK_MODELS_DIRECTORY;
-
 #[cfg(feature = "gujarati")]
 use lingua_gujarati_language_model::GUJARATI_MODELS_DIRECTORY;
-
 #[cfg(feature = "hebrew")]
 use lingua_hebrew_language_model::HEBREW_MODELS_DIRECTORY;
-
 #[cfg(feature = "hindi")]
 use lingua_hindi_language_model::HINDI_MODELS_DIRECTORY;
-
 #[cfg(feature = "hungarian")]
 use lingua_hungarian_language_model::HUNGARIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "icelandic")]
 use lingua_icelandic_language_model::ICELANDIC_MODELS_DIRECTORY;
-
 #[cfg(feature = "indonesian")]
 use lingua_indonesian_language_model::INDONESIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "irish")]
 use lingua_irish_language_model::IRISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "italian")]
 use lingua_italian_language_model::ITALIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "japanese")]
 use lingua_japanese_language_model::JAPANESE_MODELS_DIRECTORY;
-
 #[cfg(feature = "kazakh")]
 use lingua_kazakh_language_model::KAZAKH_MODELS_DIRECTORY;
-
 #[cfg(feature = "korean")]
 use lingua_korean_language_model::KOREAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "latin")]
 use lingua_latin_language_model::LATIN_MODELS_DIRECTORY;
-
 #[cfg(feature = "latvian")]
 use lingua_latvian_language_model::LATVIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "lithuanian")]
 use lingua_lithuanian_language_model::LITHUANIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "macedonian")]
 use lingua_macedonian_language_model::MACEDONIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "malay")]
 use lingua_malay_language_model::MALAY_MODELS_DIRECTORY;
-
 #[cfg(feature = "maori")]
 use lingua_maori_language_model::MAORI_MODELS_DIRECTORY;
-
 #[cfg(feature = "marathi")]
 use lingua_marathi_language_model::MARATHI_MODELS_DIRECTORY;
-
 #[cfg(feature = "mongolian")]
 use lingua_mongolian_language_model::MONGOLIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "nynorsk")]
 use lingua_nynorsk_language_model::NYNORSK_MODELS_DIRECTORY;
-
 #[cfg(feature = "persian")]
 use lingua_persian_language_model::PERSIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "polish")]
 use lingua_polish_language_model::POLISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "portuguese")]
 use lingua_portuguese_language_model::PORTUGUESE_MODELS_DIRECTORY;
-
 #[cfg(feature = "punjabi")]
 use lingua_punjabi_language_model::PUNJABI_MODELS_DIRECTORY;
-
 #[cfg(feature = "romanian")]
 use lingua_romanian_language_model::ROMANIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "russian")]
 use lingua_russian_language_model::RUSSIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "serbian")]
 use lingua_serbian_language_model::SERBIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "shona")]
 use lingua_shona_language_model::SHONA_MODELS_DIRECTORY;
-
 #[cfg(feature = "slovak")]
 use lingua_slovak_language_model::SLOVAK_MODELS_DIRECTORY;
-
 #[cfg(feature = "slovene")]
 use lingua_slovene_language_model::SLOVENE_MODELS_DIRECTORY;
-
 #[cfg(feature = "somali")]
 use lingua_somali_language_model::SOMALI_MODELS_DIRECTORY;
-
 #[cfg(feature = "sotho")]
 use lingua_sotho_language_model::SOTHO_MODELS_DIRECTORY;
-
 #[cfg(feature = "spanish")]
 use lingua_spanish_language_model::SPANISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "swahili")]
 use lingua_swahili_language_model::SWAHILI_MODELS_DIRECTORY;
-
 #[cfg(feature = "swedish")]
 use lingua_swedish_language_model::SWEDISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "tagalog")]
 use lingua_tagalog_language_model::TAGALOG_MODELS_DIRECTORY;
-
 #[cfg(feature = "tamil")]
 use lingua_tamil_language_model::TAMIL_MODELS_DIRECTORY;
-
 #[cfg(feature = "telugu")]
 use lingua_telugu_language_model::TELUGU_MODELS_DIRECTORY;
-
 #[cfg(feature = "thai")]
 use lingua_thai_language_model::THAI_MODELS_DIRECTORY;
-
 #[cfg(feature = "tsonga")]
 use lingua_tsonga_language_model::TSONGA_MODELS_DIRECTORY;
-
 #[cfg(feature = "tswana")]
 use lingua_tswana_language_model::TSWANA_MODELS_DIRECTORY;
-
 #[cfg(feature = "turkish")]
 use lingua_turkish_language_model::TURKISH_MODELS_DIRECTORY;
-
 #[cfg(feature = "ukrainian")]
 use lingua_ukrainian_language_model::UKRAINIAN_MODELS_DIRECTORY;
-
 #[cfg(feature = "urdu")]
 use lingua_urdu_language_model::URDU_MODELS_DIRECTORY;
-
 #[cfg(feature = "vietnamese")]
 use lingua_vietnamese_language_model::VIETNAMESE_MODELS_DIRECTORY;
-
 #[cfg(feature = "welsh")]
 use lingua_welsh_language_model::WELSH_MODELS_DIRECTORY;
-
 #[cfg(feature = "xhosa")]
 use lingua_xhosa_language_model::XHOSA_MODELS_DIRECTORY;
-
 #[cfg(feature = "yoruba")]
 use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
-
 #[cfg(feature = "zulu")]
 use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
 
-use std::io::{Cursor, ErrorKind, Read};
-use zip::ZipArchive;
+use crate::ngram::Ngram;
+use crate::Language;
 
 pub(crate) fn load_json(language: Language, ngram_length: usize) -> std::io::Result<String> {
     let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
-    let file_path = format!("{ngram_name}s.json.zip");
+    let file_path = format!("{ngram_name}s.json.br");
     let directory = get_language_models_directory(language);
-    let zip_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
-    let zip_file_reader = Cursor::new(zip_file.contents());
-    let mut archive = ZipArchive::new(zip_file_reader).unwrap();
-    let mut json_file = archive.by_index(0).unwrap();
-    let mut json = String::new();
-    json_file.read_to_string(&mut json)?;
-    Ok(json)
+    let compressed_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
+    let compressed_file_reader = Cursor::new(compressed_file.contents());
+    let mut uncompressed_file = Decompressor::new(compressed_file_reader, 4096);
+    let mut uncompressed_file_content = String::new();
+    uncompressed_file.read_to_string(&mut uncompressed_file_content)?;
+    Ok(uncompressed_file_content)
 }
 
 fn get_language_models_directory(language: Language) -> Dir<'static> {
@@ -490,8 +416,9 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::minify;
+
+    use super::*;
 
     const EXPECTED_UNIGRAM_MODEL: &str = r#"
     {

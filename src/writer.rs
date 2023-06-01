@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
-use crate::model::TrainingDataLanguageModel;
-use crate::ngram::Ngram;
-use crate::Language;
-use itertools::Itertools;
-use regex::Regex;
 use std::collections::HashMap;
 use std::fs::{remove_file, File};
 use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
-use zip::write::FileOptions;
-use zip::ZipWriter;
+
+use brotli::CompressorWriter;
+use itertools::Itertools;
+use regex::Regex;
+
+use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
+use crate::model::TrainingDataLanguageModel;
+use crate::ngram::Ngram;
+use crate::Language;
 
 /// This struct creates language model files and writes them to a directory.
 pub struct LanguageModelFilesWriter;
@@ -157,14 +158,11 @@ impl LanguageModelFilesWriter {
         output_directory_path: &Path,
         file_name: &str,
     ) -> io::Result<()> {
-        let zip_file_name = format!("{file_name}.zip");
-        let zip_file_path = output_directory_path.join(zip_file_name);
-        let zip_file = File::create(zip_file_path)?;
-        let mut zip = ZipWriter::new(zip_file);
-
-        zip.start_file(file_name, FileOptions::default())?;
-        zip.write_all(model.to_json().as_bytes())?;
-
+        let file_name = format!("{file_name}.br");
+        let file_path = output_directory_path.join(file_name);
+        let file = File::create(file_path)?;
+        let mut compressed_file = CompressorWriter::new(file, 4096, 11, 22);
+        compressed_file.write_all(model.to_json().as_bytes())?;
         Ok(())
     }
 }
@@ -375,11 +373,13 @@ fn check_output_directory_path(output_directory_path: &Path) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::fs::read_dir;
     use std::io::Read;
     use std::path::PathBuf;
+
     use tempfile::{tempdir, NamedTempFile};
+
+    use super::*;
 
     fn create_temp_input_file(content: &str) -> NamedTempFile {
         let mut input_file = NamedTempFile::new().unwrap();
@@ -400,9 +400,11 @@ mod tests {
     }
 
     mod language_model_files {
-        use super::*;
+        use brotli::Decompressor;
+
         use crate::minify;
-        use zip::ZipArchive;
+
+        use super::*;
 
         const TEXT: &str = "
             These sentences are intended for testing purposes.
@@ -507,52 +509,39 @@ mod tests {
             let quadrigrams_file_path = files.get(2).unwrap();
             let fivegrams_file_path = files.get(1).unwrap();
 
-            assert_file_names(unigrams_file_path, "unigrams.json.zip");
-            assert_file_names(bigrams_file_path, "bigrams.json.zip");
-            assert_file_names(trigrams_file_path, "trigrams.json.zip");
-            assert_file_names(quadrigrams_file_path, "quadrigrams.json.zip");
-            assert_file_names(fivegrams_file_path, "fivegrams.json.zip");
+            assert_file_names(unigrams_file_path, "unigrams.json.br");
+            assert_file_names(bigrams_file_path, "bigrams.json.br");
+            assert_file_names(trigrams_file_path, "trigrams.json.br");
+            assert_file_names(quadrigrams_file_path, "quadrigrams.json.br");
+            assert_file_names(fivegrams_file_path, "fivegrams.json.br");
 
-            assert_file_content(unigrams_file_path, "unigrams.json", EXPECTED_UNIGRAM_MODEL);
-            assert_file_content(bigrams_file_path, "bigrams.json", EXPECTED_BIGRAM_MODEL);
-            assert_file_content(trigrams_file_path, "trigrams.json", EXPECTED_TRIGRAM_MODEL);
-            assert_file_content(
-                quadrigrams_file_path,
-                "quadrigrams.json",
-                EXPECTED_QUADRIGRAM_MODEL,
-            );
-            assert_file_content(
-                fivegrams_file_path,
-                "fivegrams.json",
-                EXPECTED_FIVEGRAM_MODEL,
-            );
+            assert_file_content(unigrams_file_path, EXPECTED_UNIGRAM_MODEL);
+            assert_file_content(bigrams_file_path, EXPECTED_BIGRAM_MODEL);
+            assert_file_content(trigrams_file_path, EXPECTED_TRIGRAM_MODEL);
+            assert_file_content(quadrigrams_file_path, EXPECTED_QUADRIGRAM_MODEL);
+            assert_file_content(fivegrams_file_path, EXPECTED_FIVEGRAM_MODEL);
         }
 
         fn assert_file_names(file_path: &Path, expected_file_name: &str) {
             assert_eq!(file_path.file_name().unwrap(), expected_file_name);
         }
 
-        fn assert_file_content(
-            file_path: &Path,
-            expected_file_name: &str,
-            expected_file_content: &str,
-        ) {
-            let file = File::open(file_path).unwrap();
-            let mut archive = ZipArchive::new(file).unwrap();
-            let mut json_file = archive.by_index(0).unwrap();
+        fn assert_file_content(file_path: &Path, expected_file_content: &str) {
+            let compressed_file = File::open(file_path).unwrap();
+            let mut uncompressed_file = Decompressor::new(compressed_file, 4096);
+            let mut uncompressed_file_content = String::new();
+            uncompressed_file
+                .read_to_string(&mut uncompressed_file_content)
+                .unwrap();
 
-            assert_eq!(json_file.name(), expected_file_name);
-
-            let mut json = String::new();
-            json_file.read_to_string(&mut json).unwrap();
-
-            assert_eq!(json, minify(expected_file_content));
+            assert_eq!(uncompressed_file_content, minify(expected_file_content));
         }
     }
 
     mod test_data_files {
-        use super::*;
         use indoc::indoc;
+
+        use super::*;
 
         const TEXT: &str = indoc! {r#"
             There are many attributes associated with good software.

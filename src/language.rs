@@ -774,6 +774,8 @@ impl Language {
         }
     }
 
+    // https://en.wikipedia.org/wiki/List_of_language_names
+    // https://www.omniglot.com/language/names.htm
     pub fn native_name(&self) -> String {
         match self {
             #[cfg(feature = "afrikaans")]
@@ -996,7 +998,7 @@ impl Language {
             Language::Xhosa => "IsiXhosa".to_string(),
 
             #[cfg(feature = "yoruba")]
-            Language::Yoruba => "Yorùbá".to_string(),
+            Language::Yoruba => "Èdè Yorùbá".to_string(),
 
             #[cfg(feature = "zulu")]
             Language::Zulu => "IsiZulu".to_string(),

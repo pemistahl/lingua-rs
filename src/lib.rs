@@ -276,6 +276,7 @@ mod language;
 mod model;
 mod ngram;
 mod result;
+mod script;
 mod writer;
 
 #[cfg(target_family = "wasm")]

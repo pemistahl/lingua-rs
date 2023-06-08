@@ -471,11 +471,9 @@ impl LanguageDetector {
 
             for character in word.chars() {
                 let mut is_match = false;
-                let mut buffer = [0; 4];
-                let char_str = character.encode_utf8(&mut buffer);
 
                 for (alphabet, language) in self.one_language_alphabets.iter() {
-                    if alphabet.matches(char_str) {
+                    if alphabet.matches_char(character) {
                         self.increment_counter(&mut word_language_counts, language.clone());
                         is_match = true;
                         break;
@@ -483,21 +481,21 @@ impl LanguageDetector {
                 }
 
                 if !is_match {
-                    if cfg!(feature = "chinese") && Alphabet::Han.matches(char_str) {
+                    if cfg!(feature = "chinese") && Alphabet::Han.matches_char(character) {
                         self.increment_counter(
                             &mut word_language_counts,
                             Language::from_str("Chinese").unwrap(),
                         );
                     } else if cfg!(feature = "japanese")
-                        && JAPANESE_CHARACTER_SET.is_match(char_str)
+                        && JAPANESE_CHARACTER_SET.is_char_match(character)
                     {
                         self.increment_counter(
                             &mut word_language_counts,
                             Language::from_str("Japanese").unwrap(),
                         );
-                    } else if Alphabet::Latin.matches(char_str)
-                        || Alphabet::Cyrillic.matches(char_str)
-                        || Alphabet::Devanagari.matches(char_str)
+                    } else if Alphabet::Latin.matches_char(character)
+                        || Alphabet::Cyrillic.matches_char(character)
+                        || Alphabet::Devanagari.matches_char(character)
                     {
                         self.languages_with_unique_characters
                             .iter()

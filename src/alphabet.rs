@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-use crate::language::Language;
-use once_cell::sync::Lazy;
-use regex::Regex;
 use std::collections::HashMap;
+
+use ahash::AHashSet;
+use once_cell::sync::Lazy;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+
+use crate::language::Language;
 
 #[derive(EnumIter, Eq, PartialEq, Hash)]
 pub(crate) enum Alphabet {
@@ -45,26 +47,11 @@ pub(crate) enum Alphabet {
 
 impl Alphabet {
     pub fn matches(&self, text: &str) -> bool {
-        match self {
-            Alphabet::Arabic => ARABIC.is_match(text),
-            Alphabet::Armenian => ARMENIAN.is_match(text),
-            Alphabet::Bengali => BENGALI.is_match(text),
-            Alphabet::Cyrillic => CYRILLIC.is_match(text),
-            Alphabet::Devanagari => DEVANAGARI.is_match(text),
-            Alphabet::Georgian => GEORGIAN.is_match(text),
-            Alphabet::Greek => GREEK.is_match(text),
-            Alphabet::Gujarati => GUJARATI.is_match(text),
-            Alphabet::Gurmukhi => GURMUKHI.is_match(text),
-            Alphabet::Han => HAN.is_match(text),
-            Alphabet::Hangul => HANGUL.is_match(text),
-            Alphabet::Hebrew => HEBREW.is_match(text),
-            Alphabet::Hiragana => HIRAGANA.is_match(text),
-            Alphabet::Katakana => KATAKANA.is_match(text),
-            Alphabet::Latin => LATIN.is_match(text),
-            Alphabet::Tamil => TAMIL.is_match(text),
-            Alphabet::Telugu => TELUGU.is_match(text),
-            Alphabet::Thai => THAI.is_match(text),
-        }
+        self.char_set().is_match(text)
+    }
+
+    pub fn matches_char(&self, ch: char) -> bool {
+        self.char_set().is_char_match(ch)
     }
 
     pub fn all_supporting_single_language() -> HashMap<Alphabet, Language> {
@@ -87,27 +74,84 @@ impl Alphabet {
         }
         languages
     }
+
+    fn char_set(&self) -> &Lazy<CharSet> {
+        match self {
+            Alphabet::Arabic => &ARABIC,
+            Alphabet::Armenian => &ARMENIAN,
+            Alphabet::Bengali => &BENGALI,
+            Alphabet::Cyrillic => &CYRILLIC,
+            Alphabet::Devanagari => &DEVANAGARI,
+            Alphabet::Georgian => &GEORGIAN,
+            Alphabet::Greek => &GREEK,
+            Alphabet::Gujarati => &GUJARATI,
+            Alphabet::Gurmukhi => &GURMUKHI,
+            Alphabet::Han => &HAN,
+            Alphabet::Hangul => &HANGUL,
+            Alphabet::Hebrew => &HEBREW,
+            Alphabet::Hiragana => &HIRAGANA,
+            Alphabet::Katakana => &KATAKANA,
+            Alphabet::Latin => &LATIN,
+            Alphabet::Tamil => &TAMIL,
+            Alphabet::Telugu => &TELUGU,
+            Alphabet::Thai => &THAI,
+        }
+    }
 }
 
-static ARABIC: Lazy<Regex> = Lazy::new(|| create_regex("Arabic"));
-static ARMENIAN: Lazy<Regex> = Lazy::new(|| create_regex("Armenian"));
-static BENGALI: Lazy<Regex> = Lazy::new(|| create_regex("Bengali"));
-static CYRILLIC: Lazy<Regex> = Lazy::new(|| create_regex("Cyrillic"));
-static DEVANAGARI: Lazy<Regex> = Lazy::new(|| create_regex("Devanagari"));
-static GEORGIAN: Lazy<Regex> = Lazy::new(|| create_regex("Georgian"));
-static GREEK: Lazy<Regex> = Lazy::new(|| create_regex("Greek"));
-static GUJARATI: Lazy<Regex> = Lazy::new(|| create_regex("Gujarati"));
-static GURMUKHI: Lazy<Regex> = Lazy::new(|| create_regex("Gurmukhi"));
-static HAN: Lazy<Regex> = Lazy::new(|| create_regex("Han"));
-static HANGUL: Lazy<Regex> = Lazy::new(|| create_regex("Hangul"));
-static HEBREW: Lazy<Regex> = Lazy::new(|| create_regex("Hebrew"));
-static HIRAGANA: Lazy<Regex> = Lazy::new(|| create_regex("Hiragana"));
-static KATAKANA: Lazy<Regex> = Lazy::new(|| create_regex("Katakana"));
-static LATIN: Lazy<Regex> = Lazy::new(|| create_regex("Latin"));
-static TAMIL: Lazy<Regex> = Lazy::new(|| create_regex("Tamil"));
-static TELUGU: Lazy<Regex> = Lazy::new(|| create_regex("Telugu"));
-static THAI: Lazy<Regex> = Lazy::new(|| create_regex("Thai"));
-
-fn create_regex(char_class: &str) -> Regex {
-    Regex::new(&format!("^\\p{{{char_class}}}+$")).unwrap()
+pub(crate) struct CharSet {
+    characters: AHashSet<char>,
 }
+
+impl CharSet {
+    pub fn from_char_classes(char_classes: &[&str]) -> Self {
+        let mut characters = AHashSet::new();
+
+        for char_class in char_classes {
+            let table = crate::script::BY_NAME
+                .iter()
+                .find(|(name, _)| *name == *char_class)
+                .unwrap()
+                .1;
+
+            for &(start, end) in table {
+                for codepoint in start..=end {
+                    characters.insert(codepoint);
+                }
+            }
+        }
+
+        CharSet { characters }
+    }
+
+    pub fn from_char_class(char_class: &str) -> Self {
+        Self::from_char_classes(&[char_class])
+    }
+
+    pub fn is_match(&self, text: &str) -> bool {
+        text.chars().all(|ch| self.is_char_match(ch))
+    }
+
+    pub fn is_char_match(&self, ch: char) -> bool {
+        self.characters.contains(&ch)
+    }
+}
+
+static ARABIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Arabic"));
+static ARMENIAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Armenian"));
+static BENGALI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Bengali"));
+static CYRILLIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Cyrillic"));
+static DEVANAGARI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Devanagari"));
+static GEORGIAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Georgian"));
+static GREEK: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Greek"));
+static GUJARATI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Gujarati"));
+static GURMUKHI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Gurmukhi"));
+static HAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Han"));
+static HANGUL: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hangul"));
+static HEBREW: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hebrew"));
+static HIRAGANA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hiragana"));
+static KATAKANA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Katakana"));
+static LATIN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Latin"));
+static TAMIL: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Tamil"));
+static TELUGU: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Telugu"));
+static THAI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Thai"));

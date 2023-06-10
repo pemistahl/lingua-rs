@@ -1,10 +1,10 @@
 ##### Swedish #####
 
->>> Accuracy on average: 61.76%
+>>> Accuracy on average: 61.8%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 34.6%
-Erroneously classified as Unknown: 9.8%, Bokmal: 7.7%, German: 6.4%, Danish: 4.9%, Finnish: 4%, Catalan: 2.8%, French: 2.7%, Latin: 2.7%, Portuguese: 2.4%, Estonian: 2.3%, Dutch: 2%, Spanish: 2%, English: 1.7%, Indonesian: 1.7%, Afrikaans: 1.5%, Esperanto: 1.3%, Hungarian: 1.3%, Italian: 0.9%, Latvian: 0.9%, Shona: 0.9%, Turkish: 0.9%, Czech: 0.7%, Zulu: 0.7%, Lithuanian: 0.6%, Romanian: 0.6%, Slovak: 0.6%, Azerbaijani: 0.3%, Croatian: 0.3%, Polish: 0.3%, Slovene: 0.3%, Vietnamese: 0.2%
+Accuracy: 34.7%
+Erroneously classified as Unknown: 9.8%, Bokmal: 7.6%, German: 5.9%, Danish: 5%, Finnish: 4%, Catalan: 2.8%, French: 2.7%, Latin: 2.7%, Estonian: 2.6%, Portuguese: 2.4%, Dutch: 2%, Spanish: 1.9%, English: 1.7%, Indonesian: 1.7%, Afrikaans: 1.5%, Hungarian: 1.4%, Esperanto: 1.3%, Italian: 0.9%, Latvian: 0.9%, Shona: 0.9%, Turkish: 0.9%, Czech: 0.7%, Zulu: 0.7%, Lithuanian: 0.6%, Romanian: 0.6%, Slovak: 0.6%, Slovene: 0.4%, Azerbaijani: 0.3%, Croatian: 0.3%, Polish: 0.3%, Vietnamese: 0.2%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 57.8%

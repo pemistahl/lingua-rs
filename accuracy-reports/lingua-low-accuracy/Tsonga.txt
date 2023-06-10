@@ -1,0 +1,16 @@
+##### Tsonga #####
+
+>>> Accuracy on average: 72.13%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 46.4%
+Erroneously classified as Zulu: 6.8%, Xhosa: 5.2%, Tswana: 5%, Shona: 3.9%, Sotho: 3.4%, Swahili: 3.1%, Ganda: 2.9%, Basque: 1.5%, Yoruba: 1.5%, English: 1.3%, Lithuanian: 1.3%, Malay: 1.3%, Tagalog: 1.2%, Indonesian: 1.1%, French: 0.9%, Latin: 0.9%, Maori: 0.9%, German: 0.8%, Italian: 0.8%, Somali: 0.7%, Albanian: 0.6%, Estonian: 0.6%, Nynorsk: 0.6%, Romanian: 0.6%, Azerbaijani: 0.5%, Hungarian: 0.5%, Swedish: 0.5%, Turkish: 0.5%, Afrikaans: 0.4%, Polish: 0.4%, Slovene: 0.4%, Spanish: 0.4%, Vietnamese: 0.4%, Welsh: 0.4%, Esperanto: 0.3%, Bosnian: 0.2%, Catalan: 0.2%, Czech: 0.2%, Dutch: 0.2%, Finnish: 0.2%, Irish: 0.2%, Latvian: 0.2%, Slovak: 0.2%, Bokmal: 0.1%, Croatian: 0.1%, Danish: 0.1%, Icelandic: 0.1%
+
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 73.4%
+Erroneously classified as Zulu: 4.4%, Xhosa: 3.6%, Tswana: 3.4%, Shona: 2.6%, Sotho: 1.8%, English: 1.4%, Ganda: 1.3%, Swahili: 1.2%, Indonesian: 0.9%, Malay: 0.7%, Basque: 0.4%, Latin: 0.4%, Tagalog: 0.4%, Estonian: 0.3%, Maori: 0.3%, Swedish: 0.3%, Welsh: 0.3%, Azerbaijani: 0.2%, Czech: 0.2%, French: 0.2%, Icelandic: 0.2%, Nynorsk: 0.2%, Romanian: 0.2%, Slovene: 0.2%, Yoruba: 0.2%, Albanian: 0.1%, Bokmal: 0.1%, Catalan: 0.1%, Croatian: 0.1%, Danish: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, German: 0.1%, Irish: 0.1%, Lithuanian: 0.1%, Slovak: 0.1%, Somali: 0.1%, Turkish: 0.1%
+
+>> Detection of 1000 sentences (average length: 121 chars)
+Accuracy: 96.6%
+Erroneously classified as Xhosa: 0.7%, Zulu: 0.7%, English: 0.4%, Shona: 0.3%, Ganda: 0.2%, Sotho: 0.2%, Basque: 0.1%, Bosnian: 0.1%, Indonesian: 0.1%, Latin: 0.1%, Malay: 0.1%, Polish: 0.1%, Swahili: 0.1%, Tagalog: 0.1%, Yoruba: 0.1%
+

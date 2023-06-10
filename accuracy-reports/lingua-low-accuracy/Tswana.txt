@@ -1,0 +1,16 @@
+##### Tswana #####
+
+>>> Accuracy on average: 71.26%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 44.1%
+Erroneously classified as Sotho: 17.1%, Tsonga: 5.1%, Xhosa: 3.8%, Zulu: 3.4%, Swahili: 2.5%, Malay: 2%, Shona: 2%, Maori: 1.8%, Ganda: 1.7%, English: 1.5%, Basque: 1.4%, Indonesian: 1.2%, Latin: 0.9%, Tagalog: 0.9%, Croatian: 0.8%, Yoruba: 0.8%, Hungarian: 0.7%, Somali: 0.7%, French: 0.6%, Romanian: 0.5%, Azerbaijani: 0.4%, Bosnian: 0.4%, Irish: 0.4%, Italian: 0.4%, Nynorsk: 0.4%, Slovene: 0.4%, Turkish: 0.4%, Afrikaans: 0.3%, Esperanto: 0.3%, Estonian: 0.3%, Finnish: 0.3%, Lithuanian: 0.3%, Albanian: 0.2%, Bokmal: 0.2%, Czech: 0.2%, German: 0.2%, Icelandic: 0.2%, Latvian: 0.2%, Slovak: 0.2%, Welsh: 0.2%, Catalan: 0.1%, Dutch: 0.1%, Polish: 0.1%, Spanish: 0.1%, Swedish: 0.1%, Vietnamese: 0.1%
+
+>> Detection of 1000 word pairs (average length: 15 chars)
+Accuracy: 73.4%
+Erroneously classified as Sotho: 14.8%, Tsonga: 1.8%, Xhosa: 1.7%, Shona: 0.8%, Zulu: 0.8%, Malay: 0.6%, Tagalog: 0.6%, English: 0.5%, Maori: 0.5%, Ganda: 0.4%, Swahili: 0.4%, Basque: 0.3%, Bosnian: 0.3%, Estonian: 0.3%, Indonesian: 0.3%, Latin: 0.3%, Welsh: 0.3%, Hungarian: 0.2%, Italian: 0.2%, Lithuanian: 0.2%, Spanish: 0.2%, Afrikaans: 0.1%, Croatian: 0.1%, Czech: 0.1%, Dutch: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, German: 0.1%, Polish: 0.1%, Slovene: 0.1%, Turkish: 0.1%, Yoruba: 0.1%
+
+>> Detection of 1000 sentences (average length: 113 chars)
+Accuracy: 96.3%
+Erroneously classified as Sotho: 3%, English: 0.2%, Shona: 0.2%, Bokmal: 0.1%, Italian: 0.1%, Yoruba: 0.1%
+

@@ -1,10 +1,10 @@
 ##### Zulu #####
 
->>> Accuracy on average: 76.53%
+>>> Accuracy on average: 76.56%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 53.5%
-Erroneously classified as Unknown: 15.6%, Shona: 5%, Italian: 2.2%, Indonesian: 1.9%, Estonian: 1.8%, English: 1.6%, Danish: 1.5%, Portuguese: 1.4%, Azerbaijani: 1.2%, Slovene: 1.2%, Turkish: 1.1%, French: 1%, Romanian: 0.9%, Spanish: 0.9%, Dutch: 0.8%, German: 0.8%, Swedish: 0.8%, Croatian: 0.7%, Latin: 0.7%, Latvian: 0.7%, Bokmal: 0.6%, Afrikaans: 0.5%, Czech: 0.5%, Esperanto: 0.5%, Lithuanian: 0.5%, Polish: 0.5%, Catalan: 0.4%, Finnish: 0.4%, Hungarian: 0.4%, Slovak: 0.3%, Vietnamese: 0.1%
+Accuracy: 53.6%
+Erroneously classified as Unknown: 15.6%, Shona: 5%, Italian: 2.2%, Indonesian: 1.9%, Estonian: 1.8%, English: 1.6%, Danish: 1.5%, Portuguese: 1.4%, Azerbaijani: 1.2%, Slovene: 1.2%, Turkish: 1.2%, French: 1%, Romanian: 0.9%, Dutch: 0.8%, German: 0.8%, Bokmal: 0.7%, Croatian: 0.7%, Latin: 0.7%, Latvian: 0.7%, Spanish: 0.7%, Swedish: 0.7%, Afrikaans: 0.5%, Czech: 0.5%, Esperanto: 0.5%, Lithuanian: 0.5%, Polish: 0.5%, Catalan: 0.4%, Finnish: 0.4%, Hungarian: 0.4%, Slovak: 0.3%, Vietnamese: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 77%

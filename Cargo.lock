@@ -742,6 +742,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-test",
  "whatlang",
+ "whichlang",
 ]
 
 [[package]]
@@ -1941,6 +1942,12 @@ dependencies = [
  "hashbrown",
  "once_cell",
 ]
+
+[[package]]
+name = "whichlang"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "213a57fbc76ff74e9dec77cf62e47fa4e4e01dec898dc09cc6873d992eed2ef9"
 
 [[package]]
 name = "winapi"

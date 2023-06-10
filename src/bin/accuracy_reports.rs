@@ -20,7 +20,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-use cld2::{detect_language, Format, Lang as CLD2Language};
+use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
 use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
@@ -28,6 +28,7 @@ use itertools::Itertools;
 use strum::IntoEnumIterator;
 use titlecase::titlecase;
 use whatlang::{Detector, Lang as WhatlangLanguage};
+use whichlang::{detect_language as whichlang_detect_language, Lang as WhichlangLanguage};
 
 use lingua::{Language, LanguageDetectorBuilder};
 use lingua_afrikaans_language_model::AFRIKAANS_TESTDATA_DIRECTORY;
@@ -333,21 +334,24 @@ fn main() {
 
     let accuracy_reports_directory = Path::new("accuracy-reports");
 
-    let lingua_high_accuracy_reports_directory =
-        accuracy_reports_directory.join("lingua-high-accuracy");
-    let mut lingua_high_accuracy_statistics =
-        collect_lingua_high_accuracy_statistics(&lingua_high_accuracy_reports_directory);
+    let cld2_reports_directory = accuracy_reports_directory.join("cld2");
+    let mut cld2_statistics = collect_cld2_statistics(&cld2_reports_directory);
+
+    let whatlang_reports_directory = accuracy_reports_directory.join("whatlang");
+    let mut whatlang_statistics = collect_whatlang_statistics(&whatlang_reports_directory);
+
+    let whichlang_reports_directory = accuracy_reports_directory.join("whichlang");
+    let mut whichlang_statistics = collect_whichlang_statistics(&whichlang_reports_directory);
 
     let lingua_low_accuracy_reports_directory =
         accuracy_reports_directory.join("lingua-low-accuracy");
     let mut lingua_low_accuracy_statistics =
         collect_lingua_low_accuracy_statistics(&lingua_low_accuracy_reports_directory);
 
-    let cld2_reports_directory = accuracy_reports_directory.join("cld2");
-    let mut cld2_statistics = collect_cld2_statistics(&cld2_reports_directory);
-
-    let whatlang_reports_directory = accuracy_reports_directory.join("whatlang");
-    let mut whatlang_statistics = collect_whatlang_statistics(&whatlang_reports_directory);
+    let lingua_high_accuracy_reports_directory =
+        accuracy_reports_directory.join("lingua-high-accuracy");
+    let mut lingua_high_accuracy_statistics =
+        collect_lingua_high_accuracy_statistics(&lingua_high_accuracy_reports_directory);
 
     let aggregated_report_file_path =
         accuracy_reports_directory.join("aggregated-accuracy-values.csv");
@@ -365,6 +369,10 @@ fn main() {
         "single-words-whatlang",
         "word-pairs-whatlang",
         "sentences-whatlang",
+        "average-whichlang",
+        "single-words-whichlang",
+        "word-pairs-whichlang",
+        "sentences-whichlang",
         "average-lingua-low",
         "single-words-lingua-low",
         "word-pairs-lingua-low",
@@ -380,22 +388,47 @@ fn main() {
         .expect("CSV header row could not be written");
 
     for (idx, language) in Language::iter().enumerate() {
-        let lingua_high_accuracy_report = lingua_high_accuracy_statistics
+        let cld2_report = cld2_statistics
             .get_mut(idx)
             .unwrap()
             .create_report_data(&language);
+
+        let cld2_aggregated_report_row = cld2_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
+
+        let whatlang_report = whatlang_statistics
+            .get_mut(idx)
+            .unwrap()
+            .create_report_data(&language);
+
+        let whatlang_aggregated_report_row = whatlang_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
+
+        let whichlang_report = whichlang_statistics
+            .get_mut(idx)
+            .unwrap()
+            .create_report_data(&language);
+
+        let whichlang_aggregated_report_row = whichlang_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
 
         let lingua_low_accuracy_report = lingua_low_accuracy_statistics
             .get_mut(idx)
             .unwrap()
             .create_report_data(&language);
 
-        let cld2_report = cld2_statistics
-            .get_mut(idx)
+        let lingua_low_accuracy_aggregated_report_row = lingua_low_accuracy_statistics
+            .get(idx)
             .unwrap()
-            .create_report_data(&language);
+            .create_aggregated_report_row(&language);
 
-        let whatlang_report = whatlang_statistics
+        let lingua_high_accuracy_report = lingua_high_accuracy_statistics
             .get_mut(idx)
             .unwrap()
             .create_report_data(&language);
@@ -405,26 +438,12 @@ fn main() {
             .unwrap()
             .create_aggregated_report_row(&language);
 
-        let lingua_low_accuracy_aggregated_report_row = lingua_low_accuracy_statistics
-            .get(idx)
-            .unwrap()
-            .create_aggregated_report_row(&language);
-
-        let cld2_aggregated_report_row = cld2_statistics
-            .get(idx)
-            .unwrap()
-            .create_aggregated_report_row(&language);
-
-        let whatlang_aggregated_report_row = whatlang_statistics
-            .get(idx)
-            .unwrap()
-            .create_aggregated_report_row(&language);
-
         let total_aggregated_report_row = format!(
-            "{:?},{},{},{},{}\n",
+            "{:?},{},{},{},{},{}\n",
             &language,
             cld2_aggregated_report_row,
             whatlang_aggregated_report_row,
+            whichlang_aggregated_report_row,
             lingua_low_accuracy_aggregated_report_row,
             lingua_high_accuracy_aggregated_report_row
         );
@@ -435,33 +454,41 @@ fn main() {
 
         let report_file_name = titlecase(&format!("{:?}.txt", &language));
 
-        let lingua_high_accuracy_reports_file_path =
-            lingua_high_accuracy_reports_directory.join(&report_file_name);
-
-        let lingua_low_accuracy_reports_file_path =
-            lingua_low_accuracy_reports_directory.join(&report_file_name);
-
         let cld2_reports_file_path = cld2_reports_directory.join(&report_file_name);
-        let whatlang_reports_file_path = whatlang_reports_directory.join(&report_file_name);
-
-        if let Some(report) = lingua_high_accuracy_report {
-            fs::write(lingua_high_accuracy_reports_file_path, report)
-                .expect("Lingua reports file could not be written");
-        }
-
-        if let Some(report) = lingua_low_accuracy_report {
-            fs::write(lingua_low_accuracy_reports_file_path, report)
-                .expect("Lingua reports file could not be written");
-        }
 
         if let Some(report) = cld2_report {
             fs::write(cld2_reports_file_path, report)
                 .expect("CLD2 reports file could not be written");
         }
 
+        let whatlang_reports_file_path = whatlang_reports_directory.join(&report_file_name);
+
         if let Some(report) = whatlang_report {
             fs::write(whatlang_reports_file_path, report)
                 .expect("Whatlang reports file could not be written");
+        }
+
+        let whichlang_reports_file_path = whichlang_reports_directory.join(&report_file_name);
+
+        if let Some(report) = whichlang_report {
+            fs::write(whichlang_reports_file_path, report)
+                .expect("Whichlang reports file could not be written");
+        }
+
+        let lingua_low_accuracy_reports_file_path =
+            lingua_low_accuracy_reports_directory.join(&report_file_name);
+
+        if let Some(report) = lingua_low_accuracy_report {
+            fs::write(lingua_low_accuracy_reports_file_path, report)
+                .expect("Lingua reports file could not be written");
+        }
+
+        let lingua_high_accuracy_reports_file_path =
+            lingua_high_accuracy_reports_directory.join(&report_file_name);
+
+        if let Some(report) = lingua_high_accuracy_report {
+            fs::write(lingua_high_accuracy_reports_file_path, report)
+                .expect("Lingua reports file could not be written");
         }
     }
 
@@ -611,17 +638,17 @@ fn collect_cld2_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistic
         let mut statistics = DetectorStatistics::new();
 
         for single_word in single_words {
-            let lang = map_cld2_to_lingua(detect_language(single_word, Format::Text).0);
+            let lang = map_cld2_to_lingua(cld2_detect_language(single_word, Format::Text).0);
             statistics.add_single_word_counts(lang, single_word);
         }
 
         for word_pair in word_pairs {
-            let lang = map_cld2_to_lingua(detect_language(word_pair, Format::Text).0);
+            let lang = map_cld2_to_lingua(cld2_detect_language(word_pair, Format::Text).0);
             statistics.add_word_pair_counts(lang, word_pair);
         }
 
         for sentence in sentences {
-            let lang = map_cld2_to_lingua(detect_language(sentence, Format::Text).0);
+            let lang = map_cld2_to_lingua(cld2_detect_language(sentence, Format::Text).0);
             statistics.add_sentence_counts(lang, sentence);
         }
 
@@ -686,6 +713,59 @@ fn collect_whatlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStati
 
     println!(
         "Whatlang reports written in {} seconds\n",
+        now.elapsed().as_secs()
+    );
+
+    language_statistics
+}
+
+fn collect_whichlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
+    let now = Instant::now();
+    let mut language_statistics = vec![];
+
+    if !reports_directory.is_dir() {
+        fs::create_dir_all(reports_directory)
+            .expect("Whichlang reports directory could not be created");
+    }
+
+    let total_language_count = Language::iter().count();
+
+    for (idx, language) in Language::iter().enumerate() {
+        println!(
+            "Writing Whichlang reports for {:?}... ({}/{})",
+            &language,
+            (idx + 1),
+            total_language_count
+        );
+
+        let single_words = get_file_content("single-words.txt", &language);
+        let word_pairs = get_file_content("word-pairs.txt", &language);
+        let sentences = get_file_content("sentences.txt", &language);
+
+        let mut statistics = DetectorStatistics::new();
+
+        for single_word in single_words {
+            let lang = map_whichlang_to_lingua(whichlang_detect_language(single_word));
+            statistics.add_single_word_counts(Some(lang), single_word);
+        }
+
+        for word_pair in word_pairs {
+            let lang = map_whichlang_to_lingua(whichlang_detect_language(word_pair));
+            statistics.add_word_pair_counts(Some(lang), word_pair);
+        }
+
+        for sentence in sentences {
+            let lang = map_whichlang_to_lingua(whichlang_detect_language(sentence));
+            statistics.add_sentence_counts(Some(lang), sentence);
+        }
+
+        statistics.compute_accuracy_values();
+
+        language_statistics.push(statistics);
+    }
+
+    println!(
+        "Whichlang reports written in {} seconds\n",
         now.elapsed().as_secs()
     );
 
@@ -779,6 +859,27 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
         Some(WhatlangLanguage::Vie) => Some(Language::Vietnamese),
         Some(WhatlangLanguage::Zul) => Some(Language::Zulu),
         _ => None,
+    }
+}
+
+fn map_whichlang_to_lingua(language: WhichlangLanguage) -> Language {
+    match language {
+        WhichlangLanguage::Ara => Language::Arabic,
+        WhichlangLanguage::Cmn => Language::Chinese,
+        WhichlangLanguage::Deu => Language::German,
+        WhichlangLanguage::Eng => Language::English,
+        WhichlangLanguage::Fra => Language::French,
+        WhichlangLanguage::Hin => Language::Hindi,
+        WhichlangLanguage::Ita => Language::Italian,
+        WhichlangLanguage::Jpn => Language::Japanese,
+        WhichlangLanguage::Kor => Language::Korean,
+        WhichlangLanguage::Nld => Language::Dutch,
+        WhichlangLanguage::Por => Language::Portuguese,
+        WhichlangLanguage::Rus => Language::Russian,
+        WhichlangLanguage::Spa => Language::Spanish,
+        WhichlangLanguage::Swe => Language::Swedish,
+        WhichlangLanguage::Tur => Language::Turkish,
+        WhichlangLanguage::Vie => Language::Vietnamese,
     }
 }
 

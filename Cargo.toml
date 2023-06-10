@@ -145,6 +145,7 @@ indoc = { version = "2.0.1", optional = true }
 rayon = "1.7.0"
 titlecase = { version = "2.2.0", optional = true }
 whatlang = { version = "0.16.2", optional = true }
+whichlang = { version = "0.1.0", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 ahash = { version = "0.8.3", default-features = false, features = ["std", "compile-time-rng"] }
@@ -178,7 +179,7 @@ default = [
     "tsonga", "tswana", "turkish", "ukrainian", "urdu", "vietnamese",
     "welsh", "xhosa", "yoruba", "zulu"
 ]
-accuracy-reports = ["cld2", "indoc", "titlecase", "whatlang"]
+accuracy-reports = ["cld2", "indoc", "titlecase", "whatlang", "whichlang"]
 afrikaans = ["lingua-afrikaans-language-model"]
 albanian = ["lingua-albanian-language-model"]
 arabic = ["lingua-arabic-language-model"]

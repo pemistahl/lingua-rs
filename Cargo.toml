@@ -49,6 +49,7 @@ required-features = ["accuracy-reports"]
 [[bench]]
 name = "benchmark"
 harness = false
+required-features = ["benchmark"]
 
 [dependencies]
 brotli = "3.3.4"
@@ -180,6 +181,7 @@ default = [
     "welsh", "xhosa", "yoruba", "zulu"
 ]
 accuracy-reports = ["cld2", "indoc", "titlecase", "whatlang", "whichlang"]
+benchmark = ["cld2", "whatlang", "whichlang"]
 afrikaans = ["lingua-afrikaans-language-model"]
 albanian = ["lingua-albanian-language-model"]
 arabic = ["lingua-arabic-language-model"]

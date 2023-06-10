@@ -85,6 +85,10 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
+      - name: Enable Safari web driver
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: sudo safaridriver --enable
+
       - name: Store or retrieve cargo caches
         uses: actions/cache@v3
         with:
@@ -113,6 +117,10 @@ jobs:
       - name: Run WASM integration tests in Firefox
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: wasm-pack test --headless --firefox
+
+      - name: Run WASM integration tests in Safari
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: wasm-pack test --headless --safari
 
       # fixme: fork and fix tarpaulin action or find a replacement
       #

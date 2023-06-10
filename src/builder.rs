@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+use std::collections::HashSet;
+
 use crate::detector::LanguageDetector;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
-use std::collections::HashSet;
 
 pub(crate) const MISSING_LANGUAGE_MESSAGE: &str =
     "LanguageDetector needs at least 2 languages to choose from";
@@ -26,6 +27,7 @@ pub(crate) const MINIMUM_RELATIVE_DISTANCE_MESSAGE: &str =
     "Minimum relative distance must lie in between 0.0 and 0.99";
 
 /// This struct configures and creates an instance of [LanguageDetector].
+#[derive(Clone)]
 pub struct LanguageDetectorBuilder {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,

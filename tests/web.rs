@@ -16,7 +16,10 @@
 
 #![cfg(target_family = "wasm")]
 
-use lingua::{IsoCode639_1, IsoCode639_3, Language, WasmLanguageDetectorBuilder};
+use lingua::{
+    ConfidenceValue, IsoCode639_1, IsoCode639_3, Language, WasmDetectionResult,
+    WasmLanguageDetectorBuilder,
+};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
@@ -218,14 +221,14 @@ fn assert_detector_cannot_be_built_from_too_few_iso_639_3_codes() {
 #[wasm_bindgen_test]
 fn assert_detector_can_be_built_from_minimum_relative_distance() {
     let mut builder = WasmLanguageDetectorBuilder::fromAllLanguages();
-    let result = builder.setMinimumRelativeDistance(0.25);
+    let result = builder.withMinimumRelativeDistance(0.25);
     assert!(result.is_ok());
 }
 
 #[wasm_bindgen_test]
 fn assert_detector_cannot_be_built_from_too_small_minimum_relative_distance() {
     let mut builder = WasmLanguageDetectorBuilder::fromAllLanguages();
-    let result = builder.setMinimumRelativeDistance(-2.3);
+    let result = builder.withMinimumRelativeDistance(-2.3);
     assert_eq!(
         result.err(),
         Some(JsValue::from(
@@ -237,7 +240,7 @@ fn assert_detector_cannot_be_built_from_too_small_minimum_relative_distance() {
 #[wasm_bindgen_test]
 fn assert_detector_cannot_be_built_from_too_large_minimum_relative_distance() {
     let mut builder = WasmLanguageDetectorBuilder::fromAllLanguages();
-    let result = builder.setMinimumRelativeDistance(1.7);
+    let result = builder.withMinimumRelativeDistance(1.7);
     assert_eq!(
         result.err(),
         Some(JsValue::from(
@@ -247,7 +250,7 @@ fn assert_detector_cannot_be_built_from_too_large_minimum_relative_distance() {
 }
 
 #[wasm_bindgen_test]
-fn assert_language_detection_works_correctly() {
+fn test_detect_language() {
     let detector = WasmLanguageDetectorBuilder::fromLanguages(Box::new([
         JsValue::from(Language::German.to_string()),
         JsValue::from(Language::English.to_string()),
@@ -264,4 +267,96 @@ fn assert_language_detection_works_correctly() {
 
     language = detector.detectLanguageOf("ma maison est grande");
     assert_eq!(language, Some(Language::French.to_string()));
+}
+
+#[wasm_bindgen_test]
+fn test_detect_multiple_languages() {
+    let detector = WasmLanguageDetectorBuilder::fromLanguages(Box::new([
+        JsValue::from(Language::German.to_string()),
+        JsValue::from(Language::English.to_string()),
+        JsValue::from(Language::French.to_string()),
+    ]))
+    .unwrap()
+    .build();
+
+    let sentence = "Parlez-vous français? Ich spreche Französisch nur ein bisschen. A little bit is better than nothing.";
+
+    let results: Vec<WasmDetectionResult> =
+        serde_wasm_bindgen::from_value(detector.detectMultipleLanguagesOf(sentence)).unwrap();
+
+    assert_eq!(results.len(), 3);
+
+    let first_result = &results[0];
+    let first_substring = &sentence[first_result.startIndex..first_result.endIndex];
+    assert_eq!(first_substring, "Parlez-vous français? ");
+    assert_eq!(first_result.language, Language::French.to_string());
+
+    let second_result = &results[1];
+    let second_substring = &sentence[second_result.startIndex..second_result.endIndex];
+    assert_eq!(
+        second_substring,
+        "Ich spreche Französisch nur ein bisschen. "
+    );
+    assert_eq!(second_result.language, Language::German.to_string());
+
+    let third_result = &results[2];
+    let third_substring = &sentence[third_result.startIndex..third_result.endIndex];
+    assert_eq!(third_substring, "A little bit is better than nothing.");
+    assert_eq!(third_result.language, Language::English.to_string());
+}
+
+#[wasm_bindgen_test]
+fn test_compute_language_confidence_values() {
+    let detector = WasmLanguageDetectorBuilder::fromLanguages(Box::new([
+        JsValue::from(Language::German.to_string()),
+        JsValue::from(Language::English.to_string()),
+        JsValue::from(Language::French.to_string()),
+    ]))
+    .unwrap()
+    .build();
+
+    let confidence_values: Vec<ConfidenceValue> = serde_wasm_bindgen::from_value(
+        detector.computeLanguageConfidenceValues("mein Haus ist groß"),
+    )
+    .unwrap();
+
+    assert_eq!(
+        confidence_values,
+        vec![
+            ConfidenceValue {
+                language: Language::German.to_string(),
+                confidence: 0.9697974735292365
+            },
+            ConfidenceValue {
+                language: Language::French.to_string(),
+                confidence: 0.015343577281546793
+            },
+            ConfidenceValue {
+                language: Language::English.to_string(),
+                confidence: 0.014858949189216833
+            }
+        ]
+    );
+}
+
+#[wasm_bindgen_test]
+fn test_compute_language_confidence() {
+    let detector = WasmLanguageDetectorBuilder::fromLanguages(Box::new([
+        JsValue::from(Language::German.to_string()),
+        JsValue::from(Language::English.to_string()),
+        JsValue::from(Language::French.to_string()),
+    ]))
+    .unwrap()
+    .build();
+
+    let confidence = detector
+        .computeLanguageConfidence("mein Haus ist groß", &Language::German.to_string())
+        .unwrap();
+    assert_eq!(confidence, 0.9697974735292365);
+
+    let result = detector.computeLanguageConfidence("mein Haus ist groß", "Sorbian");
+    assert_eq!(
+        result.err(),
+        Some(JsValue::from("Language 'Sorbian' is not supported"))
+    );
 }

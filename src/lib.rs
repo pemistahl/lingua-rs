@@ -262,7 +262,10 @@ pub use isocode::{IsoCode639_1, IsoCode639_3};
 pub use language::Language;
 pub use result::DetectionResult;
 #[cfg(target_family = "wasm")]
-pub use wasm::LanguageDetectorBuilder as WasmLanguageDetectorBuilder;
+pub use wasm::{
+    ConfidenceValue, DetectionResult as WasmDetectionResult,
+    LanguageDetectorBuilder as WasmLanguageDetectorBuilder,
+};
 pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter};
 
 mod alphabet;

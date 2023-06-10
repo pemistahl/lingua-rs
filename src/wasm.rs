@@ -16,23 +16,24 @@
 
 #![allow(non_snake_case)]
 
-use std::collections::HashSet;
 use std::str::FromStr;
 
 use itertools::Itertools;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use wasm_bindgen::prelude::*;
 
 use crate::builder::{MINIMUM_RELATIVE_DISTANCE_MESSAGE, MISSING_LANGUAGE_MESSAGE};
-use crate::{IsoCode639_1, IsoCode639_3, Language, LanguageDetector as Detector};
+use crate::{
+    IsoCode639_1, IsoCode639_3, Language, LanguageDetector as Detector,
+    LanguageDetectorBuilder as Builder,
+};
 
+/// This struct configures and creates an instance of [LanguageDetector].
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct LanguageDetectorBuilder {
-    languages: HashSet<Language>,
-    minimum_relative_distance: f64,
-    is_every_language_model_preloaded: bool,
-    is_low_accuracy_mode_enabled: bool,
+    builder: Builder,
 }
 
 #[wasm_bindgen]
@@ -40,47 +41,71 @@ pub struct LanguageDetector {
     detector: Detector,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ConfidenceValue {
-    language: String,
-    confidence: f64,
+    pub language: String,
+    pub confidence: f64,
+}
+
+/// This struct describes a contiguous single-language
+/// text section within a possibly mixed-language text.
+#[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
+pub struct DetectionResult {
+    /// Returns the start index of the identified single-language substring.
+    pub startIndex: usize,
+    /// Returns the end index of the identified single-language substring.
+    pub endIndex: usize,
+    /// Returns the detected language of the identified single-language substring.
+    pub language: String,
 }
 
 #[wasm_bindgen]
 impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder` with all built-in languages.
     pub fn fromAllLanguages() -> Self {
-        Self::from(Language::all())
+        LanguageDetectorBuilder {
+            builder: Builder::from_all_languages(),
+        }
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in spoken languages.
     pub fn fromAllSpokenLanguages() -> Self {
-        Self::from(Language::all_spoken_ones())
+        LanguageDetectorBuilder {
+            builder: Builder::from_all_spoken_languages(),
+        }
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages supporting the Arabic script.
     pub fn fromAllLanguagesWithArabicScript() -> Self {
-        Self::from(Language::all_with_arabic_script())
+        LanguageDetectorBuilder {
+            builder: Builder::from_all_languages_with_arabic_script(),
+        }
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages supporting the Cyrillic script.
     pub fn fromAllLanguagesWithCyrillicScript() -> Self {
-        Self::from(Language::all_with_cyrillic_script())
+        LanguageDetectorBuilder {
+            builder: Builder::from_all_languages_with_cyrillic_script(),
+        }
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages supporting the Devanagari script.
     pub fn fromAllLanguagesWithDevanagariScript() -> Self {
-        Self::from(Language::all_with_devanagari_script())
+        LanguageDetectorBuilder {
+            builder: Builder::from_all_languages_with_devanagari_script(),
+        }
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages supporting the Latin script.
     pub fn fromAllLanguagesWithLatinScript() -> Self {
-        Self::from(Language::all_with_latin_script())
+        LanguageDetectorBuilder {
+            builder: Builder::from_all_languages_with_latin_script(),
+        }
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
@@ -103,7 +128,11 @@ impl LanguageDetectorBuilder {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
-        Ok(Self::from(languages_to_load))
+        let languages_vec = languages_to_load.into_iter().collect_vec();
+
+        Ok(LanguageDetectorBuilder {
+            builder: Builder::from_all_languages_without(&languages_vec),
+        })
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
@@ -115,13 +144,15 @@ impl LanguageDetectorBuilder {
             .iter()
             .filter_map(|it| it.as_string())
             .filter_map(|it| Language::from_str(&it).ok())
-            .collect::<HashSet<Language>>();
+            .collect_vec();
 
         if selected_languages.len() < 2 {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
-        Ok(Self::from(selected_languages))
+        Ok(LanguageDetectorBuilder {
+            builder: Builder::from_languages(&selected_languages),
+        })
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
@@ -139,12 +170,9 @@ impl LanguageDetectorBuilder {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
-        let selected_languages = selected_iso_codes
-            .iter()
-            .map(Language::from_iso_code_639_1)
-            .collect::<HashSet<_>>();
-
-        Ok(Self::from(selected_languages))
+        Ok(LanguageDetectorBuilder {
+            builder: Builder::from_iso_codes_639_1(&selected_iso_codes),
+        })
     }
 
     /// Creates and returns an instance of `LanguageDetectorBuilder`
@@ -162,12 +190,9 @@ impl LanguageDetectorBuilder {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
-        let selected_languages = selected_iso_codes
-            .iter()
-            .map(Language::from_iso_code_639_3)
-            .collect::<HashSet<_>>();
-
-        Ok(Self::from(selected_languages))
+        Ok(LanguageDetectorBuilder {
+            builder: Builder::from_iso_codes_639_3(&selected_iso_codes),
+        })
     }
 
     /// Sets the desired value for the minimum relative distance measure.
@@ -190,12 +215,15 @@ impl LanguageDetectorBuilder {
     /// where language detection is not reliably possible.
     ///
     /// ⚠ Throws an error if `distance` is smaller than 0.0 or greater than 0.99.
-    pub fn setMinimumRelativeDistance(&mut self, distance: f64) -> Result<(), JsValue> {
+    pub fn withMinimumRelativeDistance(
+        &mut self,
+        distance: f64,
+    ) -> Result<LanguageDetectorBuilder, JsValue> {
         if !(0.0..=0.99).contains(&distance) {
             return Err(JsValue::from(MINIMUM_RELATIVE_DISTANCE_MESSAGE));
         }
-        self.minimum_relative_distance = distance;
-        Ok(())
+        self.builder.with_minimum_relative_distance(distance);
+        Ok(self.clone())
     }
 
     /// Configures `LanguageDetectorBuilder` to preload all language models when creating
@@ -206,8 +234,9 @@ impl LanguageDetectorBuilder {
     /// For web services, for instance, it is rather beneficial to preload all language
     /// models into memory to avoid unexpected latency while waiting for the
     /// service response. This method allows to switch between these two loading modes.
-    pub fn enablePreloadingLanguageModels(&mut self) {
-        self.is_every_language_model_preloaded = true;
+    pub fn withPreloadedLanguageModels(&mut self) -> Self {
+        self.builder.with_preloaded_language_models();
+        self.clone()
     }
 
     /// Disables the high accuracy mode in order to save memory and increase performance.
@@ -221,28 +250,15 @@ impl LanguageDetectorBuilder {
     /// for short texts consisting of less than 120 characters will drop significantly. However,
     /// detection accuracy for texts which are longer than 120 characters will remain mostly
     /// unaffected.
-    pub fn enableLowAccuracyMode(&mut self) {
-        self.is_low_accuracy_mode_enabled = true;
+    pub fn withLowAccuracyMode(&mut self) -> Self {
+        self.builder.with_low_accuracy_mode();
+        self.clone()
     }
 
     /// Creates and returns the configured instance of [LanguageDetector].
     pub fn build(&mut self) -> LanguageDetector {
         LanguageDetector {
-            detector: Detector::from(
-                self.languages.clone(),
-                self.minimum_relative_distance,
-                self.is_every_language_model_preloaded,
-                self.is_low_accuracy_mode_enabled,
-            ),
-        }
-    }
-
-    fn from(languages: HashSet<Language>) -> Self {
-        Self {
-            languages,
-            minimum_relative_distance: 0.0,
-            is_every_language_model_preloaded: false,
-            is_low_accuracy_mode_enabled: false,
+            detector: self.builder.build(),
         }
     }
 }
@@ -258,11 +274,34 @@ impl LanguageDetector {
         }
     }
 
+    /// Attempts to detect multiple languages in mixed-language text.
+    ///
+    /// This feature is experimental and under continuous development.
+    ///
+    /// An array of [DetectionResult] is returned containing an entry for each contiguous
+    /// single-language text section as identified by the library. Each entry consists
+    /// of the identified language, a start index and an end index. The indices denote
+    /// the substring that has been identified as a contiguous single-language text section.
+    pub fn detectMultipleLanguagesOf(&self, text: &str) -> JsValue {
+        let detection_results = self
+            .detector
+            .detect_multiple_languages_of(text)
+            .iter()
+            .map(|result| DetectionResult {
+                startIndex: result.start_index,
+                endIndex: result.end_index,
+                language: result.language.to_string(),
+            })
+            .collect_vec();
+
+        serde_wasm_bindgen::to_value(&detection_results).unwrap()
+    }
+
     /// Computes confidence values for each language supported by this detector for the given
     /// input text. These values denote how likely it is that the given text has been written
     /// in any of the languages supported by this detector.
     ///
-    /// A vector of two-element tuples is returned containing those languages which the
+    /// An array of two-element objects is returned containing those languages which the
     /// calling instance of `LanguageDetector` has been built from, together with their
     /// confidence values. The entries are sorted by their confidence value in descending order.
     /// Each value is a probability between 0.0 and 1.0. The probabilities of all languages will
@@ -281,5 +320,22 @@ impl LanguageDetector {
             .collect_vec();
 
         serde_wasm_bindgen::to_value(&confidence_values).unwrap()
+    }
+
+    /// Computes the confidence value for the given language and input text. This value denotes
+    /// how likely it is that the given text has been written in the given language.
+    ///
+    /// The value that this method computes is a number between 0.0 and 1.0. If the language is
+    /// unambiguously identified by the rule engine, the value 1.0 will always be returned.
+    /// If the given language is not supported by this detector instance, the value 0.0 will
+    /// always be returned.
+    pub fn computeLanguageConfidence(&self, text: &str, language: &str) -> Result<f64, JsValue> {
+        match Language::from_str(language) {
+            Ok(lang) => Ok(self.detector.compute_language_confidence(text, lang)),
+            Err(_) => Err(JsValue::from(format!(
+                "Language '{}' is not supported",
+                language
+            ))),
+        }
     }
 }

@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
+use std::collections::HashMap;
+use std::fs;
+use std::io::Write;
+use std::path::{Path, PathBuf};
+use std::time::Instant;
+
 use cld2::{detect_language, Format, Lang as CLD2Language};
 use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
 use itertools::Itertools;
+use strum::IntoEnumIterator;
+use titlecase::titlecase;
+use whatlang::{Detector, Lang as WhatlangLanguage};
+
 use lingua::{Language, LanguageDetectorBuilder};
 use lingua_afrikaans_language_model::AFRIKAANS_TESTDATA_DIRECTORY;
 use lingua_albanian_language_model::ALBANIAN_TESTDATA_DIRECTORY;
@@ -95,14 +105,6 @@ use lingua_welsh_language_model::WELSH_TESTDATA_DIRECTORY;
 use lingua_xhosa_language_model::XHOSA_TESTDATA_DIRECTORY;
 use lingua_yoruba_language_model::YORUBA_TESTDATA_DIRECTORY;
 use lingua_zulu_language_model::ZULU_TESTDATA_DIRECTORY;
-use std::collections::HashMap;
-use std::fs;
-use std::io::Write;
-use std::path::Path;
-use std::time::Instant;
-use strum::IntoEnumIterator;
-use titlecase::titlecase;
-use whatlang::{Detector, Lang as WhatlangLanguage};
 
 struct DetectorStatistics {
     single_word_statistic: Statistic,
@@ -310,7 +312,7 @@ impl Statistic {
             .sorted_by(
                 |(first_lang, &first_accuracy), (second_lang, &second_accuracy)| {
                     let sorted_by_accuracy = second_accuracy.partial_cmp(&first_accuracy).unwrap();
-                    let sorted_by_language = first_lang.partial_cmp(&second_lang).unwrap();
+                    let sorted_by_language = first_lang.partial_cmp(second_lang).unwrap();
                     sorted_by_accuracy.then(sorted_by_language)
                 },
             )
@@ -329,49 +331,30 @@ impl Statistic {
 fn main() {
     let now = Instant::now();
 
-    let lingua_detector_with_high_accuracy = LanguageDetectorBuilder::from_all_languages()
-        .with_preloaded_language_models()
-        .build();
-
-    let lingua_detector_with_low_accuracy = LanguageDetectorBuilder::from_all_languages()
-        .with_low_accuracy_mode()
-        .with_preloaded_language_models()
-        .build();
-
-    let whatlang_detector = Detector::new();
-
     let accuracy_reports_directory = Path::new("accuracy-reports");
+
     let lingua_high_accuracy_reports_directory =
         accuracy_reports_directory.join("lingua-high-accuracy");
+    let mut lingua_high_accuracy_statistics =
+        collect_lingua_high_accuracy_statistics(&lingua_high_accuracy_reports_directory);
+
     let lingua_low_accuracy_reports_directory =
         accuracy_reports_directory.join("lingua-low-accuracy");
+    let mut lingua_low_accuracy_statistics =
+        collect_lingua_low_accuracy_statistics(&lingua_low_accuracy_reports_directory);
+
     let cld2_reports_directory = accuracy_reports_directory.join("cld2");
+    let mut cld2_statistics = collect_cld2_statistics(&cld2_reports_directory);
+
     let whatlang_reports_directory = accuracy_reports_directory.join("whatlang");
-
-    if !lingua_high_accuracy_reports_directory.is_dir() {
-        fs::create_dir_all(&lingua_high_accuracy_reports_directory)
-            .expect("Lingua reports directory could not be created");
-    }
-
-    if !lingua_low_accuracy_reports_directory.is_dir() {
-        fs::create_dir_all(&lingua_low_accuracy_reports_directory)
-            .expect("Lingua reports directory could not be created");
-    }
-
-    if !cld2_reports_directory.is_dir() {
-        fs::create_dir_all(&cld2_reports_directory)
-            .expect("CLD2 reports directory could not be created");
-    }
-
-    if !whatlang_reports_directory.is_dir() {
-        fs::create_dir_all(&whatlang_reports_directory)
-            .expect("Whatlang reports directory could not be created");
-    }
+    let mut whatlang_statistics = collect_whatlang_statistics(&whatlang_reports_directory);
 
     let aggregated_report_file_path =
         accuracy_reports_directory.join("aggregated-accuracy-values.csv");
+
     let mut aggregated_report_file =
         fs::File::create(aggregated_report_file_path).expect("CSV file could not be created");
+
     let aggregated_report_columns = vec![
         "language",
         "average-cld2",
@@ -396,100 +379,47 @@ fn main() {
         .write_all(aggregated_report_columns.iter().join(",").as_bytes())
         .expect("CSV header row could not be written");
 
-    let total_language_count = Language::iter().count();
-
     for (idx, language) in Language::iter().enumerate() {
-        println!(
-            "Writing reports for {:?}... ({}/{})",
-            &language,
-            (idx + 1),
-            total_language_count
-        );
+        let lingua_high_accuracy_report = lingua_high_accuracy_statistics
+            .get_mut(idx)
+            .unwrap()
+            .create_report_data(&language);
 
-        let single_words = get_file_content("single-words.txt", &language);
-        let word_pairs = get_file_content("word-pairs.txt", &language);
-        let sentences = get_file_content("sentences.txt", &language);
+        let lingua_low_accuracy_report = lingua_low_accuracy_statistics
+            .get_mut(idx)
+            .unwrap()
+            .create_report_data(&language);
 
-        let mut lingua_high_accuracy_statistics = DetectorStatistics::new();
-        let mut lingua_low_accuracy_statistics = DetectorStatistics::new();
-        let mut cld2_statistics = DetectorStatistics::new();
-        let mut whatlang_statistics = DetectorStatistics::new();
+        let cld2_report = cld2_statistics
+            .get_mut(idx)
+            .unwrap()
+            .create_report_data(&language);
 
-        for single_word in single_words {
-            let lingua_language_in_high_accuracy_mode =
-                lingua_detector_with_high_accuracy.detect_language_of(single_word);
-            lingua_high_accuracy_statistics
-                .add_single_word_counts(lingua_language_in_high_accuracy_mode, single_word);
+        let whatlang_report = whatlang_statistics
+            .get_mut(idx)
+            .unwrap()
+            .create_report_data(&language);
 
-            let lingua_language_in_low_accuracy_mode =
-                lingua_detector_with_low_accuracy.detect_language_of(single_word);
-            lingua_low_accuracy_statistics
-                .add_single_word_counts(lingua_language_in_low_accuracy_mode, single_word);
+        let lingua_high_accuracy_aggregated_report_row = lingua_high_accuracy_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
 
-            let cld2_language = map_cld2_to_lingua(detect_language(single_word, Format::Text).0);
-            cld2_statistics.add_single_word_counts(cld2_language, single_word);
+        let lingua_low_accuracy_aggregated_report_row = lingua_low_accuracy_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
 
-            let whatlang_language =
-                map_whatlang_to_lingua(whatlang_detector.detect_lang(single_word));
-            whatlang_statistics.add_single_word_counts(whatlang_language, single_word);
-        }
+        let cld2_aggregated_report_row = cld2_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
 
-        for word_pair in word_pairs {
-            let lingua_language_in_high_accuracy_mode =
-                lingua_detector_with_high_accuracy.detect_language_of(word_pair);
-            lingua_high_accuracy_statistics
-                .add_word_pair_counts(lingua_language_in_high_accuracy_mode, word_pair);
+        let whatlang_aggregated_report_row = whatlang_statistics
+            .get(idx)
+            .unwrap()
+            .create_aggregated_report_row(&language);
 
-            let lingua_language_in_low_accuracy_mode =
-                lingua_detector_with_low_accuracy.detect_language_of(word_pair);
-            lingua_low_accuracy_statistics
-                .add_word_pair_counts(lingua_language_in_low_accuracy_mode, word_pair);
-
-            let cld2_language = map_cld2_to_lingua(detect_language(word_pair, Format::Text).0);
-            cld2_statistics.add_word_pair_counts(cld2_language, word_pair);
-
-            let whatlang_language =
-                map_whatlang_to_lingua(whatlang_detector.detect_lang(word_pair));
-            whatlang_statistics.add_word_pair_counts(whatlang_language, word_pair);
-        }
-
-        for sentence in sentences {
-            let lingua_language_in_high_accuracy_mode =
-                lingua_detector_with_high_accuracy.detect_language_of(sentence);
-            lingua_high_accuracy_statistics
-                .add_sentence_counts(lingua_language_in_high_accuracy_mode, sentence);
-
-            let lingua_language_in_low_accuracy_mode =
-                lingua_detector_with_low_accuracy.detect_language_of(sentence);
-            lingua_low_accuracy_statistics
-                .add_sentence_counts(lingua_language_in_low_accuracy_mode, sentence);
-
-            let cld2_language = map_cld2_to_lingua(detect_language(sentence, Format::Text).0);
-            cld2_statistics.add_sentence_counts(cld2_language, sentence);
-
-            let whatlang_language = map_whatlang_to_lingua(whatlang_detector.detect_lang(sentence));
-            whatlang_statistics.add_sentence_counts(whatlang_language, sentence);
-        }
-
-        lingua_high_accuracy_statistics.compute_accuracy_values();
-        lingua_low_accuracy_statistics.compute_accuracy_values();
-        cld2_statistics.compute_accuracy_values();
-        whatlang_statistics.compute_accuracy_values();
-
-        let lingua_high_accuracy_report =
-            lingua_high_accuracy_statistics.create_report_data(&language);
-        let lingua_low_accuracy_report =
-            lingua_low_accuracy_statistics.create_report_data(&language);
-        let cld2_report = cld2_statistics.create_report_data(&language);
-        let whatlang_report = whatlang_statistics.create_report_data(&language);
-
-        let lingua_high_accuracy_aggregated_report_row =
-            lingua_high_accuracy_statistics.create_aggregated_report_row(&language);
-        let lingua_low_accuracy_aggregated_report_row =
-            lingua_low_accuracy_statistics.create_aggregated_report_row(&language);
-        let cld2_aggregated_report_row = cld2_statistics.create_aggregated_report_row(&language);
-        let whatlang_aggregated_report_row =
-            whatlang_statistics.create_aggregated_report_row(&language);
         let total_aggregated_report_row = format!(
             "{:?},{},{},{},{}\n",
             &language,
@@ -504,10 +434,13 @@ fn main() {
             .expect("CSV data row could not be written");
 
         let report_file_name = titlecase(&format!("{:?}.txt", &language));
+
         let lingua_high_accuracy_reports_file_path =
             lingua_high_accuracy_reports_directory.join(&report_file_name);
+
         let lingua_low_accuracy_reports_file_path =
             lingua_low_accuracy_reports_directory.join(&report_file_name);
+
         let cld2_reports_file_path = cld2_reports_directory.join(&report_file_name);
         let whatlang_reports_file_path = whatlang_reports_directory.join(&report_file_name);
 
@@ -530,14 +463,233 @@ fn main() {
             fs::write(whatlang_reports_file_path, report)
                 .expect("Whatlang reports file could not be written");
         }
-
-        println!("Done\n");
     }
 
     println!(
         "All accuracy reports successfully written in {} seconds",
         now.elapsed().as_secs()
     );
+}
+
+fn collect_lingua_high_accuracy_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
+    let now = Instant::now();
+    let mut language_statistics = vec![];
+
+    if !reports_directory.is_dir() {
+        fs::create_dir_all(reports_directory)
+            .expect("Lingua reports directory could not be created");
+    }
+
+    let detector = LanguageDetectorBuilder::from_all_languages()
+        .with_preloaded_language_models()
+        .build();
+
+    let total_language_count = Language::iter().count();
+
+    for (idx, language) in Language::iter().enumerate() {
+        println!(
+            "Writing Lingua high accuracy reports for {:?}... ({}/{})",
+            &language,
+            (idx + 1),
+            total_language_count
+        );
+
+        let single_words = get_file_content("single-words.txt", &language);
+        let word_pairs = get_file_content("word-pairs.txt", &language);
+        let sentences = get_file_content("sentences.txt", &language);
+
+        let mut statistics = DetectorStatistics::new();
+
+        for single_word in single_words {
+            let lang = detector.detect_language_of(single_word);
+            statistics.add_single_word_counts(lang, single_word);
+        }
+
+        for word_pair in word_pairs {
+            let lang = detector.detect_language_of(word_pair);
+            statistics.add_word_pair_counts(lang, word_pair);
+        }
+
+        for sentence in sentences {
+            let lang = detector.detect_language_of(sentence);
+            statistics.add_sentence_counts(lang, sentence);
+        }
+
+        statistics.compute_accuracy_values();
+
+        language_statistics.push(statistics);
+    }
+
+    println!(
+        "Lingua high accuracy reports written in {} seconds\n",
+        now.elapsed().as_secs()
+    );
+
+    language_statistics
+}
+
+fn collect_lingua_low_accuracy_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
+    let now = Instant::now();
+    let mut language_statistics = vec![];
+
+    if !reports_directory.is_dir() {
+        fs::create_dir_all(reports_directory)
+            .expect("Lingua reports directory could not be created");
+    }
+
+    let detector = LanguageDetectorBuilder::from_all_languages()
+        .with_low_accuracy_mode()
+        .with_preloaded_language_models()
+        .build();
+
+    let total_language_count = Language::iter().count();
+
+    for (idx, language) in Language::iter().enumerate() {
+        println!(
+            "Writing Lingua low accuracy reports for {:?}... ({}/{})",
+            &language,
+            (idx + 1),
+            total_language_count
+        );
+
+        let single_words = get_file_content("single-words.txt", &language);
+        let word_pairs = get_file_content("word-pairs.txt", &language);
+        let sentences = get_file_content("sentences.txt", &language);
+
+        let mut statistics = DetectorStatistics::new();
+
+        for single_word in single_words {
+            let lang = detector.detect_language_of(single_word);
+            statistics.add_single_word_counts(lang, single_word);
+        }
+
+        for word_pair in word_pairs {
+            let lang = detector.detect_language_of(word_pair);
+            statistics.add_word_pair_counts(lang, word_pair);
+        }
+
+        for sentence in sentences {
+            let lang = detector.detect_language_of(sentence);
+            statistics.add_sentence_counts(lang, sentence);
+        }
+
+        statistics.compute_accuracy_values();
+
+        language_statistics.push(statistics);
+    }
+
+    println!(
+        "Lingua low accuracy reports written in {} seconds\n",
+        now.elapsed().as_secs()
+    );
+
+    language_statistics
+}
+
+fn collect_cld2_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
+    let now = Instant::now();
+    let mut language_statistics = vec![];
+
+    if !reports_directory.is_dir() {
+        fs::create_dir_all(reports_directory).expect("CLD2 reports directory could not be created");
+    }
+
+    let total_language_count = Language::iter().count();
+
+    for (idx, language) in Language::iter().enumerate() {
+        println!(
+            "Writing CLD2 reports for {:?}... ({}/{})",
+            &language,
+            (idx + 1),
+            total_language_count
+        );
+
+        let single_words = get_file_content("single-words.txt", &language);
+        let word_pairs = get_file_content("word-pairs.txt", &language);
+        let sentences = get_file_content("sentences.txt", &language);
+
+        let mut statistics = DetectorStatistics::new();
+
+        for single_word in single_words {
+            let lang = map_cld2_to_lingua(detect_language(single_word, Format::Text).0);
+            statistics.add_single_word_counts(lang, single_word);
+        }
+
+        for word_pair in word_pairs {
+            let lang = map_cld2_to_lingua(detect_language(word_pair, Format::Text).0);
+            statistics.add_word_pair_counts(lang, word_pair);
+        }
+
+        for sentence in sentences {
+            let lang = map_cld2_to_lingua(detect_language(sentence, Format::Text).0);
+            statistics.add_sentence_counts(lang, sentence);
+        }
+
+        statistics.compute_accuracy_values();
+
+        language_statistics.push(statistics);
+    }
+
+    println!(
+        "CLD2 reports written in {} seconds\n",
+        now.elapsed().as_secs()
+    );
+
+    language_statistics
+}
+
+fn collect_whatlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
+    let now = Instant::now();
+    let mut language_statistics = vec![];
+
+    if !reports_directory.is_dir() {
+        fs::create_dir_all(reports_directory)
+            .expect("Whatlang reports directory could not be created");
+    }
+
+    let detector = Detector::new();
+    let total_language_count = Language::iter().count();
+
+    for (idx, language) in Language::iter().enumerate() {
+        println!(
+            "Writing Whatlang reports for {:?}... ({}/{})",
+            &language,
+            (idx + 1),
+            total_language_count
+        );
+
+        let single_words = get_file_content("single-words.txt", &language);
+        let word_pairs = get_file_content("word-pairs.txt", &language);
+        let sentences = get_file_content("sentences.txt", &language);
+
+        let mut statistics = DetectorStatistics::new();
+
+        for single_word in single_words {
+            let lang = map_whatlang_to_lingua(detector.detect_lang(single_word));
+            statistics.add_single_word_counts(lang, single_word);
+        }
+
+        for word_pair in word_pairs {
+            let lang = map_whatlang_to_lingua(detector.detect_lang(word_pair));
+            statistics.add_word_pair_counts(lang, word_pair);
+        }
+
+        for sentence in sentences {
+            let lang = map_whatlang_to_lingua(detector.detect_lang(sentence));
+            statistics.add_sentence_counts(lang, sentence);
+        }
+
+        statistics.compute_accuracy_values();
+
+        language_statistics.push(statistics);
+    }
+
+    println!(
+        "Whatlang reports written in {} seconds\n",
+        now.elapsed().as_secs()
+    );
+
+    language_statistics
 }
 
 fn get_file_content<'a>(file_name: &'a str, language: &'a Language) -> Vec<&'a str> {
@@ -547,7 +699,7 @@ fn get_file_content<'a>(file_name: &'a str, language: &'a Language) -> Vec<&'a s
         .unwrap()
         .contents_utf8()
         .unwrap()
-        .split("\n")
+        .split('\n')
         .filter(|&line| !line.trim().is_empty())
         .collect_vec()
 }
@@ -631,81 +783,81 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
 }
 
 fn get_test_data_directory(language: &Language) -> Dir<'static> {
-    match language {
-        &Language::Afrikaans => AFRIKAANS_TESTDATA_DIRECTORY,
-        &Language::Albanian => ALBANIAN_TESTDATA_DIRECTORY,
-        &Language::Arabic => ARABIC_TESTDATA_DIRECTORY,
-        &Language::Armenian => ARMENIAN_TESTDATA_DIRECTORY,
-        &Language::Azerbaijani => AZERBAIJANI_TESTDATA_DIRECTORY,
-        &Language::Basque => BASQUE_TESTDATA_DIRECTORY,
-        &Language::Belarusian => BELARUSIAN_TESTDATA_DIRECTORY,
-        &Language::Bengali => BENGALI_TESTDATA_DIRECTORY,
-        &Language::Bokmal => BOKMAL_TESTDATA_DIRECTORY,
-        &Language::Bosnian => BOSNIAN_TESTDATA_DIRECTORY,
-        &Language::Bulgarian => BULGARIAN_TESTDATA_DIRECTORY,
-        &Language::Catalan => CATALAN_TESTDATA_DIRECTORY,
-        &Language::Chinese => CHINESE_TESTDATA_DIRECTORY,
-        &Language::Croatian => CROATIAN_TESTDATA_DIRECTORY,
-        &Language::Czech => CZECH_TESTDATA_DIRECTORY,
-        &Language::Danish => DANISH_TESTDATA_DIRECTORY,
-        &Language::Dutch => DUTCH_TESTDATA_DIRECTORY,
-        &Language::English => ENGLISH_TESTDATA_DIRECTORY,
-        &Language::Esperanto => ESPERANTO_TESTDATA_DIRECTORY,
-        &Language::Estonian => ESTONIAN_TESTDATA_DIRECTORY,
-        &Language::Finnish => FINNISH_TESTDATA_DIRECTORY,
-        &Language::French => FRENCH_TESTDATA_DIRECTORY,
-        &Language::Ganda => GANDA_TESTDATA_DIRECTORY,
-        &Language::Georgian => GEORGIAN_TESTDATA_DIRECTORY,
-        &Language::German => GERMAN_TESTDATA_DIRECTORY,
-        &Language::Greek => GREEK_TESTDATA_DIRECTORY,
-        &Language::Gujarati => GUJARATI_TESTDATA_DIRECTORY,
-        &Language::Hebrew => HEBREW_TESTDATA_DIRECTORY,
-        &Language::Hindi => HINDI_TESTDATA_DIRECTORY,
-        &Language::Hungarian => HUNGARIAN_TESTDATA_DIRECTORY,
-        &Language::Icelandic => ICELANDIC_TESTDATA_DIRECTORY,
-        &Language::Indonesian => INDONESIAN_TESTDATA_DIRECTORY,
-        &Language::Irish => IRISH_TESTDATA_DIRECTORY,
-        &Language::Italian => ITALIAN_TESTDATA_DIRECTORY,
-        &Language::Japanese => JAPANESE_TESTDATA_DIRECTORY,
-        &Language::Kazakh => KAZAKH_TESTDATA_DIRECTORY,
-        &Language::Korean => KOREAN_TESTDATA_DIRECTORY,
-        &Language::Latin => LATIN_TESTDATA_DIRECTORY,
-        &Language::Latvian => LATVIAN_TESTDATA_DIRECTORY,
-        &Language::Lithuanian => LITHUANIAN_TESTDATA_DIRECTORY,
-        &Language::Macedonian => MACEDONIAN_TESTDATA_DIRECTORY,
-        &Language::Malay => MALAY_TESTDATA_DIRECTORY,
-        &Language::Maori => MAORI_TESTDATA_DIRECTORY,
-        &Language::Marathi => MARATHI_TESTDATA_DIRECTORY,
-        &Language::Mongolian => MONGOLIAN_TESTDATA_DIRECTORY,
-        &Language::Nynorsk => NYNORSK_TESTDATA_DIRECTORY,
-        &Language::Persian => PERSIAN_TESTDATA_DIRECTORY,
-        &Language::Polish => POLISH_TESTDATA_DIRECTORY,
-        &Language::Portuguese => PORTUGUESE_TESTDATA_DIRECTORY,
-        &Language::Punjabi => PUNJABI_TESTDATA_DIRECTORY,
-        &Language::Romanian => ROMANIAN_TESTDATA_DIRECTORY,
-        &Language::Russian => RUSSIAN_TESTDATA_DIRECTORY,
-        &Language::Serbian => SERBIAN_TESTDATA_DIRECTORY,
-        &Language::Shona => SHONA_TESTDATA_DIRECTORY,
-        &Language::Slovak => SLOVAK_TESTDATA_DIRECTORY,
-        &Language::Slovene => SLOVENE_TESTDATA_DIRECTORY,
-        &Language::Somali => SOMALI_TESTDATA_DIRECTORY,
-        &Language::Sotho => SOTHO_TESTDATA_DIRECTORY,
-        &Language::Spanish => SPANISH_TESTDATA_DIRECTORY,
-        &Language::Swahili => SWAHILI_TESTDATA_DIRECTORY,
-        &Language::Swedish => SWEDISH_TESTDATA_DIRECTORY,
-        &Language::Tagalog => TAGALOG_TESTDATA_DIRECTORY,
-        &Language::Tamil => TAMIL_TESTDATA_DIRECTORY,
-        &Language::Telugu => TELUGU_TESTDATA_DIRECTORY,
-        &Language::Thai => THAI_TESTDATA_DIRECTORY,
-        &Language::Tsonga => TSONGA_TESTDATA_DIRECTORY,
-        &Language::Tswana => TSWANA_TESTDATA_DIRECTORY,
-        &Language::Turkish => TURKISH_TESTDATA_DIRECTORY,
-        &Language::Ukrainian => UKRAINIAN_TESTDATA_DIRECTORY,
-        &Language::Urdu => URDU_TESTDATA_DIRECTORY,
-        &Language::Vietnamese => VIETNAMESE_TESTDATA_DIRECTORY,
-        &Language::Welsh => WELSH_TESTDATA_DIRECTORY,
-        &Language::Xhosa => XHOSA_TESTDATA_DIRECTORY,
-        &Language::Yoruba => YORUBA_TESTDATA_DIRECTORY,
-        &Language::Zulu => ZULU_TESTDATA_DIRECTORY,
+    match *language {
+        Language::Afrikaans => AFRIKAANS_TESTDATA_DIRECTORY,
+        Language::Albanian => ALBANIAN_TESTDATA_DIRECTORY,
+        Language::Arabic => ARABIC_TESTDATA_DIRECTORY,
+        Language::Armenian => ARMENIAN_TESTDATA_DIRECTORY,
+        Language::Azerbaijani => AZERBAIJANI_TESTDATA_DIRECTORY,
+        Language::Basque => BASQUE_TESTDATA_DIRECTORY,
+        Language::Belarusian => BELARUSIAN_TESTDATA_DIRECTORY,
+        Language::Bengali => BENGALI_TESTDATA_DIRECTORY,
+        Language::Bokmal => BOKMAL_TESTDATA_DIRECTORY,
+        Language::Bosnian => BOSNIAN_TESTDATA_DIRECTORY,
+        Language::Bulgarian => BULGARIAN_TESTDATA_DIRECTORY,
+        Language::Catalan => CATALAN_TESTDATA_DIRECTORY,
+        Language::Chinese => CHINESE_TESTDATA_DIRECTORY,
+        Language::Croatian => CROATIAN_TESTDATA_DIRECTORY,
+        Language::Czech => CZECH_TESTDATA_DIRECTORY,
+        Language::Danish => DANISH_TESTDATA_DIRECTORY,
+        Language::Dutch => DUTCH_TESTDATA_DIRECTORY,
+        Language::English => ENGLISH_TESTDATA_DIRECTORY,
+        Language::Esperanto => ESPERANTO_TESTDATA_DIRECTORY,
+        Language::Estonian => ESTONIAN_TESTDATA_DIRECTORY,
+        Language::Finnish => FINNISH_TESTDATA_DIRECTORY,
+        Language::French => FRENCH_TESTDATA_DIRECTORY,
+        Language::Ganda => GANDA_TESTDATA_DIRECTORY,
+        Language::Georgian => GEORGIAN_TESTDATA_DIRECTORY,
+        Language::German => GERMAN_TESTDATA_DIRECTORY,
+        Language::Greek => GREEK_TESTDATA_DIRECTORY,
+        Language::Gujarati => GUJARATI_TESTDATA_DIRECTORY,
+        Language::Hebrew => HEBREW_TESTDATA_DIRECTORY,
+        Language::Hindi => HINDI_TESTDATA_DIRECTORY,
+        Language::Hungarian => HUNGARIAN_TESTDATA_DIRECTORY,
+        Language::Icelandic => ICELANDIC_TESTDATA_DIRECTORY,
+        Language::Indonesian => INDONESIAN_TESTDATA_DIRECTORY,
+        Language::Irish => IRISH_TESTDATA_DIRECTORY,
+        Language::Italian => ITALIAN_TESTDATA_DIRECTORY,
+        Language::Japanese => JAPANESE_TESTDATA_DIRECTORY,
+        Language::Kazakh => KAZAKH_TESTDATA_DIRECTORY,
+        Language::Korean => KOREAN_TESTDATA_DIRECTORY,
+        Language::Latin => LATIN_TESTDATA_DIRECTORY,
+        Language::Latvian => LATVIAN_TESTDATA_DIRECTORY,
+        Language::Lithuanian => LITHUANIAN_TESTDATA_DIRECTORY,
+        Language::Macedonian => MACEDONIAN_TESTDATA_DIRECTORY,
+        Language::Malay => MALAY_TESTDATA_DIRECTORY,
+        Language::Maori => MAORI_TESTDATA_DIRECTORY,
+        Language::Marathi => MARATHI_TESTDATA_DIRECTORY,
+        Language::Mongolian => MONGOLIAN_TESTDATA_DIRECTORY,
+        Language::Nynorsk => NYNORSK_TESTDATA_DIRECTORY,
+        Language::Persian => PERSIAN_TESTDATA_DIRECTORY,
+        Language::Polish => POLISH_TESTDATA_DIRECTORY,
+        Language::Portuguese => PORTUGUESE_TESTDATA_DIRECTORY,
+        Language::Punjabi => PUNJABI_TESTDATA_DIRECTORY,
+        Language::Romanian => ROMANIAN_TESTDATA_DIRECTORY,
+        Language::Russian => RUSSIAN_TESTDATA_DIRECTORY,
+        Language::Serbian => SERBIAN_TESTDATA_DIRECTORY,
+        Language::Shona => SHONA_TESTDATA_DIRECTORY,
+        Language::Slovak => SLOVAK_TESTDATA_DIRECTORY,
+        Language::Slovene => SLOVENE_TESTDATA_DIRECTORY,
+        Language::Somali => SOMALI_TESTDATA_DIRECTORY,
+        Language::Sotho => SOTHO_TESTDATA_DIRECTORY,
+        Language::Spanish => SPANISH_TESTDATA_DIRECTORY,
+        Language::Swahili => SWAHILI_TESTDATA_DIRECTORY,
+        Language::Swedish => SWEDISH_TESTDATA_DIRECTORY,
+        Language::Tagalog => TAGALOG_TESTDATA_DIRECTORY,
+        Language::Tamil => TAMIL_TESTDATA_DIRECTORY,
+        Language::Telugu => TELUGU_TESTDATA_DIRECTORY,
+        Language::Thai => THAI_TESTDATA_DIRECTORY,
+        Language::Tsonga => TSONGA_TESTDATA_DIRECTORY,
+        Language::Tswana => TSWANA_TESTDATA_DIRECTORY,
+        Language::Turkish => TURKISH_TESTDATA_DIRECTORY,
+        Language::Ukrainian => UKRAINIAN_TESTDATA_DIRECTORY,
+        Language::Urdu => URDU_TESTDATA_DIRECTORY,
+        Language::Vietnamese => VIETNAMESE_TESTDATA_DIRECTORY,
+        Language::Welsh => WELSH_TESTDATA_DIRECTORY,
+        Language::Xhosa => XHOSA_TESTDATA_DIRECTORY,
+        Language::Yoruba => YORUBA_TESTDATA_DIRECTORY,
+        Language::Zulu => ZULU_TESTDATA_DIRECTORY,
     }
 }

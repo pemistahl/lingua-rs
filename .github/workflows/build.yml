@@ -82,7 +82,7 @@ jobs:
           echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Install wasm-pack
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Enable Safari web driver
@@ -107,15 +107,15 @@ jobs:
         run: cargo test --target ${{ matrix.target }}
 
       - name: Run WASM integration tests on NodeJS
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --node
 
       - name: Run WASM integration tests in Chrome
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --headless --chrome
 
       - name: Run WASM integration tests in Firefox
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --headless --firefox
 
       - name: Run WASM integration tests in Safari

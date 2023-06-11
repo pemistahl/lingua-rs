@@ -12,5 +12,5 @@ Erroneously classified as
 
 >> Detection of 1000 sentences (average length: 92 chars)
 Accuracy: 99.6%
-Erroneously classified as English: 0.2%, Italian: 0.1%, Latin: 0.1%
+Erroneously classified as English: 0.2%, Latin: 0.1%, Portuguese: 0.1%
 

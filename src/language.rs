@@ -14,18 +14,31 @@
  * limitations under the License.
  */
 
-use crate::alphabet::Alphabet;
-use crate::isocode::{IsoCode639_1, IsoCode639_3};
-use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::fmt::{Debug, Display, Formatter, Result};
 use std::str::FromStr;
+
+use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
-use std::fmt::{Debug, Display, Formatter, Result};
+
+use crate::alphabet::Alphabet;
+use crate::isocode::{IsoCode639_1, IsoCode639_3};
 
 /// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
 #[derive(
-    Clone, Debug, Serialize, Deserialize, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd, EnumString,
+    Clone,
+    Copy,
+    Debug,
+    Serialize,
+    Deserialize,
+    EnumIter,
+    EnumString,
+    Eq,
+    PartialEq,
+    Hash,
+    Ord,
+    PartialOrd,
 )]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
@@ -259,7 +272,7 @@ pub enum Language {
 impl Display for Language {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let debug_repr = format!("{self:?}");
-        write!(f, "{}", debug_repr.to_lowercase())
+        write!(f, "{}", debug_repr)
     }
 }
 
@@ -1072,31 +1085,33 @@ impl Language {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::language::Language::*;
     use std::str::FromStr;
+
+    use crate::language::Language::*;
+
+    use super::*;
 
     #[test]
     fn assert_language_string_representation_is_correct() {
-        assert_eq!(Language::English.to_string(), "english");
+        assert_eq!(English.to_string(), "English");
     }
 
     #[test]
     fn test_language_serializer() {
-        let serialized = serde_json::to_string(&Language::English).unwrap();
+        let serialized = serde_json::to_string(&English).unwrap();
         assert_eq!(serialized, "\"ENGLISH\"");
     }
 
     #[test]
     fn test_language_deserializer() {
         let deserialized = serde_json::from_str::<Language>("\"ENGLISH\"").unwrap();
-        assert_eq!(deserialized, Language::English);
+        assert_eq!(deserialized, English);
     }
 
     #[test]
     fn test_from_str() {
         let language = Language::from_str("english").unwrap();
-        assert_eq!(language, Language::English);
+        assert_eq!(language, English);
     }
 
     #[test]

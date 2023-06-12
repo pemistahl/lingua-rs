@@ -15,12 +15,27 @@
  */
 
 use std::fmt::{Debug, Display, Formatter, Result};
-use strum_macros::EnumString;
+
+use serde::{Deserialize, Serialize};
+use strum_macros::{EnumIter, EnumString};
 
 /// This enum specifies the ISO 639-1 code representations for the supported languages.
 ///
 /// ISO 639 is a standardized nomenclature used to classify languages.
-#[derive(Debug, Eq, PartialEq, EnumString)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Serialize,
+    Deserialize,
+    EnumIter,
+    EnumString,
+    Eq,
+    PartialEq,
+    Hash,
+    Ord,
+    PartialOrd,
+)]
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
 pub enum IsoCode639_1 {
@@ -328,7 +343,20 @@ pub enum IsoCode639_1 {
 /// This enum specifies the ISO 639-3 code representations for the supported languages.
 ///
 /// ISO 639 is a standardized nomenclature used to classify languages.
-#[derive(Debug, Eq, PartialEq, EnumString)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Serialize,
+    Deserialize,
+    EnumIter,
+    EnumString,
+    Eq,
+    PartialEq,
+    Hash,
+    Ord,
+    PartialOrd,
+)]
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
 pub enum IsoCode639_3 {
@@ -649,8 +677,9 @@ impl Display for IsoCode639_3 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::str::FromStr;
+
+    use super::*;
 
     #[test]
     fn assert_iso_code_639_1_string_representation_is_correct() {

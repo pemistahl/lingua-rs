@@ -55,7 +55,7 @@ impl TrainingDataLanguageModel {
         );
 
         TrainingDataLanguageModel {
-            language: language.clone(),
+            language: *language,
             absolute_frequencies: Some(absolute_frequencies),
             relative_frequencies: Some(relative_frequencies),
         }
@@ -91,7 +91,7 @@ impl TrainingDataLanguageModel {
         }
 
         let model = JsonLanguageModel {
-            language: self.language.clone(),
+            language: self.language,
             ngrams: fractions_to_joined_ngrams,
         };
 

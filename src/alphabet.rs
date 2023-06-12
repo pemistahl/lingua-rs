@@ -59,7 +59,7 @@ impl Alphabet {
         for alphabet in Alphabet::iter() {
             let supported_languages = alphabet.supported_languages();
             if supported_languages.len() == 1 {
-                alphabets.insert(alphabet, supported_languages[0].clone());
+                alphabets.insert(alphabet, supported_languages[0]);
             }
         }
         alphabets

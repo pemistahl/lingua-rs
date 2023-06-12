@@ -36,6 +36,6 @@ impl DetectionResult {
     }
     /// Returns the detected language of the identified single-language substring.
     pub fn language(&self) -> Language {
-        self.language.clone()
+        self.language
     }
 }

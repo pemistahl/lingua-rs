@@ -185,7 +185,7 @@ impl LanguageDetector {
             &confidence_values.first().unwrap();
 
         if confidence_values.len() == 1 {
-            return Some(most_likely_language.clone());
+            return Some(*most_likely_language);
         }
 
         let (_, second_most_likely_language_probability) = &confidence_values.get(1).unwrap();
@@ -202,7 +202,7 @@ impl LanguageDetector {
             return None;
         }
 
-        Some(most_likely_language.clone())
+        Some(*most_likely_language)
     }
 
     /// Attempts to detect multiple languages in mixed-language text.
@@ -257,7 +257,7 @@ impl LanguageDetector {
                 start_index: 0,
                 end_index: text_str.chars().count(),
                 word_count: tokens_without_whitespace.len(),
-                language: languages.iter().next().unwrap().clone(),
+                language: *languages.iter().next().unwrap(),
             };
             results.push(result);
         } else {
@@ -274,11 +274,11 @@ impl LanguageDetector {
                 let language = self.detect_language_from_languages(word, &languages);
 
                 if i == 0 {
-                    current_language = language.clone();
+                    current_language = language;
                 }
 
                 if let Some(lang) = language {
-                    if let Some(current_lang) = current_language.clone() {
+                    if let Some(current_lang) = current_language {
                         if lang != current_lang {
                             let result = DetectionResult {
                                 start_index: current_start_index,
@@ -298,7 +298,7 @@ impl LanguageDetector {
                 word_count += 1;
 
                 if i == last_index {
-                    if let Some(current_lang) = current_language.clone() {
+                    if let Some(current_lang) = current_language {
                         let result = DetectionResult {
                             start_index: current_start_index,
                             end_index: current_end_index,
@@ -364,7 +364,7 @@ impl LanguageDetector {
         let mut values = Vec::with_capacity(languages.len());
 
         for language in languages {
-            values.push((language.clone(), 0.0));
+            values.push((*language, 0.0));
         }
 
         let text_str = text.into();
@@ -474,7 +474,7 @@ impl LanguageDetector {
 
                 for (alphabet, language) in self.one_language_alphabets.iter() {
                     if alphabet.matches_char(character) {
-                        self.increment_counter(&mut word_language_counts, language.clone());
+                        self.increment_counter(&mut word_language_counts, *language);
                         is_match = true;
                         break;
                     }
@@ -500,9 +500,7 @@ impl LanguageDetector {
                         self.languages_with_unique_characters
                             .iter()
                             .filter(|it| it.unique_characters().unwrap().contains(character))
-                            .for_each(|it| {
-                                self.increment_counter(&mut word_language_counts, it.clone())
-                            });
+                            .for_each(|it| self.increment_counter(&mut word_language_counts, *it));
                     }
                 }
             }
@@ -513,7 +511,7 @@ impl LanguageDetector {
                 let counted_languages = word_language_counts.keys().collect_vec();
                 let language = *counted_languages.first().unwrap();
                 if languages.contains(language) {
-                    self.increment_counter(&mut total_language_counts, Some(language.clone()));
+                    self.increment_counter(&mut total_language_counts, Some(*language));
                 } else {
                     self.increment_counter(&mut total_language_counts, None);
                 }
@@ -537,7 +535,7 @@ impl LanguageDetector {
                 if first_count > second_count && languages.contains(most_frequent_language) {
                     self.increment_counter(
                         &mut total_language_counts,
-                        Some(most_frequent_language.clone()),
+                        Some(*most_frequent_language),
                     );
                 } else {
                     self.increment_counter(&mut total_language_counts, None);
@@ -556,7 +554,7 @@ impl LanguageDetector {
         }
 
         if total_language_counts.len() == 1 {
-            return total_language_counts.iter().next().unwrap().0.clone();
+            return *total_language_counts.iter().next().unwrap().0;
         }
 
         if total_language_counts.len() == 2
@@ -572,7 +570,7 @@ impl LanguageDetector {
             .into_iter()
             .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
             .collect_vec();
-        let (most_frequent_language, first_count) = sorted_total_language_counts[0].clone();
+        let (most_frequent_language, first_count) = sorted_total_language_counts[0];
         let (_, second_count) = sorted_total_language_counts[1];
 
         if first_count == second_count {
@@ -647,7 +645,7 @@ impl LanguageDetector {
         let languages_subset = language_counts
             .into_iter()
             .filter(|(_, count)| (*count as f64) >= half_word_count)
-            .map(|(language, _)| language.clone())
+            .map(|(language, _)| *language)
             .collect::<HashSet<_>>();
 
         if !languages_subset.is_empty() {
@@ -760,7 +758,7 @@ impl LanguageDetector {
         for language in filtered_languages.iter() {
             let sum = self.compute_sum_of_ngram_probabilities(language, model, language_models);
             if sum < 0.0 {
-                probabilities.insert(language.clone(), sum);
+                probabilities.insert(*language, sum);
             }
         }
         probabilities
@@ -781,14 +779,13 @@ impl LanguageDetector {
         if denominator.is_zero() {
             // For very long inputs, only trigrams are used, so we safely access them at index 0.
             let probability_map = probability_maps[0];
-            let most_likely_language = probability_map
+            let most_likely_language = *probability_map
                 .iter()
                 .max_by(|(_, first_probability), (_, second_probability)| {
                     first_probability.total_cmp(second_probability)
                 })
                 .unwrap()
-                .0
-                .clone();
+                .0;
 
             update_confidence_values(values, most_likely_language, 1.0);
         } else {
@@ -857,7 +854,7 @@ impl LanguageDetector {
                     .unwrap_or(0.0);
 
                 if probability > 0.0 {
-                    self.increment_counter(&mut unigram_counts, language.clone());
+                    self.increment_counter(&mut unigram_counts, *language);
                 }
             }
         }
@@ -887,7 +884,7 @@ impl LanguageDetector {
             }
 
             if sum != 0.0 {
-                summed_up_probabilities.insert(language.clone(), sum.exp());
+                summed_up_probabilities.insert(*language, sum.exp());
             }
         }
 
@@ -904,10 +901,10 @@ impl LanguageDetector {
         if !models.contains_key(language) {
             drop(models);
             let mut models = language_models.write().unwrap();
-            let json = load_json(language.clone(), ngram_length);
+            let json = load_json(*language, ngram_length);
             if let Ok(json_content) = json {
                 models.insert(
-                    language.clone(),
+                    *language,
                     TrainingDataLanguageModel::from_json(&json_content),
                 );
             }
@@ -976,14 +973,14 @@ fn merge_adjacent_results(
                 start_index: results[i].start_index,
                 end_index: results[i + 1].end_index,
                 word_count: results[i + 1].word_count,
-                language: results[i + 1].language.clone(),
+                language: results[i + 1].language,
             };
         } else {
             results[i - 1] = DetectionResult {
                 start_index: results[i - 1].start_index,
                 end_index: results[i].end_index,
                 word_count: results[i - 1].word_count,
-                language: results[i - 1].language.clone(),
+                language: results[i - 1].language,
             };
         }
 

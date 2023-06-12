@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020-today Peter M. Stahl pemistahl@gmail.com
+ * Copyright © 2020-present Peter M. Stahl pemistahl@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+use std::fmt;
+use std::fmt::{Debug, Display};
+
 use fraction::GenericFraction;
 use itertools::Itertools;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::fmt;
-use std::fmt::{Debug, Display};
 
 #[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub(crate) struct Fraction {

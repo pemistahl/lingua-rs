@@ -1,3 +1,38 @@
+## Lingua 1.5.0 (released on 13 Jun 2023)
+
+### Features
+
+- The new method `LanguageDetector.detect_multiple_languages_of()` has been
+  introduced. It allows to detect multiple languages in mixed-language text. (#1)
+
+- The new method `LanguageDetectorBuilder.with_low_accuracy_mode()` has been
+  introduced. By activating it, detection accuracy for short text is reduced
+  in favor of a smaller memory footprint and faster detection performance. (#119)
+
+- The new method `LanguageDetector.compute_language_confidence()` has been
+  introduced. It allows to retrieve the confidence value for one specific
+  language only, given the input text. (#102)
+
+### Improvements
+
+- The computation of the confidence values has been revised and the softmax function
+  is now applied to the values, making them better comparable by behaving more like 
+  real probabilities. (#120)
+
+- The WASM API has been revised. Now it makes use of the same builder pattern
+  as the Rust API. (#122)
+
+- The language model files are now compressed with the Brotli algorithm which
+  reduces the file size by 15 %, on average. (#189)
+
+- Several performance optimizations have been applied which makes the library
+  nearly twice as fast as the previous version. Big thanks go out to @serega
+  and @koute for their help. (#82, #148, #177)
+
+- The enums `IsoCode639_1` and `IsoCode639_3` now implement some new traits
+  such as `Copy`, `Hash` and Serde's `Serialize` and `Deserialize`. The enum
+  `Language` now implements `Copy` as well. (#175)
+
 ## Lingua 1.4.0 (released on 08 Apr 2022)
 
 ### Features

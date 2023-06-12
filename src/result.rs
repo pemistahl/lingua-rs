@@ -18,6 +18,7 @@ use crate::language::Language;
 
 /// This struct describes a contiguous single-language
 /// text section within a possibly mixed-language text.
+#[derive(Copy, Clone, Debug)]
 pub struct DetectionResult {
     pub(crate) start_index: usize,
     pub(crate) end_index: usize,

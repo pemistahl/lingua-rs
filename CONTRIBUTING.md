@@ -45,17 +45,17 @@ model and test data directories.
 this library's fields of application. 
 
 [library build url]: https://github.com/pemistahl/lingua-rs#8-how-to-build
-[isocode639_1 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L26
-[isocode639_3 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L334
+[isocode639_1 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L40
+[isocode639_3 url]: https://github.com/pemistahl/lingua-rs/blob/main/src/isocode.rs#L361
 [wikipedia isocodes list]: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-[language url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L30
-[language method url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L777
-[alphabet url]: https://github.com/pemistahl/lingua-rs/blob/main/src/alphabet.rs#L25
-[chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/main/src/constant.rs#L44
+[language url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L43
+[language method url]: https://github.com/pemistahl/lingua-rs/blob/main/src/language.rs#L1017
+[alphabet url]: https://github.com/pemistahl/lingua-rs/blob/main/src/alphabet.rs#L27
+[chars to languages mapping url]: https://github.com/pemistahl/lingua-rs/blob/main/src/constant.rs#L42
 [language model files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L38
 [language models directory url]: https://github.com/pemistahl/lingua-rs/tree/main/language-models
-[test data files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L172
+[test data files writer url]: https://github.com/pemistahl/lingua-rs/blob/main/src/writer.rs#L170
 [test data directory url]: https://github.com/pemistahl/lingua-rs/tree/main/assets/test/language-testdata
 [cargo toml url]: https://github.com/pemistahl/lingua-rs/blob/main/Cargo.toml
-[json rs url]: https://github.com/pemistahl/lingua-rs/blob/main/src/json.rs#L262
+[json rs url]: https://github.com/pemistahl/lingua-rs/blob/main/src/json.rs#L188
 [accuracy reports url]: https://github.com/pemistahl/lingua-rs/blob/main/src/bin/accuracy_reports.rs

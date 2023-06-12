@@ -16,7 +16,7 @@
 
 //! ## 1. What does this library do?
 //!
-//! Its task is simple: It tells you which language some provided textual data is written in.
+//! Its task is simple: It tells you which language some text is written in.
 //! This is very useful as a preprocessing step for linguistic data in natural language
 //! processing applications such as text classification and spell checking.
 //! Other use cases, for instance, might include routing e-mails to the right geographically
@@ -29,20 +29,21 @@
 //! functionality of those systems or don't want to learn the ropes of those,
 //! a small flexible library comes in handy.
 //!
-//! So far, the only other comprehensive open source libraries in the Rust ecosystem for
-//! this task are [*CLD2*](https://github.com/emk/rust-cld2)
-//! and [*Whatlang*](https://github.com/greyblake/whatlang-rs).
-//! Unfortunately, they have two major drawbacks:
+//! So far, other comprehensive open source libraries in the Rust ecosystem for
+//! this task are [*CLD2*](https://github.com/emk/rust-cld2),
+//! [*Whatlang*](https://github.com/greyblake/whatlang-rs) and
+//! [*Whichlang*](https://github.com/quickwit-oss/whichlang).
+//! Unfortunately, most of them have two major drawbacks:
 //!
 //! 1. Detection only works with quite lengthy text fragments. For very short text snippets
 //! such as Twitter messages, it does not provide adequate results.
 //! 2. The more languages take part in the decision process, the less accurate are the
 //! detection results.
 //!
-//! *Lingua* aims at eliminating these problems. It nearly does not need any configuration and
+//! *Lingua* aims at eliminating these problems. She nearly does not need any configuration and
 //! yields pretty accurate results on both long and short text, even on single words and phrases.
-//! It draws on both rule-based and statistical methods but does not use any dictionaries of words.
-//! It does not need a connection to any external API or service either.
+//! She draws on both rule-based and statistical methods but does not use any dictionaries of words.
+//! She does not need a connection to any external API or service either.
 //! Once the library has been downloaded, it can be used completely offline.
 //!
 //! ## 3. Which languages are supported?
@@ -67,16 +68,13 @@
 //! each comprising ten thousand sentences. From each test corpus, a random unsorted subset of
 //! 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 //!
-//! Given the generated test data, I have compared the detection results of *Lingua*, *CLD2* and
-//! *Whatlang* running over the data of *Lingua's* supported 75 languages. Languages that are not
-//! supported by *Whatlang* are simply ignored for this library during the detection process.
+//! Given the generated test data, I have compared the detection results of *Lingua*, *CLD2*,
+//! *Whatlang* and *Whichlang* running over the data of *Lingua's* supported 75 languages.
+//! Languages that are not supported by the other classifiers are simply ignored for the
+//! respective library during the detection process.
 //!
-//! The [bar and box plots](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_PLOTS.md)
-//! show the measured accuracy values for all three performed tasks: Single word detection,
-//! word pair detection and sentence detection. *Lingua* clearly outperforms its contenders.
-//! Detailed statistics including mean, median and standard deviation values for each language
-//! and classifier are available in
-//! [tabular form](https://github.com/pemistahl/lingua-rs/blob/main/ACCURACY_TABLE.md) as well.
+//! The results of this comparison are available
+//! [here](https://github.com/pemistahl/lingua-rs#4-how-accurate-is-it).
 //!
 //! ## 5. Why is it better than other libraries?
 //!
@@ -100,7 +98,7 @@
 //!
 //! In general, it is always a good idea to restrict the set of languages to be considered in the
 //! classification process using the respective api methods. If you know beforehand that certain
-//! languages are never to occur in an input text, do not let those take part in the classifcation
+//! languages are never to occur in an input text, do not let those take part in the classification
 //! process. The filtering mechanism of the rule-based engine is quite good, however, filtering
 //! based on your own knowledge of the input text is always preferable.
 //!
@@ -110,17 +108,17 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.4.0"
+//! lingua = "1.5.0"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
-//! a total of approximately 100 MB. If your bandwidth or hard drive space is limited, or you simply
+//! a total of approximately 90 MB. If your bandwidth or hard drive space is limited, or you simply
 //! do not need all languages, you can specify a subset of the language models to be downloaded as
 //! separate features in your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.4.0", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.5.0", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?
@@ -152,7 +150,7 @@
 //! use lingua::Language::{English, French, German, Spanish};
 //!
 //! let detector = LanguageDetectorBuilder::from_languages(&[English, French, German, Spanish])
-//!     .with_minimum_relative_distance(0.9) // minimum: 0.00 maximum: 0.99 default: 0.00
+//!     .with_minimum_relative_distance(0.9)
 //!     .build();
 //! let detected_language = detector.detect_language_of("languages are awesome");
 //!
@@ -173,16 +171,16 @@
 //! These questions can be answered as well:
 //!
 //! ```
-//! use lingua::{LanguageDetectorBuilder, Language};
 //! use lingua::Language::{English, French, German, Spanish};
+//! use lingua::{Language, LanguageDetectorBuilder};
 //!
 //! let languages = vec![English, French, German, Spanish];
 //! let detector = LanguageDetectorBuilder::from_languages(&languages).build();
 //! let confidence_values: Vec<(Language, f64)> = detector
 //!     .compute_language_confidence_values("languages are awesome")
-//!     .iter()
+//!     .into_iter()
 //!     // Let's round the values to two decimal places for easier assertions
-//!     .map(|(language, value)| (language.clone(), (value * 100.0).round() / 100.0))
+//!     .map(|(language, confidence)| (language, (confidence * 100.0).round() / 100.0))
 //!     .collect();
 //!
 //! assert_eq!(
@@ -191,13 +189,30 @@
 //! );
 //! ```
 //!
-//! In the example above, a vector of two-element tuples is returned containing those languages
-//! which the calling instance of `LanguageDetector` has been built from, together with their
-//! confidence values. The entries are sorted by their confidence value in descending order.
-//! Each value is a probability between 0.0 and 1.0. The probabilities of all languages will
-//! sum to 1.0. If the language is unambiguously identified by the rule engine, the value
-//! 1.0 will always be returned for this language. The other languages will receive a value
-//! of 0.0.
+//! In the example above, a vector of two-element tuples is returned containing all possible
+//! languages sorted by their confidence value in descending order. Each value is a probability
+//! between 0.0 and 1.0. The probabilities of all languages will sum to 1.0. If the language is
+//! unambiguously identified by the rule engine, the value 1.0 will always be returned for this
+//! language. The other languages will receive a value of 0.0.
+//!
+//! There is also a method for returning the confidence value for one specific language only:
+//!
+//! ```
+//! use lingua::Language::{English, French, German, Spanish};
+//! use lingua::{Language, LanguageDetectorBuilder};
+//!
+//! let languages = vec![English, French, German, Spanish];
+//! let detector = LanguageDetectorBuilder::from_languages(&languages).build();
+//! let confidence = detector.compute_language_confidence("languages are awesome", French);
+//! let rounded_confidence = (confidence * 100.0).round() / 100.0;
+//!
+//! assert_eq!(rounded_confidence, 0.04);
+//! ```
+//!
+//! The value that this method computes is a number between 0.0 and 1.0.
+//! If the language is unambiguously identified by the rule engine, the value
+//! 1.0 will always be returned. If the given language is not supported by
+//! this detector instance, the value 0.0 will always be returned.
 //!
 //! ### 7.4 Eager loading versus lazy loading
 //!
@@ -216,7 +231,86 @@
 //! Multiple instances of `LanguageDetector` share the same language models in memory which are
 //! accessed asynchronously by the instances.
 //!
-//! ### 7.5 Methods to build the LanguageDetector
+//! ### 7.5 Low accuracy mode versus high accuracy mode
+//!
+//! *Lingua's* high detection accuracy comes at the cost of being noticeably slower
+//! than other language detectors. The large language models also consume significant
+//! amounts of memory. These requirements might not be feasible for systems running low
+//! on resources. If you want to classify mostly long texts or need to save resources,
+//! you can enable a *low accuracy mode* that loads only a small subset of the language
+//! models into memory:
+//!
+//! ```
+//! use lingua::LanguageDetectorBuilder;
+//!
+//! LanguageDetectorBuilder::from_all_languages().with_low_accuracy_mode().build();
+//! ```
+//!
+//! The downside of this approach is that detection accuracy for short texts consisting
+//! of less than 120 characters will drop significantly. However, detection accuracy for
+//! texts which are longer than 120 characters will remain mostly unaffected.
+//!
+//! In high accuracy mode (the default), the language detector consumes approximately
+//! 1,200 MB of memory if all language models are loaded. In low accuracy mode, memory
+//! consumption is reduced to approximately 90 MB. The goal is to further reduce memory
+//! consumption in later releases.
+//!
+//! An alternative for a smaller memory footprint and faster performance is to reduce the set
+//! of languages when building the language detector. In most cases, it is not advisable to
+//! build the detector from all supported languages. When you have knowledge about
+//! the texts you want to classify you can almost always rule out certain languages as impossible
+//! or unlikely to occur.
+//!
+//! ### 7.6 Detection of multiple languages in mixed-language texts
+//!
+//! In contrast to most other language detectors, *Lingua* is able to detect multiple languages
+//! in mixed-language texts. This feature can yield quite reasonable results, but it is still
+//! in an experimental state and therefore the detection result is highly dependent on the input
+//! text. It works best in high-accuracy mode with multiple long words for each language.
+//! The shorter the phrases and their words are, the less accurate are the results. Reducing the
+//! set of languages when building the language detector can also improve accuracy for this task
+//! if the languages occurring in the text are equal to the languages supported by the respective
+//! language detector instance.
+//!
+//! ```
+//! use lingua::DetectionResult;
+//! use lingua::Language::{English, French, German};
+//! use lingua::LanguageDetectorBuilder;
+//!
+//! let languages = vec![English, French, German];
+//! let detector = LanguageDetectorBuilder::from_languages(&languages).build();
+//! let sentence = "Parlez-vous français? \
+//!     Ich spreche Französisch nur ein bisschen. \
+//!     A little bit is better than nothing.";
+//!
+//! let results: Vec<DetectionResult> = detector.detect_multiple_languages_of(sentence);
+//!
+//! if let [first, second, third] = &results[..] {
+//!     assert_eq!(first.language(), French);
+//!     assert_eq!(
+//!         &sentence[first.start_index()..first.end_index()],
+//!         "Parlez-vous français? "
+//!     );
+//!
+//!     assert_eq!(second.language(), German);
+//!     assert_eq!(
+//!         &sentence[second.start_index()..second.end_index()],
+//!         "Ich spreche Französisch nur ein bisschen. "
+//!     );
+//!
+//!     assert_eq!(third.language(), English);
+//!     assert_eq!(
+//!         &sentence[third.start_index()..third.end_index()],
+//!         "A little bit is better than nothing."
+//!     );
+//! }
+//! ```
+//!
+//! In the example above, a vector of [DetectionResult] is returned. Each entry in the vector
+//! describes a contiguous single-language text section, providing start and end indices of the
+//! respective substring.
+//!
+//! ### 7.7 Methods to build the LanguageDetector
 //!
 //! There might be classification tasks where you know beforehand that your language data is
 //! definitely not written in Latin, for instance (what a surprise :-). The detection accuracy can
@@ -226,9 +320,7 @@
 //! ```
 //! use lingua::{LanguageDetectorBuilder, Language, IsoCode639_1, IsoCode639_3};
 //!
-//! // Including all languages available in the library
-//! // consumes approximately 2GB of memory and might
-//! // lead to slow runtime performance.
+//! // Include all languages available in the library.
 //! LanguageDetectorBuilder::from_all_languages();
 //!
 //! // Include only languages that are not yet extinct (= currently excludes Latin).
@@ -249,6 +341,34 @@
 //! // Select languages by ISO 639-3 code.
 //! LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::ENG, IsoCode639_3::DEU]);
 //! ```
+//!
+//! ## 8. WebAssembly support
+//!
+//! This library can be compiled to [WebAssembly (WASM)](https://webassembly.org) which allows to
+//! use *Lingua* in any JavaScript-based project, be it in the browser or in the back end running on
+//! [Node.js](https://nodejs.org).
+//!
+//! The easiest way to compile is to use [`wasm-pack`](https://rustwasm.github.io/wasm-pack).
+//! After the installation, you can, for instance, build the library with the web target so that it
+//! can be directly used in the browser:
+//!
+//! ```shell
+//! wasm-pack build --target web
+//! ```
+//!
+//! By default, all 75 supported languages are included in the compiled wasm file which has a size
+//! of 74 MB, approximately. If you only need a subset of certain languages, you can tell `wasm-pack`
+//! which ones to include:
+//!
+//! ```shell
+//! wasm-pack build --target web -- --no-default-features --features "french,italian,spanish"
+//! ```
+//!
+//! The output of `wasm-pack` will be hosted in a
+//! [separate repository](https://github.com/pemistahl/lingua-js) which allows to add further
+//! JavaScript-related configuration, tests and documentation. *Lingua* will then be added to the
+//! [npm registry](https://www.npmjs.com) as well, allowing for an easy download and installation
+//! within every JavaScript or TypeScript project.
 
 #[macro_use]
 extern crate maplit;

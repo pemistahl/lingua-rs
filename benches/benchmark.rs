@@ -72,7 +72,7 @@ fn benchmark_preloading_all_language_models(c: &mut Criterion) {
             let detector = LanguageDetectorBuilder::from_all_languages()
                 .with_preloaded_language_models()
                 .build();
-            detector.clear_language_models();
+            detector.unload_language_models();
         })
     });
 }

@@ -19,7 +19,7 @@ use std::hint::black_box;
 use cld2::{detect_language as cld2_detect_language, Format};
 use criterion::{criterion_group, criterion_main, Criterion};
 use rayon::prelude::*;
-use whatlang::detect_lang as whatlang_detect_language;
+use whatlang::{Detector, Lang};
 use whichlang::detect_language as whichlang_detect_language;
 
 use lingua::{Language, LanguageDetectorBuilder};
@@ -98,7 +98,7 @@ fn benchmark_lingua(c: &mut Criterion) {
             .with_preloaded_language_models()
             .build();
 
-    let sentences = SENTENCES.repeat(250);
+    let sentences = SENTENCES.repeat(125);
 
     let mut group1 = c.benchmark_group("Lingua with all languages in single thread");
     group1.bench_function("low accuracy mode", |bencher| {
@@ -174,7 +174,7 @@ fn benchmark_lingua(c: &mut Criterion) {
 }
 
 fn benchmark_whichlang(c: &mut Criterion) {
-    let sentences = SENTENCES.repeat(250);
+    let sentences = SENTENCES.repeat(125);
     let mut group = c.benchmark_group("Whichlang");
     group.bench_function("in single thread", |bencher| {
         bencher.iter(|| {
@@ -193,26 +193,65 @@ fn benchmark_whichlang(c: &mut Criterion) {
 }
 
 fn benchmark_whatlang(c: &mut Criterion) {
-    let sentences = SENTENCES.repeat(250);
-    let mut group = c.benchmark_group("Whatlang");
-    group.bench_function("in single thread", |bencher| {
+    let all_languages_detector = Detector::new();
+    let common_languages_detector = Detector::with_allowlist(vec![
+        Lang::Ara,
+        Lang::Cmn,
+        Lang::Deu,
+        Lang::Eng,
+        Lang::Fra,
+        Lang::Hin,
+        Lang::Ita,
+        Lang::Jpn,
+        Lang::Kor,
+        Lang::Nld,
+        Lang::Por,
+        Lang::Rus,
+        Lang::Spa,
+        Lang::Swe,
+        Lang::Tur,
+        Lang::Vie,
+    ]);
+
+    let sentences = SENTENCES.repeat(125);
+
+    let mut group1 = c.benchmark_group("Whatlang with all languages");
+    group1.bench_function("in single thread", |bencher| {
         bencher.iter(|| {
             sentences.iter().for_each(|sentence| {
-                black_box(whatlang_detect_language(sentence));
+                black_box(all_languages_detector.detect_lang(sentence));
             });
         });
     });
-    group.bench_function("in multiple threads", |bencher| {
+    group1.bench_function("in multiple threads", |bencher| {
         bencher.iter(|| {
             sentences.par_iter().for_each(|sentence| {
-                black_box(whatlang_detect_language(sentence));
+                black_box(all_languages_detector.detect_lang(sentence));
             });
         });
     });
+    group1.finish();
+
+    let mut group2 = c.benchmark_group("Whatlang with common languages");
+    group2.bench_function("in single thread", |bencher| {
+        bencher.iter(|| {
+            sentences.iter().for_each(|sentence| {
+                black_box(common_languages_detector.detect_lang(sentence));
+            });
+        });
+    });
+    group2.bench_function("in multiple threads", |bencher| {
+        bencher.iter(|| {
+            sentences.par_iter().for_each(|sentence| {
+                black_box(common_languages_detector.detect_lang(sentence));
+            });
+        });
+    });
+    group2.finish();
 }
 
 fn benchmark_cld2(c: &mut Criterion) {
-    let sentences = SENTENCES.repeat(250);
+    let sentences = SENTENCES.repeat(125);
     let mut group = c.benchmark_group("CLD2");
     group.bench_function("in single thread", |bencher| {
         bencher.iter(|| {

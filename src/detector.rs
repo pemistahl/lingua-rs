@@ -21,6 +21,7 @@ use std::str::FromStr;
 use std::sync::RwLock;
 
 use ahash::AHashMap;
+use compact_str::CompactString;
 use fraction::Zero;
 use itertools::Itertools;
 use once_cell::sync::Lazy;
@@ -38,9 +39,9 @@ use crate::language::Language;
 use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
 use crate::result::DetectionResult;
 
-type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, AHashMap<String, f64>>>>;
-type StaticLanguageModelMap = &'static RwLock<HashMap<Language, AHashMap<String, f64>>>;
-type LanguageModelArray<'a> = [Option<&'a HashMap<Language, AHashMap<String, f64>>>; 5];
+type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, AHashMap<CompactString, f64>>>>;
+type StaticLanguageModelMap = &'static RwLock<HashMap<Language, AHashMap<CompactString, f64>>>;
+type LanguageModelArray<'a> = [Option<&'a HashMap<Language, AHashMap<CompactString, f64>>>; 5];
 
 static UNIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
 static BIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
@@ -165,6 +166,23 @@ impl LanguageDetector {
 
     /// Detects the language of given input text.
     /// If the language cannot be reliably detected, [None] is returned.
+    ///
+    /// ```
+    /// use lingua::Language::{English, French, German, Spanish};
+    /// use lingua::LanguageDetectorBuilder;
+    ///
+    /// let detector = LanguageDetectorBuilder::from_languages(&[
+    ///     English,
+    ///     French,
+    ///     German,
+    ///     Spanish
+    /// ])
+    /// .build();
+    ///
+    /// let detected_language = detector.detect_language_of("languages are awesome");
+    ///
+    /// assert_eq!(detected_language, Some(English));
+    /// ```
     pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {
         self.detect_language_from_languages(text, &self.languages)
     }
@@ -213,6 +231,38 @@ impl LanguageDetector {
     /// single-language text section as identified by the library. Each entry consists
     /// of the identified language, a start index and an end index. The indices denote
     /// the substring that has been identified as a contiguous single-language text section.
+    ///
+    /// ```
+    /// use lingua::Language::{English, French, German};
+    /// use lingua::LanguageDetectorBuilder;
+    ///
+    /// let detector = LanguageDetectorBuilder::from_languages(&[English, French, German]).build();
+    /// let sentence = "Parlez-vous français? \
+    ///     Ich spreche Französisch nur ein bisschen. \
+    ///     A little bit is better than nothing.";
+    ///
+    /// let results = detector.detect_multiple_languages_of(sentence);
+    ///
+    /// if let [first, second, third] = &results[..] {
+    ///     assert_eq!(first.language(), French);
+    ///     assert_eq!(
+    ///         &sentence[first.start_index()..first.end_index()],
+    ///         "Parlez-vous français? "
+    ///     );
+    ///
+    ///     assert_eq!(second.language(), German);
+    ///     assert_eq!(
+    ///         &sentence[second.start_index()..second.end_index()],
+    ///         "Ich spreche Französisch nur ein bisschen. "
+    ///     );
+    ///
+    ///     assert_eq!(third.language(), English);
+    ///     assert_eq!(
+    ///         &sentence[third.start_index()..third.end_index()],
+    ///         "A little bit is better than nothing."
+    ///     );
+    /// }
+    /// ```
     pub fn detect_multiple_languages_of<T: Into<String>>(&self, text: T) -> Vec<DetectionResult> {
         let text_str = text.into();
 
@@ -349,6 +399,35 @@ impl LanguageDetector {
     /// sum to 1.0. If the language is unambiguously identified by the rule engine, the value
     /// 1.0 will always be returned for this language. The other languages will receive a value
     /// of 0.0.
+    ///
+    /// ```
+    /// use lingua::Language::{English, French, German, Spanish};
+    /// use lingua::LanguageDetectorBuilder;
+    ///
+    /// let detector = LanguageDetectorBuilder::from_languages(&[
+    ///     English,
+    ///     French,
+    ///     German,
+    ///     Spanish
+    /// ])
+    /// .build();
+    ///
+    /// let confidence_values = detector
+    ///     .compute_language_confidence_values("languages are awesome")
+    ///     .into_iter()
+    ///     .map(|(language, confidence)| (language, (confidence * 100.0).round() / 100.0))
+    ///     .collect::<Vec<_>>();
+    ///
+    /// assert_eq!(
+    ///     confidence_values,
+    ///     vec![
+    ///         (English, 0.93),
+    ///         (French, 0.04),
+    ///         (German, 0.02),
+    ///         (Spanish, 0.01)
+    ///     ]
+    /// );
+    /// ```
     pub fn compute_language_confidence_values<T: Into<String>>(
         &self,
         text: T,
@@ -448,6 +527,24 @@ impl LanguageDetector {
     /// unambiguously identified by the rule engine, the value 1.0 will always be returned.
     /// If the given language is not supported by this detector instance, the value 0.0 will
     /// always be returned.
+    ///
+    /// ```
+    /// use lingua::Language::{English, French, German, Spanish};
+    /// use lingua::LanguageDetectorBuilder;
+    ///
+    /// let detector = LanguageDetectorBuilder::from_languages(&[
+    ///     English,
+    ///     French,
+    ///     German,
+    ///     Spanish
+    /// ])
+    /// .build();
+    ///
+    /// let confidence = detector.compute_language_confidence("languages are awesome", French);
+    /// let rounded_confidence = (confidence * 100.0).round() / 100.0;
+    ///
+    /// assert_eq!(rounded_confidence, 0.04);
+    /// ```
     pub fn compute_language_confidence<T: Into<String>>(&self, text: T, language: Language) -> f64 {
         let confidence_values = self.compute_language_confidence_values(text);
         for (lang, confidence_value) in confidence_values {
@@ -838,7 +935,7 @@ impl LanguageDetector {
         &self,
         unigram_model: &TestDataLanguageModel,
         filtered_languages: &HashSet<Language>,
-        language_models: &HashMap<Language, AHashMap<String, f64>>,
+        language_models: &HashMap<Language, AHashMap<CompactString, f64>>,
     ) -> HashMap<Language, u32> {
         let mut unigram_counts = HashMap::new();
         for language in filtered_languages.iter() {
@@ -1013,8 +1110,10 @@ mod tests {
     // HELPER FUNCTIONS
     // ##############################
 
-    fn create_language_model_map(data: HashMap<&'static str, f64>) -> AHashMap<String, f64> {
-        data.iter().map(|(&k, &v)| (k.to_string(), v)).collect()
+    fn create_language_model_map(data: HashMap<&'static str, f64>) -> AHashMap<CompactString, f64> {
+        data.iter()
+            .map(|(&k, &v)| (CompactString::new(k), v))
+            .collect()
     }
 
     fn round_to_two_decimal_places(value: f64) -> f64 {
@@ -1026,7 +1125,7 @@ mod tests {
     // ##############################
 
     #[fixture]
-    fn unigram_language_model_for_english() -> AHashMap<String, f64> {
+    fn unigram_language_model_for_english() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "a" => 0.01,
             "l" => 0.02,
@@ -1039,7 +1138,7 @@ mod tests {
     }
 
     #[fixture]
-    fn bigram_language_model_for_english() -> AHashMap<String, f64> {
+    fn bigram_language_model_for_english() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "al" => 0.11,
             "lt" => 0.12,
@@ -1052,7 +1151,7 @@ mod tests {
     }
 
     #[fixture]
-    fn trigram_language_model_for_english() -> AHashMap<String, f64> {
+    fn trigram_language_model_for_english() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "alt" => 0.19,
             "lte" => 0.2,
@@ -1065,7 +1164,7 @@ mod tests {
     }
 
     #[fixture]
-    fn quadrigram_language_model_for_english() -> AHashMap<String, f64> {
+    fn quadrigram_language_model_for_english() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "alte" => 0.25,
             "lter" => 0.26,
@@ -1076,7 +1175,7 @@ mod tests {
     }
 
     #[fixture]
-    fn fivegram_language_model_for_english() -> AHashMap<String, f64> {
+    fn fivegram_language_model_for_english() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "alter" => 0.29,
             // unknown fivegrams
@@ -1089,7 +1188,7 @@ mod tests {
     // ##############################
 
     #[fixture]
-    fn unigram_language_model_for_german() -> AHashMap<String, f64> {
+    fn unigram_language_model_for_german() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "a" => 0.06,
             "l" => 0.07,
@@ -1102,7 +1201,7 @@ mod tests {
     }
 
     #[fixture]
-    fn bigram_language_model_for_german() -> AHashMap<String, f64> {
+    fn bigram_language_model_for_german() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "al" => 0.15,
             "lt" => 0.16,
@@ -1114,7 +1213,7 @@ mod tests {
     }
 
     #[fixture]
-    fn trigram_language_model_for_german() -> AHashMap<String, f64> {
+    fn trigram_language_model_for_german() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "alt" => 0.22,
             "lte" => 0.23,
@@ -1125,7 +1224,7 @@ mod tests {
     }
 
     #[fixture]
-    fn quadrigram_language_model_for_german() -> AHashMap<String, f64> {
+    fn quadrigram_language_model_for_german() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!(
             "alte" => 0.27,
             "lter" => 0.28,
@@ -1135,7 +1234,7 @@ mod tests {
     }
 
     #[fixture]
-    fn fivegram_language_model_for_german() -> AHashMap<String, f64> {
+    fn fivegram_language_model_for_german() -> AHashMap<CompactString, f64> {
         create_language_model_map(hashmap!("alter" => 0.3))
     }
 
@@ -1145,11 +1244,12 @@ mod tests {
 
     #[fixture]
     fn unigram_language_models(
-        unigram_language_model_for_english: AHashMap<String, f64>,
-        unigram_language_model_for_german: AHashMap<String, f64>,
+        unigram_language_model_for_english: AHashMap<CompactString, f64>,
+        unigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static UNIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
-            OnceCell::new();
+        static UNIGRAM_MODELS_FIXTURE: OnceCell<
+            RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
+        > = OnceCell::new();
         UNIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => unigram_language_model_for_english,
@@ -1160,11 +1260,12 @@ mod tests {
 
     #[fixture]
     fn bigram_language_models(
-        bigram_language_model_for_english: AHashMap<String, f64>,
-        bigram_language_model_for_german: AHashMap<String, f64>,
+        bigram_language_model_for_english: AHashMap<CompactString, f64>,
+        bigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static BIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
-            OnceCell::new();
+        static BIGRAM_MODELS_FIXTURE: OnceCell<
+            RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
+        > = OnceCell::new();
         BIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => bigram_language_model_for_english,
@@ -1175,11 +1276,12 @@ mod tests {
 
     #[fixture]
     fn trigram_language_models(
-        trigram_language_model_for_english: AHashMap<String, f64>,
-        trigram_language_model_for_german: AHashMap<String, f64>,
+        trigram_language_model_for_english: AHashMap<CompactString, f64>,
+        trigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static TRIGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
-            OnceCell::new();
+        static TRIGRAM_MODELS_FIXTURE: OnceCell<
+            RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
+        > = OnceCell::new();
         TRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => trigram_language_model_for_english,
@@ -1190,11 +1292,11 @@ mod tests {
 
     #[fixture]
     fn quadrigram_language_models(
-        quadrigram_language_model_for_english: AHashMap<String, f64>,
-        quadrigram_language_model_for_german: AHashMap<String, f64>,
+        quadrigram_language_model_for_english: AHashMap<CompactString, f64>,
+        quadrigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
         static QUADRIGRAM_MODELS_FIXTURE: OnceCell<
-            RwLock<HashMap<Language, AHashMap<String, f64>>>,
+            RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
         > = OnceCell::new();
         QUADRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
@@ -1206,11 +1308,12 @@ mod tests {
 
     #[fixture]
     fn fivegram_language_models(
-        fivegram_language_model_for_english: AHashMap<String, f64>,
-        fivegram_language_model_for_german: AHashMap<String, f64>,
+        fivegram_language_model_for_english: AHashMap<CompactString, f64>,
+        fivegram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static FIVEGRAM_MODELS_FIXTURE: OnceCell<RwLock<HashMap<Language, AHashMap<String, f64>>>> =
-            OnceCell::new();
+        static FIVEGRAM_MODELS_FIXTURE: OnceCell<
+            RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
+        > = OnceCell::new();
         FIVEGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => fivegram_language_model_for_english,

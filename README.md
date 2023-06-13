@@ -2654,10 +2654,10 @@ Whichlang has the shortest processing time, Lingua the longest.
 
 |                                                  | **Single Thread** | **Multiple Threads** |
 |--------------------------------------------------|-------------------|----------------------|
-| _Lingua / high accuracy mode / all languages_    | 756.18 ms         | 112.54 ms            |
-| _Lingua / high accuracy mode / common languages_ | 336.86 ms         | 34.351 ms            |
-| _Lingua / low accuracy mode / all languages_     | 370.87 ms         | 49.002 ms            |
-| _Lingua / low accuracy mode / common languages_  | 186.89 ms         | 22.897 ms            |
+| _Lingua / high accuracy mode / all languages_    | 622.00 ms         | 96.648 ms            |
+| _Lingua / high accuracy mode / common languages_ | 333.31 ms         | 37.347 ms            |
+| _Lingua / low accuracy mode / all languages_     | 373.15 ms         | 48.182 ms            |
+| _Lingua / low accuracy mode / common languages_  | 180.54 ms         | 24.550 ms            |
 | _Whichlang_                                      | 2.0458 ms         | 351.03 µs            |
 | _Whatlang / all languages_                       | 113.08 ms         | 12.992 ms            |
 | _Whatlang / common languages_                    | 47.742 ms         | 5.6070 ms            |
@@ -2831,11 +2831,17 @@ value 1.0 will always be returned for this language. The other languages will re
 There is also a method for returning the confidence value for one specific language only:
 
 ```rust
-let confidence = detector.compute_language_confidence("languages are awesome", French);
-println!("{:.2}", confidence);
+use lingua::Language::{English, French, German, Spanish};
+use lingua::LanguageDetectorBuilder;
 
-// Output:
-// 0.04
+fn main() {
+    let languages = vec![English, French, German, Spanish];
+    let detector = LanguageDetectorBuilder::from_languages(&languages).build();
+    let confidence = detector.compute_language_confidence("languages are awesome", French);
+    let rounded_confidence = (confidence * 100.0).round() / 100.0;
+
+    assert_eq!(rounded_confidence, 0.04);
+}
 ```
 
 The value that this method computes is a number between 0.0 and 1.0.
@@ -2876,8 +2882,8 @@ of less than 120 characters will drop significantly. However, detection accuracy
 texts which are longer than 120 characters will remain mostly unaffected.
 
 In high accuracy mode (the default), the language detector consumes approximately
-1,200 MB of memory if all language models are loaded. In low accuracy mode, memory
-consumption is reduced to approximately 90 MB. The goal is to further reduce memory
+970 MB of memory if all language models are loaded. In low accuracy mode, memory
+consumption is reduced to approximately 72 MB. The goal is to further reduce memory
 consumption in later releases.
 
 An alternative for a smaller memory footprint and faster performance is to reduce the set

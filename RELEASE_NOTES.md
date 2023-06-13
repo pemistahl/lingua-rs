@@ -25,6 +25,9 @@
 - The language model files are now compressed with the Brotli algorithm which
   reduces the file size by 15 %, on average. (#189)
 
+- The language model ngrams are now stored in a `CompactString` type which 
+  reduces the amount of consumed memory by 20 %. (#198) 
+
 - Several performance optimizations have been applied which makes the library
   nearly twice as fast as the previous version. Big thanks go out to @serega
   and @koute for their help. (#82, #148, #177)

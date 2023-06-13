@@ -199,7 +199,7 @@
 //!
 //! ```
 //! use lingua::Language::{English, French, German, Spanish};
-//! use lingua::{Language, LanguageDetectorBuilder};
+//! use lingua::LanguageDetectorBuilder;
 //!
 //! let languages = vec![English, French, German, Spanish];
 //! let detector = LanguageDetectorBuilder::from_languages(&languages).build();

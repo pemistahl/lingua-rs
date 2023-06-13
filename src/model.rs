@@ -17,6 +17,7 @@
 use std::collections::{BTreeMap, HashMap};
 
 use ahash::AHashMap;
+use compact_str::CompactString;
 use itertools::Itertools;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -61,14 +62,14 @@ impl TrainingDataLanguageModel {
         }
     }
 
-    pub(crate) fn from_json(json: &str) -> AHashMap<String, f64> {
+    pub(crate) fn from_json(json: &str) -> AHashMap<CompactString, f64> {
         let json_language_model = serde_json::from_str::<JsonLanguageModel>(json).unwrap();
         let mut json_relative_frequencies = AHashMap::new();
 
         for (fraction, ngrams) in json_language_model.ngrams {
             let floating_point_value = fraction.to_f64();
             for ngram in ngrams.split(' ') {
-                json_relative_frequencies.insert(ngram.to_string(), floating_point_value);
+                json_relative_frequencies.insert(CompactString::new(ngram), floating_point_value);
             }
         }
 
@@ -282,10 +283,12 @@ mod tests {
             ))
         }
 
-        fn expected_unigram_json_relative_frequencies() -> AHashMap<String, f64> {
+        fn expected_unigram_json_relative_frequencies() -> AHashMap<CompactString, f64> {
             expected_unigram_relative_frequencies()
                 .iter()
-                .map(|(ngram, fraction)| (ngram.value.clone(), fraction.to_f64()))
+                .map(|(ngram, fraction)| {
+                    (CompactString::new(ngram.value.clone()), fraction.to_f64())
+                })
                 .collect()
         }
 

@@ -6,7 +6,7 @@
   [![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
   [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
   [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
-  [![dependency status](https://deps.rs/crate/lingua/1.4.0/status.svg)](https://deps.rs/crate/lingua/1.4.0)
+  [![dependency status](https://deps.rs/crate/lingua/1.5.0/status.svg)](https://deps.rs/crate/lingua/1.5.0)
   [![downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
   [![crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
   [![lib.rs](https://img.shields.io/badge/lib.rs-v1.5.0-blue)](https://lib.rs/crates/lingua)

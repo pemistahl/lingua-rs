@@ -129,7 +129,7 @@ jobs:
         uses: FreeMasen/tarpaulin-action@9f7e03f06fea8f374c85a95c2ecff6a4d5805845
         with:
           version: "0.22.0"
-          args: '--lib --ignore-config --ignore-panics --ignore-tests --exclude-files src/script.rs src/wasm.rs'
+          args: '--lib --ignore-config --ignore-panics --ignore-tests --exclude-files src/script.rs src/wasm.rs src/bin/accuracy_reports.rs'
 
       - name: Upload code coverage report to Codecov
         if: ${{ matrix.os == 'ubuntu-latest' && github.event_name == 'push' }}

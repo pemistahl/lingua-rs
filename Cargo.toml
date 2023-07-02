@@ -53,7 +53,7 @@ required-features = ["benchmark"]
 
 [dependencies]
 brotli = "3.3.4"
-compact_str = "0.7.0"
+compact_str = "0.7.1"
 fraction = "0.13.1"
 include_dir = "0.7.3"
 itertools = "0.10.5"

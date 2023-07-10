@@ -276,7 +276,7 @@ dependencies = [
  "oorandom",
  "plotters",
  "rayon",
- "regex 1.8.4",
+ "regex 1.9.1",
  "serde",
  "serde_derive",
  "serde_json",
@@ -768,7 +768,7 @@ dependencies = [
  "maplit",
  "once_cell",
  "rayon",
- "regex 1.8.4",
+ "regex 1.9.1",
  "rstest",
  "serde",
  "serde-wasm-bindgen",
@@ -1558,13 +1558,25 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.8.4"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0ab3ca65655bb1e41f2a8c8cd662eb4fb035e67c3f78da1d61dffe89d07300f"
+checksum = "b2eae68fc220f7cf2532e4494aded17545fce192d59cd996e0fe7887f4ceb575"
 dependencies = [
  "aho-corasick 1.0.2",
  "memchr 2.5.0",
- "regex-syntax 0.7.2",
+ "regex-automata",
+ "regex-syntax 0.7.3",
+]
+
+[[package]]
+name = "regex-automata"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83d3daa6976cffb758ec878f108ba0e062a45b2d6ca3a2cca965338855476caf"
+dependencies = [
+ "aho-corasick 1.0.2",
+ "memchr 2.5.0",
+ "regex-syntax 0.7.3",
 ]
 
 [[package]]
@@ -1575,9 +1587,9 @@ checksum = "f9ec002c35e86791825ed294b50008eea9ddfc8def4420124fbc6b08db834957"
 
 [[package]]
 name = "regex-syntax"
-version = "0.7.2"
+version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "436b050e76ed2903236f032a59761c1eb99e1b0aead2c257922771dab1fc8c78"
+checksum = "2ab07dc67230e4a4718e70fd5c20055a4334b121f1f9db8fe63ef39ce9b8c846"
 
 [[package]]
 name = "relative-path"
@@ -1607,7 +1619,7 @@ dependencies = [
  "glob",
  "proc-macro2",
  "quote",
- "regex 1.8.4",
+ "regex 1.9.1",
  "relative-path",
  "rustc_version",
  "syn",
@@ -1829,7 +1841,7 @@ checksum = "38397a8cdb017cfeb48bf6c154d6de975ac69ffeed35980fde199d2ee0842042"
 dependencies = [
  "joinery",
  "lazy_static 1.4.0",
- "regex 1.8.4",
+ "regex 1.9.1",
 ]
 
 [[package]]

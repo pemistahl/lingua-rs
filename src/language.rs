@@ -267,6 +267,15 @@ pub enum Language {
 
     #[cfg(feature = "zulu")]
     Zulu,
+
+    #[cfg(feature = "amharic")]
+    Amharic,
+
+    #[cfg(feature = "burmese")]
+    Burmese,
+
+    #[cfg(feature = "chechen")]
+    Chechen,
 }
 
 impl Display for Language {
@@ -555,6 +564,15 @@ impl Language {
 
             #[cfg(feature = "zulu")]
             Language::Zulu => IsoCode639_1::ZU,
+
+            #[cfg(feature = "amharic")]
+            Language::Amharic => IsoCode639_1::AM,
+
+            #[cfg(feature = "chechen")]
+            Language::Chechen => IsoCode639_1::CE,
+
+            #[cfg(feature = "burmese")]
+            Language::Burmese => IsoCode639_1::MY,
         }
     }
 
@@ -784,6 +802,15 @@ impl Language {
 
             #[cfg(feature = "zulu")]
             Language::Zulu => IsoCode639_3::ZUL,
+
+            #[cfg(feature = "amharic")]
+            Language::Amharic => IsoCode639_3::AMH,
+
+            #[cfg(feature = "chechen")]
+            Language::Chechen => IsoCode639_3::CHE,
+
+            #[cfg(feature = "burmese")]
+            Language::Burmese => IsoCode639_3::MYA,
         }
     }
 
@@ -1013,6 +1040,15 @@ impl Language {
 
             #[cfg(feature = "thai")]
             Language::Thai => hashset!(Alphabet::Thai),
+
+            #[cfg(feature = "amharic")]
+            Language::Amharic => hashset!(Alphabet::Ethiopic),
+
+            #[cfg(feature = "chechen")]
+            Language::Chechen => hashset!(Alphabet::Cyrillic),
+
+            #[cfg(feature = "burmese")]
+            Language::Burmese => hashset!(Alphabet::Myanmar),
         }
     }
 

@@ -15,6 +15,7 @@
 /pkg/
 /target/
 **/*.rs.bk
+src/lingua_notes.ipynb
 
 .idea
 .project

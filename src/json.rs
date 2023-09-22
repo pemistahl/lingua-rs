@@ -169,6 +169,14 @@ use lingua_xhosa_language_model::XHOSA_MODELS_DIRECTORY;
 use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
 #[cfg(feature = "zulu")]
 use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
+#[cfg(feature = "amharic")]
+use lingua_amharic_language_model::AMHARIC_MODELS_DIRECTORY;
+#[cfg(feature = "burmese")]
+use lingua_burmese_language_model::BURMESE_MODELS_DIRECTORY;
+#[cfg(feature = "chechen")]
+use lingua_chechen_language_model::CHECHEN_MODELS_DIRECTORY;
+
+
 
 use crate::ngram::Ngram;
 use crate::Language;
@@ -411,6 +419,15 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "zulu")]
         Language::Zulu => ZULU_MODELS_DIRECTORY,
+
+        #[cfg(feature = "chechen")]
+        Language::Chechen => CHECHEN_MODELS_DIRECTORY,
+
+        #[cfg(feature = "burmese")]
+        Language::Burmese => BURMESE_MODELS_DIRECTORY,
+
+        #[cfg(feature = "amharic")]
+        Language::Amharic => AMHARIC_MODELS_DIRECTORY,
     }
 }
 

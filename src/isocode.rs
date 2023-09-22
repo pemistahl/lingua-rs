@@ -338,6 +338,18 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "zulu")]
     /// The ISO 639-1 code for [`Zulu`](crate::language::Language::Zulu)
     ZU,
+
+    #[cfg(feature = "amharic")]
+    /// The ISO 639-1 code for [`Amharic`](crate::language::Language::Amharic)
+    AM,
+     
+    #[cfg(feature = "burmese")]
+    /// The ISO 639-1 code for [`Burmese`](crate::language::Language::Burmese)
+    MY,
+
+    #[cfg(feature = "chechen")]
+    /// The ISO 639-1 code for [`Chechen`](crate::language::Language::Chechen)
+    CE,
 }
 
 /// This enum specifies the ISO 639-3 code representations for the supported languages.
@@ -659,6 +671,18 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "zulu")]
     /// The ISO 639-3 code for [`Zulu`](crate::language::Language::Zulu)
     ZUL,
+
+    #[cfg(feature = "amharic")]
+    /// The ISO 639-3 code for [`Amharic`](crate::language::Language::Amharic)
+    AMH,
+
+    #[cfg(feature = "burmese")]
+    /// The ISO 639-3 code for [`Burmese`](crate::language::Language::Burmese)
+    MYA,
+
+    #[cfg(feature = "chechen")]
+    /// The ISO 639-3 code for [`Chechen`](crate::language::Language::Chechen)
+    CHE,
 }
 
 impl Display for IsoCode639_1 {

@@ -1,0 +1,18 @@
+
+[package]
+name = "lingua-chechen-language-model"
+version = "1.1.0"
+description = """
+The Chechen language model for Lingua, an accurate natural language detection library
+"""
+edition = "2021"
+categories = ["text-processing"]
+keywords = [
+    "language-processing",
+    "language-detection",
+    "language-recognition",
+    "nlp"
+]
+
+[dependencies]
+include_dir = "0.7.3"

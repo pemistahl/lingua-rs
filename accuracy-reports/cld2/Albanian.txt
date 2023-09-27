@@ -12,5 +12,5 @@ Erroneously classified as Unknown: 21.7%, English: 0.9%, German: 0.2%, Catalan: 
 
 >> Detection of 1000 sentences (average length: 118 chars)
 Accuracy: 99.2%
-Erroneously classified as Unknown: 0.6%, Catalan: 0.1%, Italian: 0.1%
+Erroneously classified as Unknown: 0.5%, Catalan: 0.1%, Italian: 0.1%, Turkmen: 0.1%
 

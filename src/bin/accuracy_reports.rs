@@ -21,7 +21,7 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
-use fraction::{Decimal, Zero, GenericDecimal};
+use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
 use itertools::Itertools;
@@ -109,6 +109,17 @@ use lingua_zulu_language_model::ZULU_TESTDATA_DIRECTORY;
 use lingua_chechen_language_model::CHECHEN_TESTDATA_DIRECTORY;
 use lingua_amharic_language_model::AMHARIC_TESTDATA_DIRECTORY;
 use lingua_burmese_language_model::BURMESE_TESTDATA_DIRECTORY;
+use lingua_kyrgyz_language_model::KYRGYZ_TESTDATA_DIRECTORY;
+use lingua_malayalam_language_model::MALAYALAM_TESTDATA_DIRECTORY;
+use lingua_nepali_language_model::NEPALI_TESTDATA_DIRECTORY;
+use lingua_sanskrit_language_model::SANSKRIT_TESTDATA_DIRECTORY;
+use lingua_pashto_language_model::PASHTO_TESTDATA_DIRECTORY;
+// use lingua_sindhi_language_model::SINDHI_TESTDATA_DIRECTORY;
+use lingua_sinhala_language_model::SINHALA_TESTDATA_DIRECTORY;
+use lingua_tatar_language_model::TATAR_TESTDATA_DIRECTORY;
+use lingua_tajik_language_model::TAJIK_TESTDATA_DIRECTORY;
+use lingua_uzbek_language_model::UZBEK_TESTDATA_DIRECTORY;
+use lingua_turkmen_language_model::TURKMEN_TESTDATA_DIRECTORY;
 
 struct DetectorStatistics {
     single_word_statistic: Statistic,
@@ -192,141 +203,7 @@ impl DetectorStatistics {
             sentence_report
         ))
     }
-
-    fn create_report_data_for_all_langs(&mut self, languages: &[Language]) {
-        let num_languages = languages.len();
-        
-        let mut confusion_matrix = vec![vec![0; num_languages]; num_languages];
     
-        let mut reports = Vec::new();
-        let mut accuracies = Vec::new();
-    
-        for lang in languages {
-            let (single_word_accuracy, single_word_report) = self
-                .single_word_statistic
-                .create_report_data(lang, "single words");
-    
-            let (word_pair_accuracy, word_pair_report) = self
-                .word_pair_statistic
-                .create_report_data(lang, "word pairs");
-    
-            let (sentence_accuracy, sentence_report) = self
-                .sentence_statistic
-                .create_report_data(lang, "sentences");
-    
-            let average_accuracy = (single_word_accuracy + word_pair_accuracy + sentence_accuracy)
-                / Decimal::from(3);
-    
-            self.average_accuracies.insert(lang.clone(), average_accuracy);
-    
-            if average_accuracy.is_zero() {
-                continue;
-            }
-            
-            let accuracy_idx = accuracies.len();
-            accuracies.push(average_accuracy);
-            reports.push((accuracy_idx, single_word_report, word_pair_report, sentence_report));
-    
-            for (_idx, report) in reports.iter().enumerate() {
-                let (other_accuracy_idx, _, _, _) = *report;
-    
-                confusion_matrix[accuracy_idx][other_accuracy_idx] += 1;
-            }
-        }
-    
-        let mut final_report = formatdoc!("# Confusion Matrix #\n\n");
-        
-        let confusion_matrix_path = "/home/sbychkova/lingua/confusion_matrix.csv";
-        let _ = Self::save_confusion_matrix(&confusion_matrix, languages, confusion_matrix_path);
-    }
-    
-//         let mut total_accuracy: Decimal = 0.into();
-//         let mut all_languages_accuracy: Option<Decimal> = None;
-
-//     for (i, lang) in languages.iter().enumerate() {
-//         let accuracy = accuracies[i];
-//         let _report_idx = reports[i].0;
-//         let (_, single_word_report, word_pair_report, sentence_report) = &reports[i];
-    
-//         final_report += &formatdoc!(
-//             "\n##### {:?} (Accuracy: {}) #####\n",
-//             lang,
-//             format_accuracy(accuracy)
-//     );
-//         final_report += &single_word_report;
-//         final_report += &word_pair_report;
-//         final_report += &sentence_report;
-
-//         total_accuracy += accuracy;
-
-//         if i == 0 {
-//             all_languages_accuracy = Some(accuracy); 
-//         }
-//     }
-
-//     let average_accuracy = total_accuracy / Decimal::from(num_languages);
-
-//     final_report += &formatdoc!(
-//         "\n>>> Average Accuracy on All Languages: {}\n",
-//         format_accuracy(average_accuracy)
-//     );
-
-//     let total_accuracy_path = "/home/sbychkova/lingua/total_accuracy.txt";
-//     let _ = Self::save_total_accuracy(total_accuracy, total_accuracy_path);
-
-
-//     if let Some(accuracy) = all_languages_accuracy {
-//         final_report += &formatdoc!(
-//             "\n>>> Total Accuracy on All Languages: {}\n",
-//             format_accuracy(accuracy)
-//         );
-    
-//     }
-
-//     let final_report_path = "/home/sbychkova/lingua/final_report.txt";
-//     let _ = Self::save_final_report(&final_report, final_report_path);
-
-//     Some(final_report)
-        
-// }   
-
-  
-//     fn save_total_accuracy(accuracy: GenericDecimal<u64, u8>, path: &str) -> Result<(), std::io::Error> {
-//         let mut file = fs::File::create(path)?;
-//         write!(file, "Total Accuracy: {:.2}%", accuracy)?;
-//     Ok(())
-// }
-
-//     fn save_final_report(report: &str, path: &str) -> Result<(), std::io::Error> {
-//         let mut file = fs::File::create(path)?;
-//         write!(file, "{}", report)?;
-//     Ok(())
-// }
-
-fn save_confusion_matrix(
-    confusion_matrix: &Vec<Vec<u32>>,
-    languages: &[Language],
-    path: &str,
-) -> Result<(), std::io::Error> {
-    let mut file = fs::File::create(path)?;
-
-    write!(file, "Actual,")?;
-    for language in languages {
-        write!(file, "{},", language)?;
-    }
-    writeln!(file)?;
-
-    for (idx, row) in confusion_matrix.iter().enumerate() {
-        write!(file, "{}", languages[idx])?;
-        for count in row {
-            write!(file, ",{}", count)?;
-        }
-        writeln!(file)?;
-    }
-
-    Ok(())
-}
-
     fn create_aggregated_report_row(&self, language: &Language) -> String {
         let average_accuracy_column = match self.average_accuracies.get(language) {
             Some(&accuracy) => {
@@ -1100,5 +977,17 @@ fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Amharic => AMHARIC_TESTDATA_DIRECTORY,
         Language::Burmese => BURMESE_TESTDATA_DIRECTORY,
         Language::Chechen => CHECHEN_TESTDATA_DIRECTORY,
+        Language::Kyrgyz => KYRGYZ_TESTDATA_DIRECTORY,
+        Language::Malayalam => MALAYALAM_TESTDATA_DIRECTORY,
+        Language::Nepali => NEPALI_TESTDATA_DIRECTORY,
+        Language::Pashto => PASHTO_TESTDATA_DIRECTORY,
+        Language::Sanskrit => SANSKRIT_TESTDATA_DIRECTORY,
+        // Language::Sindhi => SINDHI_TESTDATA_DIRECTORY,
+        Language::Sinhala => SINHALA_TESTDATA_DIRECTORY,
+        Language::Tajik => TAJIK_TESTDATA_DIRECTORY,
+        Language::Tatar => TATAR_TESTDATA_DIRECTORY,
+        Language::Turkmen => TURKMEN_TESTDATA_DIRECTORY,
+        Language::Uzbek => UZBEK_TESTDATA_DIRECTORY,
+
     }
 }

@@ -4,13 +4,13 @@
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 30.4%
-Erroneously classified as Unknown: 68.1%, Azerbaijani: 0.3%, Indonesian: 0.3%, Croatian: 0.1%, Czech: 0.1%, English: 0.1%, Icelandic: 0.1%, Latin: 0.1%, Lithuanian: 0.1%, Malay: 0.1%, Welsh: 0.1%, Xhosa: 0.1%
+Erroneously classified as Unknown: 67%, Tatar: 0.5%, Turkmen: 0.5%, Azerbaijani: 0.3%, Indonesian: 0.3%, Croatian: 0.1%, Czech: 0.1%, English: 0.1%, Icelandic: 0.1%, Latin: 0.1%, Lithuanian: 0.1%, Malay: 0.1%, Welsh: 0.1%, Xhosa: 0.1%, Uzbek: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 71%
-Erroneously classified as Unknown: 26.2%, Azerbaijani: 1.4%, English: 0.7%, Czech: 0.2%, Malay: 0.2%, Nynorsk: 0.2%, Croatian: 0.1%
+Erroneously classified as Unknown: 25.2%, Azerbaijani: 1.4%, English: 0.7%, Turkmen: 0.5%, Tatar: 0.4%, Czech: 0.2%, Malay: 0.2%, Nynorsk: 0.2%, Croatian: 0.1%, Uzbek: 0.1%
 
 >> Detection of 1000 sentences (average length: 119 chars)
 Accuracy: 97.1%
-Erroneously classified as Unknown: 2.8%, Ganda: 0.1%
+Erroneously classified as Unknown: 2.7%, Ganda: 0.1%, Turkmen: 0.1%
 

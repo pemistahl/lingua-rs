@@ -4,7 +4,7 @@
 
 >> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 42%
-Erroneously classified as Unknown: 57.1%, Russian: 0.7%, Ukrainian: 0.2%
+Erroneously classified as Unknown: 57%, Russian: 0.7%, Ukrainian: 0.2%, Uzbek: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 87.3%

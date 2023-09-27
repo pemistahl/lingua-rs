@@ -1,0 +1,16 @@
+##### Pashto #####
+
+>>> Accuracy on average: 90.95%
+
+>> Detection of 20000 single words (average length: 6 chars)
+Accuracy: 79.48%
+Erroneously classified as Persian: 10.78%, Arabic: 4.87%, Urdu: 4.85%, Welsh: 0%
+
+>> Detection of 20000 word pairs (average length: 13 chars)
+Accuracy: 93.57%
+Erroneously classified as Persian: 4.32%, Arabic: 1.16%, Urdu: 0.94%
+
+>> Detection of 6001 sentences (average length: 119 chars)
+Accuracy: 99.81%
+Erroneously classified as Persian: 0.14%, Arabic: 0.01%, Urdu: 0.01%
+

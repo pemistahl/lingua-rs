@@ -4,7 +4,7 @@
 
 >> Detection of 1000 single words (average length: 10 chars)
 Accuracy: 43.6%
-Erroneously classified as Unknown: 55.3%, English: 0.5%, Estonian: 0.2%, Indonesian: 0.2%, Swedish: 0.2%
+Erroneously classified as Unknown: 55.2%, English: 0.5%, Estonian: 0.2%, Indonesian: 0.2%, Swedish: 0.2%, Tatar: 0.1%
 
 >> Detection of 1000 word pairs (average length: 19 chars)
 Accuracy: 89.1%

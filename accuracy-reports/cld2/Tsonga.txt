@@ -4,11 +4,11 @@
 
 >> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 19%
-Erroneously classified as Unknown: 78.9%, Xhosa: 1%, English: 0.2%, Zulu: 0.2%, Afrikaans: 0.1%, Azerbaijani: 0.1%, Croatian: 0.1%, Ganda: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Sotho: 0.1%
+Erroneously classified as Unknown: 78.8%, Xhosa: 1%, English: 0.2%, Zulu: 0.2%, Afrikaans: 0.1%, Azerbaijani: 0.1%, Croatian: 0.1%, Ganda: 0.1%, Nynorsk: 0.1%, Somali: 0.1%, Sotho: 0.1%, Sanskrit: 0.1%
 
 >> Detection of 1000 word pairs (average length: 16 chars)
 Accuracy: 67.8%
-Erroneously classified as Unknown: 27.9%, English: 2.4%, Maori: 0.4%, Shona: 0.4%, Zulu: 0.4%, Xhosa: 0.3%, Indonesian: 0.1%, Portuguese: 0.1%, Sotho: 0.1%, Tswana: 0.1%
+Erroneously classified as Unknown: 27.7%, English: 2.4%, Maori: 0.4%, Shona: 0.4%, Zulu: 0.4%, Xhosa: 0.3%, Indonesian: 0.1%, Portuguese: 0.1%, Sotho: 0.1%, Tswana: 0.1%, Sanskrit: 0.1%, Uzbek: 0.1%
 
 >> Detection of 1000 sentences (average length: 121 chars)
 Accuracy: 97.3%

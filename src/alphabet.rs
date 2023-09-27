@@ -43,7 +43,9 @@ pub(crate) enum Alphabet {
     Telugu,
     Thai,
     Ethiopic,
-    Myanmar
+    Myanmar,
+    Malayalam,
+    Sinhala,
 }
 
 impl Alphabet {
@@ -98,6 +100,8 @@ impl Alphabet {
             Alphabet::Thai => &THAI,
             Alphabet::Ethiopic => &ETHIOPIC,
             Alphabet::Myanmar => &MYANMAR,
+            Alphabet::Malayalam => &MALAYALAM,
+            Alphabet::Sinhala => &SINHALA,
         }
     }
 }
@@ -160,3 +164,5 @@ static TELUGU: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Telugu"));
 static THAI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Thai"));
 static MYANMAR: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Myanmar"));
 static ETHIOPIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Ethiopic"));
+static MALAYALAM: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Malayalam"));
+static SINHALA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Sinhala"));

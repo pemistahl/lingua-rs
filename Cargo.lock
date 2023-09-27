@@ -705,23 +705,30 @@ dependencies = [
  "lingua-japanese-language-model",
  "lingua-kazakh-language-model",
  "lingua-korean-language-model",
+ "lingua-kyrgyz-language-model",
  "lingua-latin-language-model",
  "lingua-latvian-language-model",
  "lingua-lithuanian-language-model",
  "lingua-macedonian-language-model",
  "lingua-malay-language-model",
+ "lingua-malayalam-language-model",
  "lingua-maori-language-model",
  "lingua-marathi-language-model",
  "lingua-mongolian-language-model",
+ "lingua-nepali-language-model",
  "lingua-nynorsk-language-model",
+ "lingua-pashto-language-model",
  "lingua-persian-language-model",
  "lingua-polish-language-model",
  "lingua-portuguese-language-model",
  "lingua-punjabi-language-model",
  "lingua-romanian-language-model",
  "lingua-russian-language-model",
+ "lingua-sanskrit-language-model",
  "lingua-serbian-language-model",
  "lingua-shona-language-model",
+ "lingua-sindhi-language-model",
+ "lingua-sinhala-language-model",
  "lingua-slovak-language-model",
  "lingua-slovene-language-model",
  "lingua-somali-language-model",
@@ -730,14 +737,18 @@ dependencies = [
  "lingua-swahili-language-model",
  "lingua-swedish-language-model",
  "lingua-tagalog-language-model",
+ "lingua-tajik-language-model",
  "lingua-tamil-language-model",
+ "lingua-tatar-language-model",
  "lingua-telugu-language-model",
  "lingua-thai-language-model",
  "lingua-tsonga-language-model",
  "lingua-tswana-language-model",
  "lingua-turkish-language-model",
+ "lingua-turkmen-language-model",
  "lingua-ukrainian-language-model",
  "lingua-urdu-language-model",
+ "lingua-uzbek-language-model",
  "lingua-vietnamese-language-model",
  "lingua-welsh-language-model",
  "lingua-xhosa-language-model",
@@ -1042,6 +1053,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-kyrgyz-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-latin-language-model"
 version = "1.1.0"
 dependencies = [
@@ -1077,6 +1095,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-malayalam-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-maori-language-model"
 version = "1.1.0"
 dependencies = [
@@ -1098,7 +1123,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-nepali-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-nynorsk-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-pashto-language-model"
 version = "1.1.0"
 dependencies = [
  "include_dir",
@@ -1147,6 +1186,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-sanskrit-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-serbian-language-model"
 version = "1.1.0"
 dependencies = [
@@ -1155,6 +1201,20 @@ dependencies = [
 
 [[package]]
 name = "lingua-shona-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-sindhi-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-sinhala-language-model"
 version = "1.1.0"
 dependencies = [
  "include_dir",
@@ -1217,7 +1277,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-tajik-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-tamil-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-tatar-language-model"
 version = "1.1.0"
 dependencies = [
  "include_dir",
@@ -1259,6 +1333,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-turkmen-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-ukrainian-language-model"
 version = "1.1.0"
 dependencies = [
@@ -1267,6 +1348,13 @@ dependencies = [
 
 [[package]]
 name = "lingua-urdu-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-uzbek-language-model"
 version = "1.1.0"
 dependencies = [
  "include_dir",

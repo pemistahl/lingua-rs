@@ -1,0 +1,18 @@
+[package]
+name = "lingua-uzbek-language-model"
+version = "1.1.0"
+edition = "2021"
+description = """
+The Uzbek language model for Lingua, an accurate natural language detection library
+"""
+categories = ["text-processing"]
+keywords = [
+    "language-processing",
+    "language-detection",
+    "language-recognition",
+    "nlp"
+]
+
+[dependencies]
+include_dir = "0.7.3"
+

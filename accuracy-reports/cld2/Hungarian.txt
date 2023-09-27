@@ -4,7 +4,7 @@
 
 >> Detection of 1000 single words (average length: 9 chars)
 Accuracy: 40.6%
-Erroneously classified as Unknown: 58.3%, Czech: 0.4%, Slovak: 0.3%, Danish: 0.1%, Latin: 0.1%, Polish: 0.1%, Romanian: 0.1%
+Erroneously classified as Unknown: 58.2%, Czech: 0.4%, Slovak: 0.3%, Danish: 0.1%, Latin: 0.1%, Polish: 0.1%, Romanian: 0.1%, Sanskrit: 0.1%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 85%

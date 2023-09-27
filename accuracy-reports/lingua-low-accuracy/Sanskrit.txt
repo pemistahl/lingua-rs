@@ -1,0 +1,16 @@
+##### Sanskrit #####
+
+>>> Accuracy on average: 40.13%
+
+>> Detection of 20000 single words (average length: 9 chars)
+Accuracy: 19.64%
+Erroneously classified as Unknown: 71.94%, Nepali: 4.66%, Marathi: 2.21%, Hindi: 1.54%
+
+>> Detection of 16429 word pairs (average length: 19 chars)
+Accuracy: 33.61%
+Erroneously classified as Unknown: 51.73%, Nepali: 8.06%, Marathi: 3.93%, Hindi: 2.64%
+
+>> Detection of 5972 sentences (average length: 66 chars)
+Accuracy: 67.14%
+Erroneously classified as Unknown: 16.39%, Nepali: 9.59%, Marathi: 3.93%, Hindi: 2.93%
+

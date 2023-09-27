@@ -8,7 +8,7 @@ Erroneously classified as Unknown: 38.7%, Czech: 22.2%, English: 0.4%, Hungarian
 
 >> Detection of 1000 word pairs (average length: 16 chars)
 Accuracy: 75.9%
-Erroneously classified as Unknown: 11.8%, Czech: 11.5%, Slovene: 0.2%, English: 0.1%, Hungarian: 0.1%, Indonesian: 0.1%, Polish: 0.1%, Serbian: 0.1%, Spanish: 0.1%
+Erroneously classified as Unknown: 11.7%, Czech: 11.5%, Slovene: 0.2%, English: 0.1%, Hungarian: 0.1%, Indonesian: 0.1%, Polish: 0.1%, Serbian: 0.1%, Spanish: 0.1%, Turkmen: 0.1%
 
 >> Detection of 1000 sentences (average length: 101 chars)
 Accuracy: 99.4%

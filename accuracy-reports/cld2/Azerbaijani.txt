@@ -4,11 +4,11 @@
 
 >> Detection of 1000 single words (average length: 8 chars)
 Accuracy: 34.5%
-Erroneously classified as Unknown: 63.5%, Turkish: 1.2%, English: 0.3%, Indonesian: 0.2%, Ganda: 0.1%, Malay: 0.1%, Shona: 0.1%
+Erroneously classified as Unknown: 62.5%, Turkish: 1.2%, Tatar: 0.6%, Uzbek: 0.4%, English: 0.3%, Indonesian: 0.2%, Ganda: 0.1%, Malay: 0.1%, Shona: 0.1%
 
 >> Detection of 1000 word pairs (average length: 16 chars)
 Accuracy: 81.5%
-Erroneously classified as Unknown: 16.1%, Turkish: 1.8%, English: 0.3%, Danish: 0.1%, German: 0.1%, Malay: 0.1%
+Erroneously classified as Unknown: 15.6%, Turkish: 1.8%, Tatar: 0.4%, English: 0.3%, Danish: 0.1%, German: 0.1%, Malay: 0.1%, Turkmen: 0.1%
 
 >> Detection of 1000 sentences (average length: 107 chars)
 Accuracy: 99.3%

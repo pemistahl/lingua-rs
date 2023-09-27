@@ -276,6 +276,39 @@ pub enum Language {
 
     #[cfg(feature = "chechen")]
     Chechen,
+
+    #[cfg(feature = "kyrgyz")]
+    Kyrgyz,
+
+    #[cfg(feature = "malayalam")]
+    Malayalam,
+
+    #[cfg(feature = "nepali")]
+    Nepali,
+
+    #[cfg(feature = "pashto")]
+    Pashto,
+
+    #[cfg(feature = "sanskrit")]
+    Sanskrit,
+
+    #[cfg(feature = "sinhala")]
+    Sinhala,
+
+    #[cfg(feature = "sindhi")]
+    Sindhi,
+
+    #[cfg(feature = "tatar")]
+    Tatar,
+
+    #[cfg(feature = "tajik")]
+    Tajik,
+
+    #[cfg(feature = "turkmen")]
+    Turkmen,
+
+    #[cfg(feature = "uzbek")]
+    Uzbek,
 }
 
 impl Display for Language {
@@ -573,6 +606,39 @@ impl Language {
 
             #[cfg(feature = "burmese")]
             Language::Burmese => IsoCode639_1::MY,
+
+            #[cfg(feature = "kyrgyz")]
+            Language::Kyrgyz => IsoCode639_1::KY,
+
+            #[cfg(feature = "malayalam")]
+            Language::Malayalam => IsoCode639_1::ML,
+
+            #[cfg(feature = "nepali")]
+            Language::Nepali => IsoCode639_1::NE,
+
+            #[cfg(feature = "pashto")]
+            Language::Pashto => IsoCode639_1::PS,
+
+            #[cfg(feature = "sanskrit")]
+            Language::Sanskrit => IsoCode639_1::SA,
+
+            #[cfg(feature = "sinhala")]
+            Language::Sinhala => IsoCode639_1::SI,
+
+            #[cfg(feature = "sindhi")]
+            Language::Sindhi => IsoCode639_1::SD,
+
+            #[cfg(feature = "tatar")]
+            Language::Tatar => IsoCode639_1::TT,
+
+            #[cfg(feature = "tajik")]
+            Language::Tajik => IsoCode639_1::TG,
+
+            #[cfg(feature = "turkmen")]
+            Language::Turkmen => IsoCode639_1::TK,
+
+            #[cfg(feature = "uzbek")]
+            Language::Uzbek => IsoCode639_1::UZ,
         }
     }
 
@@ -811,6 +877,40 @@ impl Language {
 
             #[cfg(feature = "burmese")]
             Language::Burmese => IsoCode639_3::MYA,
+
+            #[cfg(feature = "kyrgyz")]
+            Language::Kyrgyz => IsoCode639_3::KIR,
+
+            #[cfg(feature = "malayalam")]
+            Language::Malayalam => IsoCode639_3::MAL,
+
+            #[cfg(feature = "nepali")]
+            Language::Nepali => IsoCode639_3::NEP,
+
+            #[cfg(feature = "pashto")]
+            Language::Pashto => IsoCode639_3::PUS,
+
+            #[cfg(feature = "sanskrit")]
+            Language::Sanskrit => IsoCode639_3::SAN,
+
+            #[cfg(feature = "sinhala")]
+            Language::Sinhala => IsoCode639_3::SIN,
+
+            #[cfg(feature = "sindhi")]
+            Language::Sindhi => IsoCode639_3::SND,
+
+            #[cfg(feature = "tatar")]
+            Language::Tatar => IsoCode639_3::TAT,
+
+            #[cfg(feature = "tajik")]
+            Language::Tajik => IsoCode639_3::TGK,
+
+            #[cfg(feature = "turkmen")]
+            Language::Turkmen => IsoCode639_3::TUK,
+
+            #[cfg(feature = "uzbek")]
+            Language::Uzbek => IsoCode639_3::UZB,
+
         }
     }
 
@@ -1049,6 +1149,39 @@ impl Language {
 
             #[cfg(feature = "burmese")]
             Language::Burmese => hashset!(Alphabet::Myanmar),
+
+            #[cfg(feature = "kyrgyz")]
+            Language::Kyrgyz => hashset!(Alphabet::Cyrillic),
+
+            #[cfg(feature = "malayalam")]
+            Language::Malayalam => hashset!(Alphabet::Malayalam),
+
+            #[cfg(feature = "nepali")]
+            Language::Nepali => hashset!(Alphabet::Devanagari),
+
+            #[cfg(feature = "pashto")]
+            Language::Pashto => hashset!(Alphabet::Arabic),
+
+            #[cfg(feature = "sanskrit")]
+            Language::Sanskrit => hashset!(Alphabet::Devanagari),
+
+            #[cfg(feature = "sinhala")]
+            Language::Sinhala => hashset!(Alphabet::Sinhala),
+
+            #[cfg(feature = "sindhi")]
+            Language::Sindhi => hashset!(Alphabet::Arabic),
+
+            #[cfg(feature = "tatar")]
+            Language::Tatar => hashset!(Alphabet::Cyrillic),
+
+            #[cfg(feature = "tajik")]
+            Language::Tajik => hashset!(Alphabet::Cyrillic),
+
+            #[cfg(feature = "turkmen")]
+            Language::Turkmen => hashset!(Alphabet::Latin),
+
+            #[cfg(feature = "uzbek")]
+            Language::Uzbek => hashset!(Alphabet::Latin),
         }
     }
 

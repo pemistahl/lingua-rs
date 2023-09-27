@@ -1,0 +1,16 @@
+##### Tatar #####
+
+>>> Accuracy on average: 47.2%
+
+>> Detection of 20000 single words (average length: 8 chars)
+Accuracy: 26.17%
+Erroneously classified as Kazakh: 47.09%, Mongolian: 9.33%, Belarusian: 5.13%, Russian: 5%, Kyrgyz: 2.23%, Chechen: 1.62%, Bulgarian: 1.16%, Tajik: 0.95%, Ukrainian: 0.49%, Macedonian: 0.47%, Serbian: 0.32%, English: 0%, Ganda: 0%, Swahili: 0%
+
+>> Detection of 20000 word pairs (average length: 16 chars)
+Accuracy: 34.56%
+Erroneously classified as Kazakh: 36.5%, Russian: 15.77%, Mongolian: 5.41%, Belarusian: 4.77%, Bulgarian: 1.62%, Kyrgyz: 0.62%, Chechen: 0.31%, Tajik: 0.2%, Macedonian: 0.09%, Ukrainian: 0.06%, Serbian: 0.06%
+
+>> Detection of 5893 sentences (average length: 112 chars)
+Accuracy: 80.89%
+Erroneously classified as Kazakh: 15.34%, Russian: 2.78%, Mongolian: 0.39%, Belarusian: 0.27%, Kyrgyz: 0.06%, Azerbaijani: 0.05%, English: 0.05%, Arabic: 0.01%, Basque: 0.01%, Dutch: 0.01%, French: 0.01%, German: 0.01%, Portuguese: 0.01%, Shona: 0.01%, Turkish: 0.01%, Chechen: 0.01%
+

@@ -175,7 +175,28 @@ use lingua_amharic_language_model::AMHARIC_MODELS_DIRECTORY;
 use lingua_burmese_language_model::BURMESE_MODELS_DIRECTORY;
 #[cfg(feature = "chechen")]
 use lingua_chechen_language_model::CHECHEN_MODELS_DIRECTORY;
-
+#[cfg(feature = "kyrgyz")]
+use lingua_kyrgyz_language_model::KYRGYZ_MODELS_DIRECTORY;
+#[cfg(feature = "malayalam")]
+use lingua_malayalam_language_model::MALAYALAM_MODELS_DIRECTORY;
+#[cfg(feature = "nepali")]
+use lingua_nepali_language_model::NEPALI_MODELS_DIRECTORY;
+#[cfg(feature = "pashto")]
+use lingua_pashto_language_model::PASHTO_MODELS_DIRECTORY;
+#[cfg(feature = "sanskrit")]
+use lingua_sanskrit_language_model::SANSKRIT_MODELS_DIRECTORY;
+#[cfg(feature = "sinhala")]
+use lingua_sinhala_language_model::SINHALA_MODELS_DIRECTORY;
+#[cfg(feature = "sindhi")]
+use lingua_sindhi_language_model::SINDHI_MODELS_DIRECTORY;
+#[cfg(feature = "tatar")]
+use lingua_tatar_language_model::TATAR_MODELS_DIRECTORY;
+#[cfg(feature = "tajik")]
+use lingua_tajik_language_model::TAJIK_MODELS_DIRECTORY;
+#[cfg(feature = "turkmen")]
+use lingua_turkmen_language_model::TURKMEN_MODELS_DIRECTORY;
+#[cfg(feature = "uzbek")]
+use lingua_uzbek_language_model::UZBEK_MODELS_DIRECTORY;
 
 
 use crate::ngram::Ngram;
@@ -428,7 +449,41 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "amharic")]
         Language::Amharic => AMHARIC_MODELS_DIRECTORY,
-    }
+
+        #[cfg(feature = "kyrgyz")]
+        Language::Kyrgyz => KYRGYZ_MODELS_DIRECTORY,
+
+        #[cfg(feature = "malayalam")]
+        Language::Malayalam => MALAYALAM_MODELS_DIRECTORY,
+
+        #[cfg(feature = "nepali")]
+        Language::Nepali => NEPALI_MODELS_DIRECTORY,
+
+        #[cfg(feature = "sanskrit")]
+        Language::Sanskrit => SANSKRIT_MODELS_DIRECTORY,
+
+        #[cfg(feature = "pashto")]
+        Language::Pashto => PASHTO_MODELS_DIRECTORY,
+
+        #[cfg(feature = "sinhala")]
+        Language::Sinhala => SINHALA_MODELS_DIRECTORY,
+
+        #[cfg(feature = "sindhi")]
+        Language::Sindhi => SINDHI_MODELS_DIRECTORY,
+
+        #[cfg(feature = "tatar")]
+        Language::Tatar => TATAR_MODELS_DIRECTORY,
+
+        #[cfg(feature = "turkmen")]
+        Language::Turkmen => TURKMEN_MODELS_DIRECTORY,
+
+        #[cfg(feature = "tajik")]
+        Language::Tajik => TAJIK_MODELS_DIRECTORY,
+
+        #[cfg(feature = "uzbek")]
+        Language::Uzbek => UZBEK_MODELS_DIRECTORY,
+
+}
 }
 
 #[cfg(test)]

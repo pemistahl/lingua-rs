@@ -20,13 +20,14 @@ use ahash::AHashSet;
 use once_cell::sync::Lazy;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use crate::Language;
+use crate::{Language};
 
 #[derive(EnumIter, Eq, PartialEq, Hash)]
 pub(crate) enum Alphabet {
     Arabic,
     Armenian,
     Bengali,
+    Brahmi,
     Cyrillic,
     Devanagari,
     Georgian,
@@ -46,6 +47,8 @@ pub(crate) enum Alphabet {
     Myanmar,
     Malayalam,
     Sinhala,
+    Lao,
+    Khmer,
 }
 
 impl Alphabet {
@@ -102,6 +105,9 @@ impl Alphabet {
             Alphabet::Myanmar => &MYANMAR,
             Alphabet::Malayalam => &MALAYALAM,
             Alphabet::Sinhala => &SINHALA,
+            Alphabet::Brahmi => &BRAHMI,
+            Alphabet::Lao => &LAO,
+            Alphabet::Khmer => &KHMER,
         }
     }
 }
@@ -166,3 +172,6 @@ static MYANMAR: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Myanmar")
 static ETHIOPIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Ethiopic"));
 static MALAYALAM: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Malayalam"));
 static SINHALA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Sinhala"));
+static BRAHMI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Brahmi"));
+static LAO: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Lao"));
+static KHMER: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Khmer"));

@@ -153,6 +153,8 @@ lingua-tatar-language-model = { path = "language-models/tt", version = "1.1.0", 
 lingua-tajik-language-model = { path = "language-models/tg", version = "1.1.0", optional = true }
 lingua-turkmen-language-model = { path = "language-models/tk", version = "1.1.0", optional = true }
 lingua-uzbek-language-model = { path = "language-models/uz", version = "1.1.0", optional = true }
+lingua-lao-language-model = { path = "language-models/lo", version = "1.1.0", optional = true }
+lingua-khmer-language-model = { path = "language-models/km", version = "1.1.0", optional = true }
 
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
@@ -196,7 +198,7 @@ default = [
     "tsonga", "tswana", "turkish", "ukrainian", "urdu", "vietnamese",
     "welsh", "xhosa", "yoruba", "zulu", "chechen", "amharic", "burmese",
     "kyrgyz", "nepali", "malayalam", "pashto", "sanskrit", "sinhala",
-    "tatar", "tajik", "turkmen", "uzbek", "sindhi"
+    "tatar", "tajik", "turkmen", "uzbek", "sindhi", "lao", "khmer"
 ]
 accuracy-reports = ["cld2", "indoc", "titlecase", "whatlang", "whichlang"]
 benchmark = ["cld2", "whatlang", "whichlang"]
@@ -289,3 +291,5 @@ tatar = ["lingua-tatar-language-model"]
 tajik = ["lingua-tajik-language-model"]
 turkmen = ["lingua-turkmen-language-model"]
 uzbek = ["lingua-uzbek-language-model"]
+khmer = ["lingua-khmer-language-model"]
+lao = ["lingua-lao-language-model"]

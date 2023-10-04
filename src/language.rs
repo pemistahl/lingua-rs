@@ -309,6 +309,12 @@ pub enum Language {
 
     #[cfg(feature = "uzbek")]
     Uzbek,
+
+    #[cfg(feature = "khmer")]
+    Khmer,
+
+    #[cfg(feature = "lao")]
+    Lao,
 }
 
 impl Display for Language {
@@ -639,6 +645,12 @@ impl Language {
 
             #[cfg(feature = "uzbek")]
             Language::Uzbek => IsoCode639_1::UZ,
+
+            #[cfg(feature = "khmer")]
+            Language::Khmer => IsoCode639_1::KM,
+
+            #[cfg(feature = "lao")]
+            Language::Lao => IsoCode639_1::LO,
         }
     }
 
@@ -911,6 +923,11 @@ impl Language {
             #[cfg(feature = "uzbek")]
             Language::Uzbek => IsoCode639_3::UZB,
 
+            #[cfg(feature = "khmer")]
+            Language::Khmer => IsoCode639_3::KHM,
+
+            #[cfg(feature = "lao")]
+            Language::Lao => IsoCode639_3::LAO,
         }
     }
 
@@ -1169,7 +1186,7 @@ impl Language {
             Language::Sinhala => hashset!(Alphabet::Sinhala),
 
             #[cfg(feature = "sindhi")]
-            Language::Sindhi => hashset!(Alphabet::Arabic),
+            Language::Sindhi => hashset!(Alphabet::Brahmi),
 
             #[cfg(feature = "tatar")]
             Language::Tatar => hashset!(Alphabet::Cyrillic),
@@ -1182,6 +1199,12 @@ impl Language {
 
             #[cfg(feature = "uzbek")]
             Language::Uzbek => hashset!(Alphabet::Latin),
+
+            #[cfg(feature = "khmer")]
+            Language::Khmer => hashset!(Alphabet::Khmer),
+
+            #[cfg(feature = "lao")]
+            Language::Lao => hashset!(Alphabet::Lao),
         }
     }
 
@@ -1218,7 +1241,7 @@ impl Language {
             Language::Macedonian => Some("ЃѓЅѕЌќЏџ"),
 
             #[cfg(feature = "marathi")]
-            Language::Marathi => Some("ळ"),
+            Language::Marathi => Some("ळक़"),
 
             #[cfg(feature = "mongolian")]
             Language::Mongolian => Some("ӨөҮү"),
@@ -1246,6 +1269,12 @@ impl Language {
 
             #[cfg(feature = "yoruba")]
             Language::Yoruba => Some("Ṣṣ"),
+
+            #[cfg(feature = "sindhi")]
+            Language::Sindhi => Some("ݙٻ"),
+
+            #[cfg(feature = "turkmen")]
+            Language::Turkmen => Some("ň"),
 
             _ => None,
         }

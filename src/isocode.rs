@@ -394,6 +394,14 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "uzbek")]
     /// The ISO 639-1 code for [`Uzbek`](crate::language::Language::Uzbek)
     UZ,
+
+    #[cfg(feature = "khmer")]
+    /// The ISO 639-1 code for [`Khmer`](crate::language::Language::Khmer)
+    KM,
+
+    #[cfg(feature = "lao")]
+    /// The ISO 639-1 code for [`Lao`](crate::language::Language::Lao)
+    LO,
 }
 
 /// This enum specifies the ISO 639-3 code representations for the supported languages.
@@ -771,6 +779,14 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "uzbek")]
     /// The ISO 639-3 code for [`Uzbek`](crate::language::Language::Uzbek)
     UZB,
+
+    #[cfg(feature = "khmer")]
+    /// The ISO 639-3 code for [`Khmer`](crate::language::Language::Khmer)
+    KHM,
+
+    #[cfg(feature = "lao")]
+    /// The ISO 639-3 code for [`Lao`](crate::language::Language::Lao)
+    LAO,
 }
 
 impl Display for IsoCode639_1 {

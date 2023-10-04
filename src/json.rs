@@ -197,6 +197,11 @@ use lingua_tajik_language_model::TAJIK_MODELS_DIRECTORY;
 use lingua_turkmen_language_model::TURKMEN_MODELS_DIRECTORY;
 #[cfg(feature = "uzbek")]
 use lingua_uzbek_language_model::UZBEK_MODELS_DIRECTORY;
+#[cfg(feature = "lao")]
+use lingua_lao_language_model::LAO_MODELS_DIRECTORY;
+#[cfg(feature = "khmer")]
+use lingua_khmer_language_model::KHMER_MODELS_DIRECTORY;
+
 
 
 use crate::ngram::Ngram;
@@ -482,6 +487,12 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "uzbek")]
         Language::Uzbek => UZBEK_MODELS_DIRECTORY,
+
+        #[cfg(feature = "khmer")]
+        Language::Khmer => KHMER_MODELS_DIRECTORY,
+
+        #[cfg(feature = "lao")]
+        Language::Lao => LAO_MODELS_DIRECTORY,
 
 }
 }

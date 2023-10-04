@@ -704,8 +704,10 @@ dependencies = [
  "lingua-italian-language-model",
  "lingua-japanese-language-model",
  "lingua-kazakh-language-model",
+ "lingua-khmer-language-model",
  "lingua-korean-language-model",
  "lingua-kyrgyz-language-model",
+ "lingua-lao-language-model",
  "lingua-latin-language-model",
  "lingua-latvian-language-model",
  "lingua-lithuanian-language-model",
@@ -1046,6 +1048,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lingua-khmer-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
 name = "lingua-korean-language-model"
 version = "1.1.0"
 dependencies = [
@@ -1054,6 +1063,13 @@ dependencies = [
 
 [[package]]
 name = "lingua-kyrgyz-language-model"
+version = "1.1.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-lao-language-model"
 version = "1.1.0"
 dependencies = [
  "include_dir",

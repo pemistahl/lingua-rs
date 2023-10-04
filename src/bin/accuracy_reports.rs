@@ -114,12 +114,14 @@ use lingua_malayalam_language_model::MALAYALAM_TESTDATA_DIRECTORY;
 use lingua_nepali_language_model::NEPALI_TESTDATA_DIRECTORY;
 use lingua_sanskrit_language_model::SANSKRIT_TESTDATA_DIRECTORY;
 use lingua_pashto_language_model::PASHTO_TESTDATA_DIRECTORY;
-// use lingua_sindhi_language_model::SINDHI_TESTDATA_DIRECTORY;
+use lingua_sindhi_language_model::SINDHI_TESTDATA_DIRECTORY;
 use lingua_sinhala_language_model::SINHALA_TESTDATA_DIRECTORY;
 use lingua_tatar_language_model::TATAR_TESTDATA_DIRECTORY;
 use lingua_tajik_language_model::TAJIK_TESTDATA_DIRECTORY;
 use lingua_uzbek_language_model::UZBEK_TESTDATA_DIRECTORY;
 use lingua_turkmen_language_model::TURKMEN_TESTDATA_DIRECTORY;
+use lingua_khmer_language_model::KHMER_TESTDATA_DIRECTORY;
+use lingua_lao_language_model::LAO_TESTDATA_DIRECTORY;
 
 struct DetectorStatistics {
     single_word_statistic: Statistic,
@@ -982,12 +984,14 @@ fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Nepali => NEPALI_TESTDATA_DIRECTORY,
         Language::Pashto => PASHTO_TESTDATA_DIRECTORY,
         Language::Sanskrit => SANSKRIT_TESTDATA_DIRECTORY,
-        // Language::Sindhi => SINDHI_TESTDATA_DIRECTORY,
+        Language::Sindhi => SINDHI_TESTDATA_DIRECTORY,
         Language::Sinhala => SINHALA_TESTDATA_DIRECTORY,
         Language::Tajik => TAJIK_TESTDATA_DIRECTORY,
         Language::Tatar => TATAR_TESTDATA_DIRECTORY,
         Language::Turkmen => TURKMEN_TESTDATA_DIRECTORY,
         Language::Uzbek => UZBEK_TESTDATA_DIRECTORY,
+        Language::Khmer => KHMER_TESTDATA_DIRECTORY,
+        Language::Lao => LAO_TESTDATA_DIRECTORY,
 
     }
 }

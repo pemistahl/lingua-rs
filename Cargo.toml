@@ -141,7 +141,7 @@ lingua-yoruba-language-model = { path = "language-models/yo", version = "1.1.0",
 lingua-zulu-language-model = { path = "language-models/zu", version = "1.1.0", optional = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-ahash = "0.8.3"
+ahash = "0.8.4"
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.4", optional = true }
 rayon = "1.8.0"

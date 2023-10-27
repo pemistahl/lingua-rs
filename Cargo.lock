@@ -42,7 +42,7 @@ version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "43f6cb1bf222025340178f382c426f13757b2960e89779dfcb319c32542a5a41"
 dependencies = [
- "memchr 2.5.0",
+ "memchr 2.6.4",
 ]
 
 [[package]]
@@ -283,7 +283,7 @@ dependencies = [
  "oorandom",
  "plotters",
  "rayon",
- "regex 1.8.4",
+ "regex 1.10.2",
  "serde",
  "serde_derive",
  "serde_json",
@@ -481,7 +481,7 @@ dependencies = [
  "futures-macro",
  "futures-sink",
  "futures-task",
- "memchr 2.5.0",
+ "memchr 2.6.4",
  "pin-project-lite",
  "pin-utils",
  "slab",
@@ -744,7 +744,7 @@ dependencies = [
  "maplit",
  "once_cell",
  "rayon",
- "regex 1.8.4",
+ "regex 1.10.2",
  "rstest",
  "serde",
  "serde-wasm-bindgen",
@@ -1319,9 +1319,9 @@ dependencies = [
 
 [[package]]
 name = "memchr"
-version = "2.5.0"
+version = "2.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
+checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
 
 [[package]]
 name = "memoffset"
@@ -1528,13 +1528,25 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.8.4"
+version = "1.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0ab3ca65655bb1e41f2a8c8cd662eb4fb035e67c3f78da1d61dffe89d07300f"
+checksum = "380b951a9c5e80ddfd6136919eef32310721aa4aacd4889a8d39124b026ab343"
 dependencies = [
  "aho-corasick 1.0.2",
- "memchr 2.5.0",
- "regex-syntax 0.7.2",
+ "memchr 2.6.4",
+ "regex-automata",
+ "regex-syntax 0.8.2",
+]
+
+[[package]]
+name = "regex-automata"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f804c7828047e88b2d32e2d7fe5a105da8ee3264f01902f796c8e067dc2483f"
+dependencies = [
+ "aho-corasick 1.0.2",
+ "memchr 2.6.4",
+ "regex-syntax 0.8.2",
 ]
 
 [[package]]
@@ -1545,9 +1557,9 @@ checksum = "f9ec002c35e86791825ed294b50008eea9ddfc8def4420124fbc6b08db834957"
 
 [[package]]
 name = "regex-syntax"
-version = "0.7.2"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "436b050e76ed2903236f032a59761c1eb99e1b0aead2c257922771dab1fc8c78"
+checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 
 [[package]]
 name = "relative-path"
@@ -1577,7 +1589,7 @@ dependencies = [
  "glob",
  "proc-macro2",
  "quote",
- "regex 1.8.4",
+ "regex 1.10.2",
  "relative-path",
  "rustc_version",
  "syn",
@@ -1811,7 +1823,7 @@ checksum = "38397a8cdb017cfeb48bf6c154d6de975ac69ffeed35980fde199d2ee0842042"
 dependencies = [
  "joinery",
  "lazy_static 1.4.0",
- "regex 1.8.4",
+ "regex 1.10.2",
 ]
 
 [[package]]

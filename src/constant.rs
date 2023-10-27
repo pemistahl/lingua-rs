@@ -212,6 +212,19 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             });
         }
 
+        if cfg!(feature = "kazakh") || cfg!(feature = "mongolian") {
+            mapping.insert("ӨөҮү", {
+                let mut languages = hashset!();
+                if cfg!(feature = "kazakh") {
+                    languages.insert(Language::from_str("Kazakh").unwrap());
+                }
+                if cfg!(feature = "mongolian") {
+                    languages.insert(Language::from_str("Mongolian").unwrap());
+                }
+                languages
+            });
+        }
+
         if cfg!(feature = "latvian") || cfg!(feature = "maori") || cfg!(feature = "yoruba") {
             mapping.insert("ĀāĒēĪī", {
                 let mut languages = hashset!();
@@ -995,13 +1008,5 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet
             }
         }
 
-        /*
-        hashmap!(
-            "Éé" => hashset!(
-                Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
-                Spanish, Vietnamese, Yoruba
-            )
-        )
-        */
         mapping
     });

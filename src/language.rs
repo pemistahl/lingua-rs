@@ -1051,9 +1051,6 @@ impl Language {
             #[cfg(feature = "marathi")]
             Language::Marathi => Some("ळ"),
 
-            #[cfg(feature = "mongolian")]
-            Language::Mongolian => Some("ӨөҮү"),
-
             #[cfg(feature = "polish")]
             Language::Polish => Some("ŁłŃńŚśŹź"),
 

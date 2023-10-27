@@ -284,7 +284,7 @@ impl LanguageDetector {
 
         let language = self.detect_language_of(&text_str);
         if let Some(lang) = language {
-            self.increment_counter(&mut language_counts, lang);
+            self.increment_counter(&mut language_counts, lang, 1);
         }
 
         for word in tokens_without_whitespace.iter() {
@@ -293,7 +293,7 @@ impl LanguageDetector {
             }
             let language = self.detect_language_of(*word);
             if let Some(lang) = language {
-                self.increment_counter(&mut language_counts, lang);
+                self.increment_counter(&mut language_counts, lang, 1);
             }
         }
 
@@ -571,7 +571,7 @@ impl LanguageDetector {
 
                 for (alphabet, language) in self.one_language_alphabets.iter() {
                     if alphabet.matches_char(character) {
-                        self.increment_counter(&mut word_language_counts, *language);
+                        self.increment_counter(&mut word_language_counts, *language, 1);
                         is_match = true;
                         break;
                     }
@@ -582,6 +582,7 @@ impl LanguageDetector {
                         self.increment_counter(
                             &mut word_language_counts,
                             Language::from_str("Chinese").unwrap(),
+                            1,
                         );
                     } else if cfg!(feature = "japanese")
                         && JAPANESE_CHARACTER_SET.is_char_match(character)
@@ -589,6 +590,7 @@ impl LanguageDetector {
                         self.increment_counter(
                             &mut word_language_counts,
                             Language::from_str("Japanese").unwrap(),
+                            1,
                         );
                     } else if Alphabet::Latin.matches_char(character)
                         || Alphabet::Cyrillic.matches_char(character)
@@ -597,20 +599,22 @@ impl LanguageDetector {
                         self.languages_with_unique_characters
                             .iter()
                             .filter(|it| it.unique_characters().unwrap().contains(character))
-                            .for_each(|it| self.increment_counter(&mut word_language_counts, *it));
+                            .for_each(|it| {
+                                self.increment_counter(&mut word_language_counts, *it, 1)
+                            });
                     }
                 }
             }
 
             if word_language_counts.is_empty() {
-                self.increment_counter(&mut total_language_counts, None);
+                self.increment_counter(&mut total_language_counts, None, 1);
             } else if word_language_counts.len() == 1 {
                 let counted_languages = word_language_counts.keys().collect_vec();
                 let language = *counted_languages.first().unwrap();
                 if languages.contains(language) {
-                    self.increment_counter(&mut total_language_counts, Some(*language));
+                    self.increment_counter(&mut total_language_counts, Some(*language), 1);
                 } else {
-                    self.increment_counter(&mut total_language_counts, None);
+                    self.increment_counter(&mut total_language_counts, None, 1);
                 }
             } else if cfg!(feature = "chinese")
                 && cfg!(feature = "japanese")
@@ -620,6 +624,7 @@ impl LanguageDetector {
                 self.increment_counter(
                     &mut total_language_counts,
                     Some(Language::from_str("Japanese").unwrap()),
+                    1,
                 );
             } else {
                 let sorted_word_language_counts = word_language_counts
@@ -633,9 +638,10 @@ impl LanguageDetector {
                     self.increment_counter(
                         &mut total_language_counts,
                         Some(*most_frequent_language),
+                        1,
                     );
                 } else {
-                    self.increment_counter(&mut total_language_counts, None);
+                    self.increment_counter(&mut total_language_counts, None, 1);
                 }
             }
         }
@@ -688,7 +694,11 @@ impl LanguageDetector {
         for word in words.iter() {
             for alphabet in Alphabet::iter() {
                 if alphabet.matches(word) {
-                    self.increment_counter(&mut detected_alphabets, alphabet);
+                    self.increment_counter(
+                        &mut detected_alphabets,
+                        alphabet,
+                        word.chars().count() as u32,
+                    );
                     break;
                 }
             }
@@ -732,7 +742,7 @@ impl LanguageDetector {
                 for character in characters.chars() {
                     if word.contains(character) {
                         for language in relevant_languages.iter() {
-                            self.increment_counter(&mut language_counts, language);
+                            self.increment_counter(&mut language_counts, language, 1);
                         }
                     }
                 }
@@ -951,7 +961,7 @@ impl LanguageDetector {
                     .unwrap_or(0.0);
 
                 if probability > 0.0 {
-                    self.increment_counter(&mut unigram_counts, *language);
+                    self.increment_counter(&mut unigram_counts, *language, 1);
                 }
             }
         }
@@ -1008,9 +1018,9 @@ impl LanguageDetector {
         }
     }
 
-    fn increment_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T) {
+    fn increment_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T, value: u32) {
         let counter = counts.entry(key).or_insert(0);
-        *counter += 1;
+        *counter += value;
     }
 }
 
@@ -1095,6 +1105,7 @@ mod tests {
     use once_cell::sync::OnceCell;
     use rstest::*;
 
+    use crate::builder::LanguageDetectorBuilder;
     use crate::language::Language::*;
     use crate::ngram::NgramRef;
 
@@ -1737,6 +1748,28 @@ mod tests {
     }
 
     #[rstest(
+        builder_languages,
+        text,
+        expected_language,
+        case(vec![English, Kazakh], "нормаланбайды", Some(Kazakh)),
+        case(vec![English, Kazakh], "нормаланбайды I", Some(Kazakh)),
+        case(vec![Kazakh, Mongolian], "Балаларды жүзуге үй-рету бассейнінің үй-жайы", Some(Kazakh)),
+        case(vec![English, Russian], "III не нормируется I, II", Some(Russian))
+    )]
+    fn test_specific_language_detection_problems(
+        builder_languages: Vec<Language>,
+        text: &str,
+        expected_language: Option<Language>,
+    ) {
+        let detector = LanguageDetectorBuilder::from_languages(&builder_languages)
+            .with_preloaded_language_models()
+            .build();
+
+        let language = detector.detect_language_of(text);
+        assert_eq!(language, expected_language);
+    }
+
+    #[rstest(
         word,
         expected_language,
         // words with unique characters
@@ -1773,8 +1806,6 @@ mod tests {
         case("ќерка", Some(Macedonian)),
         case("џамиите", Some(Macedonian)),
         case("मिळते", Some(Marathi)),
-        case("үндсэн", Some(Mongolian)),
-        case("дөхөж", Some(Mongolian)),
         case("zmieniły", Some(Polish)),
         case("państwowych", Some(Polish)),
         case("mniejszości", Some(Polish)),
@@ -1884,6 +1915,8 @@ mod tests {
         case("плаваща", hashset!(Bulgarian, Kazakh, Mongolian, Russian)),
         case("довършат", hashset!(Bulgarian, Kazakh, Mongolian, Russian)),
         case("павінен", hashset!(Belarusian, Kazakh, Ukrainian)),
+        case("үндсэн", hashset!(Belarusian, Kazakh, Mongolian, Russian)),
+        case("дөхөж", hashset!(Kazakh, Mongolian)),
         case("затоплување", hashset!(Macedonian, Serbian)),
         case("ректасцензија", hashset!(Macedonian, Serbian)),
         case("набљудувач", hashset!(Macedonian, Serbian)),

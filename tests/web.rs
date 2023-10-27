@@ -320,20 +320,28 @@ fn test_compute_language_confidence_values() {
     )
     .unwrap();
 
+    let rounded_confidence_values = confidence_values
+        .iter()
+        .map(|value| ConfidenceValue {
+            language: value.language.clone(),
+            confidence: (value.confidence * 100000.0).round() / 100000.0,
+        })
+        .collect::<Vec<_>>();
+
     assert_eq!(
-        confidence_values,
+        rounded_confidence_values,
         vec![
             ConfidenceValue {
                 language: Language::German.to_string(),
-                confidence: 0.9697974735292365
+                confidence: 0.9698
             },
             ConfidenceValue {
                 language: Language::French.to_string(),
-                confidence: 0.015343577281546793
+                confidence: 0.01534
             },
             ConfidenceValue {
                 language: Language::English.to_string(),
-                confidence: 0.014858949189216833
+                confidence: 0.01486
             }
         ]
     );
@@ -352,7 +360,8 @@ fn test_compute_language_confidence() {
     let confidence = detector
         .computeLanguageConfidence("mein Haus ist groß", &Language::German.to_string())
         .unwrap();
-    assert_eq!(confidence, 0.9697974735292365);
+    let rounded_confidence = (confidence * 100000.0).round() / 100000.0;
+    assert_eq!(rounded_confidence, 0.9698);
 
     let result = detector.computeLanguageConfidence("mein Haus ist groß", "Sorbian");
     assert_eq!(

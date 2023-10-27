@@ -323,7 +323,7 @@ impl LanguageDetector {
                 let word = token_match.as_str();
                 let language = self.detect_language_from_languages(word, &languages);
 
-                if i == 0 {
+                if i == 0 || (current_language.is_none() && language.is_some()) {
                     current_language = language;
                 }
 
@@ -1079,14 +1079,14 @@ fn merge_adjacent_results(
             results[i + 1] = DetectionResult {
                 start_index: results[i].start_index,
                 end_index: results[i + 1].end_index,
-                word_count: results[i + 1].word_count,
+                word_count: results[i].word_count + results[i + 1].word_count,
                 language: results[i + 1].language,
             };
         } else {
             results[i - 1] = DetectionResult {
                 start_index: results[i - 1].start_index,
                 end_index: results[i].end_index,
-                word_count: results[i - 1].word_count,
+                word_count: results[i - 1].word_count + results[i].word_count,
                 language: results[i - 1].language,
             };
         }
@@ -1637,15 +1637,19 @@ mod tests {
 
     #[rstest(
         sentence,
+        expected_word_count,
         expected_language,
         case::english(
             "I'm really not sure whether multi-language detection is a good idea.",
+            11,
             English
-        )
+        ),
+        case::kazakh("V төзімділік спорт", 3, Kazakh)
     )]
     fn test_detect_multiple_languages_with_one_language(
         detector_for_all_languages: LanguageDetector,
         sentence: &str,
+        expected_word_count: usize,
         expected_language: Language,
     ) {
         let results = detector_for_all_languages.detect_multiple_languages_of(sentence);
@@ -1654,36 +1658,54 @@ mod tests {
         let result = &results[0];
         let substring = &sentence[result.start_index()..result.end_index()];
         assert_eq!(substring, sentence);
+        assert_eq!(result.word_count, expected_word_count);
         assert_eq!(result.language(), expected_language);
     }
 
     #[rstest(
         sentence,
         expected_first_substring,
+        expected_first_word_count,
         expected_first_language,
         expected_second_substring,
+        expected_second_word_count,
         expected_second_language,
         case::english_german(
             "  He   turned around and asked: \"Entschuldigen Sie, sprechen Sie Deutsch?\"",
             "  He   turned around and asked: ",
+            5,
             English,
             "\"Entschuldigen Sie, sprechen Sie Deutsch?\"",
+            5,
             German
         ),
         case::chinese_english(
             "上海大学是一个好大学. It is such a great university.",
             "上海大学是一个好大学. ",
+            10,
             Chinese,
             "It is such a great university.",
+            6,
             English
+        ),
+        case::english_russian(
+            "English German French - Английский язык",
+            "English German French - ",
+            4,
+            English,
+            "Английский язык",
+            2,
+            Russian
         )
     )]
     fn test_detect_multiple_languages_with_two_languages(
         detector_for_all_languages: LanguageDetector,
         sentence: &str,
         expected_first_substring: &str,
+        expected_first_word_count: usize,
         expected_first_language: Language,
         expected_second_substring: &str,
+        expected_second_word_count: usize,
         expected_second_language: Language,
     ) {
         let results = detector_for_all_languages.detect_multiple_languages_of(sentence);
@@ -1692,29 +1714,49 @@ mod tests {
         let first_result = &results[0];
         let first_substring = &sentence[first_result.start_index()..first_result.end_index()];
         assert_eq!(first_substring, expected_first_substring);
+        assert_eq!(first_result.word_count, expected_first_word_count);
         assert_eq!(first_result.language(), expected_first_language);
 
         let second_result = &results[1];
         let second_substring = &sentence[second_result.start_index()..second_result.end_index()];
         assert_eq!(second_substring, expected_second_substring);
+        assert_eq!(second_result.word_count, expected_second_word_count);
         assert_eq!(second_result.language(), expected_second_language);
     }
 
     #[rstest(
         sentence,
         expected_first_substring,
+        expected_first_word_count,
         expected_first_language,
         expected_second_substring,
+        expected_second_word_count,
         expected_second_language,
         expected_third_substring,
+        expected_third_word_count,
         expected_third_language,
         case::french_german_english(
             "Parlez-vous français? Ich spreche Französisch nur ein bisschen. A little bit is better than nothing.",
             "Parlez-vous français? ",
+            2,
             French,
             "Ich spreche Französisch nur ein bisschen. ",
+            6,
             German,
             "A little bit is better than nothing.",
+            7,
+            English
+        ),
+        case::polish_german_english(
+            "Płaszczowo-rurowe wymienniki ciepła Uszczelkowe der blaue himmel über berlin 中文 the quick brown fox jumps over the lazy dog",
+            "Płaszczowo-rurowe wymienniki ciepła Uszczelkowe ",
+            4,
+            Polish,
+            "der blaue himmel über berlin 中文 ",
+            7,
+            German,
+            "the quick brown fox jumps over the lazy dog",
+            9,
             English
         )
     )]
@@ -1722,10 +1764,13 @@ mod tests {
         detector_for_all_languages: LanguageDetector,
         sentence: &str,
         expected_first_substring: &str,
+        expected_first_word_count: usize,
         expected_first_language: Language,
         expected_second_substring: &str,
+        expected_second_word_count: usize,
         expected_second_language: Language,
         expected_third_substring: &str,
+        expected_third_word_count: usize,
         expected_third_language: Language,
     ) {
         let results = detector_for_all_languages.detect_multiple_languages_of(sentence);
@@ -1734,16 +1779,19 @@ mod tests {
         let first_result = &results[0];
         let first_substring = &sentence[first_result.start_index()..first_result.end_index()];
         assert_eq!(first_substring, expected_first_substring);
+        assert_eq!(first_result.word_count, expected_first_word_count);
         assert_eq!(first_result.language(), expected_first_language);
 
         let second_result = &results[1];
         let second_substring = &sentence[second_result.start_index()..second_result.end_index()];
         assert_eq!(second_substring, expected_second_substring);
+        assert_eq!(second_result.word_count, expected_second_word_count);
         assert_eq!(second_result.language(), expected_second_language);
 
         let third_result = &results[2];
         let third_substring = &sentence[third_result.start_index()..third_result.end_index()];
         assert_eq!(third_substring, expected_third_substring);
+        assert_eq!(third_result.word_count, expected_third_word_count);
         assert_eq!(third_result.language(), expected_third_language);
     }
 

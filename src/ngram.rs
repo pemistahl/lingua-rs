@@ -108,7 +108,7 @@ impl<'a> Iterator for NgramRefRange<'a> {
     type Item = NgramRef<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let last_ch = self.start.value.chars().rev().next()?;
+        let last_ch = self.start.value.chars().next_back()?;
         let result = self.start;
         self.start.value = &self.start.value[..self.start.value.len() - last_ch.len_utf8()];
         self.start.char_count -= 1;

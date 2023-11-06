@@ -402,6 +402,9 @@ mod result;
 mod script;
 mod writer;
 
+#[cfg(feature = "python")]
+mod python;
+
 #[cfg(target_family = "wasm")]
 mod wasm;
 

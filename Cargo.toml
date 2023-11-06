@@ -17,7 +17,7 @@ members = ["language-models/*"]
 
 [package]
 name = "lingua"
-version = "1.5.0"
+version = "1.6.0"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for long and short text alike
@@ -144,6 +144,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.1.0", o
 ahash = "0.8.6"
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.4", optional = true }
+pyo3 = { version = "0.20.0", optional = true }
 rayon = "1.8.0"
 titlecase = { version = "2.2.0", optional = true }
 whatlang = { version = "0.16.2", optional = true }
@@ -183,6 +184,7 @@ default = [
 ]
 accuracy-reports = ["cld2", "indoc", "titlecase", "whatlang", "whichlang"]
 benchmark = ["cld2", "whatlang", "whichlang"]
+python = ["pyo3"]
 afrikaans = ["lingua-afrikaans-language-model"]
 albanian = ["lingua-albanian-language-model"]
 arabic = ["lingua-arabic-language-model"]

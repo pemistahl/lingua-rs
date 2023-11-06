@@ -19,6 +19,7 @@ use crate::language::Language;
 /// This struct describes a contiguous single-language
 /// text section within a possibly mixed-language text.
 #[derive(Copy, Clone, Debug)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 pub struct DetectionResult {
     pub(crate) start_index: usize,
     pub(crate) end_index: usize,
@@ -34,6 +35,11 @@ impl DetectionResult {
     /// Returns the end index of the identified single-language substring.
     pub fn end_index(&self) -> usize {
         self.end_index
+    }
+    /// Returns the number of words being part of the identified
+    /// single-language substring.
+    pub fn word_count(&self) -> usize {
+        self.word_count
     }
     /// Returns the detected language of the identified single-language substring.
     pub fn language(&self) -> Language {

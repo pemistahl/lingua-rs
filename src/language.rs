@@ -42,6 +42,7 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 )]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(rename_all = "UPPERCASE"))]
 pub enum Language {
     #[cfg(feature = "afrikaans")]
     Afrikaans,

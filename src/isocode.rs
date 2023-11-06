@@ -38,6 +38,7 @@ use strum_macros::{EnumIter, EnumString};
 )]
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 pub enum IsoCode639_1 {
     #[cfg(feature = "afrikaans")]
     /// The ISO 639-1 code for [`Afrikaans`](crate::language::Language::Afrikaans)
@@ -359,6 +360,7 @@ pub enum IsoCode639_1 {
 )]
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 pub enum IsoCode639_3 {
     #[cfg(feature = "afrikaans")]
     /// The ISO 639-3 code for [`Afrikaans`](crate::language::Language::Afrikaans)

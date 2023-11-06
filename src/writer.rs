@@ -39,7 +39,7 @@ pub struct LanguageModelFilesWriter;
 pub struct TestDataFilesWriter;
 
 impl LanguageModelFilesWriter {
-    /// Creates language model files for accuracy report generation and writes them to a directory.
+    /// Creates language model files and writes them to a directory.
     ///
     /// `input_file_path`: The path to a txt file used for language model creation.
     /// The assumed encoding of the txt file is UTF-8.

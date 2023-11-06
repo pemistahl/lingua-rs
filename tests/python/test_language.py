@@ -16,6 +16,14 @@
 from lingua import IsoCode639_1, IsoCode639_3, Language
 
 
+def test_iso_code_639_1_name():
+    assert IsoCode639_1.EN.name == "EN"
+
+
+def test_iso_code_639_3_name():
+    assert IsoCode639_3.ENG.name == "ENG"
+
+
 def test_language_name():
     assert Language.ENGLISH.name == "ENGLISH"
 

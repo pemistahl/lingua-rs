@@ -120,6 +120,12 @@ impl DetectionResult {
 
 #[pymethods]
 impl IsoCode639_1 {
+    fn __hash__(&self) -> u64 {
+        let mut hasher = DefaultHasher::new();
+        self.hash(&mut hasher);
+        hasher.finish()
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -128,6 +134,12 @@ impl IsoCode639_1 {
 
 #[pymethods]
 impl IsoCode639_3 {
+    fn __hash__(&self) -> u64 {
+        let mut hasher = DefaultHasher::new();
+        self.hash(&mut hasher);
+        hasher.finish()
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()

@@ -294,11 +294,12 @@ impl LanguageDetectorBuilder {
     #[pyo3(signature = (*languages))]
     #[classmethod]
     fn py_from_all_languages_without(_cls: &PyType, languages: &PyTuple) -> PyResult<Self> {
-        let vector: Vec<Language> = languages.extract().unwrap();
-        let result = panic::catch_unwind(|| Self::from_all_languages_without(&vector));
-        match result {
-            Ok(builder) => Ok(builder),
-            Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+        match languages.extract::<Vec<Language>>() {
+            Ok(vector) => match panic::catch_unwind(|| Self::from_all_languages_without(&vector)) {
+                Ok(builder) => Ok(builder),
+                Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+            },
+            Err(err) => Err(err),
         }
     }
 
@@ -308,11 +309,12 @@ impl LanguageDetectorBuilder {
     #[pyo3(signature = (*languages))]
     #[classmethod]
     fn py_from_languages(_cls: &PyType, languages: &PyTuple) -> PyResult<Self> {
-        let vector: Vec<Language> = languages.extract().unwrap();
-        let result = panic::catch_unwind(|| Self::from_languages(&vector));
-        match result {
-            Ok(builder) => Ok(builder),
-            Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+        match languages.extract::<Vec<Language>>() {
+            Ok(vector) => match panic::catch_unwind(|| Self::from_languages(&vector)) {
+                Ok(builder) => Ok(builder),
+                Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+            },
+            Err(err) => Err(err),
         }
     }
 
@@ -326,11 +328,12 @@ impl LanguageDetectorBuilder {
     #[pyo3(signature = (*iso_codes))]
     #[classmethod]
     fn py_from_iso_codes_639_1(_cls: &PyType, iso_codes: &PyTuple) -> PyResult<Self> {
-        let vector: Vec<IsoCode639_1> = iso_codes.extract().unwrap();
-        let result = panic::catch_unwind(|| Self::from_iso_codes_639_1(&vector));
-        match result {
-            Ok(builder) => Ok(builder),
-            Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+        match iso_codes.extract::<Vec<IsoCode639_1>>() {
+            Ok(vector) => match panic::catch_unwind(|| Self::from_iso_codes_639_1(&vector)) {
+                Ok(builder) => Ok(builder),
+                Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+            },
+            Err(err) => Err(err),
         }
     }
 
@@ -344,11 +347,12 @@ impl LanguageDetectorBuilder {
     #[pyo3(signature = (*iso_codes))]
     #[classmethod]
     fn py_from_iso_codes_639_3(_cls: &PyType, iso_codes: &PyTuple) -> PyResult<Self> {
-        let vector: Vec<IsoCode639_3> = iso_codes.extract().unwrap();
-        let result = panic::catch_unwind(|| Self::from_iso_codes_639_3(&vector));
-        match result {
-            Ok(builder) => Ok(builder),
-            Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+        match iso_codes.extract::<Vec<IsoCode639_3>>() {
+            Ok(vector) => match panic::catch_unwind(|| Self::from_iso_codes_639_3(&vector)) {
+                Ok(builder) => Ok(builder),
+                Err(_) => Err(PyValueError::new_err(MISSING_LANGUAGE_MESSAGE)),
+            },
+            Err(err) => Err(err),
         }
     }
 

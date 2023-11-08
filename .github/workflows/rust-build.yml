@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: build
+name: Rust Build
 
 on:
   push:
@@ -36,8 +36,8 @@ on:
       - '**.yml'
 
 jobs:
-  build-and-test:
-    name: ${{ matrix.name }}
+  rust-build:
+    name: Rust on ${{ matrix.name }}
 
     runs-on: ${{ matrix.os }}
 
@@ -100,10 +100,10 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build in debug mode
+      - name: Build target in debug mode
         run: cargo build --target ${{ matrix.target }} --locked
 
-      - name: Run unit tests
+      - name: Test default target in debug mode
         run: cargo test --target ${{ matrix.target }}
 
       - name: Run WASM integration tests on NodeJS

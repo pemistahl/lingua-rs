@@ -30,14 +30,16 @@ use crate::ngram::Ngram;
 use crate::Language;
 
 /// This struct creates language model files and writes them to a directory.
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 pub struct LanguageModelFilesWriter;
 
 /// This struct creates test data files for accuracy report generation
 /// and writes them to a directory.
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 pub struct TestDataFilesWriter;
 
 impl LanguageModelFilesWriter {
-    /// Creates language model files for accuracy report generation and writes them to a directory.
+    /// Creates language model files and writes them to a directory.
     ///
     /// `input_file_path`: The path to a txt file used for language model creation.
     /// The assumed encoding of the txt file is UTF-8.
@@ -359,7 +361,7 @@ fn check_output_directory_path(output_directory_path: &Path) {
     }
     if !output_directory_path.exists() {
         panic!(
-            "Output directory '{}' does not exist",
+            "Output directory path '{}' does not exist",
             output_directory_path.display()
         );
     }

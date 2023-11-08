@@ -28,6 +28,7 @@ pub(crate) const MINIMUM_RELATIVE_DISTANCE_MESSAGE: &str =
 
 /// This struct configures and creates an instance of [LanguageDetector].
 #[derive(Clone)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 pub struct LanguageDetectorBuilder {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,

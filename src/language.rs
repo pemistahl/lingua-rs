@@ -42,6 +42,7 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 )]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(rename_all = "UPPERCASE"))]
 pub enum Language {
     #[cfg(feature = "afrikaans")]
     Afrikaans,
@@ -277,10 +278,12 @@ impl Display for Language {
 }
 
 impl Language {
+    /// Returns a set of all supported languages.
     pub fn all() -> HashSet<Language> {
         Language::iter().collect()
     }
 
+    /// Returns a set of all supported spoken languages.
     pub fn all_spoken_ones() -> HashSet<Language> {
         Language::iter()
             .filter(|it| {
@@ -293,42 +296,51 @@ impl Language {
             .collect()
     }
 
+    /// Returns a set of all languages supporting the Arabic script.
     pub fn all_with_arabic_script() -> HashSet<Language> {
         Language::iter()
             .filter(|it| it.alphabets().contains(&Alphabet::Arabic))
             .collect()
     }
 
+    /// Returns a set of all languages supporting the Cyrillic script.
     pub fn all_with_cyrillic_script() -> HashSet<Language> {
         Language::iter()
             .filter(|it| it.alphabets().contains(&Alphabet::Cyrillic))
             .collect()
     }
 
+    /// Returns a set of all languages supporting the Devanagari script.
     pub fn all_with_devanagari_script() -> HashSet<Language> {
         Language::iter()
             .filter(|it| it.alphabets().contains(&Alphabet::Devanagari))
             .collect()
     }
 
+    /// Returns a set of all languages supporting the Latin script.
     pub fn all_with_latin_script() -> HashSet<Language> {
         Language::iter()
             .filter(|it| it.alphabets().contains(&Alphabet::Latin))
             .collect()
     }
 
+    /// Returns the language associated with the ISO 639-1 code
+    /// passed to this method.
     pub fn from_iso_code_639_1(iso_code: &IsoCode639_1) -> Language {
         Language::iter()
             .find(|it| &it.iso_code_639_1() == iso_code)
             .unwrap()
     }
 
+    /// Returns the language associated with the ISO 639-3 code
+    /// passed to this method.
     pub fn from_iso_code_639_3(iso_code: &IsoCode639_3) -> Language {
         Language::iter()
             .find(|it| &it.iso_code_639_3() == iso_code)
             .unwrap()
     }
 
+    /// Returns the ISO 639-1 code of this language.
     pub fn iso_code_639_1(&self) -> IsoCode639_1 {
         match self {
             #[cfg(feature = "afrikaans")]
@@ -558,6 +570,7 @@ impl Language {
         }
     }
 
+    /// Returns the ISO 639-3 code of this language.
     pub fn iso_code_639_3(&self) -> IsoCode639_3 {
         match self {
             #[cfg(feature = "afrikaans")]

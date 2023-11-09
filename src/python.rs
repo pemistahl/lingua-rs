@@ -24,6 +24,7 @@ use std::path::PathBuf;
 
 use pyo3::exceptions::{PyException, PyValueError};
 use pyo3::prelude::*;
+use pyo3::pyclass::CompareOp;
 use pyo3::types::{PyTuple, PyType};
 
 use crate::builder::{
@@ -126,6 +127,10 @@ impl IsoCode639_1 {
         hasher.finish()
     }
 
+    fn __richcmp__(&self, other: &Self, op: CompareOp) -> bool {
+        op.matches(self.to_string().cmp(&other.to_string()))
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -140,6 +145,10 @@ impl IsoCode639_3 {
         hasher.finish()
     }
 
+    fn __richcmp__(&self, other: &Self, op: CompareOp) -> bool {
+        op.matches(self.to_string().cmp(&other.to_string()))
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -152,6 +161,10 @@ impl Language {
         let mut hasher = DefaultHasher::new();
         self.hash(&mut hasher);
         hasher.finish()
+    }
+
+    fn __richcmp__(&self, other: &Self, op: CompareOp) -> bool {
+        op.matches(self.to_string().cmp(&other.to_string()))
     }
 
     /// Return a set of all supported languages.

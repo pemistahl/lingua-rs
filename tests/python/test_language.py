@@ -20,12 +20,33 @@ def test_iso_code_639_1_name():
     assert IsoCode639_1.EN.name == "EN"
 
 
+def test_iso_code_639_1_is_comparable():
+    assert IsoCode639_1.EN == IsoCode639_1.EN
+    assert IsoCode639_1.EN != IsoCode639_1.DE
+    assert IsoCode639_1.EN > IsoCode639_1.DE
+    assert IsoCode639_1.DE < IsoCode639_1.EN
+
+
 def test_iso_code_639_3_name():
     assert IsoCode639_3.ENG.name == "ENG"
 
 
+def test_iso_code_639_3_is_comparable():
+    assert IsoCode639_3.ENG == IsoCode639_3.ENG
+    assert IsoCode639_3.ENG != IsoCode639_3.DEU
+    assert IsoCode639_3.ENG > IsoCode639_3.DEU
+    assert IsoCode639_3.DEU < IsoCode639_3.ENG
+
+
 def test_language_name():
     assert Language.ENGLISH.name == "ENGLISH"
+
+
+def test_language_is_comparable():
+    assert Language.ENGLISH == Language.ENGLISH
+    assert Language.ENGLISH != Language.GERMAN
+    assert Language.ENGLISH < Language.GERMAN
+    assert Language.GERMAN > Language.ENGLISH
 
 
 def test_all_languages_are_available():

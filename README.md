@@ -2,7 +2,8 @@
 
   ![lingua](https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/logo.png)
 
-  [![build status](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/build.yml)
+  [![rust build status](https://github.com/pemistahl/lingua-rs/actions/workflows/rust-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/rust-build.yml)
+  [![python build status](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml)
   [![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
   [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
   [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)

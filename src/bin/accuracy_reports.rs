@@ -494,7 +494,7 @@ fn main() {
 
     println!(
         "All accuracy reports successfully written in {} seconds",
-        now.elapsed().as_secs()
+        now.elapsed().as_secs_f64()
     );
 }
 
@@ -527,19 +527,19 @@ fn collect_lingua_high_accuracy_statistics(reports_directory: &PathBuf) -> Vec<D
 
         let mut statistics = DetectorStatistics::new();
 
-        for single_word in single_words {
-            let lang = detector.detect_language_of(single_word);
-            statistics.add_single_word_counts(lang, single_word);
+        let mut languages = detector.detect_languages_in_parallel_of(&single_words);
+        for (i, single_word) in single_words.into_iter().enumerate() {
+            statistics.add_single_word_counts(*languages.get(i).unwrap(), single_word);
         }
 
-        for word_pair in word_pairs {
-            let lang = detector.detect_language_of(word_pair);
-            statistics.add_word_pair_counts(lang, word_pair);
+        languages = detector.detect_languages_in_parallel_of(&word_pairs);
+        for (i, word_pair) in word_pairs.into_iter().enumerate() {
+            statistics.add_word_pair_counts(*languages.get(i).unwrap(), word_pair);
         }
 
-        for sentence in sentences {
-            let lang = detector.detect_language_of(sentence);
-            statistics.add_sentence_counts(lang, sentence);
+        languages = detector.detect_languages_in_parallel_of(&sentences);
+        for (i, sentence) in sentences.into_iter().enumerate() {
+            statistics.add_sentence_counts(*languages.get(i).unwrap(), sentence);
         }
 
         statistics.compute_accuracy_values();
@@ -549,7 +549,7 @@ fn collect_lingua_high_accuracy_statistics(reports_directory: &PathBuf) -> Vec<D
 
     println!(
         "Lingua high accuracy reports written in {} seconds\n",
-        now.elapsed().as_secs()
+        now.elapsed().as_secs_f64()
     );
 
     language_statistics
@@ -585,19 +585,19 @@ fn collect_lingua_low_accuracy_statistics(reports_directory: &PathBuf) -> Vec<De
 
         let mut statistics = DetectorStatistics::new();
 
-        for single_word in single_words {
-            let lang = detector.detect_language_of(single_word);
-            statistics.add_single_word_counts(lang, single_word);
+        let mut languages = detector.detect_languages_in_parallel_of(&single_words);
+        for (i, single_word) in single_words.into_iter().enumerate() {
+            statistics.add_single_word_counts(*languages.get(i).unwrap(), single_word);
         }
 
-        for word_pair in word_pairs {
-            let lang = detector.detect_language_of(word_pair);
-            statistics.add_word_pair_counts(lang, word_pair);
+        languages = detector.detect_languages_in_parallel_of(&word_pairs);
+        for (i, word_pair) in word_pairs.into_iter().enumerate() {
+            statistics.add_word_pair_counts(*languages.get(i).unwrap(), word_pair);
         }
 
-        for sentence in sentences {
-            let lang = detector.detect_language_of(sentence);
-            statistics.add_sentence_counts(lang, sentence);
+        languages = detector.detect_languages_in_parallel_of(&sentences);
+        for (i, sentence) in sentences.into_iter().enumerate() {
+            statistics.add_sentence_counts(*languages.get(i).unwrap(), sentence);
         }
 
         statistics.compute_accuracy_values();
@@ -607,7 +607,7 @@ fn collect_lingua_low_accuracy_statistics(reports_directory: &PathBuf) -> Vec<De
 
     println!(
         "Lingua low accuracy reports written in {} seconds\n",
-        now.elapsed().as_secs()
+        now.elapsed().as_secs_f64()
     );
 
     language_statistics
@@ -659,7 +659,7 @@ fn collect_cld2_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistic
 
     println!(
         "CLD2 reports written in {} seconds\n",
-        now.elapsed().as_secs()
+        now.elapsed().as_secs_f64()
     );
 
     language_statistics
@@ -713,7 +713,7 @@ fn collect_whatlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStati
 
     println!(
         "Whatlang reports written in {} seconds\n",
-        now.elapsed().as_secs()
+        now.elapsed().as_secs_f64()
     );
 
     language_statistics
@@ -766,7 +766,7 @@ fn collect_whichlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStat
 
     println!(
         "Whichlang reports written in {} seconds\n",
-        now.elapsed().as_secs()
+        now.elapsed().as_secs_f64()
     );
 
     language_statistics

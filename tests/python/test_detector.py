@@ -33,8 +33,19 @@ detector_for_english_and_german = (
 def test_detect_language():
     assert (
         detector_for_english_and_german
-        .detect_language_of("Alter")
+        .detect_language_of("Sprachen sind großartig")
         == Language.GERMAN
+    )
+
+
+def test_detect_languages_in_parallel():
+    assert (
+        detector_for_english_and_german
+        .detect_languages_in_parallel_of([
+            "languages are awesome",
+            "Sprachen sind großartig"
+        ])
+        == [Language.ENGLISH, Language.GERMAN]
     )
 
 
@@ -150,6 +161,52 @@ def test_compute_language_confidence_values(
 
 
 @pytest.mark.parametrize(
+    "texts,expected_confidence_values",
+    [
+        pytest.param(
+            ["groß", "Alter", "проарплап"],
+            [
+                [
+                    ConfidenceValue(Language.GERMAN, 1.0),
+                    ConfidenceValue(Language.ENGLISH, 0.0),
+                ],
+                [
+                    ConfidenceValue(Language.GERMAN, 0.68),
+                    ConfidenceValue(Language.ENGLISH, 0.32),
+                ],
+                [
+                    ConfidenceValue(Language.ENGLISH, 0.0),
+                    ConfidenceValue(Language.GERMAN, 0.0),
+                ],
+            ]
+        )
+    ]
+)
+def test_compute_language_confidence_values_in_parallel(
+    texts, expected_confidence_values
+):
+    confidence_values = (
+        detector_for_english_and_german
+        .compute_language_confidence_values_in_parallel(texts)
+    )
+
+    assert len(confidence_values) == 3
+    assert len(confidence_values[0]) == 2
+    assert len(confidence_values[1]) == 2
+    assert len(confidence_values[2]) == 2
+
+    for i, values in enumerate(confidence_values):
+        first, second = values
+        expected_first, expected_second = expected_confidence_values[i]
+
+        assert first.language == expected_first.language
+        assert round(first.value, 2) == expected_first.value
+
+        assert second.language == expected_second.language
+        assert round(second.value, 2) == expected_second.value
+
+
+@pytest.mark.parametrize(
     "text,expected_confidence_for_german,expected_confidence_for_english",
     [
         pytest.param("groß", 1.0, 0.0),
@@ -182,3 +239,39 @@ def test_compute_language_confidence(
         )
     )
     assert confidence_for_french == 0.0
+
+
+@pytest.mark.parametrize(
+    "texts,expected_confidence_values_for_german,expected_confidence_values_for_english",
+    [
+        pytest.param(
+            ["groß", "Alter", "проарплап"],
+            [1.0, 0.68, 0.0],
+            [0.0, 0.32, 0.0]
+        )
+    ]
+)
+def test_compute_language_confidence_in_parallel(
+    texts,
+    expected_confidence_values_for_german,
+    expected_confidence_values_for_english
+):
+    confidence_values_for_german = (
+        detector_for_english_and_german
+        .compute_language_confidence_in_parallel(texts, Language.GERMAN)
+    )
+    rounded_values_for_german = list(map(
+        lambda v: round(v, 2),
+        confidence_values_for_german
+    ))
+    assert rounded_values_for_german == expected_confidence_values_for_german
+
+    confidence_values_for_english = (
+        detector_for_english_and_german
+        .compute_language_confidence_in_parallel(texts, Language.ENGLISH)
+    )
+    rounded_values_for_english = list(map(
+        lambda v: round(v, 2),
+        confidence_values_for_english
+    ))
+    assert rounded_values_for_english == expected_confidence_values_for_english

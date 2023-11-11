@@ -303,8 +303,7 @@ impl LanguageDetectorBuilder {
 
     /// Create and return an instance of LanguageDetectorBuilder
     /// with all built-in languages except those passed to this method.
-    #[pyo3(name = "from_all_languages_without")]
-    #[pyo3(signature = (*languages))]
+    #[pyo3(name = "from_all_languages_without", signature = (*languages))]
     #[classmethod]
     fn py_from_all_languages_without(_cls: &PyType, languages: &PyTuple) -> PyResult<Self> {
         match languages.extract::<Vec<Language>>() {
@@ -318,8 +317,7 @@ impl LanguageDetectorBuilder {
 
     /// Create and return an instance of LanguageDetectorBuilder
     /// with the languages passed to this method.
-    #[pyo3(name = "from_languages")]
-    #[pyo3(signature = (*languages))]
+    #[pyo3(name = "from_languages", signature = (*languages))]
     #[classmethod]
     fn py_from_languages(_cls: &PyType, languages: &PyTuple) -> PyResult<Self> {
         match languages.extract::<Vec<Language>>() {
@@ -337,8 +335,7 @@ impl LanguageDetectorBuilder {
     ///
     /// Raises:
     ///     ValueError: if less than two ISO codes are specified
-    #[pyo3(name = "from_iso_codes_639_1")]
-    #[pyo3(signature = (*iso_codes))]
+    #[pyo3(name = "from_iso_codes_639_1", signature = (*iso_codes))]
     #[classmethod]
     fn py_from_iso_codes_639_1(_cls: &PyType, iso_codes: &PyTuple) -> PyResult<Self> {
         match iso_codes.extract::<Vec<IsoCode639_1>>() {
@@ -356,8 +353,7 @@ impl LanguageDetectorBuilder {
     ///
     /// Raises:
     ///     ValueError: if less than two ISO codes are specified
-    #[pyo3(name = "from_iso_codes_639_3")]
-    #[pyo3(signature = (*iso_codes))]
+    #[pyo3(name = "from_iso_codes_639_3", signature = (*iso_codes))]
     #[classmethod]
     fn py_from_iso_codes_639_3(_cls: &PyType, iso_codes: &PyTuple) -> PyResult<Self> {
         match iso_codes.extract::<Vec<IsoCode639_3>>() {
@@ -454,26 +450,74 @@ impl LanguageDetector {
         self.unload_language_models()
     }
 
-    /// Detect the language of text.
+    /// Detect the language of given input text.
     ///
-    /// If the language cannot be reliably detected, None is returned.
+    /// If the language cannot be reliably detected, `None` is returned.
+    ///
+    /// This method operates in a single thread. If you want to classify
+    /// a very large set of texts, you will probably want to use method
+    /// `detect_languages_in_parallel_of` instead.
     #[pyo3(name = "detect_language_of")]
     fn py_detect_language_of(&self, text: String) -> Option<Language> {
         self.detect_language_of(text)
+    }
+
+    /// Detects the languages of all given input texts.
+    ///
+    /// If the language cannot be reliably detected for a text,
+    /// `None` is put into the result list.
+    ///
+    /// This method is a good fit if you want to classify a very large set of texts.
+    /// It potentially operates in multiple threads, depending on how many idle CPU
+    /// cores are available and how many texts are passed to this method.
+    ///
+    /// If you do not want or need parallel execution, use method
+    /// `detect_language_of` instead.
+    #[pyo3(name = "detect_languages_in_parallel_of")]
+    fn py_detect_languages_in_parallel_of(&self, texts: Vec<String>) -> Vec<Option<Language>> {
+        self.detect_languages_in_parallel_of(&texts)
     }
 
     /// Attempt to detect multiple languages in mixed-language text.
     ///
     /// This feature is experimental and under continuous development.
     ///
-    /// A list of DetectionResult is returned containing an entry for each
+    /// A list of `DetectionResult` is returned containing an entry for each
     /// contiguous single-language text section as identified by the library.
     /// Each entry consists of the identified language, a start index and an
     /// end index. The indices denote the substring that has been identified
     /// as a contiguous single-language text section.
+    ///
+    /// This method operates in a single thread. If you want to classify
+    /// a very large set of texts, you will probably want to use method
+    /// `detect_multiple_languages_in_parallel_of` instead.
     #[pyo3(name = "detect_multiple_languages_of")]
     fn py_detect_multiple_languages_of(&self, text: String) -> Vec<DetectionResult> {
         self.detect_multiple_languages_of(text)
+    }
+
+    /// Attempt to detect multiple languages in mixed-language text.
+    ///
+    /// This feature is experimental and under continuous development.
+    ///
+    /// A list of `DetectionResult` is returned for each text containing an
+    /// entry for each contiguous single-language text section as identified by
+    /// the library. Each entry consists of the identified language, a start index
+    /// and an end index. The indices denote the substring that has been identified
+    /// as a contiguous single-language text section.
+    ///
+    /// This method is a good fit if you want to classify a very large set of texts.
+    /// It potentially operates in multiple threads, depending on how many idle CPU
+    /// cores are available and how many texts are passed to this method.
+    ///
+    /// If you do not want or need parallel execution, use method
+    /// `detect_multiple_languages_of` instead.
+    #[pyo3(name = "detect_multiple_languages_in_parallel_of")]
+    fn py_detect_multiple_languages_in_parallel_of(
+        &self,
+        texts: Vec<String>,
+    ) -> Vec<Vec<DetectionResult>> {
+        self.detect_multiple_languages_in_parallel_of(&texts)
     }
 
     /// Compute confidence values for each language supported
@@ -484,13 +528,17 @@ impl LanguageDetector {
     /// supported by this detector.
     ///
     /// A list is returned containing those languages which the
-    /// calling instance of LanguageDetector has been built from.
+    /// calling instance of `LanguageDetector` has been built from.
     /// The entries are sorted by their confidence value in
     /// descending order. Each value is a probability between
     /// 0.0 and 1.0. The probabilities of all languages will sum to 1.0.
     /// If the language is unambiguously identified by the rule engine,
     /// the value 1.0 will always be returned for this language. The
     /// other languages will receive a value of 0.0.
+    ///
+    /// This method operates in a single thread. If you want to classify
+    /// a very large set of texts, you will probably want to use method
+    /// `compute_language_confidence_values_in_parallel` instead.
     #[pyo3(name = "compute_language_confidence_values")]
     fn py_compute_language_confidence_values(&self, text: String) -> Vec<ConfidenceValue> {
         self.compute_language_confidence_values(text)
@@ -498,6 +546,37 @@ impl LanguageDetector {
             .map(|tup| ConfidenceValue {
                 language: tup.0,
                 value: tup.1,
+            })
+            .collect()
+    }
+
+    /// Compute confidence values for each language supported by this detector for all the given
+    /// input texts.
+    ///
+    /// The confidence values denote how likely it is that the given text has been written
+    /// in any of the languages supported by this detector.
+    ///
+    /// This method is a good fit if you want to classify a very large set of texts.
+    /// It potentially operates in multiple threads, depending on how many idle CPU
+    /// cores are available and how many texts are passed to this method.
+    ///
+    /// If you do not want or need parallel execution, use method
+    /// `compute_language_confidence_values` instead.
+    #[pyo3(name = "compute_language_confidence_values_in_parallel")]
+    fn py_compute_language_confidence_values_in_parallel(
+        &self,
+        texts: Vec<String>,
+    ) -> Vec<Vec<ConfidenceValue>> {
+        self.compute_language_confidence_values_in_parallel(&texts)
+            .iter()
+            .map(|vector| {
+                vector
+                    .iter()
+                    .map(|tup| ConfidenceValue {
+                        language: tup.0,
+                        value: tup.1,
+                    })
+                    .collect()
             })
             .collect()
     }
@@ -510,9 +589,38 @@ impl LanguageDetector {
     /// unambiguously identified by the rule engine, the value 1.0 will
     /// always be returned. If the given language is not supported by this
     /// detector instance, the value 0.0 will always be returned.
+    ///
+    /// This method operates in a single thread. If you want to classify
+    /// a very large set of texts, you will probably want to use method
+    /// `compute_language_confidence_in_parallel` instead.
     #[pyo3(name = "compute_language_confidence")]
     fn py_compute_language_confidence(&self, text: String, language: Language) -> f64 {
         self.compute_language_confidence(text, language)
+    }
+
+    /// Compute the confidence values of all input texts for the given language.
+    ///
+    /// A confidence value denotes how likely it is that a given text has been
+    /// written in a given language.
+    ///
+    /// The values that this method computes are numbers between 0.0 and 1.0. If the language is
+    /// unambiguously identified by the rule engine, the value 1.0 will always be returned.
+    /// If the given language is not supported by this detector instance, the value 0.0 will
+    /// always be returned.
+    ///
+    /// This method is a good fit if you want to classify a very large set of texts.
+    /// It potentially operates in multiple threads, depending on how many idle CPU
+    /// cores are available and how many texts are passed to this method.
+    ///
+    /// If you do not want or need parallel execution, use method
+    /// `compute_language_confidence` instead.
+    #[pyo3(name = "compute_language_confidence_in_parallel")]
+    fn py_compute_language_confidence_in_parallel(
+        &self,
+        texts: Vec<String>,
+        language: Language,
+    ) -> Vec<f64> {
+        self.compute_language_confidence_in_parallel(&texts, language)
     }
 }
 

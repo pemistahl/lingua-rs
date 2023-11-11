@@ -25,12 +25,13 @@ use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
 use itertools::Itertools;
+use once_cell::sync::Lazy;
 use strum::IntoEnumIterator;
 use titlecase::titlecase;
 use whatlang::{Detector, Lang as WhatlangLanguage};
 use whichlang::{detect_language as whichlang_detect_language, Lang as WhichlangLanguage};
 
-use lingua::{Language, LanguageDetectorBuilder};
+use lingua::{Language, LanguageDetector, LanguageDetectorBuilder};
 use lingua_afrikaans_language_model::AFRIKAANS_TESTDATA_DIRECTORY;
 use lingua_albanian_language_model::ALBANIAN_TESTDATA_DIRECTORY;
 use lingua_arabic_language_model::ARABIC_TESTDATA_DIRECTORY;
@@ -165,8 +166,7 @@ impl DetectorStatistics {
         let average_accuracy =
             (single_word_accuracy + word_pair_accuracy + sentence_accuracy) / Decimal::from(3);
 
-        self.average_accuracies
-            .insert(language.clone(), average_accuracy);
+        self.average_accuracies.insert(*language, average_accuracy);
 
         if average_accuracy.is_zero() {
             return None;
@@ -204,7 +204,7 @@ impl DetectorStatistics {
         let single_words_accuracy_column = match self
             .single_word_statistic
             .language_accuracies
-            .get(&Some(language.clone()))
+            .get(&Some(*language))
         {
             Some(accuracy) => accuracy.to_string(),
             None => "NaN".to_string(),
@@ -212,7 +212,7 @@ impl DetectorStatistics {
         let word_pairs_accuracy_column = match self
             .word_pair_statistic
             .language_accuracies
-            .get(&Some(language.clone()))
+            .get(&Some(*language))
         {
             Some(accuracy) => accuracy.to_string(),
             None => "NaN".to_string(),
@@ -220,7 +220,7 @@ impl DetectorStatistics {
         let sentences_accuracy_column = match self
             .sentence_statistic
             .language_accuracies
-            .get(&Some(language.clone()))
+            .get(&Some(*language))
         {
             Some(accuracy) => accuracy.to_string(),
             None => "NaN".to_string(),
@@ -273,7 +273,7 @@ impl Statistic {
             .iter()
             .map(|(language, count)| {
                 (
-                    language.clone(),
+                    *language,
                     Decimal::from(*count) / Decimal::from(sum_of_counts) * Decimal::from(100),
                 )
             })
@@ -283,7 +283,7 @@ impl Statistic {
     fn create_report_data(&self, language: &Language, description: &str) -> (Decimal, String) {
         let accuracy = *self
             .language_accuracies
-            .get(&Some(language.clone()))
+            .get(&Some(*language))
             .unwrap_or(&Decimal::zero());
 
         let average_length =
@@ -329,29 +329,173 @@ impl Statistic {
     }
 }
 
+static WHATLANG_DETECTOR: Lazy<Detector> = Lazy::new(Detector::new);
+
+static LINGUA_DETECTOR_WITH_LOW_ACCURACY: Lazy<LanguageDetector> = Lazy::new(|| {
+    LanguageDetectorBuilder::from_all_languages()
+        .with_low_accuracy_mode()
+        .with_preloaded_language_models()
+        .build()
+});
+
+static LINGUA_DETECTOR_WITH_HIGH_ACCURACY: Lazy<LanguageDetector> = Lazy::new(|| {
+    LanguageDetectorBuilder::from_all_languages()
+        .with_preloaded_language_models()
+        .build()
+});
+
+fn cld2_detect(texts: &[&str]) -> Vec<Option<Language>> {
+    texts
+        .iter()
+        .map(|text| map_cld2_to_lingua(cld2_detect_language(text, Format::Text).0))
+        .collect()
+}
+
+fn whatlang_detect(texts: &[&str]) -> Vec<Option<Language>> {
+    texts
+        .iter()
+        .map(|text| map_whatlang_to_lingua(WHATLANG_DETECTOR.detect_lang(text)))
+        .collect()
+}
+
+fn whichlang_detect(texts: &[&str]) -> Vec<Option<Language>> {
+    texts
+        .iter()
+        .map(|text| map_whichlang_to_lingua(whichlang_detect_language(text)))
+        .collect()
+}
+
+fn lingua_low_accuracy_detect(texts: &[&str]) -> Vec<Option<Language>> {
+    LINGUA_DETECTOR_WITH_LOW_ACCURACY.detect_languages_in_parallel_of(texts)
+}
+
+fn lingua_high_accuracy_detect(texts: &[&str]) -> Vec<Option<Language>> {
+    LINGUA_DETECTOR_WITH_HIGH_ACCURACY.detect_languages_in_parallel_of(texts)
+}
+
+fn get_file_content(file_name: &str) -> HashMap<Language, Vec<&str>> {
+    Language::iter()
+        .map(|language| {
+            let file_content = get_test_data_directory(&language)
+                .get_file(file_name)
+                .unwrap()
+                .contents_utf8()
+                .unwrap()
+                .split('\n')
+                .filter(|&line| !line.trim().is_empty())
+                .collect_vec();
+
+            (language, file_content)
+        })
+        .collect()
+}
+
+static SINGLE_WORDS: Lazy<HashMap<Language, Vec<&str>>> =
+    Lazy::new(|| get_file_content("single-words.txt"));
+
+static WORD_PAIRS: Lazy<HashMap<Language, Vec<&str>>> =
+    Lazy::new(|| get_file_content("word-pairs.txt"));
+
+static SENTENCES: Lazy<HashMap<Language, Vec<&str>>> =
+    Lazy::new(|| get_file_content("sentences.txt"));
+
+fn collect_statistics(
+    detector_name: &str,
+    reports_directory: &PathBuf,
+    detector_fn: fn(&[&str]) -> Vec<Option<Language>>,
+) -> Vec<DetectorStatistics> {
+    let now = Instant::now();
+    let mut language_statistics = vec![];
+
+    if !reports_directory.is_dir() {
+        fs::create_dir_all(reports_directory).expect("Reports directory could not be created");
+    }
+
+    let total_language_count = Language::iter().count();
+
+    for (idx, language) in Language::iter().enumerate() {
+        println!(
+            "Writing {detector_name} reports for {:?}... ({}/{})",
+            &language,
+            (idx + 1),
+            total_language_count
+        );
+
+        let mut statistics = DetectorStatistics::new();
+
+        let single_words = SINGLE_WORDS.get(&language).unwrap();
+        let single_word_results = detector_fn(single_words);
+
+        for (i, single_word) in single_words.iter().enumerate() {
+            statistics.add_single_word_counts(*single_word_results.get(i).unwrap(), single_word);
+        }
+
+        let word_pairs = WORD_PAIRS.get(&language).unwrap();
+        let word_pair_results = detector_fn(word_pairs);
+
+        for (i, word_pair) in word_pairs.iter().enumerate() {
+            statistics.add_word_pair_counts(*word_pair_results.get(i).unwrap(), word_pair);
+        }
+
+        let sentences = SENTENCES.get(&language).unwrap();
+        let sentence_results = detector_fn(sentences);
+
+        for (i, sentence) in sentences.iter().enumerate() {
+            statistics.add_sentence_counts(*sentence_results.get(i).unwrap(), sentence);
+        }
+
+        statistics.compute_accuracy_values();
+
+        let report_file_name = titlecase(&format!("{:?}.txt", &language));
+        let report_file_path = reports_directory.join(&report_file_name);
+        let report_data = statistics.create_report_data(&language);
+
+        if let Some(report) = report_data {
+            fs::write(report_file_path, report).expect("Reports file could not be written");
+        }
+
+        language_statistics.push(statistics);
+    }
+
+    println!(
+        "{detector_name} high accuracy reports written in {:.2} seconds\n",
+        now.elapsed().as_secs_f64()
+    );
+
+    language_statistics
+}
+
 fn main() {
     let now = Instant::now();
 
     let accuracy_reports_directory = Path::new("accuracy-reports");
 
     let cld2_reports_directory = accuracy_reports_directory.join("cld2");
-    let mut cld2_statistics = collect_cld2_statistics(&cld2_reports_directory);
+    let cld2_statistics = collect_statistics("cld2", &cld2_reports_directory, cld2_detect);
 
     let whatlang_reports_directory = accuracy_reports_directory.join("whatlang");
-    let mut whatlang_statistics = collect_whatlang_statistics(&whatlang_reports_directory);
+    let whatlang_statistics =
+        collect_statistics("whatlang", &whatlang_reports_directory, whatlang_detect);
 
     let whichlang_reports_directory = accuracy_reports_directory.join("whichlang");
-    let mut whichlang_statistics = collect_whichlang_statistics(&whichlang_reports_directory);
+    let whichlang_statistics =
+        collect_statistics("whichlang", &whichlang_reports_directory, whichlang_detect);
 
     let lingua_low_accuracy_reports_directory =
         accuracy_reports_directory.join("lingua-low-accuracy");
-    let mut lingua_low_accuracy_statistics =
-        collect_lingua_low_accuracy_statistics(&lingua_low_accuracy_reports_directory);
+    let lingua_low_accuracy_statistics = collect_statistics(
+        "lingua-low-accuracy",
+        &lingua_low_accuracy_reports_directory,
+        lingua_low_accuracy_detect,
+    );
 
     let lingua_high_accuracy_reports_directory =
         accuracy_reports_directory.join("lingua-high-accuracy");
-    let mut lingua_high_accuracy_statistics =
-        collect_lingua_high_accuracy_statistics(&lingua_high_accuracy_reports_directory);
+    let lingua_high_accuracy_statistics = collect_statistics(
+        "lingua-high-accuracy",
+        &lingua_high_accuracy_reports_directory,
+        lingua_high_accuracy_detect,
+    );
 
     let aggregated_report_file_path =
         accuracy_reports_directory.join("aggregated-accuracy-values.csv");
@@ -388,50 +532,25 @@ fn main() {
         .expect("CSV header row could not be written");
 
     for (idx, language) in Language::iter().enumerate() {
-        let cld2_report = cld2_statistics
-            .get_mut(idx)
-            .unwrap()
-            .create_report_data(&language);
-
         let cld2_aggregated_report_row = cld2_statistics
             .get(idx)
             .unwrap()
             .create_aggregated_report_row(&language);
-
-        let whatlang_report = whatlang_statistics
-            .get_mut(idx)
-            .unwrap()
-            .create_report_data(&language);
 
         let whatlang_aggregated_report_row = whatlang_statistics
             .get(idx)
             .unwrap()
             .create_aggregated_report_row(&language);
 
-        let whichlang_report = whichlang_statistics
-            .get_mut(idx)
-            .unwrap()
-            .create_report_data(&language);
-
         let whichlang_aggregated_report_row = whichlang_statistics
             .get(idx)
             .unwrap()
             .create_aggregated_report_row(&language);
 
-        let lingua_low_accuracy_report = lingua_low_accuracy_statistics
-            .get_mut(idx)
-            .unwrap()
-            .create_report_data(&language);
-
         let lingua_low_accuracy_aggregated_report_row = lingua_low_accuracy_statistics
             .get(idx)
             .unwrap()
             .create_aggregated_report_row(&language);
-
-        let lingua_high_accuracy_report = lingua_high_accuracy_statistics
-            .get_mut(idx)
-            .unwrap()
-            .create_report_data(&language);
 
         let lingua_high_accuracy_aggregated_report_row = lingua_high_accuracy_statistics
             .get(idx)
@@ -451,337 +570,12 @@ fn main() {
         aggregated_report_file
             .write_all(total_aggregated_report_row.as_bytes())
             .expect("CSV data row could not be written");
-
-        let report_file_name = titlecase(&format!("{:?}.txt", &language));
-
-        let cld2_reports_file_path = cld2_reports_directory.join(&report_file_name);
-
-        if let Some(report) = cld2_report {
-            fs::write(cld2_reports_file_path, report)
-                .expect("CLD2 reports file could not be written");
-        }
-
-        let whatlang_reports_file_path = whatlang_reports_directory.join(&report_file_name);
-
-        if let Some(report) = whatlang_report {
-            fs::write(whatlang_reports_file_path, report)
-                .expect("Whatlang reports file could not be written");
-        }
-
-        let whichlang_reports_file_path = whichlang_reports_directory.join(&report_file_name);
-
-        if let Some(report) = whichlang_report {
-            fs::write(whichlang_reports_file_path, report)
-                .expect("Whichlang reports file could not be written");
-        }
-
-        let lingua_low_accuracy_reports_file_path =
-            lingua_low_accuracy_reports_directory.join(&report_file_name);
-
-        if let Some(report) = lingua_low_accuracy_report {
-            fs::write(lingua_low_accuracy_reports_file_path, report)
-                .expect("Lingua reports file could not be written");
-        }
-
-        let lingua_high_accuracy_reports_file_path =
-            lingua_high_accuracy_reports_directory.join(&report_file_name);
-
-        if let Some(report) = lingua_high_accuracy_report {
-            fs::write(lingua_high_accuracy_reports_file_path, report)
-                .expect("Lingua reports file could not be written");
-        }
     }
 
     println!(
-        "All accuracy reports successfully written in {} seconds",
+        "All accuracy reports successfully written in {:.2} seconds",
         now.elapsed().as_secs_f64()
     );
-}
-
-fn collect_lingua_high_accuracy_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
-    let now = Instant::now();
-    let mut language_statistics = vec![];
-
-    if !reports_directory.is_dir() {
-        fs::create_dir_all(reports_directory)
-            .expect("Lingua reports directory could not be created");
-    }
-
-    let detector = LanguageDetectorBuilder::from_all_languages()
-        .with_preloaded_language_models()
-        .build();
-
-    let total_language_count = Language::iter().count();
-
-    for (idx, language) in Language::iter().enumerate() {
-        println!(
-            "Writing Lingua high accuracy reports for {:?}... ({}/{})",
-            &language,
-            (idx + 1),
-            total_language_count
-        );
-
-        let single_words = get_file_content("single-words.txt", &language);
-        let word_pairs = get_file_content("word-pairs.txt", &language);
-        let sentences = get_file_content("sentences.txt", &language);
-
-        let mut statistics = DetectorStatistics::new();
-
-        let mut languages = detector.detect_languages_in_parallel_of(&single_words);
-        for (i, single_word) in single_words.into_iter().enumerate() {
-            statistics.add_single_word_counts(*languages.get(i).unwrap(), single_word);
-        }
-
-        languages = detector.detect_languages_in_parallel_of(&word_pairs);
-        for (i, word_pair) in word_pairs.into_iter().enumerate() {
-            statistics.add_word_pair_counts(*languages.get(i).unwrap(), word_pair);
-        }
-
-        languages = detector.detect_languages_in_parallel_of(&sentences);
-        for (i, sentence) in sentences.into_iter().enumerate() {
-            statistics.add_sentence_counts(*languages.get(i).unwrap(), sentence);
-        }
-
-        statistics.compute_accuracy_values();
-
-        language_statistics.push(statistics);
-    }
-
-    println!(
-        "Lingua high accuracy reports written in {} seconds\n",
-        now.elapsed().as_secs_f64()
-    );
-
-    language_statistics
-}
-
-fn collect_lingua_low_accuracy_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
-    let now = Instant::now();
-    let mut language_statistics = vec![];
-
-    if !reports_directory.is_dir() {
-        fs::create_dir_all(reports_directory)
-            .expect("Lingua reports directory could not be created");
-    }
-
-    let detector = LanguageDetectorBuilder::from_all_languages()
-        .with_low_accuracy_mode()
-        .with_preloaded_language_models()
-        .build();
-
-    let total_language_count = Language::iter().count();
-
-    for (idx, language) in Language::iter().enumerate() {
-        println!(
-            "Writing Lingua low accuracy reports for {:?}... ({}/{})",
-            &language,
-            (idx + 1),
-            total_language_count
-        );
-
-        let single_words = get_file_content("single-words.txt", &language);
-        let word_pairs = get_file_content("word-pairs.txt", &language);
-        let sentences = get_file_content("sentences.txt", &language);
-
-        let mut statistics = DetectorStatistics::new();
-
-        let mut languages = detector.detect_languages_in_parallel_of(&single_words);
-        for (i, single_word) in single_words.into_iter().enumerate() {
-            statistics.add_single_word_counts(*languages.get(i).unwrap(), single_word);
-        }
-
-        languages = detector.detect_languages_in_parallel_of(&word_pairs);
-        for (i, word_pair) in word_pairs.into_iter().enumerate() {
-            statistics.add_word_pair_counts(*languages.get(i).unwrap(), word_pair);
-        }
-
-        languages = detector.detect_languages_in_parallel_of(&sentences);
-        for (i, sentence) in sentences.into_iter().enumerate() {
-            statistics.add_sentence_counts(*languages.get(i).unwrap(), sentence);
-        }
-
-        statistics.compute_accuracy_values();
-
-        language_statistics.push(statistics);
-    }
-
-    println!(
-        "Lingua low accuracy reports written in {} seconds\n",
-        now.elapsed().as_secs_f64()
-    );
-
-    language_statistics
-}
-
-fn collect_cld2_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
-    let now = Instant::now();
-    let mut language_statistics = vec![];
-
-    if !reports_directory.is_dir() {
-        fs::create_dir_all(reports_directory).expect("CLD2 reports directory could not be created");
-    }
-
-    let total_language_count = Language::iter().count();
-
-    for (idx, language) in Language::iter().enumerate() {
-        println!(
-            "Writing CLD2 reports for {:?}... ({}/{})",
-            &language,
-            (idx + 1),
-            total_language_count
-        );
-
-        let single_words = get_file_content("single-words.txt", &language);
-        let word_pairs = get_file_content("word-pairs.txt", &language);
-        let sentences = get_file_content("sentences.txt", &language);
-
-        let mut statistics = DetectorStatistics::new();
-
-        for single_word in single_words {
-            let lang = map_cld2_to_lingua(cld2_detect_language(single_word, Format::Text).0);
-            statistics.add_single_word_counts(lang, single_word);
-        }
-
-        for word_pair in word_pairs {
-            let lang = map_cld2_to_lingua(cld2_detect_language(word_pair, Format::Text).0);
-            statistics.add_word_pair_counts(lang, word_pair);
-        }
-
-        for sentence in sentences {
-            let lang = map_cld2_to_lingua(cld2_detect_language(sentence, Format::Text).0);
-            statistics.add_sentence_counts(lang, sentence);
-        }
-
-        statistics.compute_accuracy_values();
-
-        language_statistics.push(statistics);
-    }
-
-    println!(
-        "CLD2 reports written in {} seconds\n",
-        now.elapsed().as_secs_f64()
-    );
-
-    language_statistics
-}
-
-fn collect_whatlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
-    let now = Instant::now();
-    let mut language_statistics = vec![];
-
-    if !reports_directory.is_dir() {
-        fs::create_dir_all(reports_directory)
-            .expect("Whatlang reports directory could not be created");
-    }
-
-    let detector = Detector::new();
-    let total_language_count = Language::iter().count();
-
-    for (idx, language) in Language::iter().enumerate() {
-        println!(
-            "Writing Whatlang reports for {:?}... ({}/{})",
-            &language,
-            (idx + 1),
-            total_language_count
-        );
-
-        let single_words = get_file_content("single-words.txt", &language);
-        let word_pairs = get_file_content("word-pairs.txt", &language);
-        let sentences = get_file_content("sentences.txt", &language);
-
-        let mut statistics = DetectorStatistics::new();
-
-        for single_word in single_words {
-            let lang = map_whatlang_to_lingua(detector.detect_lang(single_word));
-            statistics.add_single_word_counts(lang, single_word);
-        }
-
-        for word_pair in word_pairs {
-            let lang = map_whatlang_to_lingua(detector.detect_lang(word_pair));
-            statistics.add_word_pair_counts(lang, word_pair);
-        }
-
-        for sentence in sentences {
-            let lang = map_whatlang_to_lingua(detector.detect_lang(sentence));
-            statistics.add_sentence_counts(lang, sentence);
-        }
-
-        statistics.compute_accuracy_values();
-
-        language_statistics.push(statistics);
-    }
-
-    println!(
-        "Whatlang reports written in {} seconds\n",
-        now.elapsed().as_secs_f64()
-    );
-
-    language_statistics
-}
-
-fn collect_whichlang_statistics(reports_directory: &PathBuf) -> Vec<DetectorStatistics> {
-    let now = Instant::now();
-    let mut language_statistics = vec![];
-
-    if !reports_directory.is_dir() {
-        fs::create_dir_all(reports_directory)
-            .expect("Whichlang reports directory could not be created");
-    }
-
-    let total_language_count = Language::iter().count();
-
-    for (idx, language) in Language::iter().enumerate() {
-        println!(
-            "Writing Whichlang reports for {:?}... ({}/{})",
-            &language,
-            (idx + 1),
-            total_language_count
-        );
-
-        let single_words = get_file_content("single-words.txt", &language);
-        let word_pairs = get_file_content("word-pairs.txt", &language);
-        let sentences = get_file_content("sentences.txt", &language);
-
-        let mut statistics = DetectorStatistics::new();
-
-        for single_word in single_words {
-            let lang = map_whichlang_to_lingua(whichlang_detect_language(single_word));
-            statistics.add_single_word_counts(Some(lang), single_word);
-        }
-
-        for word_pair in word_pairs {
-            let lang = map_whichlang_to_lingua(whichlang_detect_language(word_pair));
-            statistics.add_word_pair_counts(Some(lang), word_pair);
-        }
-
-        for sentence in sentences {
-            let lang = map_whichlang_to_lingua(whichlang_detect_language(sentence));
-            statistics.add_sentence_counts(Some(lang), sentence);
-        }
-
-        statistics.compute_accuracy_values();
-
-        language_statistics.push(statistics);
-    }
-
-    println!(
-        "Whichlang reports written in {} seconds\n",
-        now.elapsed().as_secs_f64()
-    );
-
-    language_statistics
-}
-
-fn get_file_content<'a>(file_name: &'a str, language: &'a Language) -> Vec<&'a str> {
-    let directory = get_test_data_directory(language);
-    directory
-        .get_file(file_name)
-        .unwrap()
-        .contents_utf8()
-        .unwrap()
-        .split('\n')
-        .filter(|&line| !line.trim().is_empty())
-        .collect_vec()
 }
 
 fn format_accuracy(accuracy: Decimal) -> String {
@@ -862,24 +656,24 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
     }
 }
 
-fn map_whichlang_to_lingua(language: WhichlangLanguage) -> Language {
+fn map_whichlang_to_lingua(language: WhichlangLanguage) -> Option<Language> {
     match language {
-        WhichlangLanguage::Ara => Language::Arabic,
-        WhichlangLanguage::Cmn => Language::Chinese,
-        WhichlangLanguage::Deu => Language::German,
-        WhichlangLanguage::Eng => Language::English,
-        WhichlangLanguage::Fra => Language::French,
-        WhichlangLanguage::Hin => Language::Hindi,
-        WhichlangLanguage::Ita => Language::Italian,
-        WhichlangLanguage::Jpn => Language::Japanese,
-        WhichlangLanguage::Kor => Language::Korean,
-        WhichlangLanguage::Nld => Language::Dutch,
-        WhichlangLanguage::Por => Language::Portuguese,
-        WhichlangLanguage::Rus => Language::Russian,
-        WhichlangLanguage::Spa => Language::Spanish,
-        WhichlangLanguage::Swe => Language::Swedish,
-        WhichlangLanguage::Tur => Language::Turkish,
-        WhichlangLanguage::Vie => Language::Vietnamese,
+        WhichlangLanguage::Ara => Some(Language::Arabic),
+        WhichlangLanguage::Cmn => Some(Language::Chinese),
+        WhichlangLanguage::Deu => Some(Language::German),
+        WhichlangLanguage::Eng => Some(Language::English),
+        WhichlangLanguage::Fra => Some(Language::French),
+        WhichlangLanguage::Hin => Some(Language::Hindi),
+        WhichlangLanguage::Ita => Some(Language::Italian),
+        WhichlangLanguage::Jpn => Some(Language::Japanese),
+        WhichlangLanguage::Kor => Some(Language::Korean),
+        WhichlangLanguage::Nld => Some(Language::Dutch),
+        WhichlangLanguage::Por => Some(Language::Portuguese),
+        WhichlangLanguage::Rus => Some(Language::Russian),
+        WhichlangLanguage::Spa => Some(Language::Spanish),
+        WhichlangLanguage::Swe => Some(Language::Swedish),
+        WhichlangLanguage::Tur => Some(Language::Turkish),
+        WhichlangLanguage::Vie => Some(Language::Vietnamese),
     }
 }
 

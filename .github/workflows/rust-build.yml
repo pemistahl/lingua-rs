@@ -101,7 +101,9 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build target in debug mode
-        run: cargo build --target ${{ matrix.target }} --locked
+        run: |
+          cargo build --target ${{ matrix.target }} --locked
+          cargo build --target ${{ matrix.target }} --locked --bin accuracy_reports --features accuracy-reports
 
       - name: Test default target in debug mode
         run: cargo test --target ${{ matrix.target }}

@@ -7,10 +7,10 @@
   [![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
   [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
   [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
-  [![dependency status](https://deps.rs/crate/lingua/1.5.0/status.svg)](https://deps.rs/crate/lingua/1.5.0)
+  [![dependency status](https://deps.rs/crate/lingua/1.6.0/status.svg)](https://deps.rs/crate/lingua/1.6.0)
   [![downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
   [![crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-  [![lib.rs](https://img.shields.io/badge/lib.rs-v1.5.0-blue)](https://lib.rs/crates/lingua)
+  [![lib.rs](https://img.shields.io/badge/lib.rs-v1.6.0-blue)](https://lib.rs/crates/lingua)
   [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 </div>
 
@@ -2721,7 +2721,7 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.5.0"
+lingua = "1.6.0"
 ```
 
 By default, this will download the language model dependencies for all 75 supported languages, 
@@ -2731,7 +2731,7 @@ separate features in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-lingua = { version = "1.5.0", default-features = false, features = ["french", "italian", "spanish"] }
+lingua = { version = "1.6.0", default-features = false, features = ["french", "italian", "spanish"] }
 ```
 
 ## 9. How to build?
@@ -2749,6 +2749,26 @@ cargo build
 The source code is accompanied by an extensive unit test suite. To run them, simply say:
 
     cargo test
+
+With the help of [PyO3](https://github.com/PyO3/pyo3) and
+[Maturin](https://github.com/PyO3/maturin), the library has been compiled to a
+Python extension module so that it can be used within any Python software as well.
+It is available in the [Python Package Index](https://pypi.org/project/lingua-language-detector) 
+and can be installed with:
+
+```shell
+pip install lingua-language-detector
+```
+
+To build the Python extension module yourself, create a virtual environment and install
+[Maturin](https://github.com/PyO3/maturin).
+
+```shell
+python -m venv .venv
+source .venv/bin/activate
+pip install maturin
+maturin build
+```
 
 ## 10. How to use?
 
@@ -2944,7 +2964,23 @@ In the example above, a vector of [`DetectionResult`](https://github.com/pemista
 is returned. Each entry in the vector describes a contiguous single-language text section,
 providing start and end indices of the respective substring.
 
-### 10.7 Methods to build the LanguageDetector
+### 10.7 Single-threaded versus multi-threaded language detection
+
+The `LanguageDetector` methods explained above all operate in a single thread.
+If you want to classify a very large set of texts, you will probably want to
+use all available CPU cores efficiently in multiple threads for maximum performance.
+
+Every single-threaded method has a multi-threaded equivalent that accepts a list of texts
+and returns a list of results.
+
+| Single-threaded                      | Multi-threaded                                   |
+|--------------------------------------|--------------------------------------------------|
+| `detect_language_of`                 | `detect_languages_in_parallel_of`                |
+| `detect_multiple_languages_of`       | `detect_multiple_languages_in_parallel_of`       |
+| `compute_language_confidence_values` | `compute_language_confidence_values_in_parallel` |
+| `compute_language_confidence`        | `compute_language_confidence_in_parallel`        |
+
+### 10.8 Methods to build the LanguageDetector
 
 There might be classification tasks where you know beforehand that your language data is
 definitely not written in Latin, for instance (what a surprise :-). The detection accuracy can
@@ -3015,9 +3051,9 @@ allows to add further JavaScript-related configuration, tests and documentation.
 [npm registry](https://www.npmjs.com) as well, allowing for an easy download and installation within every JavaScript 
 or TypeScript project.
 
-## 12. What's next for version 1.6.0?
+## 12. What's next for version 1.7.0?
 
-Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/8).
+Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/9).
 
 ## 13. Contributions
 

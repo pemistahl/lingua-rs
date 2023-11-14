@@ -1,3 +1,23 @@
+## Lingua 1.6.0 (released on 14 Nov 2023)
+
+### Features
+
+- Python bindings are now available for the library. 
+  These bindings replace the pure Python implementation of Lingua in order to
+  benefit from Rust's performance in any Python software. (#262)
+
+- Parallel equivalents for all methods in `LanguageDetector` have been added
+  to give the user the choice of using the library single-threaded or
+  multi-threaded. (#271)
+
+### Bug Fixes
+
+- Several bugs in multiple languages detection have been fixed that caused
+  incomplete results to be returned in several cases.
+
+- A significant amount of Kazakh texts were incorrectly classified as Mongolian.
+  This has been fixed.
+
 ## Lingua 1.5.0 (released on 13 Jun 2023)
 
 ### Features

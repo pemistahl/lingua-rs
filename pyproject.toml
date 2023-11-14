@@ -15,10 +15,10 @@
 
 [project]
 name = "lingua-language-detector"
-version = "1.4.0"
+version = "2.0.0"
 authors = [{name = "Peter M. Stahl", email = "pemistahl@gmail.com"}]
 description = "An accurate natural language detection library, suitable for long and short text alike"
-#readme = "README_PYPI.md"
+readme = "README_PYPI.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
 keywords = [
@@ -91,6 +91,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Rust",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Software Development :: Libraries :: Python Modules",

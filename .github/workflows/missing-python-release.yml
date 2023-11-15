@@ -44,7 +44,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist -i 3.8 3.9
+          args: --release --out dist -i pypy3.8 pypy3.9 pypy3.10
           sccache: 'true'
 
       - name: Upload wheels

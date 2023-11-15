@@ -108,7 +108,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.5.0"
+//! lingua = "1.6.0"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
@@ -118,7 +118,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.5.0", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.6.0", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?
@@ -310,7 +310,23 @@
 //! describes a contiguous single-language text section, providing start and end indices of the
 //! respective substring.
 //!
-//! ### 7.7 Methods to build the LanguageDetector
+//! ### 7.7 Single-threaded versus multi-threaded language detection
+//!
+//! The `LanguageDetector` methods explained above all operate in a single thread.
+//! If you want to classify a very large set of texts, you will probably want to
+//! use all available CPU cores efficiently in multiple threads for maximum performance.
+//!
+//! Every single-threaded method has a multi-threaded equivalent that accepts a list of texts
+//! and returns a list of results.
+//!
+//! | Single-threaded                      | Multi-threaded                                   |
+//! |--------------------------------------|--------------------------------------------------|
+//! | `detect_language_of`                 | `detect_languages_in_parallel_of`                |
+//! | `detect_multiple_languages_of`       | `detect_multiple_languages_in_parallel_of`       |
+//! | `compute_language_confidence_values` | `compute_language_confidence_values_in_parallel` |
+//! | `compute_language_confidence`        | `compute_language_confidence_in_parallel`        |
+//!
+//! ### 7.8 Methods to build the LanguageDetector
 //!
 //! There might be classification tasks where you know beforehand that your language data is
 //! definitely not written in Latin, for instance (what a surprise :-). The detection accuracy can

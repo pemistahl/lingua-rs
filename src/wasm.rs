@@ -29,13 +29,14 @@ use crate::{
     LanguageDetectorBuilder as Builder,
 };
 
-/// This struct configures and creates an instance of [LanguageDetector].
+/// This class configures and creates an instance of `LanguageDetector`.
 #[wasm_bindgen]
 #[derive(Clone)]
 pub struct LanguageDetectorBuilder {
     builder: Builder,
 }
 
+/// This class detects the language of given input text.
 #[wasm_bindgen]
 pub struct LanguageDetector {
     detector: Detector,
@@ -44,10 +45,10 @@ pub struct LanguageDetector {
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ConfidenceValue {
     pub language: String,
-    pub confidence: f64,
+    pub value: f64,
 }
 
-/// This struct describes a contiguous single-language
+/// This class describes a contiguous single-language
 /// text section within a possibly mixed-language text.
 #[derive(Serialize, Deserialize, Debug, Eq, PartialEq)]
 pub struct DetectionResult {
@@ -55,6 +56,9 @@ pub struct DetectionResult {
     pub startIndex: usize,
     /// Returns the end index of the identified single-language substring.
     pub endIndex: usize,
+    /// Returns the number of words being part of the identified
+    /// single-language substring.
+    pub wordCount: usize,
     /// Returns the detected language of the identified single-language substring.
     pub language: String,
 }
@@ -113,6 +117,7 @@ impl LanguageDetectorBuilder {
     ///
     /// ⚠ Throws an error if less than two `languages` are used to build
     /// the `LanguageDetector`.
+    #[wasm_bindgen(variadic)]
     pub fn fromAllLanguagesWithout(
         languages: Box<[JsValue]>,
     ) -> Result<LanguageDetectorBuilder, JsValue> {
@@ -128,10 +133,10 @@ impl LanguageDetectorBuilder {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
-        let languages_vec = languages_to_load.into_iter().collect_vec();
+        let selected_languages = languages_to_load.into_iter().collect_vec();
 
         Ok(LanguageDetectorBuilder {
-            builder: Builder::from_all_languages_without(&languages_vec),
+            builder: Builder::from_languages(&selected_languages),
         })
     }
 
@@ -139,6 +144,7 @@ impl LanguageDetectorBuilder {
     /// with the specified `languages`.
     ///
     /// ⚠ Throws an error if less than two `languages` are specified.
+    #[wasm_bindgen(variadic)]
     pub fn fromLanguages(languages: Box<[JsValue]>) -> Result<LanguageDetectorBuilder, JsValue> {
         let selected_languages = languages
             .iter()
@@ -159,6 +165,7 @@ impl LanguageDetectorBuilder {
     /// with the languages specified by the respective ISO 639-1 codes.
     ///
     /// ⚠ Throws an error if less than two `iso_codes` are specified.
+    #[wasm_bindgen(variadic)]
     pub fn fromISOCodes6391(isoCodes: Box<[JsValue]>) -> Result<LanguageDetectorBuilder, JsValue> {
         let selected_iso_codes = isoCodes
             .iter()
@@ -179,6 +186,7 @@ impl LanguageDetectorBuilder {
     /// with the languages specified by the respective ISO 639-3 codes.
     ///
     /// ⚠ Throws an error if less than two `iso_codes` are specified.
+    #[wasm_bindgen(variadic)]
     pub fn fromISOCodes6393(isoCodes: Box<[JsValue]>) -> Result<LanguageDetectorBuilder, JsValue> {
         let selected_iso_codes = isoCodes
             .iter()
@@ -227,7 +235,7 @@ impl LanguageDetectorBuilder {
     }
 
     /// Configures `LanguageDetectorBuilder` to preload all language models when creating
-    /// the instance of [LanguageDetector].
+    /// the instance of `LanguageDetector`.
     ///
     /// By default, *Lingua* uses lazy-loading to load only those language models
     /// on demand which are considered relevant by the rule-based filter engine.
@@ -255,7 +263,7 @@ impl LanguageDetectorBuilder {
         self.clone()
     }
 
-    /// Creates and returns the configured instance of [LanguageDetector].
+    /// Creates and returns the configured instance of `LanguageDetector`.
     pub fn build(&mut self) -> LanguageDetector {
         LanguageDetector {
             detector: self.builder.build(),
@@ -278,7 +286,7 @@ impl LanguageDetector {
     ///
     /// This feature is experimental and under continuous development.
     ///
-    /// An array of [DetectionResult] is returned containing an entry for each contiguous
+    /// An array of `DetectionResult` is returned containing an entry for each contiguous
     /// single-language text section as identified by the library. Each entry consists
     /// of the identified language, a start index and an end index. The indices denote
     /// the substring that has been identified as a contiguous single-language text section.
@@ -290,6 +298,7 @@ impl LanguageDetector {
             .map(|result| DetectionResult {
                 startIndex: result.start_index,
                 endIndex: result.end_index,
+                wordCount: result.word_count,
                 language: result.language.to_string(),
             })
             .collect_vec();
@@ -315,7 +324,7 @@ impl LanguageDetector {
             .iter()
             .map(|(language, confidence)| ConfidenceValue {
                 language: language.to_string(),
-                confidence: *confidence,
+                value: *confidence,
             })
             .collect_vec();
 

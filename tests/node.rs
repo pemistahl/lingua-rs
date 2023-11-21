@@ -322,7 +322,7 @@ fn test_compute_language_confidence_values() {
         .iter()
         .map(|value| ConfidenceValue {
             language: value.language.clone(),
-            confidence: (value.confidence * 100000.0).round() / 100000.0,
+            value: (value.value * 100000.0).round() / 100000.0,
         })
         .collect::<Vec<_>>();
 
@@ -331,15 +331,15 @@ fn test_compute_language_confidence_values() {
         vec![
             ConfidenceValue {
                 language: Language::German.to_string(),
-                confidence: 0.9698
+                value: 0.9698
             },
             ConfidenceValue {
                 language: Language::French.to_string(),
-                confidence: 0.01534
+                value: 0.01534
             },
             ConfidenceValue {
                 language: Language::English.to_string(),
-                confidence: 0.01486
+                value: 0.01486
             }
         ]
     );

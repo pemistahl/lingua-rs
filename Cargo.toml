@@ -17,10 +17,10 @@ members = ["language-models/*"]
 
 [package]
 name = "lingua"
-version = "1.6.0"
+version = "1.6.1"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
-An accurate natural language detection library, suitable for long and short text alike
+An accurate natural language detection library, suitable for short text and mixed-language text
 """
 homepage = "https://github.com/pemistahl/lingua-rs"
 repository = "https://github.com/pemistahl/lingua-rs"

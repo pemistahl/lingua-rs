@@ -25,8 +25,8 @@ use wasm_bindgen::prelude::*;
 
 use crate::builder::{MINIMUM_RELATIVE_DISTANCE_MESSAGE, MISSING_LANGUAGE_MESSAGE};
 use crate::{
-    IsoCode639_1, IsoCode639_3, Language, LanguageDetector as Detector,
-    LanguageDetectorBuilder as Builder,
+    convert_byte_indices_to_char_indices, IsoCode639_1, IsoCode639_3, Language,
+    LanguageDetector as Detector, LanguageDetectorBuilder as Builder,
 };
 
 /// This class configures and creates an instance of `LanguageDetector`.
@@ -291,9 +291,9 @@ impl LanguageDetector {
     /// of the identified language, a start index and an end index. The indices denote
     /// the substring that has been identified as a contiguous single-language text section.
     pub fn detectMultipleLanguagesOf(&self, text: &str) -> JsValue {
-        let detection_results = self
-            .detector
-            .detect_multiple_languages_of(text)
+        let detection_results = self.detector.detect_multiple_languages_of(text);
+        let converted_results = convert_byte_indices_to_char_indices(&detection_results, text);
+        let mapped_results = converted_results
             .iter()
             .map(|result| DetectionResult {
                 startIndex: result.start_index,
@@ -303,7 +303,7 @@ impl LanguageDetector {
             })
             .collect_vec();
 
-        serde_wasm_bindgen::to_value(&detection_results).unwrap()
+        serde_wasm_bindgen::to_value(&mapped_results).unwrap()
     }
 
     /// Computes confidence values for each language supported by this detector for the given

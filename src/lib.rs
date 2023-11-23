@@ -108,7 +108,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.6.0"
+//! lingua = "1.6.1"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
@@ -118,7 +118,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.6.0", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.6.1", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?
@@ -423,6 +423,33 @@ mod python;
 
 #[cfg(target_family = "wasm")]
 mod wasm;
+
+#[cfg(any(target_family = "wasm", feature = "python"))]
+pub(crate) fn convert_byte_indices_to_char_indices(
+    results: &Vec<DetectionResult>,
+    text: &str,
+) -> Vec<DetectionResult> {
+    let mut converted_results: Vec<DetectionResult> = vec![];
+
+    for i in 0..results.len() {
+        let result = results[i];
+        let chars_count = text[result.start_index..result.end_index].chars().count();
+        let start_index = if i == 0 {
+            0
+        } else {
+            converted_results[i - 1].end_index
+        };
+        let end_index = start_index + chars_count;
+        converted_results.push(DetectionResult {
+            start_index,
+            end_index,
+            word_count: result.word_count,
+            language: result.language,
+        });
+    }
+
+    converted_results
+}
 
 #[cfg(test)]
 pub(crate) fn minify(json: &str) -> String {

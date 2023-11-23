@@ -17,7 +17,7 @@
 name = "lingua-language-detector"
 version = "2.0.1"
 authors = [{name = "Peter M. Stahl", email = "pemistahl@gmail.com"}]
-description = "An accurate natural language detection library, suitable for long and short text alike"
+description = "An accurate natural language detection library, suitable for short text and mixed-language text"
 readme = "README_PYPI.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}

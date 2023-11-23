@@ -280,6 +280,7 @@ fn test_detect_multiple_languages() {
     .build();
 
     let sentence = "Parlez-vous français? Ich spreche Französisch nur ein bisschen. A little bit is better than nothing.";
+    let sentence_chars = sentence.chars().collect::<Vec<_>>();
 
     let results: Vec<WasmDetectionResult> =
         serde_wasm_bindgen::from_value(detector.detectMultipleLanguagesOf(sentence)).unwrap();
@@ -287,12 +288,16 @@ fn test_detect_multiple_languages() {
     assert_eq!(results.len(), 3);
 
     let first_result = &results[0];
-    let first_substring = &sentence[first_result.startIndex..first_result.endIndex];
+    let first_substring = sentence_chars[first_result.startIndex..first_result.endIndex]
+        .into_iter()
+        .collect::<String>();
     assert_eq!(first_substring, "Parlez-vous français? ");
     assert_eq!(first_result.language, Language::French.to_string());
 
     let second_result = &results[1];
-    let second_substring = &sentence[second_result.startIndex..second_result.endIndex];
+    let second_substring = sentence_chars[second_result.startIndex..second_result.endIndex]
+        .into_iter()
+        .collect::<String>();
     assert_eq!(
         second_substring,
         "Ich spreche Französisch nur ein bisschen. "
@@ -300,7 +305,9 @@ fn test_detect_multiple_languages() {
     assert_eq!(second_result.language, Language::German.to_string());
 
     let third_result = &results[2];
-    let third_substring = &sentence[third_result.startIndex..third_result.endIndex];
+    let third_substring = sentence_chars[third_result.startIndex..third_result.endIndex]
+        .into_iter()
+        .collect::<String>();
     assert_eq!(third_substring, "A little bit is better than nothing.");
     assert_eq!(third_result.language, Language::English.to_string());
 }

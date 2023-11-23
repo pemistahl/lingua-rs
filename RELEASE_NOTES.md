@@ -1,3 +1,16 @@
+## Lingua 1.6.1 (released on 23 Nov 2023)
+
+### Bug Fixes
+
+- The method `LanguageDetector.detect_multiple_languages_of` returns byte indices.
+  For creating string slices in Python and JavaScript, character indices are needed
+  but were not provided. This resulted in incorrect `DetectionResult`s for Python
+  and JavaScript. This has been fixed now by converting the byte indices to 
+  character indices.
+
+- Some minor bugs in the WASM module have been fixed to prepare the first release
+  of [Lingua for JavaScript](https://github.com/pemistahl/lingua-js).
+
 ## Lingua 1.6.0 (released on 14 Nov 2023)
 
 ### Features

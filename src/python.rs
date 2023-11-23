@@ -72,6 +72,22 @@ impl ConfidenceValue {
         Self { language, value }
     }
 
+    fn __repr__(&self) -> String {
+        format!(
+            "ConfidenceValue(language=Language.{}, value={})",
+            self.language.to_string().to_uppercase(),
+            self.value
+        )
+    }
+
+    fn __str__(&self) -> String {
+        format!(
+            "({}, {})",
+            self.language.to_string().to_uppercase(),
+            (self.value * 100000.0).round() / 100000.0
+        )
+    }
+
     /// Return the language of the associated confidence value.
     #[getter]
     fn language(&self) -> Language {
@@ -89,6 +105,36 @@ impl ConfidenceValue {
 
 #[pymethods]
 impl DetectionResult {
+    #[new]
+    fn new(start_index: usize, end_index: usize, word_count: usize, language: Language) -> Self {
+        Self {
+            start_index,
+            end_index,
+            word_count,
+            language,
+        }
+    }
+
+    fn __repr__(&self) -> String {
+        format!(
+            "DetectionResult(start_index={}, end_index={}, word_count={}, language=Language.{})",
+            self.start_index,
+            self.end_index,
+            self.word_count,
+            self.language.to_string().to_uppercase()
+        )
+    }
+
+    fn __str__(&self) -> String {
+        format!(
+            "({}, {}, {}, {})",
+            self.start_index,
+            self.end_index,
+            self.word_count,
+            self.language.to_string().to_uppercase()
+        )
+    }
+
     /// Return the start index of the identified single-language substring.
     #[pyo3(name = "start_index")]
     #[getter]
@@ -493,7 +539,8 @@ impl LanguageDetector {
     /// `detect_multiple_languages_in_parallel_of` instead.
     #[pyo3(name = "detect_multiple_languages_of")]
     fn py_detect_multiple_languages_of(&self, text: String) -> Vec<DetectionResult> {
-        self.detect_multiple_languages_of(text)
+        let results = self.detect_multiple_languages_of(&text);
+        convert_byte_indices_to_char_indices(&results, &text)
     }
 
     /// Attempt to detect multiple languages in mixed-language text.
@@ -517,7 +564,15 @@ impl LanguageDetector {
         &self,
         texts: Vec<String>,
     ) -> Vec<Vec<DetectionResult>> {
-        self.detect_multiple_languages_in_parallel_of(&texts)
+        let results = self.detect_multiple_languages_in_parallel_of(&texts);
+        let mut converted_results = vec![];
+
+        for i in 0..texts.len() {
+            let converted_result = convert_byte_indices_to_char_indices(&results[i], &texts[i]);
+            converted_results.push(converted_result);
+        }
+
+        converted_results
     }
 
     /// Compute confidence values for each language supported
@@ -720,4 +775,30 @@ fn convert_io_result_to_py_result(
             Err(PyException::new_err(panic_info))
         }
     }
+}
+
+fn convert_byte_indices_to_char_indices(
+    results: &Vec<DetectionResult>,
+    text: &str,
+) -> Vec<DetectionResult> {
+    let mut converted_results: Vec<DetectionResult> = vec![];
+
+    for i in 0..results.len() {
+        let result = results[i];
+        let chars_count = text[result.start_index..result.end_index].chars().count();
+        let start_index = if i == 0 {
+            0
+        } else {
+            converted_results[i - 1].end_index
+        };
+        let end_index = start_index + chars_count;
+        converted_results.push(DetectionResult {
+            start_index,
+            end_index,
+            word_count: result.word_count,
+            language: result.language,
+        });
+    }
+
+    converted_results
 }

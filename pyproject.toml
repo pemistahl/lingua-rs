@@ -15,7 +15,7 @@
 
 [project]
 name = "lingua-language-detector"
-version = "2.0.1"
+version = "2.0.2"
 authors = [{name = "Peter M. Stahl", email = "pemistahl@gmail.com"}]
 description = "An accurate natural language detection library, suitable for short text and mixed-language text"
 readme = "README_PYPI.md"

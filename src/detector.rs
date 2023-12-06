@@ -372,7 +372,7 @@ impl LanguageDetector {
         if languages.len() == 1 {
             let result = DetectionResult {
                 start_index: 0,
-                end_index: text_str.chars().count(),
+                end_index: text_str.len(),
                 word_count: tokens_without_whitespace.len(),
                 language: *languages.iter().next().unwrap(),
             };
@@ -1872,11 +1872,12 @@ mod tests {
         sentence,
         expected_word_count,
         expected_language,
-        case::english(
+        case::english_1(
             "I'm really not sure whether multi-language detection is a good idea.",
             11,
             English
         ),
+        case::english_2("I'm frightened! 🙈", 3, English),
         case::kazakh("V төзімділік спорт", 3, Kazakh)
     )]
     fn test_detect_multiple_languages_with_one_language(

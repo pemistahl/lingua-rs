@@ -79,8 +79,9 @@ def test_detect_multiple_languages_for_empty_string():
             "I'm really not sure whether multi-language detection is a good idea.",
             11,
             Language.ENGLISH,
-            id="ENGLISH"
+            id="ENGLISH 1"
         ),
+        pytest.param("I'm frightened! 🙈", 3, Language.ENGLISH, id="ENGLISH 2"),
         pytest.param("V төзімділік спорт", 3, Language.KAZAKH, id="KAZAKH"),
     ],
 )

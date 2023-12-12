@@ -18,7 +18,6 @@ import pytest
 from lingua import (
     ConfidenceValue,
     Language,
-    LanguageDetector,
     LanguageDetectorBuilder
 )
 

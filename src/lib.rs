@@ -108,7 +108,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.6.1"
+//! lingua = "1.6.2"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
@@ -118,7 +118,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.6.1", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.6.2", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?

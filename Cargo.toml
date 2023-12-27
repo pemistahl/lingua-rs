@@ -1,4 +1,4 @@
-# Copyright © 2020-present Peter M. Stahl pemistahl@gmail.com
+s# Copyright © 2020-present Peter M. Stahl pemistahl@gmail.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ members = ["language-models/*"]
 
 [package]
 name = "lingua"
-version = "1.5.0"
+version = "1.5.1"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for long and short text alike

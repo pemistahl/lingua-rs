@@ -54,7 +54,7 @@ required-features = ["benchmark"]
 [dependencies]
 brotli = "3.4.0"
 compact_str = "0.7.1"
-fraction = "0.14.0"
+fraction = "0.15.0"
 include_dir = "0.7.3"
 itertools = "0.12.0"
 maplit = "1.0.2"

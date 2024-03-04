@@ -1186,7 +1186,7 @@ impl Language {
             Language::Sinhala => hashset!(Alphabet::Sinhala),
 
             #[cfg(feature = "sindhi")]
-            Language::Sindhi => hashset!(Alphabet::Brahmi),
+            Language::Sindhi => hashset!(Alphabet::Arabic),
 
             #[cfg(feature = "tatar")]
             Language::Tatar => hashset!(Alphabet::Cyrillic),

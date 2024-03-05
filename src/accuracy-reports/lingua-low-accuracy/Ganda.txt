@@ -1,0 +1,16 @@
+##### Ganda #####
+
+>>> Accuracy on average: 83.46%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 64.5%
+Erroneously classified as Xhosa: 3.8%, Zulu: 2.8%, Shona: 2.3%, Somali: 2.2%, Swahili: 2.2%, Tsonga: 2.1%, Sotho: 1.4%, Latin: 1.3%, Estonian: 1.2%, Uzbek: 1.1%, Basque: 0.9%, Maori: 0.9%, Finnish: 0.8%, Italian: 0.8%, Yoruba: 0.8%, Indonesian: 0.7%, Malay: 0.7%, Tagalog: 0.7%, Tswana: 0.7%, Afrikaans: 0.6%, Azerbaijani: 0.6%, Portuguese: 0.6%, English: 0.5%, Lithuanian: 0.5%, Turkish: 0.5%, French: 0.4%, Nynorsk: 0.4%, Norwegian: 0.3%, Bosnian: 0.3%, Czech: 0.3%, Esperanto: 0.3%, German: 0.3%, Polish: 0.3%, Welsh: 0.3%, Catalan: 0.2%, Danish: 0.2%, Hungarian: 0.2%, Icelandic: 0.2%, Latvian: 0.2%, Romanian: 0.2%, Spanish: 0.2%, Swedish: 0.2%, Croatian: 0.1%, Dutch: 0.1%, Vietnamese: 0.1%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 86.4%
+Erroneously classified as Zulu: 1.7%, Tsonga: 1.2%, Shona: 1.1%, Swahili: 1%, Tagalog: 1%, Indonesian: 0.7%, Sotho: 0.6%, Finnish: 0.5%, Somali: 0.5%, Estonian: 0.4%, Xhosa: 0.4%, Yoruba: 0.4%, Basque: 0.3%, Italian: 0.3%, Latin: 0.3%, Welsh: 0.3%, Norwegian: 0.2%, Catalan: 0.2%, English: 0.2%, Hungarian: 0.2%, Malay: 0.2%, Nynorsk: 0.2%, Portuguese: 0.2%, Romanian: 0.2%, Slovene: 0.2%, Tswana: 0.2%, Uzbek: 0.2%, Albanian: 0.1%, Czech: 0.1%, Esperanto: 0.1%, Icelandic: 0.1%, Maori: 0.1%, Polish: 0.1%, Turkmen: 0.1%
+
+>> Detection of 1000 sentences (average length: 125 chars)
+Accuracy: 99.5%
+Erroneously classified as Esperanto: 0.1%, Tagalog: 0.1%, Tswana: 0.1%, Yoruba: 0.1%, Zulu: 0.1%
+

@@ -1,0 +1,16 @@
+##### Latin #####
+
+>>> Accuracy on average: 46.33%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 8.6%
+Erroneously classified as Unknown: 86.9%, English: 3.4%, Portuguese: 0.3%, Norwegian: 0.2%, Croatian: 0.1%, Danish: 0.1%, German: 0.1%, Indonesian: 0.1%, Nynorsk: 0.1%, Sanskrit: 0.1%
+
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 42%
+Erroneously classified as Unknown: 50.2%, English: 5.4%, Portuguese: 0.5%, Danish: 0.2%, Esperanto: 0.2%, German: 0.2%, Italian: 0.2%, Nynorsk: 0.2%, Romanian: 0.2%, Afrikaans: 0.1%, Bosnian: 0.1%, Estonian: 0.1%, Latvian: 0.1%, Slovak: 0.1%, Swedish: 0.1%, Turkish: 0.1%
+
+>> Detection of 1000 sentences (average length: 91 chars)
+Accuracy: 88.4%
+Erroneously classified as Unknown: 7.6%, English: 3.6%, Indonesian: 0.1%, Italian: 0.1%, Portuguese: 0.1%, Swedish: 0.1%
+

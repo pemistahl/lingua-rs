@@ -1,0 +1,16 @@
+##### Tswana #####
+
+>>> Accuracy on average: 56.13%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 17%
+Erroneously classified as Unknown: 79.4%, Sotho: 1.9%, Xhosa: 0.7%, English: 0.3%, Indonesian: 0.3%, Danish: 0.1%, Malay: 0.1%, Maori: 0.1%, Zulu: 0.1%
+
+>> Detection of 1000 word pairs (average length: 15 chars)
+Accuracy: 57.1%
+Erroneously classified as Unknown: 36.4%, Sotho: 4.4%, English: 0.8%, Xhosa: 0.5%, Tsonga: 0.3%, Basque: 0.1%, Indonesian: 0.1%, Maori: 0.1%, Tagalog: 0.1%, Zulu: 0.1%
+
+>> Detection of 1000 sentences (average length: 113 chars)
+Accuracy: 94.3%
+Erroneously classified as Unknown: 3.8%, Sotho: 1%, English: 0.9%
+

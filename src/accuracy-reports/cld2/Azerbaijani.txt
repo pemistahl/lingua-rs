@@ -1,0 +1,16 @@
+##### Azerbaijani #####
+
+>>> Accuracy on average: 71.76%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 34.5%
+Erroneously classified as Unknown: 62.4%, Turkish: 1.2%, Tatar: 0.6%, Uzbek: 0.4%, English: 0.3%, Indonesian: 0.2%, Norwegian: 0.1%, Ganda: 0.1%, Malay: 0.1%, Shona: 0.1%
+
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 81.5%
+Erroneously classified as Unknown: 15.6%, Turkish: 1.8%, Tatar: 0.4%, English: 0.3%, Danish: 0.1%, German: 0.1%, Malay: 0.1%, Turkmen: 0.1%
+
+>> Detection of 1000 sentences (average length: 107 chars)
+Accuracy: 99.3%
+Erroneously classified as Unknown: 0.7%
+

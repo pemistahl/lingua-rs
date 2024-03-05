@@ -1,0 +1,16 @@
+##### Hungarian #####
+
+>>> Accuracy on average: 89.9%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 76.4%
+Erroneously classified as Slovak: 2.5%, Yoruba: 1.7%, Czech: 1.1%, Esperanto: 1%, Sotho: 1%, Latin: 0.9%, Portuguese: 0.9%, Estonian: 0.8%, Basque: 0.7%, Icelandic: 0.7%, Swahili: 0.7%, Finnish: 0.6%, French: 0.6%, Indonesian: 0.6%, Shona: 0.6%, Spanish: 0.6%, Tswana: 0.6%, Xhosa: 0.6%, German: 0.5%, Polish: 0.5%, Turkish: 0.5%, Vietnamese: 0.5%, Italian: 0.4%, Lithuanian: 0.4%, Romanian: 0.4%, Azerbaijani: 0.3%, Ganda: 0.3%, Malay: 0.3%, Tagalog: 0.3%, Turkmen: 0.3%, Uzbek: 0.3%, Norwegian: 0.2%, Bosnian: 0.2%, Irish: 0.2%, Latvian: 0.2%, Maori: 0.2%, Slovene: 0.2%, Somali: 0.2%, Swedish: 0.2%, Tsonga: 0.2%, Catalan: 0.1%, Croatian: 0.1%, Danish: 0.1%, Dutch: 0.1%, English: 0.1%, Welsh: 0.1%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 93.6%
+Erroneously classified as Spanish: 0.6%, Yoruba: 0.5%, Estonian: 0.4%, Slovak: 0.4%, Norwegian: 0.3%, Czech: 0.3%, Portuguese: 0.3%, Tagalog: 0.3%, Catalan: 0.2%, Finnish: 0.2%, French: 0.2%, Indonesian: 0.2%, Latin: 0.2%, Polish: 0.2%, Turkish: 0.2%, Afrikaans: 0.1%, Basque: 0.1%, Dutch: 0.1%, English: 0.1%, Esperanto: 0.1%, Ganda: 0.1%, German: 0.1%, Icelandic: 0.1%, Latvian: 0.1%, Malay: 0.1%, Nynorsk: 0.1%, Romanian: 0.1%, Swahili: 0.1%, Swedish: 0.1%, Tsonga: 0.1%, Tswana: 0.1%, Vietnamese: 0.1%, Zulu: 0.1%, Uzbek: 0.1%
+
+>> Detection of 1000 sentences (average length: 116 chars)
+Accuracy: 99.7%
+Erroneously classified as German: 0.1%, Portuguese: 0.1%, Sotho: 0.1%
+

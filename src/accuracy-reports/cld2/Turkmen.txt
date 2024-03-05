@@ -1,0 +1,16 @@
+##### Turkmen #####
+
+>>> Accuracy on average: 76.58%
+
+>> Detection of 20000 single words (average length: 8 chars)
+Accuracy: 40.31%
+Erroneously classified as Unknown: 59.15%, Turkish: 0.11%, Indonesian: 0.07%, English: 0.05%, Tatar: 0.04%, Uzbek: 0.04%, Slovak: 0.03%, Croatian: 0.03%, Danish: 0.02%, Polish: 0.02%, Norwegian: 0.02%, Ganda: 0.01%, Hungarian: 0.01%, Malay: 0.01%, Tswana: 0.01%, Azerbaijani: 0%, Finnish: 0%, German: 0%, Welsh: 0%, Xhosa: 0%
+
+>> Detection of 20000 word pairs (average length: 18 chars)
+Accuracy: 89.48%
+Erroneously classified as Unknown: 10.03%, Turkish: 0.18%, Uzbek: 0.07%, English: 0.06%, Tatar: 0.03%, Azerbaijani: 0.03%, Indonesian: 0.03%, Norwegian: 0.01%, Croatian: 0.01%, Malay: 0.01%, Nynorsk: 0.01%, Slovak: 0.01%, Czech: 0%, Finnish: 0%, Polish: 0%, Sotho: 0%
+
+>> Detection of 6000 sentences (average length: 150 chars)
+Accuracy: 99.96%
+Erroneously classified as Unknown: 0.03%
+

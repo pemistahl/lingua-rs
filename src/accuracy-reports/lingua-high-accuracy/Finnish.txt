@@ -1,0 +1,16 @@
+##### Finnish #####
+
+>>> Accuracy on average: 95.9%
+
+>> Detection of 1000 single words (average length: 10 chars)
+Accuracy: 89.8%
+Erroneously classified as Estonian: 0.9%, Lithuanian: 0.7%, Swedish: 0.6%, Norwegian: 0.5%, Latin: 0.5%, Malay: 0.5%, Sotho: 0.5%, Tagalog: 0.5%, Basque: 0.4%, Italian: 0.4%, Uzbek: 0.4%, Dutch: 0.3%, Esperanto: 0.3%, Icelandic: 0.3%, Indonesian: 0.3%, Shona: 0.3%, Somali: 0.3%, Albanian: 0.2%, Danish: 0.2%, Ganda: 0.2%, Irish: 0.2%, Slovak: 0.2%, Swahili: 0.2%, Yoruba: 0.2%, Afrikaans: 0.1%, Azerbaijani: 0.1%, Bosnian: 0.1%, Croatian: 0.1%, English: 0.1%, German: 0.1%, Nynorsk: 0.1%, Slovene: 0.1%, Spanish: 0.1%, Tsonga: 0.1%, Tswana: 0.1%
+
+>> Detection of 1000 word pairs (average length: 19 chars)
+Accuracy: 98%
+Erroneously classified as Czech: 0.3%, English: 0.3%, Norwegian: 0.2%, Malay: 0.2%, Albanian: 0.1%, Danish: 0.1%, Estonian: 0.1%, German: 0.1%, Indonesian: 0.1%, Italian: 0.1%, Latin: 0.1%, Polish: 0.1%, Shona: 0.1%, Yoruba: 0.1%
+
+>> Detection of 1000 sentences (average length: 103 chars)
+Accuracy: 99.9%
+Erroneously classified as Portuguese: 0.1%
+

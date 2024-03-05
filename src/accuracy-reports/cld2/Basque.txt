@@ -1,0 +1,16 @@
+##### Basque #####
+
+>>> Accuracy on average: 61.16%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 22.8%
+Erroneously classified as Unknown: 74.5%, English: 0.8%, Spanish: 0.5%, Indonesian: 0.4%, Norwegian: 0.2%, Italian: 0.2%, Bosnian: 0.1%, Catalan: 0.1%, Croatian: 0.1%, Danish: 0.1%, Polish: 0.1%, Portuguese: 0.1%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 69.4%
+Erroneously classified as Unknown: 26.3%, English: 1.4%, Latin: 0.8%, Danish: 0.4%, Italian: 0.3%, Catalan: 0.2%, French: 0.2%, Spanish: 0.2%, Bosnian: 0.1%, Croatian: 0.1%, German: 0.1%, Irish: 0.1%, Malay: 0.1%, Portuguese: 0.1%, Romanian: 0.1%, Uzbek: 0.1%
+
+>> Detection of 1000 sentences (average length: 102 chars)
+Accuracy: 91.3%
+Erroneously classified as Unknown: 7.4%, Latin: 0.8%, English: 0.2%, Norwegian: 0.1%, Finnish: 0.1%, German: 0.1%
+

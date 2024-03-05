@@ -205,7 +205,7 @@ impl DetectorStatistics {
             sentence_report
         ))
     }
-    
+
     fn create_aggregated_report_row(&self, language: &Language) -> String {
         let average_accuracy_column = match self.average_accuracies.get(language) {
             Some(&accuracy) => {
@@ -853,7 +853,8 @@ fn map_whatlang_to_lingua(language: Option<WhatlangLanguage>) -> Option<Language
         Some(WhatlangLanguage::Mar) => Some(Language::Marathi),
         Some(WhatlangLanguage::Mkd) => Some(Language::Macedonian),
         Some(WhatlangLanguage::Nld) => Some(Language::Dutch),
-        Some(WhatlangLanguage::Nob) => Some(Language::Bokmal),
+        // Some(WhatlangLanguage::Nob) => Some(Language::Bokmal),
+        Some(WhatlangLanguage::Nob) => Some(Language::Norwegian),
         Some(WhatlangLanguage::Pan) => Some(Language::Punjabi),
         Some(WhatlangLanguage::Pes) => Some(Language::Persian),
         Some(WhatlangLanguage::Pol) => Some(Language::Polish),

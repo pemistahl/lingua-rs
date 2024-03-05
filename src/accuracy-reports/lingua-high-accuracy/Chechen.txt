@@ -1,0 +1,16 @@
+##### Chechen #####
+
+>>> Accuracy on average: 87.35%
+
+>> Detection of 30000 single words (average length: 7 chars)
+Accuracy: 86.71%
+Erroneously classified as Mongolian: 5.2%, Russian: 2.14%, Bulgarian: 1.25%, Tatar: 1.14%, Tajik: 0.63%, Uzbek: 0.56%, Belarusian: 0.51%, Kazakh: 0.48%, Kyrgyz: 0.4%, Macedonian: 0.38%, Serbian: 0.29%, Ukrainian: 0.24%, Sotho: 0%, Dutch: 0%, German: 0%, Hungarian: 0%, Irish: 0%, Vietnamese: 0%
+
+>> Detection of 30000 word pairs (average length: 16 chars)
+Accuracy: 88.79%
+Erroneously classified as Mongolian: 5.39%, Russian: 3.6%, Bulgarian: 0.88%, Belarusian: 0.57%, Kazakh: 0.3%, Tatar: 0.17%, Ukrainian: 0.07%, Kyrgyz: 0.06%, Tajik: 0.06%, Macedonian: 0.04%, Serbian: 0.01%, Uzbek: 0.01%
+
+>> Detection of 30000 sentences (average length: 70 chars)
+Accuracy: 86.54%
+Erroneously classified as Bulgarian: 12.89%, Russian: 0.39%, Mongolian: 0.04%, Kyrgyz: 0.02%, Tajik: 0.01%, Turkmen: 0.01%, English: 0%, German: 0%, Kazakh: 0%, Korean: 0%, Serbian: 0%, Ukrainian: 0%, Tatar: 0%, Uzbek: 0%, Basque: 0%, Belarusian: 0%, Norwegian: 0%, Icelandic: 0%, Irish: 0%, Macedonian: 0%, Turkish: 0%, Welsh: 0%, Yoruba: 0%
+

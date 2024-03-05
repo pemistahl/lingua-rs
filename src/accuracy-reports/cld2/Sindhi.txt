@@ -1,0 +1,16 @@
+##### Sindhi #####
+
+>>> Accuracy on average: 61.05%
+
+>> Detection of 30000 single words (average length: 6 chars)
+Accuracy: 10.74%
+Erroneously classified as Unknown: 88.25%, Urdu: 0.43%, Arabic: 0.28%, Pashto: 0.11%, Persian: 0.08%, Uzbek: 0.07%, Kazakh: 0.01%, Kyrgyz: 0%
+
+>> Detection of 30000 word pairs (average length: 13 chars)
+Accuracy: 73.36%
+Erroneously classified as Unknown: 22.59%, Arabic: 1.53%, Urdu: 0.96%, Persian: 0.67%, Pashto: 0.65%, Uzbek: 0.18%, Kyrgyz: 0.01%, Kazakh: 0.01%, English: 0%
+
+>> Detection of 30000 sentences (average length: 83 chars)
+Accuracy: 99.06%
+Erroneously classified as Unknown: 0.67%, Urdu: 0.12%, Persian: 0.04%, Arabic: 0.04%, English: 0.03%, Pashto: 0%, Uzbek: 0%
+

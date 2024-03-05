@@ -1,0 +1,16 @@
+##### Norwegian #####
+
+>>> Accuracy on average: 54.59%
+
+>> Detection of 200000 single words (average length: 8 chars)
+Accuracy: 29.09%
+Erroneously classified as Unknown: 54.54%, Danish: 8.83%, Nynorsk: 5.88%, English: 0.6%, Indonesian: 0.12%, Swedish: 0.11%, Croatian: 0.09%, Portuguese: 0.05%, Spanish: 0.05%, Xhosa: 0.05%, Catalan: 0.04%, Czech: 0.03%, Malay: 0.03%, German: 0.03%, Icelandic: 0.03%, Finnish: 0.03%, Afrikaans: 0.02%, Basque: 0.02%, Welsh: 0.02%, Turkmen: 0.02%, Latin: 0.02%, Estonian: 0.01%, Polish: 0.01%, Turkish: 0.01%, Ganda: 0.01%, Slovak: 0.01%, Italian: 0.01%, Sotho: 0.01%, Dutch: 0%, Hungarian: 0%, Albanian: 0%, Lithuanian: 0%, Latvian: 0%, Sanskrit: 0%, Bosnian: 0%, French: 0%, Serbian: 0%, Shona: 0%, Slovene: 0%, Uzbek: 0%, Romanian: 0%, Tswana: 0%, Zulu: 0%, Esperanto: 0%, Tagalog: 0%, Somali: 0%, Tatar: 0%, Swahili: 0%, Vietnamese: 0%, Maori: 0%, Tsonga: 0%, Irish: 0%, Yoruba: 0%
+
+>> Detection of 127916 word pairs (average length: 16 chars)
+Accuracy: 49.55%
+Erroneously classified as Unknown: 28.97%, Nynorsk: 9.32%, Danish: 7.6%, English: 2.64%, Swedish: 0.38%, German: 0.13%, Basque: 0.1%, Indonesian: 0.09%, Portuguese: 0.08%, Catalan: 0.06%, Finnish: 0.06%, Icelandic: 0.06%, Croatian: 0.06%, Afrikaans: 0.05%, Latin: 0.05%, Dutch: 0.05%, Malay: 0.04%, Spanish: 0.04%, Estonian: 0.04%, Welsh: 0.04%, French: 0.03%, Turkish: 0.03%, Italian: 0.03%, Polish: 0.02%, Czech: 0.02%, Hungarian: 0.02%, Uzbek: 0.02%, Slovak: 0.02%, Sanskrit: 0.01%, Albanian: 0.01%, Turkmen: 0.01%, Esperanto: 0.01%, Ganda: 0.01%, Lithuanian: 0.01%, Romanian: 0.01%, Somali: 0.01%, Sotho: 0.01%, Xhosa: 0.01%, Bosnian: 0.01%, Latvian: 0.01%, Tagalog: 0.01%, Shona: 0%, Slovene: 0%, Serbian: 0%, Vietnamese: 0%, Tatar: 0%, Tswana: 0%, Swahili: 0%, Azerbaijani: 0%, Irish: 0%, Tsonga: 0%, Yoruba: 0%, Zulu: 0%, Maori: 0%
+
+>> Detection of 40056 sentences (average length: 85 chars)
+Accuracy: 85.12%
+Erroneously classified as Unknown: 5.96%, Nynorsk: 5.42%, Danish: 2.13%, English: 1.16%, Swedish: 0.06%, Portuguese: 0.03%, German: 0%, Icelandic: 0%, Latin: 0%, Serbian: 0%, Croatian: 0%, Czech: 0%, French: 0%, Polish: 0%, Romanian: 0%, Basque: 0%, Catalan: 0%, Ganda: 0%, Italian: 0%, Malay: 0%, Spanish: 0%, Tswana: 0%, Uzbek: 0%
+

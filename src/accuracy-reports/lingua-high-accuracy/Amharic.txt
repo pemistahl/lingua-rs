@@ -1,0 +1,16 @@
+##### Amharic #####
+
+>>> Accuracy on average: 100%
+
+>> Detection of 30000 single words (average length: 6 chars)
+Accuracy: 100%
+Erroneously classified as 
+
+>> Detection of 30000 word pairs (average length: 12 chars)
+Accuracy: 100%
+Erroneously classified as 
+
+>> Detection of 30000 sentences (average length: 68 chars)
+Accuracy: 100%
+Erroneously classified as 
+

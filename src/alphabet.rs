@@ -16,11 +16,11 @@
 
 use std::collections::HashMap;
 
+use crate::Language;
 use ahash::AHashSet;
 use once_cell::sync::Lazy;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use crate::{Language};
 
 #[derive(EnumIter, Eq, PartialEq, Hash)]
 pub(crate) enum Alphabet {
@@ -30,6 +30,7 @@ pub(crate) enum Alphabet {
     Brahmi,
     Cyrillic,
     Devanagari,
+    Ethiopic,
     Georgian,
     Greek,
     Gujarati,
@@ -39,16 +40,15 @@ pub(crate) enum Alphabet {
     Hebrew,
     Hiragana,
     Katakana,
+    Khmer,
+    Lao,
     Latin,
+    Malayalam,
+    Myanmar,
+    Sinhala,
     Tamil,
     Telugu,
     Thai,
-    Ethiopic,
-    Myanmar,
-    Malayalam,
-    Sinhala,
-    Lao,
-    Khmer,
 }
 
 impl Alphabet {
@@ -84,10 +84,12 @@ impl Alphabet {
     fn char_set(&self) -> &Lazy<CharSet> {
         match self {
             Alphabet::Arabic => &ARABIC,
+            Alphabet::Brahmi => &BRAHMI,
             Alphabet::Armenian => &ARMENIAN,
             Alphabet::Bengali => &BENGALI,
             Alphabet::Cyrillic => &CYRILLIC,
             Alphabet::Devanagari => &DEVANAGARI,
+            Alphabet::Ethiopic => &ETHIOPIC,
             Alphabet::Georgian => &GEORGIAN,
             Alphabet::Greek => &GREEK,
             Alphabet::Gujarati => &GUJARATI,
@@ -97,17 +99,15 @@ impl Alphabet {
             Alphabet::Hebrew => &HEBREW,
             Alphabet::Hiragana => &HIRAGANA,
             Alphabet::Katakana => &KATAKANA,
+            Alphabet::Khmer => &KHMER,
             Alphabet::Latin => &LATIN,
+            Alphabet::Lao => &LAO,
+            Alphabet::Malayalam => &MALAYALAM,
+            Alphabet::Myanmar => &MYANMAR,
+            Alphabet::Sinhala => &SINHALA,
             Alphabet::Tamil => &TAMIL,
             Alphabet::Telugu => &TELUGU,
             Alphabet::Thai => &THAI,
-            Alphabet::Ethiopic => &ETHIOPIC,
-            Alphabet::Myanmar => &MYANMAR,
-            Alphabet::Malayalam => &MALAYALAM,
-            Alphabet::Sinhala => &SINHALA,
-            Alphabet::Brahmi => &BRAHMI,
-            Alphabet::Lao => &LAO,
-            Alphabet::Khmer => &KHMER,
         }
     }
 }
@@ -153,8 +153,10 @@ impl CharSet {
 static ARABIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Arabic"));
 static ARMENIAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Armenian"));
 static BENGALI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Bengali"));
+static BRAHMI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Brahmi"));
 static CYRILLIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Cyrillic"));
 static DEVANAGARI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Devanagari"));
+static ETHIOPIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Ethiopic"));
 static GEORGIAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Georgian"));
 static GREEK: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Greek"));
 static GUJARATI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Gujarati"));
@@ -164,14 +166,12 @@ static HANGUL: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hangul"));
 static HEBREW: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hebrew"));
 static HIRAGANA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hiragana"));
 static KATAKANA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Katakana"));
+static KHMER: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Khmer"));
+static LAO: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Lao"));
 static LATIN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Latin"));
+static MALAYALAM: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Malayalam"));
+static MYANMAR: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Myanmar"));
+static SINHALA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Sinhala"));
 static TAMIL: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Tamil"));
 static TELUGU: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Telugu"));
 static THAI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Thai"));
-static MYANMAR: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Myanmar"));
-static ETHIOPIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Ethiopic"));
-static MALAYALAM: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Malayalam"));
-static SINHALA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Sinhala"));
-static BRAHMI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Brahmi"));
-static LAO: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Lao"));
-static KHMER: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Khmer"));

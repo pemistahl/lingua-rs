@@ -1,16 +1,16 @@
 ##### Chechen #####
 
->>> Accuracy on average: 83.27%
+>>> Accuracy on average: 86.4%
 
->> Detection of 30000 single words (average length: 7 chars)
-Accuracy: 77.87%
-Erroneously classified as Russian: 5.96%, Mongolian: 3.02%, Kazakh: 2.4%, Tatar: 1.81%, Macedonian: 1.49%, Kyrgyz: 1.39%, Bulgarian: 1.31%, Tajik: 1.18%, Uzbek: 0.94%, Ukrainian: 0.89%, Belarusian: 0.87%, Serbian: 0.79%, Sotho: 0.03%, German: 0%, Nynorsk: 0%, Vietnamese: 0%
+>> Detection of 1000 single words (average length: 7 chars)
+Accuracy: 74.1%
+Erroneously classified as Tatar: 4.2%, Russian: 3.7%, Mongolian: 2.7%, Kazakh: 2.6%, Macedonian: 2.1%, Kyrgyz: 2%, Uzbek: 2%, Belarusian: 1.7%, Tajik: 1.7%, Ukrainian: 1.2%, Bulgarian: 1%, Serbian: 1%
 
->> Detection of 30000 word pairs (average length: 16 chars)
-Accuracy: 85.79%
-Erroneously classified as Mongolian: 6.07%, Russian: 3.55%, Kazakh: 0.99%, Bulgarian: 0.87%, Tatar: 0.66%, Belarusian: 0.59%, Kyrgyz: 0.37%, Macedonian: 0.32%, Tajik: 0.32%, Ukrainian: 0.22%, Serbian: 0.12%, Uzbek: 0.11%, Sotho: 0%
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 86.2%
+Erroneously classified as Russian: 4.6%, Mongolian: 2.9%, Kazakh: 2%, Tatar: 1.1%, Belarusian: 1%, Kyrgyz: 0.7%, Bulgarian: 0.6%, Tajik: 0.4%, Macedonian: 0.3%, Serbian: 0.1%, Uzbek: 0.1%
 
->> Detection of 30000 sentences (average length: 70 chars)
-Accuracy: 86.17%
-Erroneously classified as Bulgarian: 12.9%, Russian: 0.38%, Tajik: 0.12%, Tatar: 0.1%, Mongolian: 0.07%, Kazakh: 0.05%, Kyrgyz: 0.04%, Macedonian: 0.02%, Ukrainian: 0.02%, Turkmen: 0.01%, Belarusian: 0.01%, Serbian: 0.01%, German: 0%, Bokmal: 0%, Catalan: 0%, Estonian: 0%, French: 0%, Irish: 0%, Italian: 0%, Korean: 0%, Latvian: 0%, Maori: 0%, Swahili: 0%, Welsh: 0%, Uzbek: 0%
+>> Detection of 1000 sentences (average length: 80 chars)
+Accuracy: 98.9%
+Erroneously classified as Russian: 0.8%, Serbian: 0.1%, Tatar: 0.1%, Ukrainian: 0.1%
 

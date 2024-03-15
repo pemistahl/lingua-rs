@@ -1,16 +1,16 @@
 ##### Pashto #####
 
->>> Accuracy on average: 80.84%
+>>> Accuracy on average: 78.5%
 
->> Detection of 20000 single words (average length: 6 chars)
-Accuracy: 65.96%
-Erroneously classified as Persian: 13.01%, Urdu: 10.98%, Arabic: 10.04%, Zulu: 0%
+>> Detection of 1000 single words (average length: 6 chars)
+Accuracy: 62.8%
+Erroneously classified as Sindhi: 9.9%, Persian: 9.8%, Arabic: 8.9%, Urdu: 8.6%
 
->> Detection of 20000 word pairs (average length: 13 chars)
-Accuracy: 78.63%
-Erroneously classified as Persian: 9.31%, Arabic: 6.23%, Urdu: 5.82%
+>> Detection of 1000 word pairs (average length: 13 chars)
+Accuracy: 75.6%
+Erroneously classified as Persian: 7.8%, Sindhi: 6.1%, Arabic: 5.5%, Urdu: 5%
 
->> Detection of 6001 sentences (average length: 119 chars)
-Accuracy: 97.93%
-Erroneously classified as Persian: 1.14%, Arabic: 0.58%, Urdu: 0.29%, Unknown: 0.03%
+>> Detection of 1000 sentences (average length: 122 chars)
+Accuracy: 97.1%
+Erroneously classified as Persian: 1.1%, Sindhi: 0.8%, Arabic: 0.5%, Urdu: 0.3%, Unknown: 0.2%
 

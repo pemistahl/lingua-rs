@@ -43,6 +43,10 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Afrikaans`](crate::language::Language::Afrikaans)
     AF,
 
+    #[cfg(feature = "amharic")]
+    /// The ISO 639-1 code for [`Amharic`](crate::language::Language::Amharic)
+    AM,
+
     #[cfg(feature = "arabic")]
     /// The ISO 639-1 code for [`Arabic`](crate::language::Language::Arabic)
     AR,
@@ -70,6 +74,10 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "catalan")]
     /// The ISO 639-1 code for [`Catalan`](crate::language::Language::Catalan)
     CA,
+
+    #[cfg(feature = "chechen")]
+    /// The ISO 639-1 code for [`Chechen`](crate::language::Language::Chechen)
+    CE,
 
     #[cfg(feature = "czech")]
     /// The ISO 639-1 code for [`Czech`](crate::language::Language::Czech)
@@ -175,9 +183,17 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Kazakh`](crate::language::Language::Kazakh)
     KK,
 
+    #[cfg(feature = "khmer")]
+    /// The ISO 639-1 code for [`Khmer`](crate::language::Language::Khmer)
+    KM,
+
     #[cfg(feature = "korean")]
     /// The ISO 639-1 code for [`Korean`](crate::language::Language::Korean)
     KO,
+
+    #[cfg(feature = "kyrgyz")]
+    /// The ISO 639-1 code for [`Kyrgyz`](crate::language::Language::Kyrgyz)
+    KY,
 
     #[cfg(feature = "latin")]
     /// The ISO 639-1 code for [`Latin`](crate::language::Language::Latin)
@@ -186,6 +202,10 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "ganda")]
     /// The ISO 639-1 code for [`Ganda`](crate::language::Language::Ganda)
     LG,
+
+    #[cfg(feature = "lao")]
+    /// The ISO 639-1 code for [`Lao`](crate::language::Language::Lao)
+    LO,
 
     #[cfg(feature = "lithuanian")]
     /// The ISO 639-1 code for [`Lithuanian`](crate::language::Language::Lithuanian)
@@ -203,6 +223,10 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Macedonian`](crate::language::Language::Macedonian)
     MK,
 
+    #[cfg(feature = "malayalam")]
+    /// The ISO 639-1 code for [`Malayalam`](crate::language::Language::Malayalam)
+    ML,
+
     #[cfg(feature = "mongolian")]
     /// The ISO 639-1 code for [`Mongolian`](crate::language::Language::Mongolian)
     MN,
@@ -215,9 +239,17 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Malay`](crate::language::Language::Malay)
     MS,
 
+    #[cfg(feature = "burmese")]
+    /// The ISO 639-1 code for [`Burmese`](crate::language::Language::Burmese)
+    MY,
+
     #[cfg(feature = "bokmal")]
     /// The ISO 639-1 code for [`Norwegian Bokmal`](crate::language::Language::Bokmal)
     NB,
+
+    #[cfg(feature = "nepali")]
+    /// The ISO 639-1 code for [`Nepali`](crate::language::Language::Nepali)
+    NE,
 
     #[cfg(feature = "dutch")]
     /// The ISO 639-1 code for [`Dutch`](crate::language::Language::Dutch)
@@ -235,6 +267,10 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Polish`](crate::language::Language::Polish)
     PL,
 
+    #[cfg(feature = "pashto")]
+    /// The ISO 639-1 code for [`Pashto`](crate::language::Language::Pashto)
+    PS,
+
     #[cfg(feature = "portuguese")]
     /// The ISO 639-1 code for [`Portuguese`](crate::language::Language::Portuguese)
     PT,
@@ -246,6 +282,18 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "russian")]
     /// The ISO 639-1 code for [`Russian`](crate::language::Language::Russian)
     RU,
+
+    #[cfg(feature = "sanskrit")]
+    /// The ISO 639-1 code for [`Sanskrit`](crate::language::Language::Sanskrit)
+    SA,
+
+    #[cfg(feature = "sindhi")]
+    /// The ISO 639-1 code for [`Sindhi`](crate::language::Language::Sindhi)
+    SD,
+
+    #[cfg(feature = "sinhala")]
+    /// The ISO 639-1 code for [`Sinhala`](crate::language::Language::Sinhala)
+    SI,
 
     #[cfg(feature = "slovak")]
     /// The ISO 639-1 code for [`Slovak`](crate::language::Language::Slovak)
@@ -291,9 +339,17 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Telugu`](crate::language::Language::Telugu)
     TE,
 
+    #[cfg(feature = "tajik")]
+    /// The ISO 639-1 code for [`Tajik`](crate::language::Language::Tajik)
+    TG,
+
     #[cfg(feature = "thai")]
     /// The ISO 639-1 code for [`Thai`](crate::language::Language::Thai)
     TH,
+
+    #[cfg(feature = "turkmen")]
+    /// The ISO 639-1 code for [`Turkmen`](crate::language::Language::Turkmen)
+    TK,
 
     #[cfg(feature = "tagalog")]
     /// The ISO 639-1 code for [`Tagalog`](crate::language::Language::Tagalog)
@@ -311,6 +367,10 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Tsonga`](crate::language::Language::Tsonga)
     TS,
 
+    #[cfg(feature = "tatar")]
+    /// The ISO 639-1 code for [`Tatar`](crate::language::Language::Tatar)
+    TT,
+
     #[cfg(feature = "ukrainian")]
     /// The ISO 639-1 code for [`Ukrainian`](crate::language::Language::Ukrainian)
     UK,
@@ -318,6 +378,10 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "urdu")]
     /// The ISO 639-1 code for [`Urdu`](crate::language::Language::Urdu)
     UR,
+
+    #[cfg(feature = "uzbek")]
+    /// The ISO 639-1 code for [`Uzbek`](crate::language::Language::Uzbek)
+    UZ,
 
     #[cfg(feature = "vietnamese")]
     /// The ISO 639-1 code for [`Vietnamese`](crate::language::Language::Vietnamese)
@@ -338,70 +402,6 @@ pub enum IsoCode639_1 {
     #[cfg(feature = "zulu")]
     /// The ISO 639-1 code for [`Zulu`](crate::language::Language::Zulu)
     ZU,
-
-    #[cfg(feature = "amharic")]
-    /// The ISO 639-1 code for [`Amharic`](crate::language::Language::Amharic)
-    AM,
-     
-    #[cfg(feature = "burmese")]
-    /// The ISO 639-1 code for [`Burmese`](crate::language::Language::Burmese)
-    MY,
-
-    #[cfg(feature = "chechen")]
-    /// The ISO 639-1 code for [`Chechen`](crate::language::Language::Chechen)
-    CE,
-
-    #[cfg(feature = "kyrgyz")]
-    /// The ISO 639-1 code for [`Kyrgyz`](crate::language::Language::Kyrgyz)
-    KY,
-
-    #[cfg(feature = "malayalam")]
-    /// The ISO 639-1 code for [`Malayalam`](crate::language::Language::Malayalam)
-    ML,
-
-    #[cfg(feature = "nepali")]
-    /// The ISO 639-1 code for [`Nepali`](crate::language::Language::Nepali)
-    NE,
-
-    #[cfg(feature = "pashto")]
-    /// The ISO 639-1 code for [`Pashto`](crate::language::Language::Pashto)
-    PS,
-
-    #[cfg(feature = "sanskrit")]
-    /// The ISO 639-1 code for [`Sanskrit`](crate::language::Language::Sanskrit)
-    SA,
-
-    #[cfg(feature = "sinhala")]
-    /// The ISO 639-1 code for [`Sinhala`](crate::language::Language::Sinhala)
-    SI,
-
-    #[cfg(feature = "sindhi")]
-    /// The ISO 639-1 code for [`Sindhi`](crate::language::Language::Sindhi)
-    SD,
-
-    #[cfg(feature = "tatar")]
-    /// The ISO 639-1 code for [`Tatar`](crate::language::Language::Tatar)
-    TT,
-
-    #[cfg(feature = "tajik")]
-    /// The ISO 639-1 code for [`Tajik`](crate::language::Language::Tajik)
-    TG,
-
-    #[cfg(feature = "turkmen")]
-    /// The ISO 639-1 code for [`Turkmen`](crate::language::Language::Turkmen)
-    TK,
-
-    #[cfg(feature = "uzbek")]
-    /// The ISO 639-1 code for [`Uzbek`](crate::language::Language::Uzbek)
-    UZ,
-
-    #[cfg(feature = "khmer")]
-    /// The ISO 639-1 code for [`Khmer`](crate::language::Language::Khmer)
-    KM,
-
-    #[cfg(feature = "lao")]
-    /// The ISO 639-1 code for [`Lao`](crate::language::Language::Lao)
-    LO,
 }
 
 /// This enum specifies the ISO 639-3 code representations for the supported languages.
@@ -427,6 +427,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "afrikaans")]
     /// The ISO 639-3 code for [`Afrikaans`](crate::language::Language::Afrikaans)
     AFR,
+
+    #[cfg(feature = "amharic")]
+    /// The ISO 639-3 code for [`Amharic`](crate::language::Language::Amharic)
+    AMH,
 
     #[cfg(feature = "arabic")]
     /// The ISO 639-3 code for [`Arabic`](crate::language::Language::Arabic)
@@ -459,6 +463,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "czech")]
     /// The ISO 639-3 code for [`Czech`](crate::language::Language::Czech)
     CES,
+
+    #[cfg(feature = "chechen")]
+    /// The ISO 639-3 code for [`Chechen`](crate::language::Language::Chechen)
+    CHE,
 
     #[cfg(feature = "welsh")]
     /// The ISO 639-3 code for [`Welsh`](crate::language::Language::Welsh)
@@ -556,9 +564,21 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Kazakh`](crate::language::Language::Kazakh)
     KAZ,
 
+    #[cfg(feature = "kyrgyz")]
+    /// The ISO 639-3 code for [`Kyrgyz`](crate::language::Language::Kyrgyz)
+    KIR,
+
+    #[cfg(feature = "khmer")]
+    /// The ISO 639-3 code for [`Khmer`](crate::language::Language::Khmer)
+    KHM,
+
     #[cfg(feature = "korean")]
     /// The ISO 639-3 code for [`Korean`](crate::language::Language::Korean)
     KOR,
+
+    #[cfg(feature = "lao")]
+    /// The ISO 639-3 code for [`Lao`](crate::language::Language::Lao)
+    LAO,
 
     #[cfg(feature = "latin")]
     /// The ISO 639-3 code for [`Latin`](crate::language::Language::Latin)
@@ -575,6 +595,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "ganda")]
     /// The ISO 639-3 code for [`Ganda`](crate::language::Language::Ganda)
     LUG,
+
+    #[cfg(feature = "malayalam")]
+    /// The ISO 639-3 code for [`Malayalam`](crate::language::Language::Malayalam)
+    MAL,
 
     #[cfg(feature = "marathi")]
     /// The ISO 639-3 code for [`Marathi`](crate::language::Language::Marathi)
@@ -595,6 +619,14 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "malay")]
     /// The ISO 639-3 code for [`Malay`](crate::language::Language::Malay)
     MSA,
+
+    #[cfg(feature = "burmese")]
+    /// The ISO 639-3 code for [`Burmese`](crate::language::Language::Burmese)
+    MYA,
+
+    #[cfg(feature = "nepali")]
+    /// The ISO 639-3 code for [`Nepali`](crate::language::Language::Nepali)
+    NEP,
 
     #[cfg(feature = "dutch")]
     /// The ISO 639-3 code for [`Dutch`](crate::language::Language::Dutch)
@@ -620,6 +652,10 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Portuguese`](crate::language::Language::Portuguese)
     POR,
 
+    #[cfg(feature = "pashto")]
+    /// The ISO 639-3 code for [`Pashto`](crate::language::Language::Pashto)
+    PUS,
+
     #[cfg(feature = "romanian")]
     /// The ISO 639-3 code for [`Romanian`](crate::language::Language::Romanian)
     RON,
@@ -627,6 +663,14 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "russian")]
     /// The ISO 639-3 code for [`Russian`](crate::language::Language::Russian)
     RUS,
+
+    #[cfg(feature = "sanskrit")]
+    /// The ISO 639-3 code for [`Sanskrit`](crate::language::Language::Sanskrit)
+    SAN,
+
+    #[cfg(feature = "sinhala")]
+    /// The ISO 639-3 code for [`Sinhala`](crate::language::Language::Sinhala)
+    SIN,
 
     #[cfg(feature = "slovak")]
     /// The ISO 639-3 code for [`Slovak`](crate::language::Language::Slovak)
@@ -639,6 +683,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "shona")]
     /// The ISO 639-3 code for [`Shona`](crate::language::Language::Shona)
     SNA,
+
+    #[cfg(feature = "sindhi")]
+    /// The ISO 639-3 code for [`Sindhi`](crate::language::Language::Sindhi)
+    SND,
 
     #[cfg(feature = "somali")]
     /// The ISO 639-3 code for [`Somali`](crate::language::Language::Somali)
@@ -672,9 +720,17 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Tamil`](crate::language::Language::Tamil)
     TAM,
 
+    #[cfg(feature = "tatar")]
+    /// The ISO 639-3 code for [`Tatar`](crate::language::Language::Tatar)
+    TAT,
+
     #[cfg(feature = "telugu")]
     /// The ISO 639-3 code for [`Telugu`](crate::language::Language::Telugu)
     TEL,
+
+    #[cfg(feature = "tajik")]
+    /// The ISO 639-3 code for [`Tajik`](crate::language::Language::Tajik)
+    TGK,
 
     #[cfg(feature = "tagalog")]
     /// The ISO 639-3 code for [`Tagalog`](crate::language::Language::Tagalog)
@@ -692,6 +748,10 @@ pub enum IsoCode639_3 {
     /// The ISO 639-3 code for [`Tsonga`](crate::language::Language::Tsonga)
     TSO,
 
+    #[cfg(feature = "turkmen")]
+    /// The ISO 639-3 code for [`Turkmen`](crate::language::Language::Turkmen)
+    TUK,
+
     #[cfg(feature = "turkish")]
     /// The ISO 639-3 code for [`Turkish`](crate::language::Language::Turkish)
     TUR,
@@ -703,6 +763,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "urdu")]
     /// The ISO 639-3 code for [`Urdu`](crate::language::Language::Urdu)
     URD,
+
+    #[cfg(feature = "uzbek")]
+    /// The ISO 639-3 code for [`Uzbek`](crate::language::Language::Uzbek)
+    UZB,
 
     #[cfg(feature = "vietnamese")]
     /// The ISO 639-3 code for [`Vietnamese`](crate::language::Language::Vietnamese)
@@ -723,70 +787,6 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "zulu")]
     /// The ISO 639-3 code for [`Zulu`](crate::language::Language::Zulu)
     ZUL,
-
-    #[cfg(feature = "amharic")]
-    /// The ISO 639-3 code for [`Amharic`](crate::language::Language::Amharic)
-    AMH,
-
-    #[cfg(feature = "burmese")]
-    /// The ISO 639-3 code for [`Burmese`](crate::language::Language::Burmese)
-    MYA,
-
-    #[cfg(feature = "chechen")]
-    /// The ISO 639-3 code for [`Chechen`](crate::language::Language::Chechen)
-    CHE,
-
-    #[cfg(feature = "kyrgyz")]
-    /// The ISO 639-3 code for [`Kyrgyz`](crate::language::Language::Kyrgyz)
-    KIR,
-
-    #[cfg(feature = "malayalam")]
-    /// The ISO 639-3 code for [`Malayalam`](crate::language::Language::Malayalam)
-    MAL,
-
-    #[cfg(feature = "nepali")]
-    /// The ISO 639-3 code for [`Nepali`](crate::language::Language::Nepali)
-    NEP,
-
-    #[cfg(feature = "pashto")]
-    /// The ISO 639-3 code for [`Pashto`](crate::language::Language::Pashto)
-    PUS,
-
-    #[cfg(feature = "sanskrit")]
-    /// The ISO 639-3 code for [`Sanskrit`](crate::language::Language::Sanskrit)
-    SAN,
-
-    #[cfg(feature = "sinhala")]
-    /// The ISO 639-3 code for [`Sinhala`](crate::language::Language::Sinhala)
-    SIN,
-
-    #[cfg(feature = "sindhi")]
-    /// The ISO 639-3 code for [`Sindhi`](crate::language::Language::Sindhi)
-    SND,
-
-    #[cfg(feature = "tatar")]
-    /// The ISO 639-3 code for [`Tatar`](crate::language::Language::Tatar)
-    TAT,
-
-    #[cfg(feature = "tajik")]
-    /// The ISO 639-3 code for [`Tajik`](crate::language::Language::Tajik)
-    TGK,
-
-    #[cfg(feature = "turkmen")]
-    /// The ISO 639-3 code for [`Turkmen`](crate::language::Language::Turkmen)
-    TUK,
-
-    #[cfg(feature = "uzbek")]
-    /// The ISO 639-3 code for [`Uzbek`](crate::language::Language::Uzbek)
-    UZB,
-
-    #[cfg(feature = "khmer")]
-    /// The ISO 639-3 code for [`Khmer`](crate::language::Language::Khmer)
-    KHM,
-
-    #[cfg(feature = "lao")]
-    /// The ISO 639-3 code for [`Lao`](crate::language::Language::Lao)
-    LAO,
 }
 
 impl Display for IsoCode639_1 {

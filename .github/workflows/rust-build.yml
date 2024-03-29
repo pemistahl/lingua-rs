@@ -47,25 +47,17 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            name: Linux Binary 64-Bit
+            name: Linux 64-Bit
 
           - os: macos-latest
-            name: MacOS Binary 64-Bit
+            name: MacOS 64-Bit
 
           - os: windows-latest
-            name: Windows Binary 64-Bit
+            name: Windows 64-Bit
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Install wasm-pack
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-
-      - name: Enable Safari web driver
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: sudo safaridriver --enable
 
       - name: Store or retrieve cargo caches
         uses: actions/cache@v4
@@ -87,20 +79,32 @@ jobs:
       - name: Test in debug mode
         run: cargo test
 
+  wasm-build:
+    name: WASM Build
+    needs: rust-build
+
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Enable Safari web driver
+        run: sudo safaridriver --enable
+
       - name: Run WASM integration tests on NodeJS
-        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --node
 
       - name: Run WASM integration tests in Chrome
-        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --headless --chrome
 
       - name: Run WASM integration tests in Firefox
-        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --headless --firefox
 
       - name: Run WASM integration tests in Safari
-        if: ${{ matrix.os == 'macos-latest' }}
         run: wasm-pack test --headless --safari
 
   coverage-report:
@@ -121,5 +125,11 @@ jobs:
       - name: Generate coverage report
         run: cargo +nightly tarpaulin --lib --ignore-config --ignore-panics --ignore-tests --exclude-files src/python.rs src/script.rs src/wasm.rs src/bin/accuracy_reports.rs --verbose --timeout 120 --out xml
 
+      - name: Workaround for codecov/feedback#263
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Upload coverage report
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true

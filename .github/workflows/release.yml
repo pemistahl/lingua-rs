@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Python Release
+name: Release
 
 on:
   push:
@@ -21,24 +21,19 @@ on:
       - v1.*
 
 jobs:
-  linux:
-    name: Python on Linux and target ${{ matrix.target }}
+  python-linux-release-build:
+    name: Python Release Build on Linux and target ${{ matrix.target }}
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        target: [x86_64, x86, aarch64]
+        target: [ x86_64, x86, aarch64 ]
+        linux: [ auto, musllinux_1_2 ]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -46,33 +41,26 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --out dist -i 3.8 3.9 3.10 3.11 3.12 pypy3.8 pypy3.9 pypy3.10
           sccache: 'true'
-          manylinux: auto
+          manylinux: ${{ matrix.linux }}
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: linux-${{ matrix.linux }}-${{ matrix.target }}-wheels
           path: dist
 
-  windows:
-    name: Python on Windows and target ${{ matrix.target }}
+  python-windows-release-build:
+    name: Python Release Build on Windows and target ${{ matrix.target }}
 
     runs-on: windows-latest
 
     strategy:
       matrix:
-        target: [x64, x86]
+        target: [ x64, x86 ]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          architecture: ${{ matrix.target }}
-          cache: 'pip'
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -84,27 +72,21 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: windows-${{ matrix.target }}-wheels
           path: dist
 
-  macos:
-    name: Python on MacOS and target ${{ matrix.target }}
+  python-macos-release-build:
+    name: Python Release Build on MacOS and target ${{ matrix.target }}
 
     runs-on: macos-latest
 
     strategy:
       matrix:
-        target: [x86_64, aarch64]
+        target: [ x86_64, aarch64 ]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -116,21 +98,21 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: macos-${{ matrix.target }}-wheels
           path: dist
 
-  release:
+  python-release-upload:
     name: Publish wheels to PyPI
+    needs: [ python-linux-release-build, python-windows-release-build, python-macos-release-build ]
 
     runs-on: ubuntu-latest
-
-    needs: [linux, windows, macos]
 
     steps:
       - name: Download wheels from previous jobs
         uses: actions/download-artifact@v4
         with:
-          name: wheels
+          path: wheels
+          merge-multiple: true
 
       - name: Upload to PyPI
         uses: PyO3/maturin-action@v1
@@ -138,4 +120,19 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --skip-existing *
+          args: --skip-existing wheels/*.whl
+
+  rust-release-upload:
+    name: Upload to crates.io
+    needs: [ python-linux-release-build, python-windows-release-build, python-macos-release-build ]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Upload release to crates.io
+        uses: katyo/publish-crates@v2
+        with:
+          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}

@@ -1858,11 +1858,12 @@ dependencies = [
 
 [[package]]
 name = "titlecase"
-version = "3.0.0"
+version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb3223c7b6ee54ec8521af7b060ad616cb90a66d0b94d05af340de30cf02c514"
+checksum = "acc5e312c2e5385c8d3d31487041ca8ceaec09a8a1174bdfa9c6418c5f6b36fa"
 dependencies = [
  "regex 1.10.4",
+ "wasm-bindgen",
 ]
 
 [[package]]

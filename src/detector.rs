@@ -1189,7 +1189,7 @@ impl LanguageDetector {
 
             for unigrams in unigram_model.ngrams.iter() {
                 let probability = model
-                    .get(unigrams.get(0).unwrap().value)
+                    .get(unigrams.first().unwrap().value)
                     .copied()
                     .unwrap_or(0.0);
 

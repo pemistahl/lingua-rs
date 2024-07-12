@@ -15,16 +15,13 @@
  */
 
 use std::any::Any;
-use std::collections::hash_map::DefaultHasher;
 use std::collections::HashSet;
-use std::hash::{Hash, Hasher};
 use std::io;
 use std::panic;
 use std::path::PathBuf;
 
 use pyo3::exceptions::{PyException, PyValueError};
 use pyo3::prelude::*;
-use pyo3::pyclass::CompareOp;
 use pyo3::types::{PyTuple, PyType};
 
 use crate::builder::{
@@ -38,7 +35,7 @@ use crate::result::DetectionResult;
 use crate::writer::{LanguageModelFilesWriter, TestDataFilesWriter};
 
 #[pymodule]
-fn lingua(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn lingua(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ConfidenceValue>()?;
     m.add_class::<DetectionResult>()?;
     m.add_class::<IsoCode639_1>()?;
@@ -168,16 +165,6 @@ impl DetectionResult {
 
 #[pymethods]
 impl IsoCode639_1 {
-    fn __hash__(&self) -> u64 {
-        let mut hasher = DefaultHasher::new();
-        self.hash(&mut hasher);
-        hasher.finish()
-    }
-
-    fn __richcmp__(&self, other: &Self, op: CompareOp) -> bool {
-        op.matches(self.to_string().cmp(&other.to_string()))
-    }
-
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -186,16 +173,6 @@ impl IsoCode639_1 {
 
 #[pymethods]
 impl IsoCode639_3 {
-    fn __hash__(&self) -> u64 {
-        let mut hasher = DefaultHasher::new();
-        self.hash(&mut hasher);
-        hasher.finish()
-    }
-
-    fn __richcmp__(&self, other: &Self, op: CompareOp) -> bool {
-        op.matches(self.to_string().cmp(&other.to_string()))
-    }
-
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -204,55 +181,45 @@ impl IsoCode639_3 {
 
 #[pymethods]
 impl Language {
-    fn __hash__(&self) -> u64 {
-        let mut hasher = DefaultHasher::new();
-        self.hash(&mut hasher);
-        hasher.finish()
-    }
-
-    fn __richcmp__(&self, other: &Self, op: CompareOp) -> bool {
-        op.matches(self.to_string().cmp(&other.to_string()))
-    }
-
     /// Return a set of all supported languages.
     #[pyo3(name = "all")]
     #[classmethod]
-    fn py_all(_cls: &PyType) -> HashSet<Self> {
+    fn py_all(_cls: &Bound<PyType>) -> HashSet<Self> {
         Self::all()
     }
 
     /// Return a set of all supported spoken languages.
     #[pyo3(name = "all_spoken_ones")]
     #[classmethod]
-    fn py_all_spoken_ones(_cls: &PyType) -> HashSet<Self> {
+    fn py_all_spoken_ones(_cls: &Bound<PyType>) -> HashSet<Self> {
         Self::all_spoken_ones()
     }
 
     /// Return a set of all languages supporting the Arabic script.
     #[pyo3(name = "all_with_arabic_script")]
     #[classmethod]
-    fn py_all_with_arabic_script(_cls: &PyType) -> HashSet<Self> {
+    fn py_all_with_arabic_script(_cls: &Bound<PyType>) -> HashSet<Self> {
         Self::all_with_arabic_script()
     }
 
     /// Return a set of all languages supporting the Cyrillic script.
     #[pyo3(name = "all_with_cyrillic_script")]
     #[classmethod]
-    fn py_all_with_cyrillic_script(_cls: &PyType) -> HashSet<Self> {
+    fn py_all_with_cyrillic_script(_cls: &Bound<PyType>) -> HashSet<Self> {
         Self::all_with_cyrillic_script()
     }
 
     /// Return a set of all languages supporting the Devanagari script.
     #[pyo3(name = "all_with_devanagari_script")]
     #[classmethod]
-    fn py_all_with_devanagari_script(_cls: &PyType) -> HashSet<Self> {
+    fn py_all_with_devanagari_script(_cls: &Bound<PyType>) -> HashSet<Self> {
         Self::all_with_devanagari_script()
     }
 
     /// Return a set of all languages supporting the Latin script.
     #[pyo3(name = "all_with_latin_script")]
     #[classmethod]
-    fn py_all_with_latin_script(_cls: &PyType) -> HashSet<Self> {
+    fn py_all_with_latin_script(_cls: &Bound<PyType>) -> HashSet<Self> {
         Self::all_with_latin_script()
     }
 
@@ -263,7 +230,7 @@ impl Language {
     ///     ValueError: if there is no language for the given ISO code
     #[pyo3(name = "from_iso_code_639_1")]
     #[classmethod]
-    fn py_from_iso_code_639_1(_cls: &PyType, iso_code: &IsoCode639_1) -> Self {
+    fn py_from_iso_code_639_1(_cls: &Bound<PyType>, iso_code: &IsoCode639_1) -> Self {
         Self::from_iso_code_639_1(iso_code)
     }
 
@@ -274,7 +241,7 @@ impl Language {
     ///     ValueError: if there is no language for the given ISO code
     #[pyo3(name = "from_iso_code_639_3")]
     #[classmethod]
-    fn py_from_iso_code_639_3(_cls: &PyType, iso_code: &IsoCode639_3) -> Self {
+    fn py_from_iso_code_639_3(_cls: &Bound<PyType>, iso_code: &IsoCode639_3) -> Self {
         Self::from_iso_code_639_3(iso_code)
     }
 
@@ -304,7 +271,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages.
     #[pyo3(name = "from_all_languages")]
     #[classmethod]
-    fn py_from_all_languages(_cls: &PyType) -> Self {
+    fn py_from_all_languages(_cls: &Bound<PyType>) -> Self {
         Self::from_all_languages()
     }
 
@@ -312,7 +279,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in spoken languages.
     #[pyo3(name = "from_all_spoken_languages")]
     #[classmethod]
-    fn py_from_all_spoken_languages(_cls: &PyType) -> Self {
+    fn py_from_all_spoken_languages(_cls: &Bound<PyType>) -> Self {
         Self::from_all_spoken_languages()
     }
 
@@ -320,7 +287,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages supporting the Arabic script.
     #[pyo3(name = "from_all_languages_with_arabic_script")]
     #[classmethod]
-    fn py_from_all_languages_with_arabic_script(_cls: &PyType) -> Self {
+    fn py_from_all_languages_with_arabic_script(_cls: &Bound<PyType>) -> Self {
         Self::from_all_languages_with_arabic_script()
     }
 
@@ -328,7 +295,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages supporting the Cyrillic script.
     #[pyo3(name = "from_all_languages_with_cyrillic_script")]
     #[classmethod]
-    fn py_from_all_languages_with_cyrillic_script(_cls: &PyType) -> Self {
+    fn py_from_all_languages_with_cyrillic_script(_cls: &Bound<PyType>) -> Self {
         Self::from_all_languages_with_cyrillic_script()
     }
 
@@ -336,7 +303,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages supporting the Devanagari script.
     #[pyo3(name = "from_all_languages_with_devanagari_script")]
     #[classmethod]
-    fn py_from_all_languages_with_devanagari_script(_cls: &PyType) -> Self {
+    fn py_from_all_languages_with_devanagari_script(_cls: &Bound<PyType>) -> Self {
         Self::from_all_languages_with_devanagari_script()
     }
 
@@ -344,7 +311,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages supporting the Latin script.
     #[pyo3(name = "from_all_languages_with_latin_script")]
     #[classmethod]
-    fn py_from_all_languages_with_latin_script(_cls: &PyType) -> Self {
+    fn py_from_all_languages_with_latin_script(_cls: &Bound<PyType>) -> Self {
         Self::from_all_languages_with_latin_script()
     }
 
@@ -352,7 +319,7 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages except those passed to this method.
     #[pyo3(name = "from_all_languages_without", signature = (*languages))]
     #[classmethod]
-    fn py_from_all_languages_without(_cls: &PyType, languages: &PyTuple) -> PyResult<Self> {
+    fn py_from_all_languages_without(_cls: &Bound<PyType>, languages: &Bound<PyTuple>) -> PyResult<Self> {
         match languages.extract::<Vec<Language>>() {
             Ok(vector) => match panic::catch_unwind(|| Self::from_all_languages_without(&vector)) {
                 Ok(builder) => Ok(builder),
@@ -366,7 +333,7 @@ impl LanguageDetectorBuilder {
     /// with the languages passed to this method.
     #[pyo3(name = "from_languages", signature = (*languages))]
     #[classmethod]
-    fn py_from_languages(_cls: &PyType, languages: &PyTuple) -> PyResult<Self> {
+    fn py_from_languages(_cls: &Bound<PyType>, languages: &Bound<PyTuple>) -> PyResult<Self> {
         match languages.extract::<Vec<Language>>() {
             Ok(vector) => match panic::catch_unwind(|| Self::from_languages(&vector)) {
                 Ok(builder) => Ok(builder),
@@ -384,7 +351,7 @@ impl LanguageDetectorBuilder {
     ///     ValueError: if less than two ISO codes are specified
     #[pyo3(name = "from_iso_codes_639_1", signature = (*iso_codes))]
     #[classmethod]
-    fn py_from_iso_codes_639_1(_cls: &PyType, iso_codes: &PyTuple) -> PyResult<Self> {
+    fn py_from_iso_codes_639_1(_cls: &Bound<PyType>, iso_codes: &Bound<PyTuple>) -> PyResult<Self> {
         match iso_codes.extract::<Vec<IsoCode639_1>>() {
             Ok(vector) => match panic::catch_unwind(|| Self::from_iso_codes_639_1(&vector)) {
                 Ok(builder) => Ok(builder),
@@ -402,7 +369,7 @@ impl LanguageDetectorBuilder {
     ///     ValueError: if less than two ISO codes are specified
     #[pyo3(name = "from_iso_codes_639_3", signature = (*iso_codes))]
     #[classmethod]
-    fn py_from_iso_codes_639_3(_cls: &PyType, iso_codes: &PyTuple) -> PyResult<Self> {
+    fn py_from_iso_codes_639_3(_cls: &Bound<PyType>, iso_codes: &Bound<PyTuple>) -> PyResult<Self> {
         match iso_codes.extract::<Vec<IsoCode639_3>>() {
             Ok(vector) => match panic::catch_unwind(|| Self::from_iso_codes_639_3(&vector)) {
                 Ok(builder) => Ok(builder),
@@ -702,7 +669,7 @@ impl LanguageModelFilesWriter {
     #[pyo3(name = "create_and_write_language_model_files")]
     #[classmethod]
     fn py_create_and_write_language_model_files(
-        _cls: &PyType,
+        _cls: &Bound<PyType>,
         input_file_path: PathBuf,
         output_directory_path: PathBuf,
         language: &Language,
@@ -743,7 +710,7 @@ impl TestDataFilesWriter {
     #[pyo3(name = "create_and_write_test_data_files")]
     #[classmethod]
     fn py_create_and_write_test_data_files(
-        _cls: &PyType,
+        _cls: &Bound<PyType>,
         input_file_path: PathBuf,
         output_directory_path: PathBuf,
         char_class: &str,

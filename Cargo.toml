@@ -158,7 +158,7 @@ wasm-bindgen = "0.2.92"
 [dev-dependencies]
 float-cmp = "0.9.0"
 indoc = "2.0.5"
-rstest = "0.21.0"
+rstest = "0.22.0"
 tempfile = "3.10.1"
 
 [target.'cfg(not(target_family = "wasm"))'.dev-dependencies]

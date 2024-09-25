@@ -1095,7 +1095,6 @@ impl Language {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
 
     use crate::language::Language::*;
 

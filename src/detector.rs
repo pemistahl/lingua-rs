@@ -795,8 +795,8 @@ impl LanguageDetector {
     ) -> Option<Language> {
         let mut total_language_counts = HashMap::<Option<Language>, u32>::new();
         let half_word_count = (words.len() as f64) * 0.5;
-        let mut CJK_lang_uncertainty:usize=0;
-        let CJK_lang_uncertainty_max_ratio=0.6;
+        let mut cjk_lang_uncertainty:usize=0;
+        let cjk_lang_uncertainty_max_ratio =0.9999999999;
 
         for word in words {
             let mut word_language_counts = HashMap::<Language, u32>::new();
@@ -867,7 +867,7 @@ impl LanguageDetector {
                     Some(Language::from_str("Japanese").unwrap()),
                     1,
                 );
-                CJK_lang_uncertainty+=1;
+                cjk_lang_uncertainty +=1;
             } else {
                 let sorted_word_language_counts = word_language_counts
                     .into_iter()
@@ -907,10 +907,9 @@ impl LanguageDetector {
             && cfg!(feature = "japanese")
             && total_language_counts.contains_key(&Some(Language::from_str("Chinese").unwrap()))
             && total_language_counts.contains_key(&Some(Language::from_str("Japanese").unwrap()))
-        {
-            if CJK_lang_uncertainty as f32/words.len() as f32>=CJK_lang_uncertainty_max_ratio{
+            &&cjk_lang_uncertainty as f32/words.len() as f32>= cjk_lang_uncertainty_max_ratio
+            && self.is_low_accuracy_mode_enabled{
                 return None;
-            }
         }
 
         let sorted_total_language_counts = total_language_counts
@@ -1265,11 +1264,6 @@ impl LanguageDetector {
     fn increment_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T, value: u32) {
         let counter = counts.entry(key).or_insert(0);
         *counter += value;
-    }
-
-    fn decrement_counter<T: Eq + Hash>(&self, counts: &mut HashMap<T, u32>, key: T, value: u32) {
-        let counter = counts.entry(key).or_insert(0);
-        *counter = counter.saturating_sub(value);
     }
 }
 

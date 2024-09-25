@@ -1,16 +1,16 @@
 ##### Chinese #####
 
->>> Accuracy on average: 100%
+>>> Accuracy on average: 71.18%
 
 >> Detection of 1000 single words (average length: 1 chars)
-Accuracy: 100%
-Erroneously classified as 
+Accuracy: 56.8%
+Erroneously classified as Unknown: 43.2%
 
 >> Detection of 1000 word pairs (average length: 2 chars)
-Accuracy: 100%
-Erroneously classified as 
+Accuracy: 56.9%
+Erroneously classified as Unknown: 43.1%
 
 >> Detection of 729 sentences (average length: 48 chars)
-Accuracy: 100%
-Erroneously classified as 
+Accuracy: 99.86%
+Erroneously classified as Unknown: 0.13%
 

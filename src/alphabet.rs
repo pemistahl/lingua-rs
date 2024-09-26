@@ -23,7 +23,7 @@ use strum_macros::EnumIter;
 
 use crate::language::Language;
 
-#[derive(EnumIter, Eq, PartialEq, Hash)]
+#[derive(EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub(crate) enum Alphabet {
     Arabic,
     Armenian,

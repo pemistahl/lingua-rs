@@ -953,7 +953,15 @@ impl LanguageDetector {
 
         let most_frequent_alphabet = detected_alphabets
             .into_iter()
-            .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
+            .sorted_by(
+                |(first_alphabet, first_count), (second_alphabet, second_count)| {
+                    let ordering = second_count.cmp(first_count);
+                    match ordering {
+                        Ordering::Equal => first_alphabet.cmp(&second_alphabet),
+                        _ => ordering,
+                    }
+                },
+            )
             .next()
             .unwrap()
             .0;

@@ -813,19 +813,19 @@ impl LanguageDetector {
                 }
 
                 if !is_match {
-                    if cfg!(feature = "chinese") && Alphabet::Han.matches_char(character) {
-                        self.increment_counter(
-                            &mut word_language_counts,
-                            Language::from_str("Chinese").unwrap(),
-                            1,
-                        );
-                    }
+
                     if cfg!(feature = "japanese") //we need to test for both and later guess at which one it is
                         && JAPANESE_CHARACTER_SET.is_char_match(character)
                     {
                         self.increment_counter(
                             &mut word_language_counts,
                             Language::from_str("Japanese").unwrap(),
+                            1,
+                        );
+                    }                    if cfg!(feature = "chinese") && Alphabet::Han.matches_char(character) {
+                        self.increment_counter(
+                            &mut word_language_counts,
+                            Language::from_str("Chinese").unwrap(),
                             1,
                         );
                     } else if Alphabet::Latin.matches_char(character)
@@ -905,12 +905,27 @@ impl LanguageDetector {
         if total_language_counts.len() == 2
             && cfg!(feature = "chinese")
             && cfg!(feature = "japanese")
-            && total_language_counts.contains_key(&Some(Language::from_str("Chinese").unwrap()))
-            && total_language_counts.contains_key(&Some(Language::from_str("Japanese").unwrap()))
-            &&cjk_lang_uncertainty as f32/words.len() as f32>= cjk_lang_uncertainty_max_ratio
-            && self.is_low_accuracy_mode_enabled{
-                return None;
+            && total_language_counts.contains_key(&Some(Language::Chinese))
+            && total_language_counts.contains_key(&Some(Language::Japanese))
+            && (cjk_lang_uncertainty as f32 / words.len() as f32) >= cjk_lang_uncertainty_max_ratio
+            && self.is_low_accuracy_mode_enabled
+        {
+            // Retrieve the counts for Chinese and Japanese languages
+            let chinese_count = *total_language_counts
+                .get(&Some(Language::Chinese))
+                .unwrap_or(&0);
+            let japanese_count = *total_language_counts
+                .get(&Some(Language::Japanese))
+                .unwrap_or(&0);
+            // Compare the counts and return the language with the higher count
+            if chinese_count >= japanese_count {
+                return Some(Language::Chinese);
+            } else {
+                return Some(Language::Japanese);
+            }
         }
+
+
 
         let sorted_total_language_counts = total_language_counts
             .into_iter()

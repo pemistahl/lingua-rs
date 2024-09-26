@@ -701,27 +701,27 @@ pub const GURMUKHI: &[(char, char)] = &[
 ];
 
 pub const HAN: &[(char, char)] = &[
-    ('⺀', '⺙'),
-    ('⺛', '⻳'),
-    ('⼀', '⿕'),
-    ('々', '々'),
-    ('〇', '〇'),
-    ('〡', '〩'),
-    ('〸', '〻'),
-    ('㐀', '䶿'),
-    ('一', '鿿'),
-    ('豈', '舘'),
-    ('並', '龎'),
-    ('𖿢', '𖿣'),
-    ('𖿰', '𖿱'),
-    ('𠀀', '𪛟'),
-    ('𪜀', '𫜹'),
-    ('𫝀', '𫠝'),
-    ('𫠠', '𬺡'),
-    ('𬺰', '𮯠'),
-    ('丽', '𪘀'),
-    ('𰀀', '𱍊'),
-    ('𱍐', '𲎯'),
+    ('⺀', '⺙'),   // U+2E80 to U+2E99: Radical symbols
+    ('⺛', '⻳'),   // U+2E9B to U+2EF3: Additional radicals
+    ('⼀', '⿕'),   // U+2F00 to U+2FD5: Kangxi radicals
+    ('々', '々'),   // U+3005: Ideographic iteration mark
+    ('〇', '〇'),   // U+3007: Ideographic number zero
+    ('〡', '〩'),   // U+3021 to U+3029: Suzhou numerals
+    ('〸', '〻'),   // U+3038 to U+303B: Hangzhou numerals and iteration marks
+    ('㐀', '䶿'),   // U+3400 to U+4DBF: CJK Unified Ideographs Extension A
+    ('一', '鿿'),   // U+4E00 to U+9FFF: CJK Unified Ideographs
+    ('豈', '舘'),   // U+F900 to U+FA6D: CJK Compatibility Ideographs
+    ('並', '龎'),   // U+FA70 to U+FAD9: Additional compatibility ideographs
+    ('𖿢', '𖿣'), // U+16FE2 to U+16FE3: Ideographic symbols and punctuation
+    ('𖿰', '𖿱'), // U+16FF0 to U+16FF1: Kana symbols
+    ('𠀀', '𪛟'), // U+20000 to U+2A6DF: CJK Unified Ideographs Extension B
+    ('𪜀', '𫜹'), // U+2A700 to U+2B734: Extensions C and D
+    ('𫝀', '𫠝'), // U+2B740 to U+2B81D: Extension E
+    ('𫠠', '𬺡'), // U+2B820 to U+2CEA1: Extensions F and G
+    ('𬺰', '𮯠'), // U+2CEB0 to U+2EBE0: Extension H
+    ('丽', '𪘀'), // U+2F800 to U+2FA1D: CJK Compatibility Ideographs Supplement
+    ('𰀀', '𱍊'), // U+30000 to U+3134A: Extension J (proposed)
+    ('𱍐', '𲎯'), // U+31350 to U+323AF: Extension K (proposed)
 ];
 
 pub const HANGUL: &[(char, char)] = &[

@@ -3076,6 +3076,9 @@ for using *Lingua* with the [Elixir programming language](https://elixir-lang.or
 - [Simon Liang](https://github.com/lhr0909) has written a [wrapper](https://github.com/xanthous-tech/lingua-node)
 for using *Lingua* with [NodeJS](https://nodejs.org/).
 
+- [Roger Mo](https://github.com/shallmentmo) has written a [wrapper](https://github.com/shallmentmo/lingua_rb)
+for using *Lingua* with the [Ruby programming language](https://ruby-lang.org/).
+
 Any contributions to *Lingua* are very much appreciated. Please read the instructions
 in [`CONTRIBUTING.md`](https://github.com/pemistahl/lingua-rs/blob/main/CONTRIBUTING.md)
 for how to add new languages to the library.

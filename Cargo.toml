@@ -52,7 +52,7 @@ harness = false
 required-features = ["benchmark"]
 
 [dependencies]
-brotli = "6.0.0"
+brotli = "7.0.0"
 compact_str = "0.8.0"
 fraction = "0.15.3"
 include_dir = "0.7.4"

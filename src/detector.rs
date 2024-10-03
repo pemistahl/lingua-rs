@@ -905,8 +905,8 @@ impl LanguageDetector {
         if total_language_counts.len() == 2
             && cfg!(feature = "chinese")
             && cfg!(feature = "japanese")
-            && total_language_counts.contains_key(&Some(Language::Chinese))
-            && total_language_counts.contains_key(&Some(Language::Japanese))
+            && total_language_counts.contains_key(&Some(Language::from_str("Chinese").unwrap()))
+            && total_language_counts.contains_key(&Some(Language::from_str("Japanese").unwrap()))
             && (cjk_lang_uncertainty as f32 / words.len() as f32) >= cjk_lang_uncertainty_max_ratio
             && self.is_low_accuracy_mode_enabled
         {

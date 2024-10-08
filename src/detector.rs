@@ -795,6 +795,8 @@ impl LanguageDetector {
     ) -> Option<Language> {
         let mut total_language_counts = HashMap::<Option<Language>, u32>::new();
         let half_word_count = (words.len() as f64) * 0.5;
+        let mut cjk_lang_uncertainty:usize=0;
+        let cjk_lang_uncertainty_max_ratio =0.9999999999;
 
         for word in words {
             let mut word_language_counts = HashMap::<Language, u32>::new();
@@ -811,18 +813,19 @@ impl LanguageDetector {
                 }
 
                 if !is_match {
-                    if cfg!(feature = "chinese") && Alphabet::Han.matches_char(character) {
-                        self.increment_counter(
-                            &mut word_language_counts,
-                            Language::from_str("Chinese").unwrap(),
-                            1,
-                        );
-                    } else if cfg!(feature = "japanese")
+
+                    if cfg!(feature = "japanese") //we need to test for both and later guess at which one it is
                         && JAPANESE_CHARACTER_SET.is_char_match(character)
                     {
                         self.increment_counter(
                             &mut word_language_counts,
                             Language::from_str("Japanese").unwrap(),
+                            1,
+                        );
+                    }                    if cfg!(feature = "chinese") && Alphabet::Han.matches_char(character) {
+                        self.increment_counter(
+                            &mut word_language_counts,
+                            Language::from_str("Chinese").unwrap(),
                             1,
                         );
                     } else if Alphabet::Latin.matches_char(character)
@@ -856,9 +859,15 @@ impl LanguageDetector {
             {
                 self.increment_counter(
                     &mut total_language_counts,
+                    Some(Language::from_str("Chinese").unwrap()),
+                    1,
+                );
+                self.increment_counter(
+                    &mut total_language_counts,
                     Some(Language::from_str("Japanese").unwrap()),
                     1,
                 );
+                cjk_lang_uncertainty +=1;
             } else {
                 let sorted_word_language_counts = word_language_counts
                     .into_iter()
@@ -898,9 +907,25 @@ impl LanguageDetector {
             && cfg!(feature = "japanese")
             && total_language_counts.contains_key(&Some(Language::from_str("Chinese").unwrap()))
             && total_language_counts.contains_key(&Some(Language::from_str("Japanese").unwrap()))
+            && (cjk_lang_uncertainty as f32 / words.len() as f32) >= cjk_lang_uncertainty_max_ratio
+            && self.is_low_accuracy_mode_enabled
         {
-            return Some(Language::from_str("Japanese").unwrap());
+            // Retrieve the counts for Chinese and Japanese languages
+            let chinese_count = *total_language_counts
+                .get(&Some(Language::Chinese))
+                .unwrap_or(&0);
+            let japanese_count = *total_language_counts
+                .get(&Some(Language::Japanese))
+                .unwrap_or(&0);
+            // Compare the counts and return the language with the higher count
+            if chinese_count >= japanese_count {
+                return Some(Language::Chinese);
+            } else {
+                return Some(Language::Japanese);
+            }
         }
+
+
 
         let sorted_total_language_counts = total_language_counts
             .into_iter()

@@ -98,7 +98,7 @@ jobs:
           brew install geckodriver
 
       - name: Enable Safari web driver
-        run: sudo safaridriver --enable
+        run: sudo safaridriver --enable --port 0
 
       - name: Run WASM integration tests on NodeJS
         run: wasm-pack test --node

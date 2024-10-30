@@ -17,7 +17,7 @@ members = ["language-models/*"]
 
 [package]
 name = "lingua"
-version = "1.6.2"
+version = "1.7.0"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for short text and mixed-language text
@@ -59,9 +59,9 @@ include_dir = "0.7.4"
 itertools = "0.13.0"
 maplit = "1.0.2"
 once_cell = "1.20.2"
-regex = "1.11.0"
-serde = { version = "1.0.210", features = ["derive"] }
-serde_json = "1.0.128"
+regex = "1.11.1"
+serde = { version = "1.0.214", features = ["derive"] }
+serde_json = "1.0.132"
 strum = "0.26.3"
 strum_macros = "0.26.4"
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.1.0", optional = true }
@@ -144,7 +144,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.1.0", o
 ahash = "0.8.11"
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.5", optional = true }
-pyo3 = { version = "0.22.3", optional = true }
+pyo3 = { version = "0.22.5", optional = true }
 rayon = "1.10.0"
 titlecase = { version = "3.3.0", optional = true }
 whatlang = { version = "0.16.4", optional = true }
@@ -153,7 +153,7 @@ whichlang = { version = "0.1.0", optional = true }
 [target.'cfg(target_family = "wasm")'.dependencies]
 ahash = { version = "0.8.11", default-features = false, features = ["std", "compile-time-rng"] }
 serde-wasm-bindgen = "0.6.5"
-wasm-bindgen = "0.2.92"
+wasm-bindgen = "0.2.95"
 
 [dev-dependencies]
 float-cmp = "0.10.0"
@@ -165,7 +165,7 @@ tempfile = "3.13.0"
 criterion = "0.5.1"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
-wasm-bindgen-test = "0.3.42"
+wasm-bindgen-test = "0.3.45"
 
 [features]
 default = [

@@ -206,7 +206,6 @@ fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
 
 #[cfg(test)]
 mod tests {
-    use itertools::Itertools;
     use rstest::*;
 
     use super::*;

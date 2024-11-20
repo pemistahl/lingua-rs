@@ -24,7 +24,7 @@ use crate::alphabet::CharSet;
 use crate::language::Language;
 
 pub(crate) static JAPANESE_CHARACTER_SET: Lazy<CharSet> =
-    Lazy::new(|| CharSet::from_char_classes(&["Hiragana", "Katakana", "Han"]));
+    Lazy::new(|| CharSet::from_char_classes(&["Hiragana", "Katakana", "Japanese_Han"]));
 pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\s+").unwrap());
 pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
 pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());

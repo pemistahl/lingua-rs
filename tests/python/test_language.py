@@ -13,11 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
+
 from lingua import IsoCode639_1, IsoCode639_3, Language
 
 
 def test_iso_code_639_1_name():
     assert IsoCode639_1.EN.name == "EN"
+
+
+def test_iso_code_639_1_from_str():
+    assert IsoCode639_1.from_str("EN") == IsoCode639_1.EN
+    assert IsoCode639_1.from_str("en") == IsoCode639_1.EN
+    assert IsoCode639_1.from_str("eN") == IsoCode639_1.EN
+    with pytest.raises(ValueError, match="Matching enum member not found"):
+        IsoCode639_1.from_str("12")
 
 
 def test_iso_code_639_1_is_comparable():
@@ -31,6 +41,14 @@ def test_iso_code_639_3_name():
     assert IsoCode639_3.ENG.name == "ENG"
 
 
+def test_iso_code_639_3_from_str():
+    assert IsoCode639_3.from_str("ENG") == IsoCode639_3.ENG
+    assert IsoCode639_3.from_str("eng") == IsoCode639_3.ENG
+    assert IsoCode639_3.from_str("eNg") == IsoCode639_3.ENG
+    with pytest.raises(ValueError, match="Matching enum member not found"):
+        IsoCode639_3.from_str("123")
+
+
 def test_iso_code_639_3_is_comparable():
     assert IsoCode639_3.ENG == IsoCode639_3.ENG
     assert IsoCode639_3.ENG != IsoCode639_3.DEU
@@ -40,6 +58,14 @@ def test_iso_code_639_3_is_comparable():
 
 def test_language_name():
     assert Language.ENGLISH.name == "ENGLISH"
+
+
+def test_language_from_str():
+    assert Language.from_str("ENGLISH") == Language.ENGLISH
+    assert Language.from_str("english") == Language.ENGLISH
+    assert Language.from_str("EnGlIsH") == Language.ENGLISH
+    with pytest.raises(ValueError, match="Matching enum member not found"):
+        Language.from_str("FOOBAR")
 
 
 def test_language_is_comparable():

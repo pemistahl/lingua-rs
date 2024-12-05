@@ -42,7 +42,10 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 )]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord, rename_all = "UPPERCASE"))]
+#[cfg_attr(
+    feature = "python",
+    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord, rename_all = "UPPERCASE")
+)]
 pub enum Language {
     #[cfg(feature = "afrikaans")]
     Afrikaans,
@@ -1095,9 +1098,9 @@ impl Language {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
-
     use crate::language::Language::*;
+    use std::str::FromStr;
+    use strum::ParseError::VariantNotFound;
 
     use super::*;
 
@@ -1120,8 +1123,8 @@ mod tests {
 
     #[test]
     fn test_from_str() {
-        let language = Language::from_str("english").unwrap();
-        assert_eq!(language, English);
+        assert_eq!(Language::from_str("english"), Ok(English));
+        assert_eq!(Language::from_str("foo"), Err(VariantNotFound));
     }
 
     #[test]

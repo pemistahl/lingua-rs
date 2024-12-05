@@ -292,7 +292,7 @@ class IsoCode639_1(Enum):
     ZU = 75
 
     @classmethod
-    def from_str(cls, string: str) -> "Language":
+    def from_str(cls, string: str) -> "IsoCode639_1":
         """Return the ISO 639-1 code associated with the string representation
         passed to this method.
 
@@ -385,7 +385,7 @@ class IsoCode639_3(Enum):
     ZUL = 75
 
     @classmethod
-    def from_str(cls, string: str) -> "Language":
+    def from_str(cls, string: str) -> "IsoCode639_3":
         """Return the ISO 639-3 code associated with the string representation
         passed to this method.
 

@@ -38,7 +38,10 @@ use strum_macros::{EnumIter, EnumString};
 )]
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord))]
+#[cfg_attr(
+    feature = "python",
+    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord)
+)]
 pub enum IsoCode639_1 {
     #[cfg(feature = "afrikaans")]
     /// The ISO 639-1 code for [`Afrikaans`](crate::language::Language::Afrikaans)
@@ -360,7 +363,10 @@ pub enum IsoCode639_1 {
 )]
 #[allow(clippy::upper_case_acronyms)]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord))]
+#[cfg_attr(
+    feature = "python",
+    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord)
+)]
 pub enum IsoCode639_3 {
     #[cfg(feature = "afrikaans")]
     /// The ISO 639-3 code for [`Afrikaans`](crate::language::Language::Afrikaans)
@@ -679,9 +685,9 @@ impl Display for IsoCode639_3 {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
-
     use super::*;
+    use std::str::FromStr;
+    use strum::ParseError::VariantNotFound;
 
     #[test]
     fn assert_iso_code_639_1_string_representation_is_correct() {
@@ -695,11 +701,13 @@ mod tests {
 
     #[test]
     fn assert_string_to_iso_code_639_1_is_correct() {
-        assert_eq!(IsoCode639_1::from_str("en").unwrap(), IsoCode639_1::EN);
+        assert_eq!(IsoCode639_1::from_str("en"), Ok(IsoCode639_1::EN));
+        assert_eq!(IsoCode639_1::from_str("12"), Err(VariantNotFound));
     }
 
     #[test]
     fn assert_string_to_iso_code_639_3_is_correct() {
-        assert_eq!(IsoCode639_3::from_str("eng").unwrap(), IsoCode639_3::ENG);
+        assert_eq!(IsoCode639_3::from_str("eng"), Ok(IsoCode639_3::ENG));
+        assert_eq!(IsoCode639_3::from_str("123"), Err(VariantNotFound));
     }
 }

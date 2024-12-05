@@ -198,6 +198,15 @@ class Language(Enum):
             ValueError: if there is no language for the given ISO code
         """
 
+    @classmethod
+    def from_str(cls, string: str) -> "Language":
+        """Return the language associated with the string representation
+        passed to this method.
+
+        Raises:
+            ValueError: if there is no language for the given string representation
+        """
+
 
 class IsoCode639_1(Enum):
     """This enum specifies the ISO 639-1 code representations for the
@@ -282,6 +291,15 @@ class IsoCode639_1(Enum):
     ZH = 74
     ZU = 75
 
+    @classmethod
+    def from_str(cls, string: str) -> "Language":
+        """Return the ISO 639-1 code associated with the string representation
+        passed to this method.
+
+        Raises:
+            ValueError: if there is no ISO 639-1 code for the given string representation
+        """
+
 
 class IsoCode639_3(Enum):
     """This enum specifies the ISO 639-3 code representations for the
@@ -365,6 +383,15 @@ class IsoCode639_3(Enum):
     YOR = 73
     ZHO = 74
     ZUL = 75
+
+    @classmethod
+    def from_str(cls, string: str) -> "Language":
+        """Return the ISO 639-3 code associated with the string representation
+        passed to this method.
+
+        Raises:
+            ValueError: if there is no ISO 639-3 code for the given string representation
+        """
 
 
 class LanguageDetector:

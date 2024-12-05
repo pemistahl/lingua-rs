@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+use pyo3::exceptions::{PyException, PyValueError};
+use pyo3::prelude::*;
+use pyo3::types::{PyTuple, PyType};
 use std::any::Any;
 use std::collections::HashSet;
 use std::io;
 use std::panic;
 use std::path::PathBuf;
-
-use pyo3::exceptions::{PyException, PyValueError};
-use pyo3::prelude::*;
-use pyo3::types::{PyTuple, PyType};
+use std::str::FromStr;
 
 use crate::builder::{
     LanguageDetectorBuilder, MINIMUM_RELATIVE_DISTANCE_MESSAGE, MISSING_LANGUAGE_MESSAGE,
@@ -33,6 +33,8 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
 use crate::result::DetectionResult;
 use crate::writer::{LanguageModelFilesWriter, TestDataFilesWriter};
+
+const ENUM_MEMBER_NOT_FOUND_MESSAGE: &str = "Matching enum member not found";
 
 #[pymodule]
 fn lingua(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -169,6 +171,20 @@ impl IsoCode639_1 {
     fn name(&self) -> String {
         self.to_string().to_uppercase()
     }
+
+    /// Return the ISO 639-1 code associated with the string representation
+    /// passed to this method.
+    ///
+    /// Raises:
+    ///     ValueError: if there is no ISO 639-1 code for the given string representation
+    #[pyo3(name = "from_str")]
+    #[classmethod]
+    fn py_from_str(_cls: &Bound<PyType>, string: &str) -> PyResult<Self> {
+        match Self::from_str(string) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyValueError::new_err(ENUM_MEMBER_NOT_FOUND_MESSAGE)),
+        }
+    }
 }
 
 #[pymethods]
@@ -176,6 +192,20 @@ impl IsoCode639_3 {
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
+    }
+
+    /// Return the ISO 639-3 code associated with the string representation
+    /// passed to this method.
+    ///
+    /// Raises:
+    ///     ValueError: if there is no ISO 639-3 code for the given string representation
+    #[pyo3(name = "from_str")]
+    #[classmethod]
+    fn py_from_str(_cls: &Bound<PyType>, string: &str) -> PyResult<Self> {
+        match Self::from_str(string) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyValueError::new_err(ENUM_MEMBER_NOT_FOUND_MESSAGE)),
+        }
     }
 }
 
@@ -243,6 +273,20 @@ impl Language {
     #[classmethod]
     fn py_from_iso_code_639_3(_cls: &Bound<PyType>, iso_code: &IsoCode639_3) -> Self {
         Self::from_iso_code_639_3(iso_code)
+    }
+
+    /// Return the language associated with the string representation
+    /// passed to this method.
+    ///
+    /// Raises:
+    ///     ValueError: if there is no language for the given string representation
+    #[pyo3(name = "from_str")]
+    #[classmethod]
+    fn py_from_str(_cls: &Bound<PyType>, string: &str) -> PyResult<Self> {
+        match Self::from_str(string) {
+            Ok(language) => Ok(language),
+            Err(_) => Err(PyValueError::new_err(ENUM_MEMBER_NOT_FOUND_MESSAGE)),
+        }
     }
 
     /// Return the ISO 639-1 code of this language.
@@ -319,7 +363,10 @@ impl LanguageDetectorBuilder {
     /// with all built-in languages except those passed to this method.
     #[pyo3(name = "from_all_languages_without", signature = (*languages))]
     #[classmethod]
-    fn py_from_all_languages_without(_cls: &Bound<PyType>, languages: &Bound<PyTuple>) -> PyResult<Self> {
+    fn py_from_all_languages_without(
+        _cls: &Bound<PyType>,
+        languages: &Bound<PyTuple>,
+    ) -> PyResult<Self> {
         match languages.extract::<Vec<Language>>() {
             Ok(vector) => match panic::catch_unwind(|| Self::from_all_languages_without(&vector)) {
                 Ok(builder) => Ok(builder),

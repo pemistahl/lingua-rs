@@ -15,45 +15,8 @@
 
 import pytest
 
+from copy import copy, deepcopy
 from lingua import IsoCode639_1, IsoCode639_3, Language
-
-
-def test_iso_code_639_1_name():
-    assert IsoCode639_1.EN.name == "EN"
-
-
-def test_iso_code_639_1_from_str():
-    assert IsoCode639_1.from_str("EN") == IsoCode639_1.EN
-    assert IsoCode639_1.from_str("en") == IsoCode639_1.EN
-    assert IsoCode639_1.from_str("eN") == IsoCode639_1.EN
-    with pytest.raises(ValueError, match="Matching enum member not found"):
-        IsoCode639_1.from_str("12")
-
-
-def test_iso_code_639_1_is_comparable():
-    assert IsoCode639_1.EN == IsoCode639_1.EN
-    assert IsoCode639_1.EN != IsoCode639_1.DE
-    assert IsoCode639_1.EN > IsoCode639_1.DE
-    assert IsoCode639_1.DE < IsoCode639_1.EN
-
-
-def test_iso_code_639_3_name():
-    assert IsoCode639_3.ENG.name == "ENG"
-
-
-def test_iso_code_639_3_from_str():
-    assert IsoCode639_3.from_str("ENG") == IsoCode639_3.ENG
-    assert IsoCode639_3.from_str("eng") == IsoCode639_3.ENG
-    assert IsoCode639_3.from_str("eNg") == IsoCode639_3.ENG
-    with pytest.raises(ValueError, match="Matching enum member not found"):
-        IsoCode639_3.from_str("123")
-
-
-def test_iso_code_639_3_is_comparable():
-    assert IsoCode639_3.ENG == IsoCode639_3.ENG
-    assert IsoCode639_3.ENG != IsoCode639_3.DEU
-    assert IsoCode639_3.ENG > IsoCode639_3.DEU
-    assert IsoCode639_3.DEU < IsoCode639_3.ENG
 
 
 def test_language_name():
@@ -73,6 +36,18 @@ def test_language_is_comparable():
     assert Language.ENGLISH != Language.GERMAN
     assert Language.ENGLISH < Language.GERMAN
     assert Language.GERMAN > Language.ENGLISH
+
+
+def test_language_copy():
+    language_copy = copy(Language.ENGLISH)
+    assert language_copy == Language.ENGLISH
+    assert language_copy is not Language.ENGLISH
+
+
+def test_language_deepcopy():
+    language_copy = deepcopy(Language.ENGLISH)
+    assert language_copy == Language.ENGLISH
+    assert language_copy is not Language.ENGLISH
 
 
 def test_all_languages_are_available():

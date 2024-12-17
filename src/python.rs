@@ -17,6 +17,7 @@
 use pyo3::exceptions::{PyException, PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyTuple, PyType};
+use serde::{Deserialize, Serialize};
 use std::any::Any;
 use std::collections::HashSet;
 use std::io;
@@ -59,8 +60,8 @@ fn lingua(m: &Bound<'_, PyModule>) -> PyResult<()> {
 ///
 ///     value (float):
 ///         The language's confidence value which lies between 0.0 and 1.0.
-#[derive(Copy, Clone)]
-#[pyclass]
+#[derive(Copy, Clone, Serialize, Deserialize)]
+#[pyclass(module = "lingua")]
 struct ConfidenceValue {
     language: Language,
     value: f64,
@@ -113,6 +114,28 @@ impl ConfidenceValue {
 
     fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
         self.clone()
+    }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.ConfidenceValue' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(confidence_value) => Ok(confidence_value),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.ConfidenceValue' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (Language, f64) {
+        (self.language, self.value)
     }
 }
 
@@ -260,12 +283,17 @@ impl IsoCode639_1 {
         self.clone()
     }
 
-    fn __getstate__(&self) -> String {
-        self.to_string()
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.IsoCode639_1' object",
+            )),
+        }
     }
 
-    fn __setstate__(&self, s: &str) -> PyResult<Self> {
-        match IsoCode639_1::from_str(s) {
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyTypeError::new_err(
                 "cannot unpickle 'lingua.IsoCode639_1' object",
@@ -318,12 +346,17 @@ impl IsoCode639_3 {
         self.clone()
     }
 
-    fn __getstate__(&self) -> String {
-        self.to_string()
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.IsoCode639_3' object",
+            )),
+        }
     }
 
-    fn __setstate__(&self, s: &str) -> PyResult<Self> {
-        match IsoCode639_3::from_str(s) {
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyTypeError::new_err(
                 "cannot unpickle 'lingua.IsoCode639_3' object",
@@ -454,12 +487,17 @@ impl Language {
         self.clone()
     }
 
-    fn __getstate__(&self) -> String {
-        self.to_string()
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.Language' object",
+            )),
+        }
     }
 
-    fn __setstate__(&self, s: &str) -> PyResult<Self> {
-        match Language::from_str(s) {
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
             Ok(language) => Ok(language),
             Err(_) => Err(PyTypeError::new_err(
                 "cannot unpickle 'lingua.Language' object",

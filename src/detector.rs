@@ -50,7 +50,7 @@ static QUADRIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMa
 static FIVEGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
 
 /// This struct detects the language of given input text.
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct LanguageDetector {
     languages: HashSet<Language>,
     minimum_relative_distance: f64,

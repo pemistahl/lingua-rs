@@ -191,6 +191,33 @@ impl DetectionResult {
     fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
         self.clone()
     }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.DetectionResult' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(result) => Ok(result),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.DetectionResult' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (usize, usize, usize, Language) {
+        (
+            self.start_index,
+            self.end_index,
+            self.word_count,
+            self.language,
+        )
+    }
 }
 
 #[pymethods]
@@ -200,7 +227,7 @@ impl IsoCode639_1 {
         match IsoCode639_1::from_str(s) {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyValueError::new_err(format!(
-                "cannot instantiate 'IsoCode639_1' object from string {}",
+                "cannot instantiate 'lingua.IsoCode639_1' object from string {}",
                 s
             ))),
         }
@@ -241,7 +268,7 @@ impl IsoCode639_1 {
         match IsoCode639_1::from_str(s) {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyTypeError::new_err(
-                "cannot unpickle 'IsoCode639_1' object",
+                "cannot unpickle 'lingua.IsoCode639_1' object",
             )),
         }
     }
@@ -258,7 +285,7 @@ impl IsoCode639_3 {
         match IsoCode639_3::from_str(s) {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyValueError::new_err(format!(
-                "cannot instantiate 'IsoCode639_3' object from string {}",
+                "cannot instantiate 'lingua.IsoCode639_3' object from string {}",
                 s
             ))),
         }
@@ -299,7 +326,7 @@ impl IsoCode639_3 {
         match IsoCode639_3::from_str(s) {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyTypeError::new_err(
-                "cannot unpickle 'IsoCode639_3' object",
+                "cannot unpickle 'lingua.IsoCode639_3' object",
             )),
         }
     }
@@ -408,7 +435,7 @@ impl Language {
         match Language::from_str(s) {
             Ok(language) => Ok(language),
             Err(_) => Err(PyValueError::new_err(format!(
-                "cannot instantiate 'Language' object from string {}",
+                "cannot instantiate 'lingua.Language' object from string {}",
                 s
             ))),
         }
@@ -434,7 +461,9 @@ impl Language {
     fn __setstate__(&self, s: &str) -> PyResult<Self> {
         match Language::from_str(s) {
             Ok(language) => Ok(language),
-            Err(_) => Err(PyTypeError::new_err("cannot unpickle 'Language' object")),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.Language' object",
+            )),
         }
     }
 

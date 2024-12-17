@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pickle
+
 from copy import copy, deepcopy
 from lingua import DetectionResult, Language
 
@@ -55,3 +57,15 @@ def test_detection_result_deepcopy():
     assert result_copy.word_count is result.word_count
     assert result_copy.language == result.language
     assert result_copy.language is not result.language
+
+
+def test_detection_result_pickle():
+    result = DetectionResult(
+        start_index=0,
+        end_index=5,
+        word_count=1,
+        language=Language.ENGLISH,
+    )
+    serialized = pickle.dumps(result)
+    deserialized = pickle.loads(serialized)
+    assert deserialized == result

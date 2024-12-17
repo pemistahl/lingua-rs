@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+use serde::{Deserialize, Serialize};
+
 use crate::language::Language;
 
 /// This struct describes a contiguous single-language
 /// text section within a possibly mixed-language text.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct DetectionResult {
     pub(crate) start_index: usize,
     pub(crate) end_index: usize,

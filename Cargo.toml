@@ -146,6 +146,7 @@ cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.5", optional = true }
 pyo3 = { version = "0.23.3", optional = true }
 rayon = "1.10.0"
+serde-pickle = { version = "1.2.0", optional = true }
 titlecase = { version = "3.3.0", optional = true }
 whatlang = { version = "0.16.4", optional = true }
 whichlang = { version = "0.1.0", optional = true }
@@ -184,7 +185,7 @@ default = [
 ]
 accuracy-reports = ["cld2", "indoc", "titlecase", "whatlang", "whichlang"]
 benchmark = ["cld2", "whatlang", "whichlang"]
-python = ["pyo3"]
+python = ["pyo3", "serde-pickle"]
 afrikaans = ["lingua-afrikaans-language-model"]
 albanian = ["lingua-albanian-language-model"]
 arabic = ["lingua-arabic-language-model"]

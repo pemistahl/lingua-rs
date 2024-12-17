@@ -40,7 +40,7 @@ use strum_macros::{EnumIter, EnumString};
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(
     feature = "python",
-    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord)
+    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord, module = "lingua")
 )]
 pub enum IsoCode639_1 {
     #[cfg(feature = "afrikaans")]
@@ -365,7 +365,7 @@ pub enum IsoCode639_1 {
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(
     feature = "python",
-    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord)
+    pyo3::prelude::pyclass(eq, eq_int, frozen, hash, ord, module = "lingua")
 )]
 pub enum IsoCode639_3 {
     #[cfg(feature = "afrikaans")]

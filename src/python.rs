@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-use pyo3::exceptions::{PyException, PyValueError};
+use pyo3::exceptions::{PyException, PyTypeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::{PyTuple, PyType};
+use pyo3::types::{PyDict, PyTuple, PyType};
+use serde::{Deserialize, Serialize};
 use std::any::Any;
 use std::collections::HashSet;
 use std::io;
@@ -59,7 +60,8 @@ fn lingua(m: &Bound<'_, PyModule>) -> PyResult<()> {
 ///
 ///     value (float):
 ///         The language's confidence value which lies between 0.0 and 1.0.
-#[pyclass]
+#[derive(Copy, Clone, Serialize, Deserialize)]
+#[pyclass(module = "lingua")]
 struct ConfidenceValue {
     language: Language,
     value: f64,
@@ -70,6 +72,20 @@ impl ConfidenceValue {
     #[new]
     fn new(language: Language, value: f64) -> Self {
         Self { language, value }
+    }
+
+    /// Return the language of the associated confidence value.
+    #[getter]
+    fn language(&self) -> Language {
+        self.language
+    }
+
+    /// Return the confidence value for the associated language.
+    ///
+    /// The confidence value is a value between 0.0 and 1.0.
+    #[getter]
+    fn value(&self) -> f64 {
+        self.value
     }
 
     fn __repr__(&self) -> String {
@@ -88,18 +104,38 @@ impl ConfidenceValue {
         )
     }
 
-    /// Return the language of the associated confidence value.
-    #[getter]
-    fn language(&self) -> Language {
-        self.language
+    fn __eq__(&self, other: &Self) -> bool {
+        self.language == other.language && self.value == other.value
     }
 
-    /// Return the confidence value for the associated language.
-    ///
-    /// The confidence value is a value between 0.0 and 1.0.
-    #[getter]
-    fn value(&self) -> f64 {
-        self.value
+    fn __copy__(&self) -> Self {
+        self.clone()
+    }
+
+    fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
+        self.clone()
+    }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.ConfidenceValue' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(confidence_value) => Ok(confidence_value),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.ConfidenceValue' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (Language, f64) {
+        (self.language, self.value)
     }
 }
 
@@ -113,26 +149,6 @@ impl DetectionResult {
             word_count,
             language,
         }
-    }
-
-    fn __repr__(&self) -> String {
-        format!(
-            "DetectionResult(start_index={}, end_index={}, word_count={}, language=Language.{})",
-            self.start_index,
-            self.end_index,
-            self.word_count,
-            self.language.to_string().to_uppercase()
-        )
-    }
-
-    fn __str__(&self) -> String {
-        format!(
-            "({}, {}, {}, {})",
-            self.start_index,
-            self.end_index,
-            self.word_count,
-            self.language.to_string().to_uppercase()
-        )
     }
 
     /// Return the start index of the identified single-language substring.
@@ -163,10 +179,83 @@ impl DetectionResult {
     fn py_language(&self) -> Language {
         self.language()
     }
+
+    fn __repr__(&self) -> String {
+        format!(
+            "DetectionResult(start_index={}, end_index={}, word_count={}, language=Language.{})",
+            self.start_index,
+            self.end_index,
+            self.word_count,
+            self.language.to_string().to_uppercase()
+        )
+    }
+
+    fn __str__(&self) -> String {
+        format!(
+            "({}, {}, {}, {})",
+            self.start_index,
+            self.end_index,
+            self.word_count,
+            self.language.to_string().to_uppercase()
+        )
+    }
+
+    fn __eq__(&self, other: &Self) -> bool {
+        self.start_index == other.start_index
+            && self.end_index == other.end_index
+            && self.word_count == other.word_count
+            && self.language == other.language
+    }
+
+    fn __copy__(&self) -> Self {
+        self.clone()
+    }
+
+    fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
+        self.clone()
+    }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.DetectionResult' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(result) => Ok(result),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.DetectionResult' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (usize, usize, usize, Language) {
+        (
+            self.start_index,
+            self.end_index,
+            self.word_count,
+            self.language,
+        )
+    }
 }
 
 #[pymethods]
 impl IsoCode639_1 {
+    #[new]
+    fn new(s: &str) -> PyResult<Self> {
+        match IsoCode639_1::from_str(s) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyValueError::new_err(format!(
+                "cannot instantiate 'lingua.IsoCode639_1' object from string {}",
+                s
+            ))),
+        }
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -185,10 +274,51 @@ impl IsoCode639_1 {
             Err(_) => Err(PyValueError::new_err(ENUM_MEMBER_NOT_FOUND_MESSAGE)),
         }
     }
+
+    fn __copy__(&self) -> Self {
+        self.clone()
+    }
+
+    fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
+        self.clone()
+    }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.IsoCode639_1' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.IsoCode639_1' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (String,) {
+        (self.to_string(),)
+    }
 }
 
 #[pymethods]
 impl IsoCode639_3 {
+    #[new]
+    fn new(s: &str) -> PyResult<Self> {
+        match IsoCode639_3::from_str(s) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyValueError::new_err(format!(
+                "cannot instantiate 'lingua.IsoCode639_3' object from string {}",
+                s
+            ))),
+        }
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -206,6 +336,36 @@ impl IsoCode639_3 {
             Ok(iso_code) => Ok(iso_code),
             Err(_) => Err(PyValueError::new_err(ENUM_MEMBER_NOT_FOUND_MESSAGE)),
         }
+    }
+
+    fn __copy__(&self) -> Self {
+        self.clone()
+    }
+
+    fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
+        self.clone()
+    }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.IsoCode639_3' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.IsoCode639_3' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (String,) {
+        (self.to_string(),)
     }
 }
 
@@ -303,9 +463,50 @@ impl Language {
         self.iso_code_639_3()
     }
 
+    #[new]
+    fn new(s: &str) -> PyResult<Self> {
+        match Language::from_str(s) {
+            Ok(language) => Ok(language),
+            Err(_) => Err(PyValueError::new_err(format!(
+                "cannot instantiate 'lingua.Language' object from string {}",
+                s
+            ))),
+        }
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
+    }
+
+    fn __copy__(&self) -> Self {
+        self.clone()
+    }
+
+    fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
+        self.clone()
+    }
+
+    fn __getstate__(&self) -> PyResult<Vec<u8>> {
+        match serde_pickle::to_vec(self, Default::default()) {
+            Ok(buffer) => Ok(buffer),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot pickle 'lingua.Language' object",
+            )),
+        }
+    }
+
+    fn __setstate__(&self, state: &[u8]) -> PyResult<Self> {
+        match serde_pickle::from_slice(state, Default::default()) {
+            Ok(language) => Ok(language),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'lingua.Language' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (String,) {
+        (self.to_string(),)
     }
 }
 

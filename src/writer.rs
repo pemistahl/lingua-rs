@@ -30,12 +30,12 @@ use crate::ngram::Ngram;
 use crate::Language;
 
 /// This struct creates language model files and writes them to a directory.
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct LanguageModelFilesWriter;
 
 /// This struct creates test data files for accuracy report generation
 /// and writes them to a directory.
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct TestDataFilesWriter;
 
 impl LanguageModelFilesWriter {

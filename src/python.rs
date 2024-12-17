@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use pyo3::exceptions::{PyException, PyValueError};
+use pyo3::exceptions::{PyException, PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyTuple, PyType};
 use std::any::Any;
@@ -347,6 +347,17 @@ impl Language {
         self.iso_code_639_3()
     }
 
+    #[new]
+    fn new(s: &str) -> PyResult<Self> {
+        match Language::from_str(s) {
+            Ok(language) => Ok(language),
+            Err(_) => Err(PyValueError::new_err(format!(
+                "cannot instantiate 'Language' object from string {}",
+                s
+            ))),
+        }
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -358,6 +369,21 @@ impl Language {
 
     fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
         self.clone()
+    }
+
+    fn __getstate__(&self) -> String {
+        self.to_string()
+    }
+
+    fn __setstate__(&self, s: &str) -> PyResult<Self> {
+        match Language::from_str(s) {
+            Ok(language) => Ok(language),
+            Err(_) => Err(PyTypeError::new_err("cannot unpickle 'Language' object")),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (String,) {
+        (self.to_string(),)
     }
 }
 

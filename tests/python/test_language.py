@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pickle
 import pytest
 
 from copy import copy, deepcopy
@@ -48,6 +49,12 @@ def test_language_deepcopy():
     language_copy = deepcopy(Language.ENGLISH)
     assert language_copy == Language.ENGLISH
     assert language_copy is not Language.ENGLISH
+
+
+def test_language_pickle():
+    serialized = pickle.dumps(Language.ENGLISH)
+    deserialized = pickle.loads(serialized)
+    assert deserialized == Language.ENGLISH
 
 
 def test_all_languages_are_available():

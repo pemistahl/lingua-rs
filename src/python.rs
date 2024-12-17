@@ -195,6 +195,17 @@ impl DetectionResult {
 
 #[pymethods]
 impl IsoCode639_1 {
+    #[new]
+    fn new(s: &str) -> PyResult<Self> {
+        match IsoCode639_1::from_str(s) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyValueError::new_err(format!(
+                "cannot instantiate 'IsoCode639_1' object from string {}",
+                s
+            ))),
+        }
+    }
+
     #[getter]
     fn name(&self) -> String {
         self.to_string().to_uppercase()
@@ -220,6 +231,23 @@ impl IsoCode639_1 {
 
     fn __deepcopy__(&self, _memo: &Bound<PyDict>) -> Self {
         self.clone()
+    }
+
+    fn __getstate__(&self) -> String {
+        self.to_string()
+    }
+
+    fn __setstate__(&self, s: &str) -> PyResult<Self> {
+        match IsoCode639_1::from_str(s) {
+            Ok(iso_code) => Ok(iso_code),
+            Err(_) => Err(PyTypeError::new_err(
+                "cannot unpickle 'IsoCode639_1' object",
+            )),
+        }
+    }
+
+    fn __getnewargs__(&self) -> (String,) {
+        (self.to_string(),)
     }
 }
 

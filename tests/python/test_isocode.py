@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pickle
 import pytest
 
 from copy import copy, deepcopy
@@ -48,6 +49,12 @@ def test_iso_code_639_1_deepcopy():
     iso_code_copy = deepcopy(IsoCode639_1.EN)
     assert iso_code_copy == IsoCode639_1.EN
     assert iso_code_copy is not IsoCode639_1.EN
+
+
+def test_iso_code_639_1_pickle():
+    serialized = pickle.dumps(IsoCode639_1.EN)
+    deserialized = pickle.loads(serialized)
+    assert deserialized == IsoCode639_1.EN
 
 
 def test_iso_code_639_3_name():

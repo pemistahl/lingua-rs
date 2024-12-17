@@ -86,3 +86,9 @@ def test_iso_code_639_3_deepcopy():
     iso_code_copy = deepcopy(IsoCode639_3.ENG)
     assert iso_code_copy == IsoCode639_3.ENG
     assert iso_code_copy is not IsoCode639_3.ENG
+
+
+def test_iso_code_639_3_pickle():
+    serialized = pickle.dumps(IsoCode639_3.ENG)
+    deserialized = pickle.loads(serialized)
+    assert deserialized == IsoCode639_3.ENG

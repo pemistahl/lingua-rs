@@ -19,7 +19,7 @@ version = "2.1.0"
 authors = [{name = "Peter M. Stahl", email = "pemistahl@gmail.com"}]
 description = "An accurate natural language detection library, suitable for short text and mixed-language text"
 readme = "README_PYPI.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {file = "LICENSE"}
 keywords = [
     "language-processing",
@@ -87,11 +87,10 @@ classifiers = [
     "Natural Language :: Urdu",
     "Natural Language :: Vietnamese",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Rust",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -106,7 +105,7 @@ homepage = "https://github.com/pemistahl/lingua-py"
 repository = "https://github.com/pemistahl/lingua-py"
 
 [project.optional-dependencies]
-test = ["pytest == 7.4.3"]
+test = ["pytest == 8.3.4"]
 
 [tool.maturin]
 module-name = "lingua"

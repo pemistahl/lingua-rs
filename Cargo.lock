@@ -719,7 +719,6 @@ dependencies = [
  "lingua-yoruba-language-model",
  "lingua-zulu-language-model",
  "maplit",
- "once_cell",
  "pyo3",
  "rayon",
  "regex 1.11.1",

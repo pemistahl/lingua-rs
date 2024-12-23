@@ -16,32 +16,33 @@
 
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
+use std::sync::LazyLock;
 
-use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::alphabet::CharSet;
 use crate::language::Language;
 
-pub(crate) static JAPANESE_CHARACTER_SET: Lazy<CharSet> =
-    Lazy::new(|| CharSet::from_char_classes(&["Hiragana", "Katakana", "Han"]));
-pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\s+").unwrap());
-pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
-pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());
-pub(crate) static TOKENS_WITHOUT_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
+pub(crate) static JAPANESE_CHARACTER_SET: LazyLock<CharSet> =
+    LazyLock::new(|| CharSet::from_char_classes(&["Hiragana", "Katakana", "Han"]));
+pub(crate) static MULTIPLE_WHITESPACE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new("\\s+").unwrap());
+pub(crate) static NUMBERS: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\p{N}").unwrap());
+pub(crate) static PUNCTUATION: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\p{P}").unwrap());
+pub(crate) static TOKENS_WITHOUT_WHITESPACE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
         "\\p{Bengali}+|\\p{Devanagari}+|\\p{Gujarati}+|\\p{Gurmukhi}+|\\p{Han}|\\p{Hangul}+|\\p{Hiragana}|\\p{Katakana}|\\p{Tamil}+|\\p{Telugu}+|\\p{Thai}+|\\p{L}+",
     )
     .unwrap()
 });
-pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
+pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
         "\\s*(?:\\p{Bengali}+|\\p{Devanagari}+|\\p{Gujarati}+|\\p{Gurmukhi}+|\\p{Han}|\\p{Hangul}+|\\p{Hiragana}|\\p{Katakana}|\\p{Tamil}+|\\p{Telugu}+|\\p{Thai}+|[\\p{L}'-]+)[\\p{N}\\p{P}]*\\s*",
     )
     .unwrap()
 });
-pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet<Language>>> =
-    Lazy::new(|| {
+pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, HashSet<Language>>> =
+    LazyLock::new(|| {
         let mut mapping = hashmap!();
 
         if cfg!(feature = "portuguese") || cfg!(feature = "vietnamese") {

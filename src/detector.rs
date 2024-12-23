@@ -18,13 +18,12 @@ use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 use std::str::FromStr;
-use std::sync::RwLock;
+use std::sync::{LazyLock, RwLock};
 
 use ahash::AHashMap;
 use compact_str::CompactString;
 use fraction::Zero;
 use itertools::Itertools;
-use once_cell::sync::Lazy;
 #[cfg(not(target_family = "wasm"))]
 use rayon::prelude::*;
 use strum::IntoEnumIterator;
@@ -39,15 +38,15 @@ use crate::language::Language;
 use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
 use crate::result::DetectionResult;
 
-type LazyLanguageModelMap = Lazy<RwLock<HashMap<Language, AHashMap<CompactString, f64>>>>;
+type LazyLanguageModelMap = LazyLock<RwLock<HashMap<Language, AHashMap<CompactString, f64>>>>;
 type StaticLanguageModelMap = &'static RwLock<HashMap<Language, AHashMap<CompactString, f64>>>;
 type LanguageModelArray<'a> = [Option<&'a HashMap<Language, AHashMap<CompactString, f64>>>; 5];
 
-static UNIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
-static BIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
-static TRIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
-static QUADRIGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
-static FIVEGRAM_MODELS: LazyLanguageModelMap = Lazy::new(|| RwLock::new(HashMap::new()));
+static UNIGRAM_MODELS: LazyLanguageModelMap = LazyLock::new(|| RwLock::new(HashMap::new()));
+static BIGRAM_MODELS: LazyLanguageModelMap = LazyLock::new(|| RwLock::new(HashMap::new()));
+static TRIGRAM_MODELS: LazyLanguageModelMap = LazyLock::new(|| RwLock::new(HashMap::new()));
+static QUADRIGRAM_MODELS: LazyLanguageModelMap = LazyLock::new(|| RwLock::new(HashMap::new()));
+static FIVEGRAM_MODELS: LazyLanguageModelMap = LazyLock::new(|| RwLock::new(HashMap::new()));
 
 /// This struct detects the language of given input text.
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
@@ -1343,8 +1342,8 @@ fn merge_adjacent_results(
 #[cfg(test)]
 mod tests {
     use float_cmp::approx_eq;
-    use once_cell::sync::OnceCell;
     use rstest::*;
+    use std::sync::OnceLock;
 
     use crate::builder::LanguageDetectorBuilder;
     use crate::language::Language::*;
@@ -1499,9 +1498,9 @@ mod tests {
         unigram_language_model_for_english: AHashMap<CompactString, f64>,
         unigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static UNIGRAM_MODELS_FIXTURE: OnceCell<
+        static UNIGRAM_MODELS_FIXTURE: OnceLock<
             RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
-        > = OnceCell::new();
+        > = OnceLock::new();
         UNIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => unigram_language_model_for_english,
@@ -1515,9 +1514,9 @@ mod tests {
         bigram_language_model_for_english: AHashMap<CompactString, f64>,
         bigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static BIGRAM_MODELS_FIXTURE: OnceCell<
+        static BIGRAM_MODELS_FIXTURE: OnceLock<
             RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
-        > = OnceCell::new();
+        > = OnceLock::new();
         BIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => bigram_language_model_for_english,
@@ -1531,9 +1530,9 @@ mod tests {
         trigram_language_model_for_english: AHashMap<CompactString, f64>,
         trigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static TRIGRAM_MODELS_FIXTURE: OnceCell<
+        static TRIGRAM_MODELS_FIXTURE: OnceLock<
             RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
-        > = OnceCell::new();
+        > = OnceLock::new();
         TRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => trigram_language_model_for_english,
@@ -1547,9 +1546,9 @@ mod tests {
         quadrigram_language_model_for_english: AHashMap<CompactString, f64>,
         quadrigram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static QUADRIGRAM_MODELS_FIXTURE: OnceCell<
+        static QUADRIGRAM_MODELS_FIXTURE: OnceLock<
             RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
-        > = OnceCell::new();
+        > = OnceLock::new();
         QUADRIGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => quadrigram_language_model_for_english,
@@ -1563,9 +1562,9 @@ mod tests {
         fivegram_language_model_for_english: AHashMap<CompactString, f64>,
         fivegram_language_model_for_german: AHashMap<CompactString, f64>,
     ) -> StaticLanguageModelMap {
-        static FIVEGRAM_MODELS_FIXTURE: OnceCell<
+        static FIVEGRAM_MODELS_FIXTURE: OnceLock<
             RwLock<HashMap<Language, AHashMap<CompactString, f64>>>,
-        > = OnceCell::new();
+        > = OnceLock::new();
         FIVEGRAM_MODELS_FIXTURE.get_or_init(|| {
             RwLock::new(hashmap!(
                 English => fivegram_language_model_for_english,

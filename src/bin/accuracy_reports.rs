@@ -18,6 +18,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::sync::LazyLock;
 use std::time::Instant;
 
 use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
@@ -25,7 +26,6 @@ use fraction::{Decimal, Zero};
 use include_dir::Dir;
 use indoc::formatdoc;
 use itertools::Itertools;
-use once_cell::sync::Lazy;
 use strum::IntoEnumIterator;
 use titlecase::titlecase;
 use whatlang::{Detector, Lang as WhatlangLanguage};
@@ -329,16 +329,16 @@ impl Statistic {
     }
 }
 
-static WHATLANG_DETECTOR: Lazy<Detector> = Lazy::new(Detector::new);
+static WHATLANG_DETECTOR: LazyLock<Detector> = LazyLock::new(Detector::new);
 
-static LINGUA_DETECTOR_WITH_LOW_ACCURACY: Lazy<LanguageDetector> = Lazy::new(|| {
+static LINGUA_DETECTOR_WITH_LOW_ACCURACY: LazyLock<LanguageDetector> = LazyLock::new(|| {
     LanguageDetectorBuilder::from_all_languages()
         .with_low_accuracy_mode()
         .with_preloaded_language_models()
         .build()
 });
 
-static LINGUA_DETECTOR_WITH_HIGH_ACCURACY: Lazy<LanguageDetector> = Lazy::new(|| {
+static LINGUA_DETECTOR_WITH_HIGH_ACCURACY: LazyLock<LanguageDetector> = LazyLock::new(|| {
     LanguageDetectorBuilder::from_all_languages()
         .with_preloaded_language_models()
         .build()
@@ -390,14 +390,14 @@ fn get_file_content(file_name: &str) -> HashMap<Language, Vec<&str>> {
         .collect()
 }
 
-static SINGLE_WORDS: Lazy<HashMap<Language, Vec<&str>>> =
-    Lazy::new(|| get_file_content("single-words.txt"));
+static SINGLE_WORDS: LazyLock<HashMap<Language, Vec<&str>>> =
+    LazyLock::new(|| get_file_content("single-words.txt"));
 
-static WORD_PAIRS: Lazy<HashMap<Language, Vec<&str>>> =
-    Lazy::new(|| get_file_content("word-pairs.txt"));
+static WORD_PAIRS: LazyLock<HashMap<Language, Vec<&str>>> =
+    LazyLock::new(|| get_file_content("word-pairs.txt"));
 
-static SENTENCES: Lazy<HashMap<Language, Vec<&str>>> =
-    Lazy::new(|| get_file_content("sentences.txt"));
+static SENTENCES: LazyLock<HashMap<Language, Vec<&str>>> =
+    LazyLock::new(|| get_file_content("sentences.txt"));
 
 fn collect_statistics(
     detector_name: &str,

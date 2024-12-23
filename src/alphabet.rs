@@ -15,9 +15,9 @@
  */
 
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 use ahash::AHashSet;
-use once_cell::sync::Lazy;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
@@ -75,7 +75,7 @@ impl Alphabet {
         languages
     }
 
-    fn char_set(&self) -> &Lazy<CharSet> {
+    fn char_set(&self) -> &LazyLock<CharSet> {
         match self {
             Alphabet::Arabic => &ARABIC,
             Alphabet::Armenian => &ARMENIAN,
@@ -137,21 +137,21 @@ impl CharSet {
     }
 }
 
-static ARABIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Arabic"));
-static ARMENIAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Armenian"));
-static BENGALI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Bengali"));
-static CYRILLIC: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Cyrillic"));
-static DEVANAGARI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Devanagari"));
-static GEORGIAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Georgian"));
-static GREEK: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Greek"));
-static GUJARATI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Gujarati"));
-static GURMUKHI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Gurmukhi"));
-static HAN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Han"));
-static HANGUL: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hangul"));
-static HEBREW: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hebrew"));
-static HIRAGANA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Hiragana"));
-static KATAKANA: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Katakana"));
-static LATIN: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Latin"));
-static TAMIL: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Tamil"));
-static TELUGU: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Telugu"));
-static THAI: Lazy<CharSet> = Lazy::new(|| CharSet::from_char_class("Thai"));
+static ARABIC: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Arabic"));
+static ARMENIAN: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Armenian"));
+static BENGALI: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Bengali"));
+static CYRILLIC: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Cyrillic"));
+static DEVANAGARI: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Devanagari"));
+static GEORGIAN: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Georgian"));
+static GREEK: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Greek"));
+static GUJARATI: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Gujarati"));
+static GURMUKHI: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Gurmukhi"));
+static HAN: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Han"));
+static HANGUL: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Hangul"));
+static HEBREW: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Hebrew"));
+static HIRAGANA: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Hiragana"));
+static KATAKANA: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Katakana"));
+static LATIN: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Latin"));
+static TAMIL: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Tamil"));
+static TELUGU: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Telugu"));
+static THAI: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Thai"));

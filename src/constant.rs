@@ -28,17 +28,18 @@ pub(crate) static JAPANESE_CHARACTER_SET: Lazy<CharSet> =
 pub(crate) static MULTIPLE_WHITESPACE: Lazy<Regex> = Lazy::new(|| Regex::new("\\s+").unwrap());
 pub(crate) static NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{N}").unwrap());
 pub(crate) static PUNCTUATION: Lazy<Regex> = Lazy::new(|| Regex::new("\\p{P}").unwrap());
-pub(crate) static LETTERS: Lazy<Regex> =
-    Lazy::new(|| Regex::new("\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|\\p{L}+").unwrap());
-pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
+pub(crate) static TOKENS_WITHOUT_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
     Regex::new(
-        "\\s*(?:\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|[\\p{L}'-]+)[\\p{N}\\p{P}]*\\s*",
+        "\\p{Bengali}+|\\p{Devanagari}+|\\p{Gujarati}+|\\p{Gurmukhi}+|\\p{Han}|\\p{Hangul}+|\\p{Hiragana}|\\p{Katakana}|\\p{Tamil}+|\\p{Telugu}+|\\p{Thai}+|\\p{L}+",
     )
     .unwrap()
 });
-pub(crate) static TOKENS_WITHOUT_WHITESPACE: Lazy<Regex> =
-    Lazy::new(|| Regex::new("\\p{Han}|\\p{Hangul}|\\p{Hiragana}|\\p{Katakana}|\\p{L}+").unwrap());
-
+pub(crate) static TOKENS_WITH_OPTIONAL_WHITESPACE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(
+        "\\s*(?:\\p{Bengali}+|\\p{Devanagari}+|\\p{Gujarati}+|\\p{Gurmukhi}+|\\p{Han}|\\p{Hangul}+|\\p{Hiragana}|\\p{Katakana}|\\p{Tamil}+|\\p{Telugu}+|\\p{Thai}+|[\\p{L}'-]+)[\\p{N}\\p{P}]*\\s*",
+    )
+    .unwrap()
+});
 pub(crate) static CHARS_TO_LANGUAGES_MAPPING: Lazy<HashMap<&'static str, HashSet<Language>>> =
     Lazy::new(|| {
         let mut mapping = hashmap!();

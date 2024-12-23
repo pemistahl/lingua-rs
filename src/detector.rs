@@ -31,7 +31,7 @@ use strum::IntoEnumIterator;
 
 use crate::alphabet::Alphabet;
 use crate::constant::{
-    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, LETTERS, TOKENS_WITHOUT_WHITESPACE,
+    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, TOKENS_WITHOUT_WHITESPACE,
     TOKENS_WITH_OPTIONAL_WHITESPACE,
 };
 use crate::json::load_json;
@@ -1266,7 +1266,7 @@ impl LanguageDetector {
 }
 
 pub(crate) fn split_text_into_words(text: &str) -> Vec<String> {
-    LETTERS
+    TOKENS_WITHOUT_WHITESPACE
         .find_iter(&text.trim().to_lowercase())
         .map(|mat| mat.as_str().to_string())
         .collect()
@@ -1644,9 +1644,73 @@ mod tests {
                 "this", "is", "a", "sentence"
             ]
         ),
-        case(
+        case::latin_alphabet(
             "Weltweit    gibt es ungefähr 6.000 Sprachen.",
             vec!["weltweit", "gibt", "es", "ungefähr", "sprachen"]
+        ),
+        case::arabic_alphabet(
+            "تعمل بمحركات بنزين و كهرباء حسب الطلب.",
+            vec!["تعمل", "بمحركات", "بنزين", "و", "كهرباء", "حسب", "الطلب"]
+        ),
+        case::armenian_alphabet(
+            "Ահա թե ինչպիսին է Մարիամ Մելիքյանի մայրիկը.",
+            vec!["ահա", "թե", "ինչպիսին", "է", "մարիամ", "մելիքյանի", "մայրիկը"]
+        ),
+        case::bengali_alphabet(
+            "আপনার নির্দেশে লগি-বৈঠা দিয়ে মানুষ হত্যা করা হয়েছিল।",
+            vec!["আপনার", "নির্দেশে", "লগি", "বৈঠা", "দিয়ে", "মানুষ", "হত্যা", "করা", "হয়েছিল"]
+        ),
+        case::cyrillic_alphabet(
+            "Розташоване воно на правому боці річки Мерля.",
+            vec!["розташоване", "воно", "на", "правому", "боці", "річки", "мерля"]
+        ),
+        case::devanagari_alphabet(
+            "बनू शकलात तर कृतज्ञ बना, कृतघ्न नको.",
+            vec!["बनू", "शकलात", "तर", "कृतज्ञ", "बना", "कृतघ्न", "नको"]
+        ),
+        case::georgian_alphabet(
+            "ადმინისტრაციული ცენტრია ქალაქი პინიასი.",
+            vec!["ადმინისტრაციული", "ცენტრია", "ქალაქი", "პინიასი"]
+        ),
+        case::greek_alphabet(
+            "Αγαπημένη ομάδων των Κοσταρικανών, ήταν η Γιουβέντους.",
+            vec!["αγαπημένη", "ομάδων", "των", "κοσταρικανών", "ήταν", "η", "γιουβέντους"]
+        ),
+        case::gujarati_alphabet(
+            "અમુક પેટ્રોલિયમ તથા પ્રાકૃતિક ગૈસ પણ નિકળે છે.",
+            vec!["અમુક", "પેટ્રોલિયમ", "તથા", "પ્રાકૃતિક", "ગૈસ", "પણ", "નિકળે", "છે"]
+        ),
+        case::gurmukhi_alphabet(
+            "ਉਹ ਬੱਸ ਗਏ ਤੇ ਹੀਰੋਸ਼ੀਮਾ ਨਾਗਾਸਾਕੀ ਤੇ ਬੰਬ ਸੁੱਟ ਦਿੱਤੇ।",
+            vec!["ਉਹ", "ਬੱਸ", "ਗਏ", "ਤੇ", "ਹੀਰੋਸ਼ੀਮਾ", "ਨਾਗਾਸਾਕੀ", "ਤੇ", "ਬੰਬ", "ਸੁੱਟ", "ਦਿੱਤੇ"]
+        ),
+        case::han_alphabet(
+            "五、同业间良性的普遍推广与各团体的互助。",
+            vec!["五", "同", "业", "间", "良", "性", "的", "普", "遍", "推", "广", "与", "各", "团", "体", "的", "互", "助"]
+        ),
+        case::hangul_alphabet(
+            "그러나 아름다움은 또한 아주 가까이 있다.",
+            vec!["그러나", "아름다움은", "또한", "아주", "가까이", "있다"]
+        ),
+        case::hebrew_alphabet(
+            "אחיו שלמה שניור עזב את ספרד.",
+            vec!["אחיו", "שלמה", "שניור", "עזב", "את", "ספרד"]
+        ),
+        case::hiragana_and_katakana_alphabet(
+            "京橋創生館で1日とめても安い駐車場！",
+            vec!["京", "橋", "創", "生", "館", "で", "日", "と", "め", "て", "も", "安", "い", "駐", "車", "場"]
+        ),
+        case::tamil_alphabet(
+            "அது மார்பில் செந்நிறம் பூசியது போல் ஆயிற்று.",
+            vec!["அது", "மார்பில்", "செந்நிறம்", "பூசியது", "போல்", "ஆயிற்று"]
+        ),
+        case::telugu_alphabet(
+            "అనుకరణంలో అంతా చెప్పి చివరికి అని అనేదాన్ని వాడతాం.",
+            vec!["అనుకరణంలో", "అంతా", "చెప్పి", "చివరికి", "అని", "అనేదాన్ని", "వాడతాం"]
+        ),
+        case::thai_alphabet(
+            "สตูล จัดพิธีมอบบ้านนักเรียน คืนความสุข สู่ลูก สพฐ.",
+            vec!["สตูล", "จัดพิธีมอบบ้านนักเรียน", "คืนความสุข", "สู่ลูก", "สพฐ"]
         )
     )]
     fn test_split_text_into_words(text: &str, expected_words: Vec<&str>) {

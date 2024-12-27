@@ -36,9 +36,9 @@
 //! Unfortunately, most of them have two major drawbacks:
 //!
 //! 1. Detection only works with quite lengthy text fragments. For very short text snippets
-//! such as Twitter messages, it does not provide adequate results.
+//!    such as Twitter messages, it does not provide adequate results.
 //! 2. The more languages take part in the decision process, the less accurate are the
-//! detection results.
+//!    detection results.
 //!
 //! *Lingua* aims at eliminating these problems. She nearly does not need any configuration and
 //! yields pretty accurate results on both long and short text, even on single words and phrases.

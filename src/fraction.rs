@@ -62,7 +62,7 @@ impl Serialize for Fraction {
 
 struct FractionVisitor;
 
-impl<'de> Visitor<'de> for FractionVisitor {
+impl Visitor<'_> for FractionVisitor {
     type Value = Fraction;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

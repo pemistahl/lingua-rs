@@ -62,7 +62,7 @@ impl Serialize for Ngram {
 
 struct NgramVisitor;
 
-impl<'de> Visitor<'de> for NgramVisitor {
+impl Visitor<'_> for NgramVisitor {
     type Value = Ngram;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {

@@ -79,6 +79,9 @@ jobs:
       - name: Test in debug mode
         run: cargo test
 
+      - name: Check Clippy lints
+        run: cargo clippy -- -Dwarnings
+
   wasm-build:
     name: WASM Build
     needs: rust-build

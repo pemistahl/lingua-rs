@@ -956,7 +956,7 @@ impl LanguageDetector {
                 |(first_alphabet, first_count), (second_alphabet, second_count)| {
                     let ordering = second_count.cmp(first_count);
                     match ordering {
-                        Ordering::Equal => first_alphabet.cmp(&second_alphabet),
+                        Ordering::Equal => first_alphabet.cmp(second_alphabet),
                         _ => ordering,
                     }
                 },

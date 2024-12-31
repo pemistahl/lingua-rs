@@ -739,7 +739,7 @@ dependencies = [
 
 [[package]]
 name = "lingua-afrikaans-language-model"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "include_dir",
 ]
@@ -753,7 +753,7 @@ dependencies = [
 
 [[package]]
 name = "lingua-arabic-language-model"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "include_dir",
 ]
@@ -767,7 +767,7 @@ dependencies = [
 
 [[package]]
 name = "lingua-azerbaijani-language-model"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "include_dir",
 ]
@@ -781,7 +781,7 @@ dependencies = [
 
 [[package]]
 name = "lingua-belarusian-language-model"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "include_dir",
 ]

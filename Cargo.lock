@@ -1243,7 +1243,7 @@ dependencies = [
 
 [[package]]
 name = "lingua-xhosa-language-model"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "include_dir",
 ]

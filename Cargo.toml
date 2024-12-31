@@ -135,7 +135,7 @@ lingua-ukrainian-language-model = { path = "language-models/uk", version = "1.2.
 lingua-urdu-language-model = { path = "language-models/ur", version = "1.2.0", optional = true }
 lingua-vietnamese-language-model = { path = "language-models/vi", version = "1.2.0", optional = true }
 lingua-welsh-language-model = { path = "language-models/cy", version = "1.2.0", optional = true }
-lingua-xhosa-language-model = { path = "language-models/xh", version = "1.1.0", optional = true }
+lingua-xhosa-language-model = { path = "language-models/xh", version = "1.2.0", optional = true }
 lingua-yoruba-language-model = { path = "language-models/yo", version = "1.1.0", optional = true }
 lingua-zulu-language-model = { path = "language-models/zu", version = "1.1.0", optional = true }
 

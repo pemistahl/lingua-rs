@@ -335,6 +335,17 @@ impl Language {
             .collect()
     }
 
+    /// Returns a set of all languages supporting a single unique script.
+    pub fn all_with_single_unique_script() -> HashSet<Language> {
+        let single_language_alphabets = Alphabet::all_supporting_single_language();
+        Language::iter()
+            .filter(|it| {
+                it.alphabets().len() == 1
+                    && single_language_alphabets.contains_key(it.alphabets().iter().next().unwrap())
+            })
+            .collect()
+    }
+
     /// Returns the language associated with the ISO 639-1 code
     /// passed to this method.
     pub fn from_iso_code_639_1(iso_code: &IsoCode639_1) -> Language {
@@ -1382,6 +1393,17 @@ mod tests {
                 Xhosa,
                 Yoruba,
                 Zulu
+            )
+        );
+    }
+
+    #[test]
+    fn test_languages_with_single_unique_script() {
+        assert_eq!(
+            Language::all_with_single_unique_script(),
+            hashset!(
+                Armenian, Bengali, Georgian, Greek, Gujarati, Punjabi, Korean, Hebrew, Tamil,
+                Telugu, Thai
             )
         );
     }

@@ -497,7 +497,7 @@ mod tests {
 
         use super::*;
 
-        fn map_strs_to_ngrams(strs: Vec<Vec<&'static str>>) -> Vec<Vec<NgramRef>> {
+        fn map_strs_to_ngrams(strs: Vec<Vec<&'static str>>) -> Vec<Vec<NgramRef<'static>>> {
             strs.iter()
                 .map(|ngram_strs| ngram_strs.iter().map(|&it| NgramRef::new(it)).collect())
                 .collect()

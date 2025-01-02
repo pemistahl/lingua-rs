@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 use ahash::AHashMap;
 use compact_str::CompactString;
@@ -153,39 +153,33 @@ impl TrainingDataLanguageModel {
     }
 }
 
-pub(crate) struct TestDataLanguageModel<'a> {
-    pub(crate) ngrams: Vec<Vec<NgramRef<'a>>>,
-}
-
-impl<'a> TestDataLanguageModel<'a> {
-    pub(crate) fn from(words: &'a [String], ngram_length: usize) -> Self {
-        if !(1..6).contains(&ngram_length) {
-            panic!("ngram length {ngram_length} is not in range 1..6");
-        }
-
-        let mut ngrams = hashset!();
-
-        for word in words.iter() {
-            let chars_count = word.chars().count();
-
-            if chars_count >= ngram_length {
-                for i in 0..=chars_count - ngram_length {
-                    let slice = get_utf8_slice(word, i, i + ngram_length);
-                    ngrams.insert(NgramRef::new(slice));
-                }
+pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<NgramRef> {
+    if !(1..6).contains(&ngram_length) {
+        panic!("ngram length {ngram_length} is not in range 1..6");
+    }
+    let mut ngrams = hashset!();
+    for word in words.iter() {
+        let chars_count = word.chars().count();
+        if chars_count >= ngram_length {
+            for i in 0..=chars_count - ngram_length {
+                let slice = get_utf8_slice(word, i, i + ngram_length);
+                ngrams.insert(NgramRef::new(slice));
             }
         }
-
-        let mut lower_order_ngrams = Vec::with_capacity(ngrams.len());
-
-        for ngram in ngrams {
-            lower_order_ngrams.push(ngram.range_of_lower_order_ngrams().collect_vec());
-        }
-
-        Self {
-            ngrams: lower_order_ngrams,
-        }
     }
+    ngrams
+}
+
+pub(crate) fn create_lower_order_ngrams(
+    words: &[String],
+    ngram_length: usize,
+) -> Vec<Vec<NgramRef>> {
+    let ngrams = create_ngrams(words, ngram_length);
+    let mut lower_order_ngrams = Vec::with_capacity(ngrams.len());
+    for ngram in ngrams {
+        lower_order_ngrams.push(ngram.range_of_lower_order_ngrams().collect_vec());
+    }
+    lower_order_ngrams
 }
 
 fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
@@ -734,11 +728,9 @@ mod tests {
         )]
         fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: Vec<Vec<NgramRef>>) {
             let words = split_text_into_words(TEXT);
-            let mut model = TestDataLanguageModel::from(&words, ngram_length);
-            model
-                .ngrams
-                .sort_by(|first, second| first[0].value.cmp(&second[0].value));
-            assert_eq!(model.ngrams, expected_ngrams);
+            let mut model = create_lower_order_ngrams(&words, ngram_length);
+            model.sort_by(|first, second| first[0].value.cmp(&second[0].value));
+            assert_eq!(model, expected_ngrams);
         }
     }
 }

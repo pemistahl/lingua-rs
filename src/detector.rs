@@ -35,7 +35,8 @@ use crate::constant::{
 };
 use crate::json::load_json;
 use crate::language::Language;
-use crate::model::{TestDataLanguageModel, TrainingDataLanguageModel};
+use crate::model::{create_lower_order_ngrams, TrainingDataLanguageModel};
+use crate::ngram::NgramRef;
 use crate::result::DetectionResult;
 
 type LazyLanguageModelMap = LazyLock<RwLock<HashMap<Language, AHashMap<CompactString, f64>>>>;
@@ -1062,11 +1063,11 @@ impl LanguageDetector {
         ngram_length: usize,
         filtered_languages: &HashSet<Language>,
     ) -> (HashMap<Language, f64>, Option<HashMap<Language, u32>>) {
-        let test_data_model = TestDataLanguageModel::from(words, ngram_length);
+        let ngram_model = create_lower_order_ngrams(words, ngram_length);
 
         self.get_language_models(ngram_length, filtered_languages, |language_models| {
             let probabilities = self.compute_language_probabilities(
-                &test_data_model,
+                &ngram_model,
                 filtered_languages,
                 &language_models,
             );
@@ -1083,7 +1084,7 @@ impl LanguageDetector {
                     filtered_languages.clone()
                 };
                 Some(self.count_unigrams(
-                    &test_data_model,
+                    &ngram_model,
                     &intersected_languages,
                     language_models[0].unwrap(),
                 ))
@@ -1097,7 +1098,7 @@ impl LanguageDetector {
 
     fn compute_language_probabilities(
         &self,
-        model: &TestDataLanguageModel,
+        model: &[Vec<NgramRef>],
         filtered_languages: &HashSet<Language>,
         language_models: &LanguageModelArray,
     ) -> HashMap<Language, f64> {
@@ -1154,7 +1155,7 @@ impl LanguageDetector {
     fn compute_sum_of_ngram_probabilities(
         &self,
         language: &Language,
-        ngram_model: &TestDataLanguageModel,
+        ngram_model: &[Vec<NgramRef>],
         language_models: &LanguageModelArray,
     ) -> f64 {
         let models = [
@@ -1165,7 +1166,7 @@ impl LanguageDetector {
             language_models[4].as_ref().and_then(|m| m.get(language)),
         ];
         let mut sum = 0.0;
-        for ngrams in ngram_model.ngrams.iter() {
+        for ngrams in ngram_model.iter() {
             for ngram in ngrams {
                 let probability = models[ngram.char_count - 1]
                     .and_then(|m| m.get(ngram.value))
@@ -1183,7 +1184,7 @@ impl LanguageDetector {
 
     fn count_unigrams(
         &self,
-        unigram_model: &TestDataLanguageModel,
+        unigram_model: &[Vec<NgramRef>],
         filtered_languages: &HashSet<Language>,
         language_models: &HashMap<Language, AHashMap<CompactString, f64>>,
     ) -> HashMap<Language, u32> {
@@ -1194,7 +1195,7 @@ impl LanguageDetector {
                 None => continue,
             };
 
-            for unigrams in unigram_model.ngrams.iter() {
+            for unigrams in unigram_model.iter() {
                 let probability = model
                     .get(unigrams.first().unwrap().value)
                     .copied()
@@ -1578,18 +1579,15 @@ mod tests {
     // ##############################
 
     #[fixture(strs=vec![])]
-    fn test_data_model(strs: Vec<Vec<&'static str>>) -> TestDataLanguageModel<'static> {
-        let ngrams = strs
-            .iter()
+    fn ngram_model(strs: Vec<Vec<&'static str>>) -> Vec<Vec<NgramRef<'static>>> {
+        strs.iter()
             .map(|ngram_strs| {
                 ngram_strs
                     .iter()
                     .map(|&it| NgramRef::new(it))
                     .collect::<Vec<_>>()
             })
-            .collect::<Vec<_>>();
-
-        TestDataLanguageModel { ngrams }
+            .collect::<Vec<_>>()
     }
 
     // ##############################
@@ -1760,26 +1758,26 @@ mod tests {
     }
 
     #[rstest(
-        test_data_model,
+        ngram_model,
         expected_sum_of_probabilities,
         case(
-            test_data_model(vec![vec!["a"], vec!["l"], vec!["t"], vec!["e"], vec!["r"]]),
+            ngram_model(vec![vec!["a"], vec!["l"], vec!["t"], vec!["e"], vec!["r"]]),
             0.01_f64.ln() + 0.02_f64.ln() + 0.03_f64.ln() + 0.04_f64.ln() + 0.05_f64.ln()
         ),
         case(
             // back off unknown Trigram("tez") to known Bigram("te")
-            test_data_model(vec![vec!["alt", "al", "a"], vec!["lte", "lt", "l"], vec!["tez", "te", "t"]]),
+            ngram_model(vec![vec!["alt", "al", "a"], vec!["lte", "lt", "l"], vec!["tez", "te", "t"]]),
             0.19_f64.ln() + 0.2_f64.ln() + 0.13_f64.ln()
         ),
         case(
             // back off unknown Fivegram("aquas") to known Unigram("a")
-            test_data_model(vec![vec!["aquas", "aqua", "aqu", "aq", "a"]]),
+            ngram_model(vec![vec!["aquas", "aqua", "aqu", "aq", "a"]]),
             0.01_f64.ln()
         )
     )]
     fn assert_summation_of_ngram_probabilities_works_correctly(
         detector_for_english_and_german: LanguageDetector,
-        test_data_model: TestDataLanguageModel,
+        ngram_model: Vec<Vec<NgramRef>>,
         expected_sum_of_probabilities: f64,
     ) {
         let sum_of_probabilities = detector_for_english_and_german.get_language_models(
@@ -1788,7 +1786,7 @@ mod tests {
             |language_models| {
                 detector_for_english_and_german.compute_sum_of_ngram_probabilities(
                     &English,
-                    &test_data_model,
+                    &ngram_model,
                     &language_models,
                 )
             },
@@ -1804,30 +1802,30 @@ mod tests {
             "expected sum {} for language '{:?}' and ngrams {:?}, got {}",
             expected_sum_of_probabilities,
             English,
-            test_data_model.ngrams,
+            ngram_model,
             sum_of_probabilities
         );
     }
 
     #[rstest(
-        test_data_model,
+        ngram_model,
         expected_probabilities,
         case::unigram_model(
-            test_data_model(vec![vec!["a"], vec!["l"], vec!["t"], vec!["e"], vec!["r"]]),
+            ngram_model(vec![vec!["a"], vec!["l"], vec!["t"], vec!["e"], vec!["r"]]),
             hashmap!(
                 English => 0.01_f64.ln() + 0.02_f64.ln() + 0.03_f64.ln() + 0.04_f64.ln() + 0.05_f64.ln(),
                 German => 0.06_f64.ln() + 0.07_f64.ln() + 0.08_f64.ln() + 0.09_f64.ln() + 0.1_f64.ln()
             )
         ),
         case::trigram_model(
-            test_data_model(vec![vec!["alt", "al", "a"], vec!["lte", "lt", "l"], vec!["ter", "te", "t"], vec!["wxy", "wx", "w"]]),
+            ngram_model(vec![vec!["alt", "al", "a"], vec!["lte", "lt", "l"], vec!["ter", "te", "t"], vec!["wxy", "wx", "w"]]),
             hashmap!(
                 English => 0.19_f64.ln() + 0.2_f64.ln() + 0.21_f64.ln(),
                 German => 0.22_f64.ln() + 0.23_f64.ln() + 0.24_f64.ln()
             )
         ),
         case::quadrigram_model(
-            test_data_model(vec![vec!["alte", "alt", "al", "a"], vec!["lter", "lte", "lt", "l"], vec!["wxyz", "wxy", "wx", "w"]]),
+            ngram_model(vec![vec!["alte", "alt", "al", "a"], vec!["lter", "lte", "lt", "l"], vec!["wxyz", "wxy", "wx", "w"]]),
             hashmap!(
                 English => 0.25_f64.ln() + 0.26_f64.ln(),
                 German => 0.27_f64.ln() + 0.28_f64.ln()
@@ -1836,14 +1834,14 @@ mod tests {
     )]
     fn assert_computation_of_language_probabilities_works_correctly(
         detector_for_english_and_german: LanguageDetector,
-        test_data_model: TestDataLanguageModel,
+        ngram_model: Vec<Vec<NgramRef>>,
         expected_probabilities: HashMap<Language, f64>,
     ) {
         let languages = hashset!(English, German);
         let probabilities =
             detector_for_english_and_german.get_language_models(5, &languages, |language_models| {
                 detector_for_english_and_german.compute_language_probabilities(
-                    &test_data_model,
+                    &ngram_model,
                     &languages,
                     &language_models,
                 )

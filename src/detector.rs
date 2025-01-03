@@ -22,7 +22,7 @@ use std::sync::{LazyLock, RwLock};
 
 use ahash::AHashMap;
 use compact_str::CompactString;
-use fraction::Zero;
+use fraction::{ToPrimitive, Zero};
 use itertools::Itertools;
 #[cfg(not(target_family = "wasm"))]
 use rayon::prelude::*;
@@ -33,9 +33,8 @@ use crate::constant::{
     CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, TOKENS_WITHOUT_WHITESPACE,
     TOKENS_WITH_OPTIONAL_WHITESPACE,
 };
-use crate::json::load_json;
 use crate::language::Language;
-use crate::model::{create_lower_order_ngrams, TrainingDataLanguageModel};
+use crate::model::{create_lower_order_ngrams, load_ngram_probability_model};
 use crate::ngram::NgramRef;
 use crate::result::DetectionResult;
 
@@ -98,13 +97,13 @@ impl LanguageDetector {
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
-            self.load_language_models(self.trigram_language_models, language, 3);
+            self.load_language_models(self.trigram_language_models, *language, 3);
 
             if !self.is_low_accuracy_mode_enabled {
-                self.load_language_models(self.unigram_language_models, language, 1);
-                self.load_language_models(self.bigram_language_models, language, 2);
-                self.load_language_models(self.quadrigram_language_models, language, 4);
-                self.load_language_models(self.fivegram_language_models, language, 5);
+                self.load_language_models(self.unigram_language_models, *language, 1);
+                self.load_language_models(self.bigram_language_models, *language, 2);
+                self.load_language_models(self.quadrigram_language_models, *language, 4);
+                self.load_language_models(self.fivegram_language_models, *language, 5);
             }
         });
     }
@@ -1013,35 +1012,35 @@ impl LanguageDetector {
 
         if ngram_length >= 1 {
             for language in filtered_languages {
-                self.load_language_models(self.unigram_language_models, language, 1);
+                self.load_language_models(self.unigram_language_models, *language, 1);
             }
             model_read_locks[0] = Some(self.unigram_language_models.read().unwrap());
         }
 
         if ngram_length >= 2 {
             for language in filtered_languages {
-                self.load_language_models(self.bigram_language_models, language, 2);
+                self.load_language_models(self.bigram_language_models, *language, 2);
             }
             model_read_locks[1] = Some(self.bigram_language_models.read().unwrap());
         }
 
         if ngram_length >= 3 {
             for language in filtered_languages {
-                self.load_language_models(self.trigram_language_models, language, 3);
+                self.load_language_models(self.trigram_language_models, *language, 3);
             }
             model_read_locks[2] = Some(self.trigram_language_models.read().unwrap());
         }
 
         if ngram_length >= 4 {
             for language in filtered_languages {
-                self.load_language_models(self.quadrigram_language_models, language, 4);
+                self.load_language_models(self.quadrigram_language_models, *language, 4);
             }
             model_read_locks[3] = Some(self.quadrigram_language_models.read().unwrap());
         }
 
         if ngram_length >= 5 {
             for language in filtered_languages {
-                self.load_language_models(self.fivegram_language_models, language, 5);
+                self.load_language_models(self.fivegram_language_models, *language, 5);
             }
             model_read_locks[4] = Some(self.fivegram_language_models.read().unwrap());
         }
@@ -1242,18 +1241,21 @@ impl LanguageDetector {
     fn load_language_models(
         &self,
         language_models: StaticLanguageModelMap,
-        language: &Language,
+        language: Language,
         ngram_length: usize,
     ) {
         let models = language_models.read().unwrap();
-        if !models.contains_key(language) {
+        if !models.contains_key(&language) {
             drop(models);
             let mut models = language_models.write().unwrap();
-            let json = load_json(*language, ngram_length);
-            if let Ok(json_content) = json {
+            if let Some(model) = load_ngram_probability_model(language, ngram_length) {
                 models.insert(
-                    *language,
-                    TrainingDataLanguageModel::from_json(&json_content),
+                    language,
+                    model
+                        .ngrams
+                        .iter()
+                        .map(|(key, value)| (key.clone(), value.to_f64().unwrap()))
+                        .collect(),
                 );
             }
         }

@@ -74,7 +74,7 @@ impl LanguageModelFilesWriter {
             language,
             2,
             char_class,
-            unigram_model.absolute_frequencies.as_ref().unwrap(),
+            &unigram_model.absolute_frequencies,
         )?;
 
         let trigram_model = Self::create_language_model(
@@ -82,7 +82,7 @@ impl LanguageModelFilesWriter {
             language,
             3,
             char_class,
-            bigram_model.absolute_frequencies.as_ref().unwrap(),
+            &bigram_model.absolute_frequencies,
         )?;
 
         let quadrigram_model = Self::create_language_model(
@@ -90,7 +90,7 @@ impl LanguageModelFilesWriter {
             language,
             4,
             char_class,
-            trigram_model.absolute_frequencies.as_ref().unwrap(),
+            &trigram_model.absolute_frequencies,
         )?;
 
         let fivegram_model = Self::create_language_model(
@@ -98,7 +98,7 @@ impl LanguageModelFilesWriter {
             language,
             5,
             char_class,
-            quadrigram_model.absolute_frequencies.as_ref().unwrap(),
+            &quadrigram_model.absolute_frequencies,
         )?;
 
         Self::write_compressed_language_model(
@@ -419,14 +419,14 @@ mod tests {
             "language":"ENGLISH",
             "ngrams":{
                 "1/10":"n o s",
+                "1/100":"b g l m",
                 "1/20":"d r",
                 "1/25":"h",
                 "1/50":"f w",
-                "1/100":"b g l m",
-                "3/50":"i",
+                "13/100":"t",
                 "3/100":"a c p u y",
-                "7/50":"e",
-                "13/100":"t"
+                "3/50":"i",
+                "7/50":"e"
             }
         }
         "#;
@@ -436,17 +436,17 @@ mod tests {
             "language":"ENGLISH",
             "ngrams":{
                 "1/1":"by he",
+                "1/10":"nc nd ng no ns od of os si",
+                "1/13":"ta to",
+                "1/14":"ed em ey",
                 "1/2":"fo wa wo",
                 "1/3":"al ar ay ce co ct po pr pu uc ur us",
                 "1/5":"de do ds du nt on or ot rd re ro rp st",
                 "1/6":"io is",
-                "1/10":"nc nd ng no ns od of os si",
-                "1/13":"ta to",
-                "1/14":"ed em ey",
+                "2/13":"ti",
                 "2/3":"in",
                 "2/5":"se",
                 "2/7":"es",
-                "2/13":"ti",
                 "3/13":"te",
                 "3/14":"en",
                 "4/13":"th"

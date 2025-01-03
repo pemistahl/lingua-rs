@@ -14,28 +14,120 @@
  * limitations under the License.
  */
 
-use std::collections::{BTreeMap, HashMap, HashSet};
-
-use ahash::AHashMap;
-use compact_str::CompactString;
-use itertools::Itertools;
-use regex::Regex;
-use serde::{Deserialize, Serialize};
-
-use crate::fraction::Fraction;
+use crate::json::load_json;
 use crate::language::Language;
 use crate::ngram::{Ngram, NgramRef};
+use ahash::AHashMap;
+use compact_str::CompactString;
+use fraction::Fraction;
+use itertools::Itertools;
+use regex::Regex;
+use serde::ser::SerializeMap;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::collections::{HashMap, HashSet};
+use std::fmt;
+use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
-struct JsonLanguageModel {
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub(crate) struct NgramProbabilityModel {
     language: Language,
-    ngrams: BTreeMap<Fraction, String>,
+    #[serde(
+        serialize_with = "serialize_ngram_probabilities",
+        deserialize_with = "deserialize_ngram_probabilities"
+    )]
+    pub(crate) ngrams: AHashMap<CompactString, Fraction>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct NgramModel {
+    language: Language,
+    ngrams: HashSet<String>,
+}
+
+#[derive(Debug)]
+pub(crate) enum NgramModelType {
+    Unique,
+    MostCommon,
+}
+
+impl Display for NgramModelType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let debug_repr = format!("{self:?}");
+        write!(f, "{}", debug_repr.to_lowercase())
+    }
+}
+
+pub(crate) fn load_ngram_probability_model(
+    language: Language,
+    ngram_length: usize,
+) -> Option<NgramProbabilityModel> {
+    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
+    let file_name = format!("{ngram_name}s.json.br");
+    match load_json(language, &file_name) {
+        Ok(json) => Some(serde_json::from_str::<NgramProbabilityModel>(&json).unwrap()),
+        Err(_) => None,
+    }
+}
+
+pub(crate) fn load_ngram_model(
+    language: Language,
+    ngram_length: usize,
+    model_type: NgramModelType,
+) -> Option<NgramModel> {
+    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
+    let file_name = format!("{model_type}_{ngram_name}s.json.br");
+    match load_json(language, &file_name) {
+        Ok(json) => Some(serde_json::from_str::<NgramModel>(&json).unwrap()),
+        Err(_) => None,
+    }
+}
+
+fn serialize_ngram_probabilities<S: Serializer>(
+    source: &AHashMap<CompactString, Fraction>,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    let mut fractions_to_ngrams = btreemap!();
+    for (ngram, fraction) in source {
+        let serialized_fraction = format!(
+            "{}/{}",
+            fraction.numer().unwrap(),
+            fraction.denom().unwrap()
+        );
+        let ngrams = fractions_to_ngrams
+            .entry(serialized_fraction)
+            .or_insert_with(Vec::new);
+        ngrams.push(ngram);
+    }
+    let mut target = serializer.serialize_map(None)?;
+    for (fraction, ngrams) in fractions_to_ngrams {
+        let joined_ngrams = ngrams.iter().sorted().join(" ");
+        target.serialize_entry(&fraction, &joined_ngrams)?;
+    }
+    target.end()
+}
+
+fn deserialize_ngram_probabilities<'de, D: Deserializer<'de>>(
+    deserializer: D,
+) -> Result<AHashMap<CompactString, Fraction>, D::Error> {
+    let source = HashMap::<String, String>::deserialize(deserializer)?;
+    let mut target = AHashMap::<CompactString, Fraction>::new();
+    for (key, value) in source {
+        let (numerator, denominator) = key.split('/').collect_tuple().unwrap();
+        let parsed_numerator = numerator.parse::<u32>().unwrap();
+        let parsed_denominator = denominator.parse::<u32>().unwrap();
+        for ngram in value.split(' ') {
+            target.insert(
+                CompactString::new(ngram),
+                Fraction::new(parsed_numerator, parsed_denominator),
+            );
+        }
+    }
+    Ok(target)
 }
 
 pub(crate) struct TrainingDataLanguageModel {
-    language: Language,
-    pub(crate) absolute_frequencies: Option<HashMap<Ngram, u32>>,
-    relative_frequencies: Option<HashMap<Ngram, Fraction>>,
+    pub(crate) absolute_frequencies: HashMap<Ngram, u32>,
+    ngram_probability_model: NgramProbabilityModel,
 }
 
 impl TrainingDataLanguageModel {
@@ -50,53 +142,20 @@ impl TrainingDataLanguageModel {
             Self::compute_absolute_frequencies(text, ngram_length, char_class);
 
         let relative_frequencies = Self::compute_relative_frequencies(
+            *language,
             ngram_length,
             &absolute_frequencies,
             lower_ngram_absolute_frequencies,
         );
 
         TrainingDataLanguageModel {
-            language: *language,
-            absolute_frequencies: Some(absolute_frequencies),
-            relative_frequencies: Some(relative_frequencies),
+            absolute_frequencies,
+            ngram_probability_model: relative_frequencies,
         }
-    }
-
-    pub(crate) fn from_json(json: &str) -> AHashMap<CompactString, f64> {
-        let json_language_model = serde_json::from_str::<JsonLanguageModel>(json).unwrap();
-        let mut json_relative_frequencies = AHashMap::new();
-
-        for (fraction, ngrams) in json_language_model.ngrams {
-            let floating_point_value = fraction.to_f64();
-            for ngram in ngrams.split(' ') {
-                json_relative_frequencies.insert(CompactString::new(ngram), floating_point_value);
-            }
-        }
-
-        json_relative_frequencies
     }
 
     pub(crate) fn to_json(&self) -> String {
-        let mut fractions_to_ngrams = hashmap!();
-        for (ngram, fraction) in self.relative_frequencies.as_ref().unwrap() {
-            let ngrams = fractions_to_ngrams.entry(fraction).or_insert_with(Vec::new);
-            ngrams.push(ngram);
-        }
-
-        let mut fractions_to_joined_ngrams = btreemap!();
-        for (fraction, ngrams) in fractions_to_ngrams {
-            fractions_to_joined_ngrams.insert(
-                *fraction,
-                ngrams.iter().map(|&it| &it.value).sorted().join(" "),
-            );
-        }
-
-        let model = JsonLanguageModel {
-            language: self.language,
-            ngrams: fractions_to_joined_ngrams,
-        };
-
-        serde_json::to_string(&model).unwrap()
+        serde_json::to_string(&self.ngram_probability_model).unwrap()
     }
 
     fn compute_absolute_frequencies(
@@ -128,11 +187,12 @@ impl TrainingDataLanguageModel {
     }
 
     fn compute_relative_frequencies(
+        language: Language,
         ngram_length: usize,
         absolute_frequencies: &HashMap<Ngram, u32>,
         lower_ngram_absolute_frequencies: &HashMap<Ngram, u32>,
-    ) -> HashMap<Ngram, Fraction> {
-        let mut ngram_probabilities = hashmap!();
+    ) -> NgramProbabilityModel {
+        let mut ngrams = AHashMap::<CompactString, Fraction>::new();
         let total_ngram_frequency = absolute_frequencies.values().sum::<u32>();
 
         for (ngram, frequency) in absolute_frequencies {
@@ -141,15 +201,17 @@ impl TrainingDataLanguageModel {
             } else {
                 let chars = ngram.value.chars().collect_vec();
                 let slice = &chars[0..ngram_length - 1].iter().collect::<String>();
-
                 *lower_ngram_absolute_frequencies
                     .get(&Ngram::new(slice))
                     .unwrap()
             };
-            ngram_probabilities.insert(ngram.clone(), Fraction::new(*frequency, denominator));
+            ngrams.insert(
+                CompactString::new(&ngram.value),
+                Fraction::new(*frequency, denominator),
+            );
         }
 
-        ngram_probabilities
+        NgramProbabilityModel { language, ngrams }
     }
 }
 
@@ -211,25 +273,81 @@ mod tests {
         By the way, they consist of 23 words in total.
     ";
 
-    mod json_data {
-        use super::*;
+    fn map_strs_to_strings(strs: HashSet<&str>) -> HashSet<String> {
+        strs.iter().map(|it| it.to_string()).collect()
+    }
 
-        #[test]
-        fn test_json_model_serializer_and_deserializer() {
-            let model = JsonLanguageModel {
-                language: Language::English,
-                ngrams: btreemap!(Fraction::new(3, 5) => "a b c d e".to_string()),
-            };
+    #[test]
+    fn test_ngram_probability_model_serializer_and_deserializer() {
+        let mut ngrams = AHashMap::new();
+        ngrams.insert(CompactString::new("a"), Fraction::new(1u32, 2u32));
+        ngrams.insert(CompactString::new("b"), Fraction::new(1u32, 2u32));
+        ngrams.insert(CompactString::new("c"), Fraction::new(7u32, 10u32));
 
-            let serialized = serde_json::to_string(&model).unwrap();
-            assert_eq!(
-                serialized,
-                r#"{"language":"ENGLISH","ngrams":{"3/5":"a b c d e"}}"#
-            );
+        let model = NgramProbabilityModel {
+            language: Language::English,
+            ngrams,
+        };
 
-            let deserialized = serde_json::from_str::<JsonLanguageModel>(&serialized).unwrap();
-            assert_eq!(deserialized, model);
-        }
+        let serialized_result = serde_json::to_string(&model);
+        assert!(serialized_result.is_ok());
+
+        let serialized = serialized_result.unwrap();
+        assert_eq!(
+            serialized,
+            r#"{"language":"ENGLISH","ngrams":{"1/2":"a b","7/10":"c"}}"#
+        );
+
+        let deserialized_result = serde_json::from_str::<NgramProbabilityModel>(&serialized);
+        assert!(deserialized_result.is_ok());
+
+        let deserialized = deserialized_result.unwrap();
+        assert_eq!(deserialized, model);
+    }
+
+    #[test]
+    fn test_load_ngram_probability_model() {
+        let optional_ngram_model = load_ngram_probability_model(Language::English, 1);
+        assert!(optional_ngram_model.is_some());
+
+        let ngram_model = optional_ngram_model.unwrap();
+        assert_eq!(ngram_model.language, Language::English);
+        assert!(ngram_model.ngrams.contains_key("a"));
+
+        let expected_fraction = Fraction::new(7915445u32, 93616591u32);
+        let actual_fraction = *ngram_model.ngrams.get("a").unwrap();
+        assert_eq!(actual_fraction, expected_fraction);
+    }
+
+    #[test]
+    fn test_load_unique_ngram_model() {
+        let optional_unique_ngram_model =
+            load_ngram_model(Language::English, 1, NgramModelType::Unique);
+        assert!(optional_unique_ngram_model.is_some());
+
+        let unique_ngram_model = optional_unique_ngram_model.unwrap();
+        assert_eq!(unique_ngram_model.language, Language::English);
+        assert_eq!(
+            unique_ngram_model.ngrams,
+            map_strs_to_strings(hashset!("ɦ", "ƅ", "ﬀ", "ƴ", "ｍ", "ȼ"))
+        );
+    }
+
+    #[test]
+    fn test_load_most_common_ngram_model() {
+        let optional_most_common_ngram_model =
+            load_ngram_model(Language::English, 1, NgramModelType::MostCommon);
+        assert!(optional_most_common_ngram_model.is_some());
+
+        let most_common_ngram_model = optional_most_common_ngram_model.unwrap();
+        assert_eq!(most_common_ngram_model.language, Language::English);
+        assert_eq!(
+            most_common_ngram_model.ngrams,
+            map_strs_to_strings(hashset!(
+                "e", "t", "a", "o", "i", "n", "r", "s", "l", "h", "d", "c", "u", "m", "p", "f",
+                "g", "y", "w", "b", "v", "k", "x", "j", "q"
+            ))
+        )
     }
 
     mod training_data {
@@ -241,19 +359,23 @@ mod tests {
                 .collect()
         }
 
-        fn map_keys_to_ngrams_and_values_to_fractions(
+        fn map_relative_frequencies_to_ngram_probability_model(
+            language: Language,
             map: HashMap<&str, &str>,
-        ) -> HashMap<Ngram, Fraction> {
-            map.into_iter()
-                .map(|(key, value)| {
-                    let (numerator, denominator) = value
-                        .split('/')
-                        .map(|it| it.parse::<u32>().unwrap())
-                        .collect_tuple()
-                        .unwrap();
-                    (Ngram::new(key), Fraction::new(numerator, denominator))
-                })
-                .collect()
+        ) -> NgramProbabilityModel {
+            let mut ngrams = AHashMap::<CompactString, Fraction>::new();
+            for (key, value) in map {
+                let (numerator, denominator) = value
+                    .split('/')
+                    .map(|it| it.parse::<u32>().unwrap())
+                    .collect_tuple()
+                    .unwrap();
+                ngrams.insert(
+                    CompactString::new(key),
+                    Fraction::new(numerator, denominator),
+                );
+            }
+            NgramProbabilityModel { language, ngrams }
         }
 
         #[fixture]
@@ -267,23 +389,17 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_unigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
-            map_keys_to_ngrams_and_values_to_fractions(hashmap!(
-                "a" => "3/100", "b" => "1/100", "c" => "3/100", "d" => "1/20",
-                "e" => "7/50", "f" => "1/50", "g" => "1/100", "h" => "1/25",
-                "i" => "3/50", "l" => "1/100", "m" => "1/100", "n" => "1/10",
-                "o" => "1/10", "p" => "3/100", "r" => "1/20", "s" => "1/10",
-                "t" => "13/100", "u" => "3/100", "w" => "1/50", "y" => "3/100"
-            ))
-        }
-
-        fn expected_unigram_json_relative_frequencies() -> AHashMap<CompactString, f64> {
-            expected_unigram_relative_frequencies()
-                .iter()
-                .map(|(ngram, fraction)| {
-                    (CompactString::new(ngram.value.clone()), fraction.to_f64())
-                })
-                .collect()
+        fn expected_unigram_probability_model() -> NgramProbabilityModel {
+            map_relative_frequencies_to_ngram_probability_model(
+                Language::English,
+                hashmap!(
+                    "a" => "3/100", "b" => "1/100", "c" => "3/100", "d" => "1/20",
+                    "e" => "7/50", "f" => "1/50", "g" => "1/100", "h" => "1/25",
+                    "i" => "3/50", "l" => "1/100", "m" => "1/100", "n" => "1/10",
+                    "o" => "1/10", "p" => "3/100", "r" => "1/20", "s" => "1/10",
+                    "t" => "13/100", "u" => "3/100", "w" => "1/50", "y" => "3/100"
+                ),
+            )
         }
 
         #[fixture]
@@ -302,23 +418,26 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_bigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
-            map_keys_to_ngrams_and_values_to_fractions(hashmap!(
-                "de" => "1/5", "pr" => "1/3", "pu" => "1/3", "do" => "1/5",
-                "uc" => "1/3", "ds" => "1/5", "du" => "1/5", "ur" => "1/3",
-                "us" => "1/3", "ed" => "1/14", "in" => "2/3", "io" => "1/6",
-                "em" => "1/14", "en" => "3/14", "is" => "1/6", "al" => "1/3",
-                "es" => "2/7", "ar" => "1/3", "rd" => "1/5", "re" => "1/5",
-                "ey" => "1/14", "nc" => "1/10", "nd" => "1/10", "ay" => "1/3",
-                "ng" => "1/10", "ro" => "1/5", "rp" => "1/5", "no" => "1/10",
-                "ns" => "1/10", "nt" => "1/5", "fo" => "1/2", "wa" => "1/2",
-                "se" => "2/5", "od" => "1/10", "si" => "1/10", "of" => "1/10",
-                "by" => "1/1", "wo" => "1/2", "on" => "1/5", "st" => "1/5",
-                "ce" => "1/3", "or" => "1/5", "os" => "1/10", "ot" => "1/5",
-                "co" => "1/3", "ta" => "1/13", "ct" => "1/3", "te" => "3/13",
-                "th" => "4/13", "ti" => "2/13", "to" => "1/13", "he" => "1/1",
-                "po" => "1/3"
-            ))
+        fn expected_bigram_probability_model() -> NgramProbabilityModel {
+            map_relative_frequencies_to_ngram_probability_model(
+                Language::English,
+                hashmap!(
+                    "de" => "1/5", "pr" => "1/3", "pu" => "1/3", "do" => "1/5",
+                    "uc" => "1/3", "ds" => "1/5", "du" => "1/5", "ur" => "1/3",
+                    "us" => "1/3", "ed" => "1/14", "in" => "2/3", "io" => "1/6",
+                    "em" => "1/14", "en" => "3/14", "is" => "1/6", "al" => "1/3",
+                    "es" => "2/7", "ar" => "1/3", "rd" => "1/5", "re" => "1/5",
+                    "ey" => "1/14", "nc" => "1/10", "nd" => "1/10", "ay" => "1/3",
+                    "ng" => "1/10", "ro" => "1/5", "rp" => "1/5", "no" => "1/10",
+                    "ns" => "1/10", "nt" => "1/5", "fo" => "1/2", "wa" => "1/2",
+                    "se" => "2/5", "od" => "1/10", "si" => "1/10", "of" => "1/10",
+                    "by" => "1/1", "wo" => "1/2", "on" => "1/5", "st" => "1/5",
+                    "ce" => "1/3", "or" => "1/5", "os" => "1/10", "ot" => "1/5",
+                    "co" => "1/3", "ta" => "1/13", "ct" => "1/3", "te" => "3/13",
+                    "th" => "4/13", "ti" => "2/13", "to" => "1/13", "he" => "1/1",
+                    "po" => "1/3"
+                ),
+            )
         }
 
         #[fixture]
@@ -339,22 +458,25 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_trigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
-            map_keys_to_ngrams_and_values_to_fractions(hashmap!(
-                "rds" => "1/1", "ose" => "1/1", "ded" => "1/1", "con" => "1/1",
-                "use" => "1/1", "est" => "1/4", "ion" => "1/1", "ist" => "1/1",
-                "pur" => "1/1", "hem" => "1/4", "hes" => "1/4", "tin" => "1/2",
-                "cti" => "1/1", "wor" => "1/1", "tio" => "1/2", "ten" => "2/3",
-                "ota" => "1/2", "hey" => "1/4", "tal" => "1/1", "tes" => "1/3",
-                "uct" => "1/1", "sti" => "1/2", "pro" => "1/1", "odu" => "1/1",
-                "nsi" => "1/1", "rod" => "1/1", "for" => "1/1", "ces" => "1/1",
-                "nce" => "1/1", "not" => "1/1", "pos" => "1/1", "are" => "1/1",
-                "tot" => "1/1", "end" => "1/3", "enc" => "1/3", "sis" => "1/1",
-                "sen" => "1/4", "nte" => "1/1", "ord" => "1/2", "ses" => "1/4",
-                "ing" => "1/4", "ent" => "1/3", "way" => "1/1", "nde" => "1/1",
-                "int" => "1/4", "rpo" => "1/1", "the" => "1/1", "urp" => "1/1",
-                "duc" => "1/1", "ons" => "1/2", "ese" => "1/4"
-            ))
+        fn expected_trigram_probability_model() -> NgramProbabilityModel {
+            map_relative_frequencies_to_ngram_probability_model(
+                Language::English,
+                hashmap!(
+                    "rds" => "1/1", "ose" => "1/1", "ded" => "1/1", "con" => "1/1",
+                    "use" => "1/1", "est" => "1/4", "ion" => "1/1", "ist" => "1/1",
+                    "pur" => "1/1", "hem" => "1/4", "hes" => "1/4", "tin" => "1/2",
+                    "cti" => "1/1", "wor" => "1/1", "tio" => "1/2", "ten" => "2/3",
+                    "ota" => "1/2", "hey" => "1/4", "tal" => "1/1", "tes" => "1/3",
+                    "uct" => "1/1", "sti" => "1/2", "pro" => "1/1", "odu" => "1/1",
+                    "nsi" => "1/1", "rod" => "1/1", "for" => "1/1", "ces" => "1/1",
+                    "nce" => "1/1", "not" => "1/1", "pos" => "1/1", "are" => "1/1",
+                    "tot" => "1/1", "end" => "1/3", "enc" => "1/3", "sis" => "1/1",
+                    "sen" => "1/4", "nte" => "1/1", "ord" => "1/2", "ses" => "1/4",
+                    "ing" => "1/4", "ent" => "1/3", "way" => "1/1", "nde" => "1/1",
+                    "int" => "1/4", "rpo" => "1/1", "the" => "1/1", "urp" => "1/1",
+                    "duc" => "1/1", "ons" => "1/2", "ese" => "1/4"
+                ),
+            )
         }
 
         #[fixture]
@@ -372,19 +494,22 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_quadrigram_relative_frequencies() -> HashMap<Ngram, Fraction> {
-            map_keys_to_ngrams_and_values_to_fractions(hashmap!(
-                "onsi" => "1/1", "sist" => "1/1", "ende" => "1/1", "ords" => "1/1",
-                "esti" => "1/1", "oduc" => "1/1", "nces" => "1/1", "tenc" => "1/2",
-                "tend" => "1/2", "thes" => "1/4", "rpos" => "1/1", "ting" => "1/1",
-                "nsis" => "1/1", "nten" => "1/1", "tota" => "1/1", "they" => "1/4",
-                "cons" => "1/1", "tion" => "1/1", "prod" => "1/1", "otal" => "1/1",
-                "test" => "1/1", "ence" => "1/1", "pose" => "1/1", "oses" => "1/1",
-                "nded" => "1/1", "inte" => "1/1", "them" => "1/4", "urpo" => "1/1",
-                "duct" => "1/1", "sent" => "1/1", "stin" => "1/1", "ucti" => "1/1",
-                "ente" => "1/1", "purp" => "1/1", "ctio" => "1/1", "rodu" => "1/1",
-                "word" => "1/1", "hese" => "1/1"
-            ))
+        fn expected_quadrigram_probability_model() -> NgramProbabilityModel {
+            map_relative_frequencies_to_ngram_probability_model(
+                Language::English,
+                hashmap!(
+                    "onsi" => "1/1", "sist" => "1/1", "ende" => "1/1", "ords" => "1/1",
+                    "esti" => "1/1", "oduc" => "1/1", "nces" => "1/1", "tenc" => "1/2",
+                    "tend" => "1/2", "thes" => "1/4", "rpos" => "1/1", "ting" => "1/1",
+                    "nsis" => "1/1", "nten" => "1/1", "tota" => "1/1", "they" => "1/4",
+                    "cons" => "1/1", "tion" => "1/1", "prod" => "1/1", "otal" => "1/1",
+                    "test" => "1/1", "ence" => "1/1", "pose" => "1/1", "oses" => "1/1",
+                    "nded" => "1/1", "inte" => "1/1", "them" => "1/4", "urpo" => "1/1",
+                    "duct" => "1/1", "sent" => "1/1", "stin" => "1/1", "ucti" => "1/1",
+                    "ente" => "1/1", "purp" => "1/1", "ctio" => "1/1", "rodu" => "1/1",
+                    "word" => "1/1", "hese" => "1/1"
+                ),
+            )
         }
 
         #[fixture]
@@ -401,58 +526,61 @@ mod tests {
         }
 
         #[fixture]
-        fn expected_fivegram_relative_frequencies() -> HashMap<Ngram, Fraction> {
-            map_keys_to_ngrams_and_values_to_fractions(hashmap!(
-                "testi" => "1/1", "sente" => "1/1", "ences" => "1/1", "tende" => "1/1",
-                "ducti" => "1/1", "ntenc" => "1/2", "these" => "1/1", "onsis" => "1/1",
-                "ntend" => "1/2", "total" => "1/1", "uctio" => "1/1", "enten" => "1/1",
-                "poses" => "1/1", "ction" => "1/1", "produ" => "1/1", "inten" => "1/1",
-                "nsist" => "1/1", "words" => "1/1", "sting" => "1/1", "purpo" => "1/1",
-                "tence" => "1/1", "estin" => "1/1", "roduc" => "1/1", "urpos" => "1/1",
-                "rpose" => "1/1", "ended" => "1/1", "oduct" => "1/1", "consi" => "1/1"
-            ))
+        fn expected_fivegram_probability_model() -> NgramProbabilityModel {
+            map_relative_frequencies_to_ngram_probability_model(
+                Language::English,
+                hashmap!(
+                    "testi" => "1/1", "sente" => "1/1", "ences" => "1/1", "tende" => "1/1",
+                    "ducti" => "1/1", "ntenc" => "1/2", "these" => "1/1", "onsis" => "1/1",
+                    "ntend" => "1/2", "total" => "1/1", "uctio" => "1/1", "enten" => "1/1",
+                    "poses" => "1/1", "ction" => "1/1", "produ" => "1/1", "inten" => "1/1",
+                    "nsist" => "1/1", "words" => "1/1", "sting" => "1/1", "purpo" => "1/1",
+                    "tence" => "1/1", "estin" => "1/1", "roduc" => "1/1", "urpos" => "1/1",
+                    "rpose" => "1/1", "ended" => "1/1", "oduct" => "1/1", "consi" => "1/1"
+                ),
+            )
         }
 
         #[rstest(
             ngram_length,
             expected_absolute_frequencies,
-            expected_relative_frequencies,
+            expected_probability_model,
             lower_ngram_absolute_frequencies,
             case::unigram_model(
                 1,
                 expected_unigram_absolute_frequencies(),
-                expected_unigram_relative_frequencies(),
+                expected_unigram_probability_model(),
                 hashmap!()
             ),
             case::bigram_model(
                 2,
                 expected_bigram_absolute_frequencies(),
-                expected_bigram_relative_frequencies(),
+                expected_bigram_probability_model(),
                 expected_unigram_absolute_frequencies()
             ),
             case::trigram_model(
                 3,
                 expected_trigram_absolute_frequencies(),
-                expected_trigram_relative_frequencies(),
+                expected_trigram_probability_model(),
                 expected_bigram_absolute_frequencies()
             ),
             case::quadrigram_model(
                 4,
                 expected_quadrigram_absolute_frequencies(),
-                expected_quadrigram_relative_frequencies(),
+                expected_quadrigram_probability_model(),
                 expected_trigram_absolute_frequencies()
             ),
             case::fivegram_model(
                 5,
                 expected_fivegram_absolute_frequencies(),
-                expected_fivegram_relative_frequencies(),
+                expected_fivegram_probability_model(),
                 expected_quadrigram_absolute_frequencies()
             ),
         )]
         fn test_ngram_model_creation(
             ngram_length: usize,
             expected_absolute_frequencies: HashMap<Ngram, u32>,
-            expected_relative_frequencies: HashMap<Ngram, Fraction>,
+            expected_probability_model: NgramProbabilityModel,
             lower_ngram_absolute_frequencies: HashMap<Ngram, u32>,
         ) {
             let model = TrainingDataLanguageModel::from_text(
@@ -463,26 +591,8 @@ mod tests {
                 &lower_ngram_absolute_frequencies,
             );
 
-            assert_eq!(model.language, Language::English);
-            assert_eq!(
-                model.absolute_frequencies,
-                Some(expected_absolute_frequencies)
-            );
-            assert_eq!(
-                model.relative_frequencies,
-                Some(expected_relative_frequencies)
-            );
-        }
-
-        #[test]
-        fn test_model_serializer_and_deserializer() {
-            let model = TrainingDataLanguageModel {
-                language: Language::English,
-                absolute_frequencies: None,
-                relative_frequencies: Some(expected_unigram_relative_frequencies()),
-            };
-            let deserialized = TrainingDataLanguageModel::from_json(&model.to_json());
-            assert_eq!(deserialized, expected_unigram_json_relative_frequencies());
+            assert_eq!(model.absolute_frequencies, expected_absolute_frequencies);
+            assert_eq!(model.ngram_probability_model, expected_probability_model);
         }
     }
 

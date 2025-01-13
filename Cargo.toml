@@ -143,7 +143,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.1.0", o
 ahash = "0.8.11"
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.5", optional = true }
-pyo3 = { version = "0.23.3", optional = true }
+pyo3 = { version = "0.23.4", optional = true }
 rayon = "1.10.0"
 serde-pickle = { version = "1.2.0", optional = true }
 titlecase = { version = "3.3.0", optional = true }

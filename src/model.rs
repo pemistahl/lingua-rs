@@ -39,9 +39,9 @@ pub(crate) struct NgramProbabilityModel {
 }
 
 #[derive(Serialize, Deserialize)]
-pub(crate) struct NgramModel {
+pub(crate) struct NgramCountModel {
     language: Language,
-    ngrams: HashSet<String>,
+    pub(crate) ngrams: HashSet<String>,
 }
 
 #[derive(Debug)]
@@ -69,15 +69,15 @@ pub(crate) fn load_ngram_probability_model(
     }
 }
 
-pub(crate) fn load_ngram_model(
+pub(crate) fn load_ngram_count_model(
     language: Language,
     ngram_length: usize,
     model_type: NgramModelType,
-) -> Option<NgramModel> {
+) -> Option<NgramCountModel> {
     let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
     let file_name = format!("{model_type}_{ngram_name}s.json.br");
     match load_json(language, &file_name) {
-        Ok(json) => Some(serde_json::from_str::<NgramModel>(&json).unwrap()),
+        Ok(json) => Some(serde_json::from_str::<NgramCountModel>(&json).unwrap()),
         Err(_) => None,
     }
 }
@@ -322,7 +322,7 @@ mod tests {
     #[test]
     fn test_load_unique_ngram_model() {
         let optional_unique_ngram_model =
-            load_ngram_model(Language::English, 1, NgramModelType::Unique);
+            load_ngram_count_model(Language::English, 1, NgramModelType::Unique);
         assert!(optional_unique_ngram_model.is_some());
 
         let unique_ngram_model = optional_unique_ngram_model.unwrap();
@@ -336,7 +336,7 @@ mod tests {
     #[test]
     fn test_load_most_common_ngram_model() {
         let optional_most_common_ngram_model =
-            load_ngram_model(Language::English, 1, NgramModelType::MostCommon);
+            load_ngram_count_model(Language::English, 1, NgramModelType::MostCommon);
         assert!(optional_most_common_ngram_model.is_some());
 
         let most_common_ngram_model = optional_most_common_ngram_model.unwrap();

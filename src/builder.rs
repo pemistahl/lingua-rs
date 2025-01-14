@@ -21,7 +21,7 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
 
 pub(crate) const MISSING_LANGUAGE_MESSAGE: &str =
-    "LanguageDetector needs at least 2 languages to choose from";
+    "LanguageDetector needs at least 1 language to choose from";
 
 pub(crate) const MINIMUM_RELATIVE_DISTANCE_MESSAGE: &str =
     "Minimum relative distance must lie in between 0.0 and 0.99";
@@ -75,12 +75,11 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages except those specified in `languages`.
     ///
-    /// ⚠ Panics if less than two `languages` are used to build the
-    /// `LanguageDetector`.
+    /// ⚠ Panics if no language is specified.
     pub fn from_all_languages_without(languages: &[Language]) -> Self {
         let mut languages_to_load = Language::all();
         languages_to_load.retain(|it| !languages.contains(it));
-        if languages_to_load.len() < 2 {
+        if languages_to_load.is_empty() {
             panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         Self::from(languages_to_load)
@@ -89,9 +88,9 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with the specified `languages`.
     ///
-    /// ⚠ Panics if less than two `languages` are specified.
+    /// ⚠ Panics if no language is specified.
     pub fn from_languages(languages: &[Language]) -> Self {
-        if languages.len() < 2 {
+        if languages.is_empty() {
             panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         Self::from(languages.iter().cloned().collect())
@@ -100,9 +99,9 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with the languages specified by the respective ISO 639-1 codes.
     ///
-    /// ⚠ Panics if less than two `iso_codes` are specified.
+    /// ⚠ Panics if no ISO code is specified.
     pub fn from_iso_codes_639_1(iso_codes: &[IsoCode639_1]) -> Self {
-        if iso_codes.len() < 2 {
+        if iso_codes.is_empty() {
             panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         let languages = iso_codes
@@ -115,9 +114,9 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with the languages specified by the respective ISO 639-3 codes.
     ///
-    /// ⚠ Panics if less than two `iso_codes` are specified.
+    /// ⚠ Panics if no ISO code is specified.
     pub fn from_iso_codes_639_3(iso_codes: &[IsoCode639_3]) -> Self {
-        if iso_codes.len() < 2 {
+        if iso_codes.is_empty() {
             panic!("{}", MISSING_LANGUAGE_MESSAGE);
         }
         let languages = iso_codes
@@ -142,7 +141,7 @@ impl LanguageDetectorBuilder {
     /// dependent on the length of the input text. The longer the input
     /// text, the larger the distance between the languages. So if you
     /// want to classify very short text phrases, do not set the minimum
-    /// relative distance too high. Otherwise you will get most results
+    /// relative distance too high. Otherwise, you will get most results
     /// returned as [`None`] which is the return value for cases
     /// where language detection is not reliably possible.
     ///
@@ -267,38 +266,40 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "LanguageDetector needs at least 2 languages to choose from")]
+    #[should_panic(expected = "LanguageDetector needs at least 1 language to choose from")]
     fn assert_detector_cannot_be_built_from_too_long_blacklist() {
-        let languages = Language::all()
-            .difference(&hashset!(Language::German))
-            .cloned()
-            .collect::<Vec<_>>();
-
+        let languages = Language::all().into_iter().collect::<Vec<_>>();
         LanguageDetectorBuilder::from_all_languages_without(&languages);
     }
 
     #[test]
     fn assert_detector_can_be_built_from_whitelist() {
-        let builder =
-            LanguageDetectorBuilder::from_languages(&[Language::German, Language::English]);
-
-        assert_eq!(
-            builder.languages,
-            hashset!(Language::German, Language::English)
-        );
+        let language_sets = vec![
+            vec![Language::German],
+            vec![Language::German, Language::English],
+        ];
+        for languages in language_sets {
+            let builder = LanguageDetectorBuilder::from_languages(&languages);
+            assert_eq!(
+                builder.languages,
+                languages.into_iter().collect::<HashSet<_>>()
+            );
+        }
     }
 
     #[test]
-    #[should_panic(expected = "LanguageDetector needs at least 2 languages to choose from")]
+    #[should_panic(expected = "LanguageDetector needs at least 1 language to choose from")]
     fn assert_detector_cannot_be_built_from_too_short_whitelist() {
-        LanguageDetectorBuilder::from_languages(&[Language::German]);
+        LanguageDetectorBuilder::from_languages(&[]);
     }
 
     #[test]
     fn assert_detector_can_be_built_from_iso_639_1_codes() {
+        let builder = LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::DE]);
+        assert_eq!(builder.languages, hashset!(Language::German));
+
         let builder =
             LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::DE, IsoCode639_1::ZU]);
-
         assert_eq!(
             builder.languages,
             hashset!(Language::German, Language::Zulu)
@@ -306,16 +307,18 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "LanguageDetector needs at least 2 languages to choose from")]
+    #[should_panic(expected = "LanguageDetector needs at least 1 language to choose from")]
     fn assert_detector_cannot_be_built_from_too_few_iso_639_1_codes() {
-        LanguageDetectorBuilder::from_iso_codes_639_1(&[IsoCode639_1::DE]);
+        LanguageDetectorBuilder::from_iso_codes_639_1(&[]);
     }
 
     #[test]
     fn assert_detector_can_be_built_from_iso_639_3_codes() {
+        let builder = LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::DEU]);
+        assert_eq!(builder.languages, hashset!(Language::German));
+
         let builder =
             LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::DEU, IsoCode639_3::ZUL]);
-
         assert_eq!(
             builder.languages,
             hashset!(Language::German, Language::Zulu)
@@ -323,9 +326,9 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "LanguageDetector needs at least 2 languages to choose from")]
+    #[should_panic(expected = "LanguageDetector needs at least 1 language to choose from")]
     fn assert_detector_cannot_be_built_from_too_few_iso_639_3_codes() {
-        LanguageDetectorBuilder::from_iso_codes_639_3(&[IsoCode639_3::DEU]);
+        LanguageDetectorBuilder::from_iso_codes_639_3(&[]);
     }
 
     #[test]

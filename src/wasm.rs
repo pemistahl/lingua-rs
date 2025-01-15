@@ -115,8 +115,7 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with all built-in languages except those specified in `languages`.
     ///
-    /// ⚠ Throws an error if less than two `languages` are used to build
-    /// the `LanguageDetector`.
+    /// ⚠ Throws an error if no language is specified.
     #[wasm_bindgen(variadic)]
     pub fn fromAllLanguagesWithout(
         languages: Box<[JsValue]>,
@@ -129,7 +128,7 @@ impl LanguageDetectorBuilder {
             .collect_vec();
         languages_to_load.retain(|it| !languages_to_filter_out.contains(it));
 
-        if languages_to_load.len() < 2 {
+        if languages_to_load.is_empty() {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
@@ -143,7 +142,7 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with the specified `languages`.
     ///
-    /// ⚠ Throws an error if less than two `languages` are specified.
+    /// ⚠ Throws an error if no language is specified.
     #[wasm_bindgen(variadic)]
     pub fn fromLanguages(languages: Box<[JsValue]>) -> Result<LanguageDetectorBuilder, JsValue> {
         let selected_languages = languages
@@ -152,7 +151,7 @@ impl LanguageDetectorBuilder {
             .filter_map(|it| Language::from_str(&it).ok())
             .collect_vec();
 
-        if selected_languages.len() < 2 {
+        if selected_languages.is_empty() {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
@@ -164,7 +163,7 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with the languages specified by the respective ISO 639-1 codes.
     ///
-    /// ⚠ Throws an error if less than two `iso_codes` are specified.
+    /// ⚠ Throws an error if no ISO code is specified.
     #[wasm_bindgen(variadic)]
     pub fn fromISOCodes6391(isoCodes: Box<[JsValue]>) -> Result<LanguageDetectorBuilder, JsValue> {
         let selected_iso_codes = isoCodes
@@ -173,7 +172,7 @@ impl LanguageDetectorBuilder {
             .filter_map(|it| IsoCode639_1::from_str(&it).ok())
             .collect_vec();
 
-        if selected_iso_codes.len() < 2 {
+        if selected_iso_codes.is_empty() {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
@@ -185,7 +184,7 @@ impl LanguageDetectorBuilder {
     /// Creates and returns an instance of `LanguageDetectorBuilder`
     /// with the languages specified by the respective ISO 639-3 codes.
     ///
-    /// ⚠ Throws an error if less than two `iso_codes` are specified.
+    /// ⚠ Throws an error if no ISO code is specified.
     #[wasm_bindgen(variadic)]
     pub fn fromISOCodes6393(isoCodes: Box<[JsValue]>) -> Result<LanguageDetectorBuilder, JsValue> {
         let selected_iso_codes = isoCodes
@@ -194,7 +193,7 @@ impl LanguageDetectorBuilder {
             .filter_map(|it| IsoCode639_3::from_str(&it).ok())
             .collect_vec();
 
-        if selected_iso_codes.len() < 2 {
+        if selected_iso_codes.is_empty() {
             return Err(JsValue::from(MISSING_LANGUAGE_MESSAGE));
         }
 
@@ -218,7 +217,7 @@ impl LanguageDetectorBuilder {
     /// dependent on the length of the input text. The longer the input
     /// text, the larger the distance between the languages. So if you
     /// want to classify very short text phrases, do not set the minimum
-    /// relative distance too high. Otherwise you will get most results
+    /// relative distance too high. Otherwise, you will get most results
     /// returned as `undefined` which is the return value for cases
     /// where language detection is not reliably possible.
     ///

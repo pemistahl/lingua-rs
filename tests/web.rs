@@ -67,93 +67,28 @@ fn assert_detector_can_be_built_from_blacklist() {
 
 #[wasm_bindgen_test]
 fn assert_detector_cannot_be_built_from_too_long_blacklist() {
-    let languages = Box::new([
-        JsValue::from(Language::Afrikaans.to_string()),
-        JsValue::from(Language::Albanian.to_string()),
-        JsValue::from(Language::Arabic.to_string()),
-        JsValue::from(Language::Armenian.to_string()),
-        JsValue::from(Language::Azerbaijani.to_string()),
-        JsValue::from(Language::Basque.to_string()),
-        JsValue::from(Language::Belarusian.to_string()),
-        JsValue::from(Language::Bengali.to_string()),
-        JsValue::from(Language::Bokmal.to_string()),
-        JsValue::from(Language::Bosnian.to_string()),
-        JsValue::from(Language::Bulgarian.to_string()),
-        JsValue::from(Language::Catalan.to_string()),
-        JsValue::from(Language::Chinese.to_string()),
-        JsValue::from(Language::Croatian.to_string()),
-        JsValue::from(Language::Czech.to_string()),
-        JsValue::from(Language::Danish.to_string()),
-        JsValue::from(Language::Dutch.to_string()),
-        JsValue::from(Language::English.to_string()),
-        JsValue::from(Language::Esperanto.to_string()),
-        JsValue::from(Language::Estonian.to_string()),
-        JsValue::from(Language::Finnish.to_string()),
-        JsValue::from(Language::French.to_string()),
-        JsValue::from(Language::Ganda.to_string()),
-        JsValue::from(Language::Georgian.to_string()),
-        JsValue::from(Language::Greek.to_string()),
-        JsValue::from(Language::Gujarati.to_string()),
-        JsValue::from(Language::Hebrew.to_string()),
-        JsValue::from(Language::Hindi.to_string()),
-        JsValue::from(Language::Hungarian.to_string()),
-        JsValue::from(Language::Icelandic.to_string()),
-        JsValue::from(Language::Indonesian.to_string()),
-        JsValue::from(Language::Irish.to_string()),
-        JsValue::from(Language::Italian.to_string()),
-        JsValue::from(Language::Japanese.to_string()),
-        JsValue::from(Language::Kazakh.to_string()),
-        JsValue::from(Language::Korean.to_string()),
-        JsValue::from(Language::Latin.to_string()),
-        JsValue::from(Language::Latvian.to_string()),
-        JsValue::from(Language::Lithuanian.to_string()),
-        JsValue::from(Language::Macedonian.to_string()),
-        JsValue::from(Language::Malay.to_string()),
-        JsValue::from(Language::Maori.to_string()),
-        JsValue::from(Language::Marathi.to_string()),
-        JsValue::from(Language::Mongolian.to_string()),
-        JsValue::from(Language::Nynorsk.to_string()),
-        JsValue::from(Language::Persian.to_string()),
-        JsValue::from(Language::Polish.to_string()),
-        JsValue::from(Language::Portuguese.to_string()),
-        JsValue::from(Language::Punjabi.to_string()),
-        JsValue::from(Language::Romanian.to_string()),
-        JsValue::from(Language::Russian.to_string()),
-        JsValue::from(Language::Serbian.to_string()),
-        JsValue::from(Language::Shona.to_string()),
-        JsValue::from(Language::Slovak.to_string()),
-        JsValue::from(Language::Slovene.to_string()),
-        JsValue::from(Language::Somali.to_string()),
-        JsValue::from(Language::Sotho.to_string()),
-        JsValue::from(Language::Spanish.to_string()),
-        JsValue::from(Language::Swahili.to_string()),
-        JsValue::from(Language::Swedish.to_string()),
-        JsValue::from(Language::Tagalog.to_string()),
-        JsValue::from(Language::Tamil.to_string()),
-        JsValue::from(Language::Telugu.to_string()),
-        JsValue::from(Language::Thai.to_string()),
-        JsValue::from(Language::Tsonga.to_string()),
-        JsValue::from(Language::Tswana.to_string()),
-        JsValue::from(Language::Turkish.to_string()),
-        JsValue::from(Language::Ukrainian.to_string()),
-        JsValue::from(Language::Urdu.to_string()),
-        JsValue::from(Language::Vietnamese.to_string()),
-        JsValue::from(Language::Welsh.to_string()),
-        JsValue::from(Language::Xhosa.to_string()),
-        JsValue::from(Language::Yoruba.to_string()),
-        JsValue::from(Language::Zulu.to_string()),
-    ]);
+    let languages = Language::all()
+        .into_iter()
+        .map(|language| JsValue::from(language.to_string()))
+        .collect::<Vec<_>>()
+        .into_boxed_slice();
+
     let result = WasmLanguageDetectorBuilder::fromAllLanguagesWithout(languages);
     assert_eq!(
         result.err(),
         Some(JsValue::from(
-            "LanguageDetector needs at least 2 languages to choose from"
+            "LanguageDetector needs at least 1 language to choose from"
         ))
     );
 }
 
 #[wasm_bindgen_test]
 fn assert_detector_can_be_built_from_whitelist() {
+    let result = WasmLanguageDetectorBuilder::fromLanguages(Box::new([JsValue::from(
+        Language::German.to_string(),
+    )]));
+    assert!(result.is_ok());
+
     let result = WasmLanguageDetectorBuilder::fromLanguages(Box::new([
         JsValue::from(Language::German.to_string()),
         JsValue::from(Language::English.to_string()),
@@ -163,19 +98,22 @@ fn assert_detector_can_be_built_from_whitelist() {
 
 #[wasm_bindgen_test]
 fn assert_detector_cannot_be_built_from_too_short_whitelist() {
-    let result = WasmLanguageDetectorBuilder::fromLanguages(Box::new([JsValue::from(
-        Language::German.to_string(),
-    )]));
+    let result = WasmLanguageDetectorBuilder::fromLanguages(Box::new([]));
     assert_eq!(
         result.err(),
         Some(JsValue::from(
-            "LanguageDetector needs at least 2 languages to choose from"
+            "LanguageDetector needs at least 1 language to choose from"
         ))
     );
 }
 
 #[wasm_bindgen_test]
 fn assert_detector_can_be_built_from_iso_639_1_codes() {
+    let result = WasmLanguageDetectorBuilder::fromISOCodes6391(Box::new([JsValue::from(
+        IsoCode639_1::DE.to_string(),
+    )]));
+    assert!(result.is_ok());
+
     let result = WasmLanguageDetectorBuilder::fromISOCodes6391(Box::new([
         JsValue::from(IsoCode639_1::DE.to_string()),
         JsValue::from(IsoCode639_1::ZU.to_string()),
@@ -185,19 +123,22 @@ fn assert_detector_can_be_built_from_iso_639_1_codes() {
 
 #[wasm_bindgen_test]
 fn assert_detector_cannot_be_built_from_too_few_iso_639_1_codes() {
-    let result = WasmLanguageDetectorBuilder::fromISOCodes6391(Box::new([JsValue::from(
-        IsoCode639_1::DE.to_string(),
-    )]));
+    let result = WasmLanguageDetectorBuilder::fromISOCodes6391(Box::new([]));
     assert_eq!(
         result.err(),
         Some(JsValue::from(
-            "LanguageDetector needs at least 2 languages to choose from"
+            "LanguageDetector needs at least 1 language to choose from"
         ))
     );
 }
 
 #[wasm_bindgen_test]
 fn assert_detector_can_be_built_from_iso_639_3_codes() {
+    let result = WasmLanguageDetectorBuilder::fromISOCodes6393(Box::new([JsValue::from(
+        IsoCode639_3::DEU.to_string(),
+    )]));
+    assert!(result.is_ok());
+
     let result = WasmLanguageDetectorBuilder::fromISOCodes6393(Box::new([
         JsValue::from(IsoCode639_3::DEU.to_string()),
         JsValue::from(IsoCode639_3::ZUL.to_string()),
@@ -207,13 +148,11 @@ fn assert_detector_can_be_built_from_iso_639_3_codes() {
 
 #[wasm_bindgen_test]
 fn assert_detector_cannot_be_built_from_too_few_iso_639_3_codes() {
-    let result = WasmLanguageDetectorBuilder::fromISOCodes6393(Box::new([JsValue::from(
-        IsoCode639_3::DEU.to_string(),
-    )]));
+    let result = WasmLanguageDetectorBuilder::fromISOCodes6393(Box::new([]));
     assert_eq!(
         result.err(),
         Some(JsValue::from(
-            "LanguageDetector needs at least 2 languages to choose from"
+            "LanguageDetector needs at least 1 language to choose from"
         ))
     );
 }

@@ -170,14 +170,11 @@ use lingua_yoruba_language_model::YORUBA_MODELS_DIRECTORY;
 #[cfg(feature = "zulu")]
 use lingua_zulu_language_model::ZULU_MODELS_DIRECTORY;
 
-use crate::ngram::Ngram;
 use crate::Language;
 
-pub(crate) fn load_json(language: Language, ngram_length: usize) -> std::io::Result<String> {
-    let ngram_name = Ngram::find_ngram_name_by_length(ngram_length);
-    let file_path = format!("{ngram_name}s.json.br");
+pub(crate) fn load_json(language: Language, file_name: &str) -> std::io::Result<String> {
     let directory = get_language_models_directory(language);
-    let compressed_file = directory.get_file(file_path).ok_or(ErrorKind::NotFound)?;
+    let compressed_file = directory.get_file(file_name).ok_or(ErrorKind::NotFound)?;
     let compressed_file_reader = Cursor::new(compressed_file.contents());
     let mut uncompressed_file = Decompressor::new(compressed_file_reader, 4096);
     let mut uncompressed_file_content = String::new();
@@ -505,7 +502,7 @@ mod tests {
 
     #[test]
     fn test_load_json() {
-        let result = load_json(Language::English, 1);
+        let result = load_json(Language::English, "unigrams.json.br");
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), minify(EXPECTED_UNIGRAM_MODEL));
     }

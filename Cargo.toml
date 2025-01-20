@@ -60,7 +60,7 @@ itertools = "0.14.0"
 maplit = "1.0.2"
 regex = "1.11.1"
 serde = { version = "1.0.217", features = ["derive"] }
-serde_json = "1.0.135"
+serde_json = "1.0.137"
 strum = "0.26.3"
 strum_macros = "0.26.4"
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.1.0", optional = true }

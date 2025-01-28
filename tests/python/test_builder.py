@@ -24,12 +24,11 @@ def test_build_from_blacklist_does_not_panic():
 
 
 def test_cannot_build_from_blacklist():
-    languages = Language.all().difference({Language.GERMAN})
     with pytest.raises(ValueError) as exception_info:
-        LanguageDetectorBuilder.from_all_languages_without(*languages)
+        LanguageDetectorBuilder.from_all_languages_without(*Language.all())
     assert (
         exception_info.value.args[0]
-        == "LanguageDetector needs at least 2 languages to choose from"
+        == "LanguageDetector needs at least 1 language to choose from"
     )
 
 
@@ -40,10 +39,10 @@ def test_build_from_whitelist_does_not_panic():
 
 def test_cannot_build_from_whitelist():
     with pytest.raises(ValueError) as exception_info:
-        LanguageDetectorBuilder.from_languages(Language.GERMAN)
+        LanguageDetectorBuilder.from_languages()
     assert (
         exception_info.value.args[0]
-        == "LanguageDetector needs at least 2 languages to choose from"
+        == "LanguageDetector needs at least 1 language to choose from"
     )
 
 
@@ -55,10 +54,10 @@ def test_build_from_iso_639_1_codes_does_not_panic():
 
 def test_cannot_build_from_iso_639_1_codes():
     with pytest.raises(ValueError) as exception_info:
-        LanguageDetectorBuilder.from_iso_codes_639_1(IsoCode639_1.DE)
+        LanguageDetectorBuilder.from_iso_codes_639_1()
     assert (
         exception_info.value.args[0]
-        == "LanguageDetector needs at least 2 languages to choose from"
+        == "LanguageDetector needs at least 1 language to choose from"
     )
 
 
@@ -70,10 +69,10 @@ def test_build_from_iso_639_3_codes_does_not_panic():
 
 def test_cannot_build_from_iso_639_3_codes():
     with pytest.raises(ValueError) as exception_info:
-        LanguageDetectorBuilder.from_iso_codes_639_3(IsoCode639_3.DEU)
+        LanguageDetectorBuilder.from_iso_codes_639_3()
     assert (
         exception_info.value.args[0]
-        == "LanguageDetector needs at least 2 languages to choose from"
+        == "LanguageDetector needs at least 1 language to choose from"
     )
 
 

@@ -18,6 +18,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::iter::zip;
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use std::time::Instant;
 
 use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
@@ -139,6 +140,7 @@ impl Category {
 
 struct DetectorStatistics {
     detector_name: String,
+    is_single_language_detector: bool,
     language: Language,
     single_word_statistic: Statistic,
     word_pair_statistic: Statistic,
@@ -150,9 +152,10 @@ struct DetectorStatistics {
 }
 
 impl DetectorStatistics {
-    fn new(detector_name: &str, language: Language) -> Self {
+    fn new(detector_name: &str, is_single_language_detector: bool, language: Language) -> Self {
         Self {
             detector_name: detector_name.to_string(),
+            is_single_language_detector,
             language,
             single_word_statistic: Statistic::new(),
             word_pair_statistic: Statistic::new(),
@@ -190,17 +193,25 @@ impl DetectorStatistics {
     }
 
     fn create_report_data(&mut self) -> Option<String> {
+        let language_name = self.language.to_string().to_lowercase();
+        let language =
+            if self.is_single_language_detector && !self.detector_name.contains(&language_name) {
+                None
+            } else {
+                Some(self.language)
+            };
+
         let (single_word_accuracy, single_word_report) = self
             .single_word_statistic
-            .create_report_data(&self.language, "single words");
+            .create_report_data(&language, "single words");
 
         let (word_pair_accuracy, word_pair_report) = self
             .word_pair_statistic
-            .create_report_data(&self.language, "word pairs");
+            .create_report_data(&language, "word pairs");
 
         let (sentence_accuracy, sentence_report) = self
             .sentence_statistic
-            .create_report_data(&self.language, "sentences");
+            .create_report_data(&language, "sentences");
 
         self.single_word_accuracy = single_word_accuracy;
         self.word_pair_accuracy = word_pair_accuracy;
@@ -290,11 +301,8 @@ impl Statistic {
             .collect();
     }
 
-    fn create_report_data(&self, language: &Language, description: &str) -> (f64, String) {
-        let accuracy = *self
-            .language_accuracies
-            .get(&Some(*language))
-            .unwrap_or(&0.0);
+    fn create_report_data(&self, language: &Option<Language>, description: &str) -> (f64, String) {
+        let accuracy = *self.language_accuracies.get(language).unwrap_or(&0.0);
 
         let average_length =
             ((self.entity_length_count as f64) / (self.entity_count as f64)).round();
@@ -316,10 +324,10 @@ impl Statistic {
         )
     }
 
-    fn format_language_accuracies(&self, language: &Language) -> String {
+    fn format_language_accuracies(&self, language: &Option<Language>) -> String {
         self.language_accuracies
             .iter()
-            .filter(|(lang, _)| lang.as_ref() != Some(language))
+            .filter(|(lang, _)| lang.as_ref() != language.as_ref())
             .sorted_by(
                 |(first_lang, &first_accuracy), (second_lang, &second_accuracy)| {
                     let sorted_by_accuracy = second_accuracy.partial_cmp(&first_accuracy).unwrap();
@@ -341,6 +349,8 @@ impl Statistic {
 
 trait LanguageDetection {
     fn detector_name(&self) -> String;
+
+    fn is_single_language_detector(&self) -> bool;
 
     fn languages(&self) -> &Vec<Language>;
 
@@ -402,7 +412,11 @@ trait LanguageDetection {
                 language
             );
 
-            let mut statistics = DetectorStatistics::new(&self.detector_name(), *language);
+            let mut statistics = DetectorStatistics::new(
+                &self.detector_name(),
+                self.is_single_language_detector(),
+                *language,
+            );
 
             let single_words = all_single_words.get(language).unwrap();
             let detected_languages = self.detect(single_words);
@@ -467,6 +481,10 @@ impl LanguageDetection for CLD2Detector {
         "cld2".to_string()
     }
 
+    fn is_single_language_detector(&self) -> bool {
+        false
+    }
+
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -501,6 +519,10 @@ impl LanguageDetection for LinguaLowAccuracyDetector {
         "lingua-low-accuracy".to_string()
     }
 
+    fn is_single_language_detector(&self) -> bool {
+        false
+    }
+
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -529,6 +551,47 @@ impl LinguaHighAccuracyDetector {
 impl LanguageDetection for LinguaHighAccuracyDetector {
     fn detector_name(&self) -> String {
         "lingua-high-accuracy".to_string()
+    }
+
+    fn is_single_language_detector(&self) -> bool {
+        false
+    }
+
+    fn languages(&self) -> &Vec<Language> {
+        &self.languages
+    }
+
+    fn detect(&self, texts: &[&str]) -> Vec<Option<Language>> {
+        self.detector.detect_languages_in_parallel_of(texts)
+    }
+}
+
+struct LinguaSingleLanguageDetector {
+    language: Language,
+    languages: Vec<Language>,
+    detector: LanguageDetector,
+}
+
+impl LinguaSingleLanguageDetector {
+    fn new(language: Language, languages: &[Language]) -> Self {
+        Self {
+            language,
+            languages: languages.to_vec(),
+            detector: LanguageDetectorBuilder::from_languages(&[language]).build(),
+        }
+    }
+}
+
+impl LanguageDetection for LinguaSingleLanguageDetector {
+    fn detector_name(&self) -> String {
+        format!(
+            "lingua-{}-detector",
+            self.language.to_string().to_lowercase()
+        )
+    }
+
+    fn is_single_language_detector(&self) -> bool {
+        true
     }
 
     fn languages(&self) -> &Vec<Language> {
@@ -619,6 +682,10 @@ impl LanguageDetection for WhatlangDetector {
         "whatlang".to_string()
     }
 
+    fn is_single_language_detector(&self) -> bool {
+        false
+    }
+
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -669,6 +736,10 @@ impl LanguageDetection for WhichlangDetector {
         "whichlang".to_string()
     }
 
+    fn is_single_language_detector(&self) -> bool {
+        false
+    }
+
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -689,6 +760,14 @@ fn create_detector_instance(
         "cld2" => Some(Box::new(CLD2Detector::new(languages))),
         "lingua-high-accuracy" => Some(Box::new(LinguaHighAccuracyDetector::new(languages))),
         "lingua-low-accuracy" => Some(Box::new(LinguaLowAccuracyDetector::new(languages))),
+        name if name.starts_with("lingua-") && name.ends_with("-detector") => {
+            let name_parts = name.split('-').collect_vec();
+            let language_name = name_parts.get(1).unwrap();
+            let language = Language::from_str(language_name).unwrap();
+            Some(Box::new(LinguaSingleLanguageDetector::new(
+                language, languages,
+            )))
+        }
         "whatlang" => Some(Box::new(WhatlangDetector::new(languages))),
         "whichlang" => Some(Box::new(WhichlangDetector::new(languages))),
         _ => None,
@@ -778,13 +857,19 @@ fn main() {
     let language_names = languages.iter().map(|it| it.to_string()).collect_vec();
     let mut all_statistics = HashMap::new();
 
-    let detector_names = [
-        "cld2",
-        "lingua-high-accuracy",
-        "lingua-low-accuracy",
-        "whatlang",
-        "whichlang",
+    let mut detector_names = vec![
+        "cld2".to_string(),
+        "lingua-high-accuracy".to_string(),
+        "lingua-low-accuracy".to_string(),
+        "whatlang".to_string(),
+        "whichlang".to_string(),
     ];
+
+    for language_name in language_names.iter() {
+        detector_names.push(format!("lingua-{}-detector", language_name.to_lowercase()))
+    }
+
+    detector_names.sort();
 
     for detector_name in detector_names.iter() {
         if let Some(detector) = create_detector_instance(detector_name, &languages) {
@@ -817,19 +902,18 @@ fn main() {
         };
 
         for detector_name in detector_names.iter() {
+            let statistics = all_statistics.get(detector_name).unwrap();
             let mut lazy_dataframe = dataframe.clone().lazy();
-            let contains_detector = dataframe_contains_detector(&dataframe, detector_name);
-            if !contains_detector {
+
+            if !dataframe_contains_detector(&dataframe, detector_name) {
                 lazy_dataframe = update_dataframe_with_new_detector(lazy_dataframe, detector_name);
             }
 
-            let statistics = all_statistics.get(detector_name).unwrap();
             for stat in statistics {
                 let df = stat.to_dataframe(category.clone());
                 let language_name = get_dataframe_language_name(&df);
-                let contains_language = dataframe_contains_language(&dataframe, &language_name);
 
-                lazy_dataframe = if contains_language {
+                lazy_dataframe = if dataframe_contains_language(&dataframe, &language_name) {
                     update_dataframe_with_new_probability(lazy_dataframe, df)
                 } else {
                     update_dataframe_with_new_language(lazy_dataframe, df)

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
+use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fmt::{Debug, Display, Formatter, Result};
 use std::str::FromStr;
-
-use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, EnumString};
 
@@ -42,6 +41,7 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 )]
 #[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
+#[cfg_attr(feature = "accuracy-reports", derive(clap::ValueEnum))]
 #[cfg_attr(
     feature = "python",
     pyo3::prelude::pyclass(
@@ -299,7 +299,7 @@ impl Language {
         Language::iter()
             .filter(|it| {
                 if cfg!(feature = "latin") {
-                    it != &Language::from_str("Latin").unwrap()
+                    it != &<Language as FromStr>::from_str("Latin").unwrap()
                 } else {
                     true
                 }

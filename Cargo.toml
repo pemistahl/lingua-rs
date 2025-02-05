@@ -142,6 +142,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.2.0", o
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 ahash = "0.8.11"
+clap = { version = "4.5.28", optional = true, features = ["derive"] }
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.5", optional = true }
 polars = { version = "0.46.0", optional = true, features = ["csv", "lazy"] }
@@ -184,7 +185,7 @@ default = [
     "tsonga", "tswana", "turkish", "ukrainian", "urdu", "vietnamese",
     "welsh", "xhosa", "yoruba", "zulu"
 ]
-accuracy-reports = ["cld2", "indoc", "polars", "titlecase", "whatlang", "whichlang"]
+accuracy-reports = ["clap", "cld2", "indoc", "polars", "titlecase", "whatlang", "whichlang"]
 benchmark = ["cld2", "whatlang", "whichlang"]
 python = ["pyo3", "serde-pickle"]
 afrikaans = ["lingua-afrikaans-language-model"]

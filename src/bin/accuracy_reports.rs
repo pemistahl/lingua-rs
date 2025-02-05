@@ -13,6 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+use clap::Parser;
+use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
+use fraction::Zero;
+use include_dir::Dir;
+use indoc::formatdoc;
+use itertools::Itertools;
+use polars::prelude::*;
 use std::cmp::PartialEq;
 use std::collections::HashMap;
 use std::fs;
@@ -20,13 +27,6 @@ use std::iter::zip;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::time::Instant;
-
-use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
-use fraction::Zero;
-use include_dir::Dir;
-use indoc::formatdoc;
-use itertools::Itertools;
-use polars::prelude::*;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use titlecase::titlecase;
@@ -350,11 +350,13 @@ impl Statistic {
 trait LanguageDetection {
     fn detector_name(&self) -> String;
 
-    fn is_single_language_detector(&self) -> bool;
-
     fn languages(&self) -> &Vec<Language>;
 
     fn detect(&self, texts: &[&str]) -> Vec<Option<Language>>;
+
+    fn is_single_language_detector(&self) -> bool {
+        false
+    }
 
     fn reports_directory(&self) -> PathBuf {
         Path::new("accuracy-reports").join(self.detector_name())
@@ -481,10 +483,6 @@ impl LanguageDetection for CLD2Detector {
         "cld2".to_string()
     }
 
-    fn is_single_language_detector(&self) -> bool {
-        false
-    }
-
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -519,10 +517,6 @@ impl LanguageDetection for LinguaLowAccuracyDetector {
         "lingua-low-accuracy".to_string()
     }
 
-    fn is_single_language_detector(&self) -> bool {
-        false
-    }
-
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -551,10 +545,6 @@ impl LinguaHighAccuracyDetector {
 impl LanguageDetection for LinguaHighAccuracyDetector {
     fn detector_name(&self) -> String {
         "lingua-high-accuracy".to_string()
-    }
-
-    fn is_single_language_detector(&self) -> bool {
-        false
     }
 
     fn languages(&self) -> &Vec<Language> {
@@ -590,16 +580,16 @@ impl LanguageDetection for LinguaSingleLanguageDetector {
         )
     }
 
-    fn is_single_language_detector(&self) -> bool {
-        true
-    }
-
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
 
     fn detect(&self, texts: &[&str]) -> Vec<Option<Language>> {
         self.detector.detect_languages_in_parallel_of(texts)
+    }
+
+    fn is_single_language_detector(&self) -> bool {
+        true
     }
 }
 
@@ -682,10 +672,6 @@ impl LanguageDetection for WhatlangDetector {
         "whatlang".to_string()
     }
 
-    fn is_single_language_detector(&self) -> bool {
-        false
-    }
-
     fn languages(&self) -> &Vec<Language> {
         &self.languages
     }
@@ -734,10 +720,6 @@ impl WhichlangDetector {
 impl LanguageDetection for WhichlangDetector {
     fn detector_name(&self) -> String {
         "whichlang".to_string()
-    }
-
-    fn is_single_language_detector(&self) -> bool {
-        false
     }
 
     fn languages(&self) -> &Vec<Language> {
@@ -851,28 +833,41 @@ fn update_dataframe_with_new_probability(main_df: LazyFrame, df: DataFrame) -> L
     )
 }
 
-fn main() {
-    let total_start = Instant::now();
-    let languages = Language::iter().sorted().collect_vec();
-    let language_names = languages.iter().map(|it| it.to_string()).collect_vec();
-    let mut all_statistics = HashMap::new();
-
-    let mut detector_names = vec![
+fn default_detectors() -> Vec<String> {
+    let mut detectors = vec![
         "cld2".to_string(),
         "lingua-high-accuracy".to_string(),
         "lingua-low-accuracy".to_string(),
         "whatlang".to_string(),
         "whichlang".to_string(),
     ];
-
-    for language_name in language_names.iter() {
-        detector_names.push(format!("lingua-{}-detector", language_name.to_lowercase()))
+    for language in Language::iter() {
+        detectors.push(format!(
+            "lingua-{}-detector",
+            language.to_string().to_lowercase()
+        ));
     }
+    detectors.sort();
+    detectors
+}
 
-    detector_names.sort();
+#[derive(Parser)]
+struct Cli {
+    #[arg(short, long, num_args = 1.., default_values_t = default_detectors())]
+    detectors: Vec<String>,
 
-    for detector_name in detector_names.iter() {
-        if let Some(detector) = create_detector_instance(detector_name, &languages) {
+    #[arg(value_enum, short, long, num_args = 1.., default_values_t = Language::all())]
+    languages: Vec<Language>,
+}
+
+fn main() {
+    let total_start = Instant::now();
+    let cli = Cli::parse();
+    let language_names = cli.languages.iter().map(|it| it.to_string()).collect_vec();
+    let mut all_statistics = HashMap::new();
+
+    for detector_name in cli.detectors.iter() {
+        if let Some(detector) = create_detector_instance(detector_name, &cli.languages) {
             let start = Instant::now();
             let mut statistics = detector.collect_statistics();
             detector.write_reports(&mut statistics);
@@ -901,7 +896,7 @@ fn main() {
             Err(_) => df!("language" => &language_names).unwrap(),
         };
 
-        for detector_name in detector_names.iter() {
+        for detector_name in cli.detectors.iter() {
             let statistics = all_statistics.get(detector_name).unwrap();
             let mut lazy_dataframe = dataframe.clone().lazy();
 

@@ -70,17 +70,23 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build library in debug mode
+      - name: Build library
         run: cargo build --locked
 
-      - name: Build binary in debug mode
+      - name: Build binary
         run: cargo build --locked --bin accuracy_reports --features accuracy-reports
 
-      - name: Test in debug mode
+      - name: Test library
         run: cargo test
 
-      - name: Check Clippy lints
+      - name: Test binary
+        run: cargo test --bin accuracy_reports --features accuracy-reports
+
+      - name: Check Clippy lints in library
         run: cargo clippy -- -Dwarnings
+
+      - name: Check Clippy lints in binary
+        run: cargo clippy --bin accuracy_reports --features accuracy-reports -- -Dwarnings
 
   wasm-build:
     name: WASM Build

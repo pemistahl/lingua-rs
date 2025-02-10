@@ -813,7 +813,11 @@ fn dataframe_contains_detector(df: &DataFrame, detector_name: &str) -> bool {
 }
 
 fn update_dataframe_with_new_language(main_df: LazyFrame, df: DataFrame) -> LazyFrame {
-    concat([main_df, df.lazy()], UnionArgs::default()).unwrap()
+    let union_args = UnionArgs {
+        diagonal: true,
+        ..Default::default()
+    };
+    concat([main_df, df.lazy()], union_args).unwrap()
 }
 
 fn update_dataframe_with_new_detector(main_df: LazyFrame, detector_name: &str) -> LazyFrame {
@@ -831,6 +835,22 @@ fn update_dataframe_with_new_probability(main_df: LazyFrame, df: DataFrame) -> L
             .otherwise(col(&detector_name))
             .alias(detector_name),
     )
+}
+
+fn sort_dataframe(df: DataFrame) -> DataFrame {
+    let sorted_columns = &mut df.get_column_names_str()[1..]
+        .iter()
+        .sorted()
+        .map(|&it| col(it))
+        .collect_vec();
+
+    sorted_columns.insert(0, col("language"));
+
+    df.lazy()
+        .select(sorted_columns)
+        .sort(["language"], Default::default())
+        .collect()
+        .unwrap()
 }
 
 fn default_detectors() -> Vec<String> {
@@ -914,7 +934,7 @@ fn main() {
                     update_dataframe_with_new_language(lazy_dataframe, df)
                 };
             }
-            dataframe = lazy_dataframe.collect().unwrap();
+            dataframe = sort_dataframe(lazy_dataframe.collect().unwrap());
         }
 
         let mut aggregated_report_file =
@@ -1068,6 +1088,21 @@ mod tests {
         .unwrap()
     }
 
+    #[fixture]
+    fn dataframe_with_unsorted_columns() -> DataFrame {
+        df!(
+            "language" => [
+                Language::Yoruba.to_string(),
+                Language::German.to_string(),
+                Language::English.to_string(),
+            ],
+            "cld2" => [92.34567, 55.23456, 53.12345],
+            "whatlang" => [35.62811, 27.94481, 43.18733],
+            "lingua-high-accuracy" => [12.16833, 66.49882, 73.56271],
+        )
+        .unwrap()
+    }
+
     // ##############################
     // TESTS
     // ##############################
@@ -1139,5 +1174,23 @@ mod tests {
             )
             .unwrap()
         );
+    }
+
+    #[rstest]
+    fn test_sort_dataframe_columns(dataframe_with_unsorted_columns: DataFrame) {
+        assert_eq!(
+            sort_dataframe(dataframe_with_unsorted_columns),
+            df!(
+                "language" => [
+                    Language::English.to_string(),
+                    Language::German.to_string(),
+                    Language::Yoruba.to_string()
+                ],
+                "cld2" => [53.12345, 55.23456, 92.34567],
+                "lingua-high-accuracy" => [73.56271, 66.49882, 12.16833],
+                "whatlang" => [43.18733, 27.94481, 35.62811],
+            )
+            .unwrap()
+        )
     }
 }

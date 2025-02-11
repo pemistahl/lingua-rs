@@ -555,7 +555,7 @@ impl LanguageDetector {
                     if let Some(current_lang) = current_language {
                         let result = DetectionResult {
                             start_index: current_start_index,
-                            end_index: current_end_index,
+                            end_index: text_str.len(),
                             word_count,
                             language: current_lang,
                         };

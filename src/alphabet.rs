@@ -23,7 +23,7 @@ use strum_macros::EnumIter;
 
 use crate::language::Language;
 
-#[derive(EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[derive(Debug, EnumIter, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub(crate) enum Alphabet {
     Arabic,
     Armenian,
@@ -155,3 +155,31 @@ static LATIN: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Lat
 static TAMIL: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Tamil"));
 static TELUGU: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Telugu"));
 static THAI: LazyLock<CharSet> = LazyLock::new(|| CharSet::from_char_class("Thai"));
+
+#[cfg(test)]
+mod tests {
+    use crate::alphabet::Alphabet;
+    use crate::language::Language;
+
+    #[test]
+    fn test_alphabets_supporting_single_language() {
+        assert_eq!(
+            Alphabet::all_supporting_single_language(),
+            hashmap!(
+                Alphabet::Armenian => Language::Armenian,
+                Alphabet::Bengali => Language::Bengali,
+                Alphabet::Georgian => Language::Georgian,
+                Alphabet::Greek => Language::Greek,
+                Alphabet::Gujarati => Language::Gujarati,
+                Alphabet::Gurmukhi => Language::Punjabi,
+                Alphabet::Hangul => Language::Korean,
+                Alphabet::Hebrew => Language::Hebrew,
+                Alphabet::Hiragana => Language::Japanese,
+                Alphabet::Katakana => Language::Japanese,
+                Alphabet::Tamil => Language::Tamil,
+                Alphabet::Telugu => Language::Telugu,
+                Alphabet::Thai => Language::Thai
+            )
+        );
+    }
+}

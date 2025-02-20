@@ -3,14 +3,14 @@
 >>> Accuracy on average: 43.43%
 
 >> Detection of 1000 single words (average length: 8 chars)
-Accuracy: 12%
-Erroneously classified as Unknown: 82.1%, Portuguese: 3.2%, English: 1.5%, Indonesian: 0.2%, Malay: 0.2%, Xhosa: 0.2%, Basque: 0.1%, Catalan: 0.1%, Esperanto: 0.1%, Latin: 0.1%, Nynorsk: 0.1%, Shona: 0.1%
+Accuracy: 12.00%
+Erroneously classified as Unknown: 82.10%, Portuguese: 3.20%, English: 1.50%, Indonesian: 0.20%, Malay: 0.20%, Xhosa: 0.20%, Basque: 0.10%, Catalan: 0.10%, Esperanto: 0.10%, Latin: 0.10%, Nynorsk: 0.10%, Shona: 0.10%
 
 >> Detection of 1000 word pairs (average length: 16 chars)
-Accuracy: 33.8%
-Erroneously classified as Unknown: 57.4%, English: 4.7%, Portuguese: 2.4%, Catalan: 0.3%, Latin: 0.2%, Romanian: 0.2%, Xhosa: 0.2%, Basque: 0.1%, Esperanto: 0.1%, Finnish: 0.1%, Indonesian: 0.1%, Latvian: 0.1%, Malay: 0.1%, Slovene: 0.1%, Swedish: 0.1%
+Accuracy: 33.80%
+Erroneously classified as Unknown: 57.40%, English: 4.70%, Portuguese: 2.40%, Catalan: 0.30%, Latin: 0.20%, Romanian: 0.20%, Xhosa: 0.20%, Basque: 0.10%, Esperanto: 0.10%, Finnish: 0.10%, Indonesian: 0.10%, Latvian: 0.10%, Malay: 0.10%, Slovene: 0.10%, Swedish: 0.10%
 
 >> Detection of 1000 sentences (average length: 126 chars)
-Accuracy: 84.5%
-Erroneously classified as Unknown: 13.9%, English: 1%, Esperanto: 0.2%, Catalan: 0.1%, Croatian: 0.1%, Indonesian: 0.1%, Portuguese: 0.1%
+Accuracy: 84.50%
+Erroneously classified as Unknown: 13.90%, English: 1.00%, Esperanto: 0.20%, Catalan: 0.10%, Croatian: 0.10%, Indonesian: 0.10%, Portuguese: 0.10%
 

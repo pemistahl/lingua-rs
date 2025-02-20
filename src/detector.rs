@@ -68,6 +68,7 @@ static LANGUAGES_WITH_SINGLE_UNIQUE_SCRIPT: LazyLock<HashSet<Language>> =
     LazyLock::new(Language::all_with_single_unique_script);
 
 /// This struct detects the language of given input text.
+#[derive(Debug)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct LanguageDetector {
     languages: HashSet<Language>,
@@ -1102,21 +1103,22 @@ impl LanguageDetector {
             return *total_language_counts.iter().next().unwrap().0;
         }
 
-        if total_language_counts.len() == 2
-            && cfg!(feature = "chinese")
-            && cfg!(feature = "japanese")
-            && total_language_counts.contains_key(&Some(Language::from_str("Chinese").unwrap()))
-            && total_language_counts.contains_key(&Some(Language::from_str("Japanese").unwrap()))
-        {
-            return Some(Language::from_str("Japanese").unwrap());
-        }
-
         let sorted_total_language_counts = total_language_counts
             .into_iter()
             .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
             .collect_vec();
         let (most_frequent_language, first_count) = sorted_total_language_counts[0];
-        let (_, second_count) = sorted_total_language_counts[1];
+        let (second_frequent_language, second_count) = sorted_total_language_counts[1];
+        if cfg!(feature = "chinese")
+            && cfg!(feature = "japanese")
+            && hashset!(most_frequent_language, second_frequent_language)
+                == hashset!(
+                    Some(Language::from_str("Japanese").unwrap()),
+                    Some(Language::from_str("Chinese").unwrap())
+                )
+        {
+            return Some(Language::from_str("Japanese").unwrap());
+        }
 
         if first_count == second_count {
             return None;
@@ -2388,6 +2390,9 @@ mod tests {
         case("துன்பங்களை", Some(Tamil)),
         case("కృష్ణదేవరాయలు", Some(Telugu)),
         case("ในทางหลวงหมายเลข", Some(Thai)),
+
+        // words with both chinese and japanese characters
+        case("人参はβ−カロテン含有量が高く栄養豊富", Some(Japanese)),
     )]
     fn assert_language_detection_with_rules_works_correctly(
         detector_for_all_languages: LanguageDetector,

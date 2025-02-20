@@ -2395,7 +2395,7 @@ mod tests {
         expected_language: Option<Language>,
     ) {
         let detected_language = detector_for_all_languages.detect_language_with_rules(
-            &vec![word.to_string()],
+            &split_text_into_words(word),
             &detector_for_all_languages.languages,
         );
         assert_eq!(

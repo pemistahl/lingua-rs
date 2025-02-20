@@ -1,16 +1,16 @@
 ##### Zulu #####
 
->>> Accuracy on average: 80.8%
+>>> Accuracy on average: 80.80%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 62%
-Erroneously classified as Xhosa: 18%, Tsonga: 2.9%, Tswana: 1.9%, English: 1.8%, Swahili: 1.8%, Sotho: 1.4%, Latin: 1.3%, Ganda: 1.1%, Shona: 1%, Tagalog: 0.6%, Welsh: 0.6%, Afrikaans: 0.5%, Somali: 0.5%, Italian: 0.4%, Malay: 0.4%, Yoruba: 0.4%, Azerbaijani: 0.3%, Estonian: 0.3%, Indonesian: 0.3%, Nynorsk: 0.3%, Spanish: 0.3%, Basque: 0.2%, Catalan: 0.2%, Danish: 0.2%, Esperanto: 0.2%, Finnish: 0.2%, French: 0.2%, Lithuanian: 0.2%, Turkish: 0.2%, Albanian: 0.1%, Latvian: 0.1%, Portuguese: 0.1%
+Accuracy: 62.00%
+Erroneously classified as Xhosa: 18.00%, Tsonga: 2.90%, Tswana: 1.90%, English: 1.80%, Swahili: 1.80%, Sotho: 1.40%, Latin: 1.30%, Ganda: 1.10%, Shona: 1.00%, Tagalog: 0.60%, Welsh: 0.60%, Afrikaans: 0.50%, Somali: 0.50%, Italian: 0.40%, Malay: 0.40%, Yoruba: 0.40%, Azerbaijani: 0.30%, Estonian: 0.30%, Indonesian: 0.30%, Nynorsk: 0.30%, Spanish: 0.30%, Basque: 0.20%, Catalan: 0.20%, Danish: 0.20%, Esperanto: 0.20%, Finnish: 0.20%, French: 0.20%, Lithuanian: 0.20%, Turkish: 0.20%, Albanian: 0.10%, Latvian: 0.10%, Portuguese: 0.10%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
-Accuracy: 83.1%
-Erroneously classified as Xhosa: 12%, English: 0.9%, Swahili: 0.7%, Latin: 0.5%, Afrikaans: 0.4%, Sotho: 0.4%, Tswana: 0.4%, Shona: 0.2%, Tagalog: 0.2%, Tsonga: 0.2%, Yoruba: 0.2%, Dutch: 0.1%, Italian: 0.1%, Portuguese: 0.1%, Romanian: 0.1%, Somali: 0.1%, Swedish: 0.1%, Turkish: 0.1%, Welsh: 0.1%
+Accuracy: 83.10%
+Erroneously classified as Xhosa: 12.00%, English: 0.90%, Swahili: 0.70%, Latin: 0.50%, Afrikaans: 0.40%, Sotho: 0.40%, Tswana: 0.40%, Shona: 0.20%, Tagalog: 0.20%, Tsonga: 0.20%, Yoruba: 0.20%, Dutch: 0.10%, Italian: 0.10%, Portuguese: 0.10%, Romanian: 0.10%, Somali: 0.10%, Swedish: 0.10%, Turkish: 0.10%, Welsh: 0.10%
 
 >> Detection of 1000 sentences (average length: 115 chars)
-Accuracy: 97.3%
-Erroneously classified as Xhosa: 2.7%
+Accuracy: 97.30%
+Erroneously classified as Xhosa: 2.70%
 

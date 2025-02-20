@@ -1,16 +1,16 @@
 ##### Dutch #####
 
->>> Accuracy on average: 73.8%
+>>> Accuracy on average: 73.80%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 53.2%
-Erroneously classified as Italian: 11.4%, German: 10.7%, English: 5.8%, Turkish: 5.8%, Portuguese: 4.5%, Spanish: 4.2%, Swedish: 2.8%, French: 1.5%, Vietnamese: 0.1%
+Accuracy: 53.20%
+Erroneously classified as Italian: 11.40%, German: 10.70%, English: 5.80%, Turkish: 5.80%, Portuguese: 4.50%, Spanish: 4.20%, Swedish: 2.80%, French: 1.50%, Vietnamese: 0.10%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
-Accuracy: 70.2%
-Erroneously classified as German: 9.9%, Italian: 5.8%, English: 5.5%, Spanish: 2.4%, Turkish: 2.3%, French: 2%, Portuguese: 1.3%, Swedish: 0.6%
+Accuracy: 70.20%
+Erroneously classified as German: 9.90%, Italian: 5.80%, English: 5.50%, Spanish: 2.40%, Turkish: 2.30%, French: 2.00%, Portuguese: 1.30%, Swedish: 0.60%
 
 >> Detection of 1000 sentences (average length: 107 chars)
-Accuracy: 98%
-Erroneously classified as English: 1.1%, German: 0.4%, Swedish: 0.4%, Turkish: 0.1%
+Accuracy: 98.00%
+Erroneously classified as English: 1.10%, German: 0.40%, Swedish: 0.40%, Turkish: 0.10%
 

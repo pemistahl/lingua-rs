@@ -3,14 +3,14 @@
 >>> Accuracy on average: 92.33%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 83%
-Erroneously classified as Italian: 4.3%, Spanish: 2.5%, Dutch: 2.3%, Swedish: 1.8%, German: 1.6%, Portuguese: 1.5%, English: 1.4%, Vietnamese: 1.2%, French: 0.4%
+Accuracy: 83.00%
+Erroneously classified as Italian: 4.30%, Spanish: 2.50%, Dutch: 2.30%, Swedish: 1.80%, German: 1.60%, Portuguese: 1.50%, English: 1.40%, Vietnamese: 1.20%, French: 0.40%
 
 >> Detection of 1000 word pairs (average length: 17 chars)
-Accuracy: 94.1%
-Erroneously classified as Italian: 1.8%, German: 0.8%, Dutch: 0.7%, Swedish: 0.7%, Spanish: 0.6%, Portuguese: 0.4%, Vietnamese: 0.4%, English: 0.3%, French: 0.2%
+Accuracy: 94.10%
+Erroneously classified as Italian: 1.80%, German: 0.80%, Dutch: 0.70%, Swedish: 0.70%, Spanish: 0.60%, Portuguese: 0.40%, Vietnamese: 0.40%, English: 0.30%, French: 0.20%
 
 >> Detection of 1000 sentences (average length: 119 chars)
-Accuracy: 99.9%
-Erroneously classified as Swedish: 0.1%
+Accuracy: 99.90%
+Erroneously classified as Swedish: 0.10%
 

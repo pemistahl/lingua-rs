@@ -1,16 +1,16 @@
 ##### Bosnian #####
 
->>> Accuracy on average: 18.6%
+>>> Accuracy on average: 18.60%
 
 >> Detection of 1000 single words (average length: 8 chars)
-Accuracy: 4.1%
-Erroneously classified as Unknown: 61.5%, Croatian: 27.1%, Serbian: 5.4%, English: 0.5%, Czech: 0.4%, Danish: 0.3%, Slovak: 0.2%, Indonesian: 0.1%, Maori: 0.1%, Portuguese: 0.1%, Shona: 0.1%, Xhosa: 0.1%
+Accuracy: 4.10%
+Erroneously classified as Unknown: 61.50%, Croatian: 27.10%, Serbian: 5.40%, English: 0.50%, Czech: 0.40%, Danish: 0.30%, Slovak: 0.20%, Indonesian: 0.10%, Maori: 0.10%, Portuguese: 0.10%, Shona: 0.10%, Xhosa: 0.10%
 
 >> Detection of 1000 word pairs (average length: 16 chars)
-Accuracy: 15.2%
-Erroneously classified as Croatian: 40.3%, Unknown: 33.3%, Serbian: 8.7%, English: 1.1%, Slovak: 0.3%, Slovene: 0.3%, Nynorsk: 0.2%, Czech: 0.1%, Danish: 0.1%, Esperanto: 0.1%, Latin: 0.1%, Latvian: 0.1%, Xhosa: 0.1%
+Accuracy: 15.20%
+Erroneously classified as Croatian: 40.30%, Unknown: 33.30%, Serbian: 8.70%, English: 1.10%, Slovak: 0.30%, Slovene: 0.30%, Nynorsk: 0.20%, Czech: 0.10%, Danish: 0.10%, Esperanto: 0.10%, Latin: 0.10%, Latvian: 0.10%, Xhosa: 0.10%
 
 >> Detection of 1000 sentences (average length: 105 chars)
-Accuracy: 36.5%
-Erroneously classified as Croatian: 41.1%, Serbian: 14%, Unknown: 7.6%, English: 0.4%, Catalan: 0.1%, Danish: 0.1%, Slovak: 0.1%, Slovene: 0.1%
+Accuracy: 36.50%
+Erroneously classified as Croatian: 41.10%, Serbian: 14.00%, Unknown: 7.60%, English: 0.40%, Catalan: 0.10%, Danish: 0.10%, Slovak: 0.10%, Slovene: 0.10%
 

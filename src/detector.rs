@@ -68,7 +68,6 @@ static LANGUAGES_WITH_SINGLE_UNIQUE_SCRIPT: LazyLock<HashSet<Language>> =
     LazyLock::new(Language::all_with_single_unique_script);
 
 /// This struct detects the language of given input text.
-#[derive(Debug)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct LanguageDetector {
     languages: HashSet<Language>,

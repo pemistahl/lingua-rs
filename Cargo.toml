@@ -142,7 +142,7 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.2.0", o
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 ahash = "0.8.11"
-clap = { version = "4.5.29", optional = true, features = ["derive"] }
+clap = { version = "4.5.31", optional = true, features = ["derive"] }
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.5", optional = true }
 polars = { version = "0.46.0", optional = true, features = ["csv", "lazy"] }

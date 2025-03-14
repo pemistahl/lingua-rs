@@ -53,15 +53,15 @@ required-features = ["benchmark"]
 
 [dependencies]
 brotli = "7.0.0"
-compact_str = "0.8.1"
+compact_str = "0.9.0"
 dashmap = "6.1.0"
 fraction = "0.15.3"
 include_dir = "0.7.4"
 itertools = "0.14.0"
 maplit = "1.0.2"
 regex = "1.11.1"
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = "1.0.138"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
 strum = "0.27.1"
 strum_macros = "0.27.1"
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.2.0", optional = true }
@@ -142,11 +142,11 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.2.0", o
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 ahash = "0.8.11"
-clap = { version = "4.5.29", optional = true, features = ["derive"] }
+clap = { version = "4.5.32", optional = true, features = ["derive"] }
 cld2 = { version = "1.0.2", optional = true }
-indoc = { version = "2.0.5", optional = true }
+indoc = { version = "2.0.6", optional = true }
 polars = { version = "0.46.0", optional = true, features = ["csv", "lazy"] }
-pyo3 = { version = "0.23.4", optional = true }
+pyo3 = { version = "0.24.0", optional = true }
 rayon = "1.10.0"
 serde-pickle = { version = "1.2.0", optional = true }
 titlecase = { version = "3.3.0", optional = true }
@@ -156,19 +156,19 @@ whichlang = { version = "0.1.1", optional = true }
 [target.'cfg(target_family = "wasm")'.dependencies]
 ahash = { version = "0.8.11", default-features = false, features = ["std", "compile-time-rng"] }
 serde-wasm-bindgen = "0.6.5"
-wasm-bindgen = "0.2.97"
+wasm-bindgen = "0.2.100"
 
 [dev-dependencies]
 float-cmp = "0.10.0"
-indoc = "2.0.5"
-rstest = "0.24.0"
+indoc = "2.0.6"
+rstest = "0.25.0"
 tempfile = "3.17.1"
 
 [target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
 criterion = "0.5.1"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
-wasm-bindgen-test = "0.3.47"
+wasm-bindgen-test = "0.3.50"
 
 [features]
 default = [

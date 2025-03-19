@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[workspace]
-members = ["language-models/*"]
-
 [package]
 name = "lingua"
 version = "1.7.0"
@@ -22,6 +19,26 @@ authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for short text and mixed-language text
 """
+homepage = "https://github.com/pemistahl/lingua-rs"
+repository = "https://github.com/pemistahl/lingua-rs"
+documentation = "https://docs.rs/lingua"
+license = "Apache-2.0"
+readme = "README.md"
+edition = "2021"
+categories = ["text-processing"]
+keywords = [
+    "language-processing",
+    "language-detection",
+    "language-recognition",
+    "nlp"
+]
+
+[workspace]
+members = ["language-models/*"]
+
+[workspace.package]
+version = "1.2.0"
+authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 homepage = "https://github.com/pemistahl/lingua-rs"
 repository = "https://github.com/pemistahl/lingua-rs"
 documentation = "https://docs.rs/lingua"
@@ -157,6 +174,9 @@ whichlang = { version = "0.1.1", optional = true }
 ahash = { version = "0.8.11", default-features = false, features = ["std", "compile-time-rng"] }
 serde-wasm-bindgen = "0.6.5"
 wasm-bindgen = "0.2.100"
+
+[workspace.dependencies]
+include_dir = "0.7.4"
 
 [dev-dependencies]
 float-cmp = "0.10.0"

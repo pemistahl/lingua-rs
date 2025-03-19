@@ -14,24 +14,19 @@
 
 [package]
 name = "lingua-bulgarian-language-model"
-version = "1.2.0"
-authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
+version = { workspace = true }
+authors = { workspace = true }
 description = """
 The Bulgarian language model for Lingua, an accurate natural language detection library
 """
-homepage = "https://github.com/pemistahl/lingua-rs"
-repository = "https://github.com/pemistahl/lingua-rs"
-documentation = "https://docs.rs/lingua"
-license = "Apache-2.0"
-readme = "README.md"
-edition = "2021"
-categories = ["text-processing"]
-keywords = [
-    "language-processing",
-    "language-detection",
-    "language-recognition",
-    "nlp"
-]
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+license = { workspace = true }
+readme = { workspace = true }
+edition = { workspace = true }
+categories = { workspace = true }
+keywords = { workspace = true }
 
 [dependencies]
-include_dir = "0.7.4"
+include_dir = { workspace = true }

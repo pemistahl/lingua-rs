@@ -707,6 +707,9 @@ impl LanguageDetector {
     /// Clear all language models loaded by this LanguageDetector instance.
     ///
     /// This helps to free allocated memory previously consumed by the models.
+    /// The freed memory will not be returned back to the operating system
+    /// but will be reused e.g. for language models loaded by different
+    /// LanguageDetector instances.
     #[pyo3(name = "unload_language_models")]
     fn py_unload_language_models(&self) {
         self.unload_language_models()

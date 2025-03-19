@@ -240,6 +240,10 @@ impl LanguageDetector {
 
     /// Clears all language models loaded by this [`LanguageDetector`] instance
     /// and frees allocated memory previously consumed by the models.
+    ///
+    /// The freed memory will not be returned back to the operating system
+    /// but will be reused e.g. for language models loaded by different
+    /// [`LanguageDetector`] instances.
     pub fn unload_language_models(&self) {
         #[cfg(not(target_family = "wasm"))]
         let languages_iter = self.languages.par_iter();

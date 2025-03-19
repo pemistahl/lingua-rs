@@ -401,6 +401,9 @@ class LanguageDetector:
         """Clear all language models loaded by this LanguageDetector instance.
 
         This helps to free allocated memory previously consumed by the models.
+        The freed memory will not be returned back to the operating system
+        but will be reused e.g. for language models loaded by different
+        LanguageDetector instances.
         """
 
     def detect_language_of(self, text: str) -> Optional[Language]:

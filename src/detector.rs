@@ -67,7 +67,14 @@ static MOST_COMMON_FIVEGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(Dash
 static LANGUAGES_WITH_SINGLE_UNIQUE_SCRIPT: LazyLock<HashSet<Language>> =
     LazyLock::new(Language::all_with_single_unique_script);
 
-/// This struct detects the language of given input text.
+/// This struct detects the language of text.
+///
+/// A single instance of [`LanguageDetector`] can be used
+/// safely in multiple threads. Multiple instances of
+/// [`LanguageDetector`] share thread-safe access to the
+/// language models, so every language model is loaded
+/// into memory just once, no matter how many instances
+/// of [`LanguageDetector`] have been created.
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct LanguageDetector {
     languages: HashSet<Language>,

@@ -437,6 +437,11 @@ IsoCode639_3.ENG
 'ENG'
 ```
 
+The entire library is thread-safe, i.e. you can use a single `LanguageDetector` instance and
+its methods in multiple threads. Multiple instances of `LanguageDetector` share thread-safe
+access to the language models, so every language model is loaded into memory just once, no
+matter how many instances of `LanguageDetector` have been created.
+
 ### 11.2 Minimum relative distance
 
 By default, *Lingua* returns the most likely language for a given input text.
@@ -637,6 +642,39 @@ LanguageDetectorBuilder.from_iso_codes_639_1(IsoCode639_1.EN, IsoCode639_1.DE)
 
 # Select languages by ISO 639-3 code.
 LanguageDetectorBuilder.from_iso_codes_639_3(IsoCode639_3.ENG, IsoCode639_3.DEU)
+```
+
+### 11.10 Differences to native Python enums
+
+As version >= 2.0 has been implemented in Rust with Python bindings implemented
+with [PyO3](https://pyo3.rs), there are some limitations with regard to enums.
+[PyO3 does not yet support meta classes](https://github.com/PyO3/pyo3/issues/906), 
+that's why Lingua's enums do not exactly behave like native Python enums.
+
+If you want to iterate through all members of the `Language` enum, for instance, 
+you can do it like this:
+
+```python
+# This won't work
+# for language in Language:
+#    print(language)
+
+# But this will work
+for language in sorted(Language.all()):
+    print(language)
+```
+
+PyO3 enums are not subscriptable. If you want to get an enum member dynamically,
+you can do it like this:
+
+```python
+# This won't work
+# assert Language["GERMAN"] == Language.GERMAN
+
+# But this will work
+assert Language.from_str("GERMAN") == Language.GERMAN
+assert Language.from_str("german") == Language.GERMAN
+assert Language.from_str("GeRmAn") == Language.GERMAN
 ```
 
 ## 12. What's next for version 2.2.0?

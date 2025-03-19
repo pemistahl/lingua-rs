@@ -395,10 +395,16 @@ class IsoCode639_3(Enum):
 
 
 class LanguageDetector:
-    """This class detects the language of text."""
+    """This class detects the language of text.
+
+    A single instance of `LanguageDetector` can be used safely in multiple threads.
+    Multiple instances of `LanguageDetector` share thread-safe access to the
+    language models, so every language model is loaded into memory just once,
+    no matter how many instances of `LanguageDetector` have been created.
+    """
 
     def unload_language_models(self):
-        """Clear all language models loaded by this LanguageDetector instance.
+        """Clear all language models loaded by this `LanguageDetector` instance.
 
         This helps to free allocated memory previously consumed by the models.
         The freed memory will not be returned back to the operating system

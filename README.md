@@ -499,6 +499,11 @@ let detected_language: Option<Language> = detector.detect_language_of("languages
 assert_eq!(detected_language, Some(English));
 ```
 
+The entire library is thread-safe, i.e. you can use a single `LanguageDetector` instance and
+its methods in multiple threads. Multiple instances of `LanguageDetector` share thread-safe 
+access to the language models, so every language model is loaded into memory just once, no
+matter how many instances of `LanguageDetector` have been created.
+
 ### 10.2 Minimum relative distance
 
 By default, *Lingua* returns the most likely language for a given input text. However, there are

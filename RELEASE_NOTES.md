@@ -1,3 +1,42 @@
+## Lingua 1.7.0 (released on 19 Mar 2025)
+
+### Features
+
+- This release introduces an absolute confidence metric based on unique and most
+  common ngrams for each supported language. It allows to build
+  a language detector from a single language only. Such a detector serves as
+  a binary classifier, telling you whether some text is written in your selected
+  language or not. (#413)
+
+### Improvements
+
+- The new absolute confidence metric helps to improve accuracy in low accuracy mode.
+  The mean of average detection accuracy (single words, word pairs and sentences combined)
+  increases from 77% to 80%.
+
+- The rule-based algorithm for the recognition of Japanese texts has been improved.
+  Texts including both Japanese and Chinese characters are now classified more often
+  correctly as Japanese instead of Chinese. (#406)
+
+- The characters `Щщ` are now correctly identified as possible indicators for
+  the Ukrainian language, leading to slightly higher accuracy when identifying
+  Ukrainian texts.
+
+- The `accuracy_reports` binary now supports the arguments `--detectors` and `--languages`,
+  allowing to select only a specific subset of detector / language combinations.
+
+### Bug Fixes
+
+- Text spans created by `LanguageDetector.detect_multiple_languages_of()`
+  sometimes skipped characters in the last span. This has been fixed.
+
+- The tokenization of texts written in the Devanagari alphabet was flawed.
+  This has been fixed, leading to better detection accuracy for Hindi and Marathi.
+
+### Miscellaneous
+
+- All dependencies have been updated to their latest versions.
+
 ## Lingua 1.6.2 (released on 12 Dec 2023)
 
 ### Improvements

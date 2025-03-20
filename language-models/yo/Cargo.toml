@@ -23,7 +23,7 @@ homepage = { workspace = true }
 repository = { workspace = true }
 documentation = { workspace = true }
 license = { workspace = true }
-readme = { workspace = true }
+readme = "README.md"
 edition = { workspace = true }
 categories = { workspace = true }
 keywords = { workspace = true }

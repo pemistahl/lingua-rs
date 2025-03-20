@@ -1,4 +1,4 @@
-## Lingua 1.7.0 (released on 19 Mar 2025)
+## Lingua 1.7.0 (released on 20 Mar 2025)
 
 ### Features
 

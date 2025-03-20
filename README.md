@@ -752,7 +752,7 @@ you can, for instance, build the library with the web target so that it can be d
 
     wasm-pack build --target web
 
-By default, all 75 supported languages are included in the compiled wasm file which has a size of 74 MB, approximately. 
+By default, all 75 supported languages are included in the compiled wasm file which has a size of 96 MB, approximately. 
 If you only need a subset of certain languages, you can tell `wasm-pack` which ones to include:
 
     wasm-pack build --target web -- --no-default-features --features "french,italian,spanish"

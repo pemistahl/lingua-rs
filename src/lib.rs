@@ -108,7 +108,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.7.0"
+//! lingua = "1.7.1"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
@@ -118,7 +118,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.7.0", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.7.1", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?
@@ -389,7 +389,7 @@
 //! ```
 //!
 //! By default, all 75 supported languages are included in the compiled wasm file which has a size
-//! of 74 MB, approximately. If you only need a subset of certain languages, you can tell `wasm-pack`
+//! of 96 MB, approximately. If you only need a subset of certain languages, you can tell `wasm-pack`
 //! which ones to include:
 //!
 //! ```shell

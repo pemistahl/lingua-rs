@@ -1,3 +1,10 @@
+## Lingua 1.7.1 (released on 21 Mar 2025)
+
+### Bug Fixes
+
+- The library failed to build when only a subset of language features was selected
+  when declaring the dependency. This has been fixed. (#452)
+
 ## Lingua 1.7.0 (released on 20 Mar 2025)
 
 ### Features

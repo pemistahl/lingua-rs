@@ -70,6 +70,9 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Build library with language subset
+        run: cargo build --locked --no-default-features --features german
+
       - name: Build and test library
         run: cargo test --locked
 

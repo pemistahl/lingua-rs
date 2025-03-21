@@ -1051,6 +1051,7 @@ impl Language {
         }
     }
 
+    #[allow(unreachable_patterns)]
     pub(crate) fn unique_characters(&self) -> Option<&str> {
         match self {
             #[cfg(feature = "azerbaijani")]

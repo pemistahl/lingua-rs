@@ -945,9 +945,16 @@ impl LanguageDetector {
             let mut optional_language: Option<Language> = None;
             for language in self.languages.iter() {
                 if ngram_length == 1 {
-                    if language == &Language::Hindi
-                        || language == &Language::Marathi
-                        || (language == &Language::Japanese && self.is_built_from_one_language)
+                    let is_hindi = cfg!(feature = "hindi")
+                        && language == &Language::from_str("Hindi").unwrap();
+                    let is_marathi = cfg!(feature = "marathi")
+                        && language == &Language::from_str("Marathi").unwrap();
+                    let is_japanese = cfg!(feature = "japanese")
+                        && language == &Language::from_str("Japanese").unwrap();
+
+                    if is_hindi
+                        || is_marathi
+                        || (is_japanese && self.is_built_from_one_language)
                         || LANGUAGES_WITH_SINGLE_UNIQUE_SCRIPT.contains(language)
                     {
                         optional_language = self.search_unique_and_most_common_ngrams(

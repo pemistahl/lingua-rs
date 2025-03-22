@@ -16,7 +16,9 @@
 
 use pyo3::exceptions::{PyException, PyTypeError, PyValueError};
 use pyo3::prelude::*;
+use pyo3::pybacked::PyBackedStr;
 use pyo3::types::{PyDict, PyTuple, PyType};
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::any::Any;
 use std::collections::HashSet;
@@ -723,8 +725,8 @@ impl LanguageDetector {
     /// a very large set of texts, you will probably want to use method
     /// `detect_languages_in_parallel_of` instead.
     #[pyo3(name = "detect_language_of")]
-    fn py_detect_language_of(&self, text: String) -> Option<Language> {
-        self.detect_language_of(text)
+    fn py_detect_language_of(&self, py: Python, text: PyBackedStr) -> Option<Language> {
+        py.allow_threads(move || self.detect_language_of(&text))
     }
 
     /// Detects the languages of all given input texts.
@@ -739,8 +741,17 @@ impl LanguageDetector {
     /// If you do not want or need parallel execution, use method
     /// `detect_language_of` instead.
     #[pyo3(name = "detect_languages_in_parallel_of")]
-    fn py_detect_languages_in_parallel_of(&self, texts: Vec<String>) -> Vec<Option<Language>> {
-        self.detect_languages_in_parallel_of(&texts)
+    fn py_detect_languages_in_parallel_of(
+        &self,
+        py: Python,
+        texts: Vec<PyBackedStr>,
+    ) -> Vec<Option<Language>> {
+        py.allow_threads(move || {
+            texts
+                .into_par_iter()
+                .map(|text| self.detect_language_of(&text))
+                .collect()
+        })
     }
 
     /// Attempt to detect multiple languages in mixed-language text.
@@ -757,9 +768,15 @@ impl LanguageDetector {
     /// a very large set of texts, you will probably want to use method
     /// `detect_multiple_languages_in_parallel_of` instead.
     #[pyo3(name = "detect_multiple_languages_of")]
-    fn py_detect_multiple_languages_of(&self, text: String) -> Vec<DetectionResult> {
-        let results = self.detect_multiple_languages_of(&text);
-        convert_byte_indices_to_char_indices(&results, &text)
+    fn py_detect_multiple_languages_of(
+        &self,
+        py: Python,
+        text: PyBackedStr,
+    ) -> Vec<DetectionResult> {
+        py.allow_threads(move || {
+            let results = self.detect_multiple_languages_of(&text);
+            convert_byte_indices_to_char_indices(&results, &text)
+        })
     }
 
     /// Attempt to detect multiple languages in mixed-language text.
@@ -781,17 +798,18 @@ impl LanguageDetector {
     #[pyo3(name = "detect_multiple_languages_in_parallel_of")]
     fn py_detect_multiple_languages_in_parallel_of(
         &self,
-        texts: Vec<String>,
+        py: Python,
+        texts: Vec<PyBackedStr>,
     ) -> Vec<Vec<DetectionResult>> {
-        let results = self.detect_multiple_languages_in_parallel_of(&texts);
-        let mut converted_results = vec![];
-
-        for i in 0..texts.len() {
-            let converted_result = convert_byte_indices_to_char_indices(&results[i], &texts[i]);
-            converted_results.push(converted_result);
-        }
-
-        converted_results
+        py.allow_threads(move || {
+            texts
+                .into_par_iter()
+                .map(|text| {
+                    let results = self.detect_multiple_languages_of(&text);
+                    convert_byte_indices_to_char_indices(&results, &text)
+                })
+                .collect()
+        })
     }
 
     /// Compute confidence values for each language supported
@@ -814,14 +832,17 @@ impl LanguageDetector {
     /// a very large set of texts, you will probably want to use method
     /// `compute_language_confidence_values_in_parallel` instead.
     #[pyo3(name = "compute_language_confidence_values")]
-    fn py_compute_language_confidence_values(&self, text: String) -> Vec<ConfidenceValue> {
-        self.compute_language_confidence_values(text)
-            .iter()
-            .map(|tup| ConfidenceValue {
-                language: tup.0,
-                value: tup.1,
-            })
-            .collect()
+    fn py_compute_language_confidence_values(
+        &self,
+        py: Python,
+        text: PyBackedStr,
+    ) -> Vec<ConfidenceValue> {
+        py.allow_threads(move || {
+            self.compute_language_confidence_values(&text)
+                .into_iter()
+                .map(|(language, value)| ConfidenceValue { language, value })
+                .collect()
+        })
     }
 
     /// Compute confidence values for each language supported by this detector for all the given
@@ -839,20 +860,20 @@ impl LanguageDetector {
     #[pyo3(name = "compute_language_confidence_values_in_parallel")]
     fn py_compute_language_confidence_values_in_parallel(
         &self,
-        texts: Vec<String>,
+        py: Python,
+        texts: Vec<PyBackedStr>,
     ) -> Vec<Vec<ConfidenceValue>> {
-        self.compute_language_confidence_values_in_parallel(&texts)
-            .iter()
-            .map(|vector| {
-                vector
-                    .iter()
-                    .map(|tup| ConfidenceValue {
-                        language: tup.0,
-                        value: tup.1,
-                    })
-                    .collect()
-            })
-            .collect()
+        py.allow_threads(move || {
+            texts
+                .into_par_iter()
+                .map(|text| {
+                    self.compute_language_confidence_values(&text)
+                        .into_iter()
+                        .map(|(language, value)| ConfidenceValue { language, value })
+                        .collect()
+                })
+                .collect()
+        })
     }
 
     /// Compute the confidence value for the given language and input text.
@@ -868,8 +889,13 @@ impl LanguageDetector {
     /// a very large set of texts, you will probably want to use method
     /// `compute_language_confidence_in_parallel` instead.
     #[pyo3(name = "compute_language_confidence")]
-    fn py_compute_language_confidence(&self, text: String, language: Language) -> f64 {
-        self.compute_language_confidence(text, language)
+    fn py_compute_language_confidence(
+        &self,
+        py: Python,
+        text: PyBackedStr,
+        language: Language,
+    ) -> f64 {
+        py.allow_threads(move || self.compute_language_confidence(&text, language))
     }
 
     /// Compute the confidence values of all input texts for the given language.
@@ -891,10 +917,16 @@ impl LanguageDetector {
     #[pyo3(name = "compute_language_confidence_in_parallel")]
     fn py_compute_language_confidence_in_parallel(
         &self,
-        texts: Vec<String>,
+        py: Python,
+        texts: Vec<PyBackedStr>,
         language: Language,
     ) -> Vec<f64> {
-        self.compute_language_confidence_in_parallel(&texts, language)
+        py.allow_threads(move || {
+            texts
+                .into_par_iter()
+                .map(|text| self.compute_language_confidence(&text, language))
+                .collect()
+        })
     }
 }
 

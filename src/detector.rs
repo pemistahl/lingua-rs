@@ -763,7 +763,8 @@ impl LanguageDetector {
         }
 
         let text_str = text.into();
-        let words = split_text_into_words(&text_str);
+        let mut text_buf = String::new();
+        let words = split_text_into_words(&text_str, &mut text_buf);
 
         if words.is_empty() {
             return values;
@@ -939,7 +940,7 @@ impl LanguageDetector {
             .collect()
     }
 
-    fn detect_language_with_unique_and_common_ngrams(&self, words: &[String]) -> Option<Language> {
+    fn detect_language_with_unique_and_common_ngrams(&self, words: &[&str]) -> Option<Language> {
         for ngram_length in (1..6usize).rev() {
             let ngrams = create_ngrams(words, ngram_length);
             let mut optional_language: Option<Language> = None;
@@ -1023,7 +1024,7 @@ impl LanguageDetector {
 
     fn detect_language_with_rules(
         &self,
-        words: &[String],
+        words: &[&str],
         languages: &HashSet<Language>,
     ) -> Option<Language> {
         let mut total_language_counts = HashMap::<Option<Language>, u32>::new();
@@ -1146,7 +1147,7 @@ impl LanguageDetector {
 
     fn filter_languages_by_rules(
         &self,
-        words: &[String],
+        words: &[&str],
         languages: &HashSet<Language>,
     ) -> HashSet<Language> {
         let mut detected_alphabets = HashMap::<Alphabet, u32>::new();
@@ -1306,10 +1307,11 @@ impl LanguageDetector {
     }
 }
 
-pub(crate) fn split_text_into_words(text: &str) -> Vec<String> {
+pub(crate) fn split_text_into_words<'a>(text: &str, text_buf: &'a mut String) -> Vec<&'a str> {
+    *text_buf = text.trim().to_lowercase();
     TOKENS_WITHOUT_WHITESPACE
-        .find_iter(&text.trim().to_lowercase())
-        .map(|mat| mat.as_str().to_string())
+        .find_iter(text_buf.as_str())
+        .map(|mat| mat.as_str())
         .collect()
 }
 
@@ -1906,7 +1908,10 @@ mod tests {
         )
     )]
     fn test_split_text_into_words(text: &str, expected_words: Vec<&str>) {
-        assert_eq!(split_text_into_words(text), expected_words);
+        assert_eq!(
+            split_text_into_words(text, &mut String::new()),
+            expected_words
+        );
     }
 
     #[rstest(
@@ -2417,7 +2422,7 @@ mod tests {
         expected_language: Option<Language>,
     ) {
         let detected_language = detector_for_all_languages.detect_language_with_rules(
-            &split_text_into_words(word),
+            &split_text_into_words(word, &mut String::new()),
             &detector_for_all_languages.languages,
         );
         assert_eq!(
@@ -2549,10 +2554,8 @@ mod tests {
         word: &str,
         expected_languages: HashSet<Language>,
     ) {
-        let filtered_languages = detector_for_all_languages.filter_languages_by_rules(
-            &vec![word.to_string()],
-            &detector_for_all_languages.languages,
-        );
+        let filtered_languages = detector_for_all_languages
+            .filter_languages_by_rules(&[word], &detector_for_all_languages.languages);
         assert_eq!(
             filtered_languages, expected_languages,
             "expected {:?} for word '{}', got {:?}",

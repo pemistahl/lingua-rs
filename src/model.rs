@@ -127,7 +127,7 @@ fn deserialize_ngram_probabilities<'de, D: Deserializer<'de>>(
 
 pub(crate) struct TrainingDataLanguageModel {
     pub(crate) absolute_frequencies: HashMap<Ngram, u32>,
-    ngram_probability_model: NgramProbabilityModel,
+    pub(crate) ngram_probability_model: NgramProbabilityModel,
 }
 
 impl TrainingDataLanguageModel {
@@ -258,6 +258,72 @@ fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
                 )
         })
         .unwrap()
+}
+
+pub(crate) struct UnifiedNgramModel<'a> {
+    map: fst::Map<&'a [u8]>,
+}
+
+impl<'a> UnifiedNgramModel<'a> {
+    pub(crate) const PROBABILITY: u8 = 0;
+    pub(crate) const UNIQUE: u8 = 1;
+    pub(crate) const MOST_COMMON: u8 = 2;
+
+    pub(crate) fn load(language: Language) -> Result<Self, fst::Error> {
+        let data = match language {
+            #[cfg(feature = "german")]
+            Language::German => lingua_german_language_model::GERMAN_UNIFIED_MODEL,
+
+            _ => unimplemented!(),
+        };
+
+        fst::Map::new(data).map(|map| Self { map })
+    }
+
+    pub(crate) fn get_probability(&self, ngram: &str) -> Option<f64> {
+        self.get(ngram, Self::PROBABILITY).map(f64::from_bits)
+    }
+
+    pub(crate) fn is_unique(&self, ngram: &str) -> bool {
+        self.get(ngram, Self::UNIQUE).is_some()
+    }
+
+    pub(crate) fn is_most_common(&self, ngram: &str) -> bool {
+        self.get(ngram, Self::MOST_COMMON).is_some()
+    }
+
+    fn get(&self, ngram: &str, kind: u8) -> Option<u64> {
+        let key = UnifiedNgramKey::new(ngram, kind);
+
+        self.map.get(key)
+    }
+}
+
+#[derive(Clone, Copy)]
+pub(crate) struct UnifiedNgramKey {
+    len: usize,
+    key: [u8; Self::MAX_LEN],
+}
+
+impl UnifiedNgramKey {
+    // Maximum UTF-8-encoded length of fivegrams plus one kind byte.
+    pub(crate) const MAX_LEN: usize = 5 * 4 + 1;
+
+    pub(crate) fn new(ngram: &str, kind: u8) -> Self {
+        let len = ngram.len();
+
+        let mut key = [0; Self::MAX_LEN];
+        key[..len].copy_from_slice(ngram.as_bytes());
+        key[len] = kind;
+
+        Self { len, key }
+    }
+}
+
+impl AsRef<[u8]> for UnifiedNgramKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.key[..=self.len]
+    }
 }
 
 #[cfg(test)]

@@ -62,12 +62,13 @@ def test_language_model_files_writer(language_model_files_text):
 
     files = read_directory_content(output_directory_path)
 
-    assert len(files) == 5
-    assert files[4] == "unigrams.json.br"
+    assert len(files) == 6
+    assert files[5] == "unigrams.json.br"
     assert files[0] == "bigrams.json.br"
-    assert files[3] == "trigrams.json.br"
-    assert files[2] == "quadrigrams.json.br"
+    assert files[4] == "trigrams.json.br"
+    assert files[3] == "quadrigrams.json.br"
     assert files[1] == "fivegrams.json.br"
+    assert files[2] == "ngrams.fst"
 
 
 def test_test_data_files_writer(test_data_files_text):

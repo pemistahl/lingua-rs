@@ -21,11 +21,12 @@ use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
 
 use brotli::CompressorWriter;
+use fraction::ToPrimitive;
 use itertools::Itertools;
 use regex::Regex;
 
 use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
-use crate::model::TrainingDataLanguageModel;
+use crate::model::{TrainingDataLanguageModel, UnifiedNgramKey, UnifiedNgramModel};
 use crate::ngram::Ngram;
 use crate::Language;
 
@@ -127,6 +128,18 @@ impl LanguageModelFilesWriter {
             "fivegrams.json",
         )?;
 
+        Self::write_unified_language_model(
+            [
+                &unigram_model,
+                &bigram_model,
+                &trigram_model,
+                &quadrigram_model,
+                &fivegram_model,
+            ],
+            output_directory_path,
+            "ngrams.fst",
+        )?;
+
         Ok(())
     }
 
@@ -166,6 +179,53 @@ impl LanguageModelFilesWriter {
         let mut compressed_file = CompressorWriter::new(file, 4096, 11, 22);
         compressed_file.write_all(model.to_json().as_bytes())?;
         Ok(())
+    }
+
+    fn write_unified_language_model(
+        models: [&TrainingDataLanguageModel; 5],
+        output_directory_path: &Path,
+        file_name: &str,
+    ) -> io::Result<()> {
+        let mut pairs = models
+            .iter()
+            .flat_map(|model| {
+                let probabilities =
+                    model
+                        .ngram_probability_model
+                        .ngrams
+                        .iter()
+                        .map(|(ngram, probability)| {
+                            let key = UnifiedNgramKey::new(ngram, UnifiedNgramModel::PROBABILITY);
+                            let value = probability.to_f64().unwrap().ln().to_bits();
+
+                            (key, value)
+                        });
+
+                let most_common = model
+                    .absolute_frequencies
+                    .iter()
+                    .k_largest_by_key(25, |(_, frequency)| *frequency)
+                    .map(|(ngram, frequency)| {
+                        let key =
+                            UnifiedNgramKey::new(&ngram.value, UnifiedNgramModel::MOST_COMMON);
+                        let value = *frequency as u64;
+
+                        (key, value)
+                    });
+
+                probabilities.chain(most_common)
+            })
+            .collect_vec();
+
+        pairs.sort_unstable_by(|(lhs, _), (rhs, _)| lhs.as_ref().cmp(rhs.as_ref()));
+
+        let mut builder = fst::MapBuilder::memory();
+        builder.extend_iter(pairs).unwrap();
+        let buffer = builder.into_inner().unwrap();
+
+        let file_path = output_directory_path.join(file_name);
+        let mut file = File::create(file_path)?;
+        file.write_all(&buffer)
     }
 }
 

@@ -18,4 +18,6 @@ use include_dir::{include_dir, Dir};
 
 pub const GERMAN_MODELS_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/models");
 
+pub const GERMAN_UNIFIED_MODEL: &[u8] = include_bytes!("../models/ngrams.fst");
+
 pub const GERMAN_TESTDATA_DIRECTORY: Dir = include_dir!("$CARGO_MANIFEST_DIR/testdata");

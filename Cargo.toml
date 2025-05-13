@@ -181,7 +181,7 @@ include_dir = "0.7.4"
 float-cmp = "0.10.0"
 indoc = "2.0.6"
 rstest = "0.25.0"
-tempfile = "3.19.1"
+tempfile = "3.20.0"
 
 [target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
 criterion = "0.5.1"

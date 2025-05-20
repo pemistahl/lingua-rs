@@ -184,7 +184,7 @@ rstest = "0.25.0"
 tempfile = "3.20.0"
 
 [target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.6.0"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
 wasm-bindgen-test = "0.3.50"

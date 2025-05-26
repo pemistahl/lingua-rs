@@ -136,11 +136,8 @@ impl LanguageDetector {
             detector.preload_language_models(&languages);
         }
 
-        if is_built_from_one_language || is_low_accuracy_mode_enabled {
-            detector.preload_unique_ngram_models();
-        }
-
         if is_built_from_one_language {
+            detector.preload_unique_ngram_models();
             detector.preload_most_common_ngram_models();
         }
 
@@ -267,15 +264,12 @@ impl LanguageDetector {
                 self.fivegram_language_models.remove(language);
             }
 
-            if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
+            if self.is_built_from_one_language {
                 self.unigram_language_models.remove(language);
                 self.unique_bigram_language_models.remove(language);
                 self.unique_trigram_language_models.remove(language);
                 self.unique_quadrigram_language_models.remove(language);
                 self.unique_fivegram_language_models.remove(language);
-            }
-
-            if self.is_built_from_one_language {
                 self.most_common_unigram_language_models.remove(language);
                 self.most_common_bigram_language_models.remove(language);
                 self.most_common_trigram_language_models.remove(language);
@@ -293,15 +287,12 @@ impl LanguageDetector {
             self.fivegram_language_models.shrink_to_fit();
         }
 
-        if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
+        if self.is_built_from_one_language {
             self.unigram_language_models.shrink_to_fit();
             self.unique_bigram_language_models.shrink_to_fit();
             self.unique_trigram_language_models.shrink_to_fit();
             self.unique_quadrigram_language_models.shrink_to_fit();
             self.unique_fivegram_language_models.shrink_to_fit();
-        }
-
-        if self.is_built_from_one_language {
             self.most_common_unigram_language_models.shrink_to_fit();
             self.most_common_bigram_language_models.shrink_to_fit();
             self.most_common_trigram_language_models.shrink_to_fit();
@@ -769,7 +760,7 @@ impl LanguageDetector {
             return values;
         }
 
-        if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
+        if self.is_built_from_one_language {
             if let Some(language) = self.detect_language_with_unique_and_common_ngrams(&words) {
                 update_confidence_values(&mut values, language, 1.0);
                 values.sort_by(confidence_values_comparator);

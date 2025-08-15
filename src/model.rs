@@ -215,7 +215,10 @@ impl TrainingDataLanguageModel {
     }
 }
 
-pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<NgramRef> {
+pub(crate) fn create_ngrams<'a>(
+    words: &'a [&'a str],
+    ngram_length: usize,
+) -> HashSet<NgramRef<'a>> {
     if !(1..6).contains(&ngram_length) {
         panic!("ngram length {ngram_length} is not in range 1..6");
     }
@@ -232,10 +235,10 @@ pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<Ng
     ngrams
 }
 
-pub(crate) fn create_lower_order_ngrams(
-    words: &[String],
+pub(crate) fn create_lower_order_ngrams<'a>(
+    words: &'a [&'a str],
     ngram_length: usize,
-) -> Vec<Vec<NgramRef>> {
+) -> Vec<Vec<NgramRef<'a>>> {
     let ngrams = create_ngrams(words, ngram_length);
     let mut lower_order_ngrams = Vec::with_capacity(ngrams.len());
     for ngram in ngrams {
@@ -837,7 +840,8 @@ mod tests {
             case::fivegram_model(5, expected_fivegrams())
         )]
         fn test_ngram_model_creation(ngram_length: usize, expected_ngrams: Vec<Vec<NgramRef>>) {
-            let words = split_text_into_words(TEXT);
+            let mut text_buf = String::new();
+            let words = split_text_into_words(TEXT, &mut text_buf);
             let mut model = create_lower_order_ngrams(&words, ngram_length);
             model.sort_by(|first, second| first[0].value.cmp(&second[0].value));
             assert_eq!(model, expected_ngrams);

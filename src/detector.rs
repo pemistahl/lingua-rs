@@ -305,9 +305,8 @@ impl LanguageDetector {
     /// If the language cannot be reliably detected, [`None`] is returned.
     ///
     /// This method operates in a single thread. If you want to classify
-    /// a very large set of texts, you will probably want to use method
-    /// [`detect_languages_in_parallel_of`](#method.detect_languages_in_parallel_of)
-    /// instead.
+    /// a very large set of texts, you will probably want to use [`rayon`]
+    /// to call this from multiple threads.
     ///
     /// ```
     /// use lingua::Language::{English, French, German, Spanish};
@@ -325,64 +324,13 @@ impl LanguageDetector {
     ///
     /// assert_eq!(detected_language, Some(English));
     /// ```
-    pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {
+    pub fn detect_language_of(&self, text: &str) -> Option<Language> {
         self.detect_language_from_languages(text, &self.languages)
     }
 
-    /// Detects the languages of all given input texts.
-    /// If the language cannot be reliably detected for a text,
-    /// [`None`] is put into the result vector.
-    ///
-    /// This method is a good fit if you want to classify a very large set of texts.
-    /// It potentially operates in multiple threads, depending on how many idle CPU
-    /// cores are available and how many texts are passed to this method.
-    ///
-    /// If you do not want or need parallel execution, use method
-    /// [`detect_language_of`](#method.detect_language_of) instead.
-    ///
-    /// ```
-    /// use lingua::Language::{English, French, German, Spanish};
-    /// use lingua::LanguageDetectorBuilder;
-    ///
-    /// let detector = LanguageDetectorBuilder::from_languages(&[
-    ///     English,
-    ///     French,
-    ///     German,
-    ///     Spanish
-    /// ])
-    /// .build();
-    ///
-    /// let detected_languages = detector.detect_languages_in_parallel_of(&[
-    ///     "languages are awesome",
-    ///     "Sprachen sind großartig",
-    ///     "des langues sont géniales",
-    ///     "los idiomas son geniales"
-    /// ]);
-    ///
-    /// assert_eq!(
-    ///     detected_languages,
-    ///     vec![
-    ///         Some(English),
-    ///         Some(German),
-    ///         Some(French),
-    ///         Some(Spanish)
-    ///     ]
-    /// );
-    /// ```
-    #[cfg(not(target_family = "wasm"))]
-    pub fn detect_languages_in_parallel_of<T: Into<String> + Clone + Send + Sync>(
+    fn detect_language_from_languages(
         &self,
-        texts: &[T],
-    ) -> Vec<Option<Language>> {
-        texts
-            .into_par_iter()
-            .map(|text| self.detect_language_of(text.clone()))
-            .collect()
-    }
-
-    fn detect_language_from_languages<T: Into<String>>(
-        &self,
-        text: T,
+        text: &str,
         languages: &HashSet<Language>,
     ) -> Option<Language> {
         let confidence_values =
@@ -429,9 +377,9 @@ impl LanguageDetector {
     /// the substring that has been identified as a contiguous single-language text section.
     ///
     /// This method operates in a single thread. If you want to classify
-    /// a very large set of texts, you will probably want to use method
-    /// [`detect_multiple_languages_in_parallel_of`](#method.detect_multiple_languages_in_parallel_of)
-    /// instead.
+    /// a very large set of texts, you will probably want to use [`rayon`]
+    /// to call this from multiple threads.
+    ///.
     /// ```
     /// use lingua::Language::{English, French, German};
     /// use lingua::LanguageDetectorBuilder;
@@ -469,15 +417,13 @@ impl LanguageDetector {
     ///     );
     /// }
     /// ```
-    pub fn detect_multiple_languages_of<T: Into<String>>(&self, text: T) -> Vec<DetectionResult> {
-        let text_str = text.into();
-
-        if text_str.is_empty() {
+    pub fn detect_multiple_languages_of(&self, text: &str) -> Vec<DetectionResult> {
+        if text.is_empty() {
             return vec![];
         }
 
         let tokens_without_whitespace = TOKENS_WITHOUT_WHITESPACE
-            .find_iter(&text_str)
+            .find_iter(&text)
             .map(|mat| mat.as_str())
             .collect_vec();
 
@@ -488,7 +434,7 @@ impl LanguageDetector {
         let mut results = vec![];
         let mut language_counts = HashMap::new();
 
-        let language = self.detect_language_of(&text_str);
+        let language = self.detect_language_of(&text);
         if let Some(lang) = language {
             increment_counter(&mut language_counts, lang, 1);
         }
@@ -511,7 +457,7 @@ impl LanguageDetector {
         if languages.len() == 1 {
             let result = DetectionResult {
                 start_index: 0,
-                end_index: text_str.len(),
+                end_index: text.len(),
                 word_count: tokens_without_whitespace.len(),
                 language: *languages.iter().next().unwrap(),
             };
@@ -522,8 +468,8 @@ impl LanguageDetector {
             let mut word_count = 0;
             let mut current_language = None;
 
-            let last_index = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text_str).count() - 1;
-            let token_matches = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text_str);
+            let last_index = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text).count() - 1;
+            let token_matches = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text);
 
             for (i, token_match) in token_matches.enumerate() {
                 let word = token_match.as_str();
@@ -557,7 +503,7 @@ impl LanguageDetector {
                     if let Some(current_lang) = current_language {
                         let result = DetectionResult {
                             start_index: current_start_index,
-                            end_index: text_str.len(),
+                            end_index: text.len(),
                             word_count,
                             language: current_lang,
                         };
@@ -594,34 +540,6 @@ impl LanguageDetector {
         results
     }
 
-    /// Attempts to detect multiple languages in mixed-language text.
-    ///
-    /// This feature is experimental and under continuous development.
-    ///
-    /// A vector of [`DetectionResult`] is returned for each text containing an
-    /// entry for each contiguous single-language text section as identified by
-    /// the library. Each entry consists of the identified language, a start index
-    /// and an end index. The indices denote the substring that has been identified
-    /// as a contiguous single-language text section.
-    ///
-    /// This method is a good fit if you want to classify a very large set of texts.
-    /// It potentially operates in multiple threads, depending on how many idle CPU
-    /// cores are available and how many texts are passed to this method.
-    ///
-    /// If you do not want or need parallel execution, use method
-    /// [`detect_multiple_languages_of`](#method.detect_multiple_languages_of)
-    /// instead.
-    #[cfg(not(target_family = "wasm"))]
-    pub fn detect_multiple_languages_in_parallel_of<T: Into<String> + Clone + Send + Sync>(
-        &self,
-        texts: &[T],
-    ) -> Vec<Vec<DetectionResult>> {
-        texts
-            .into_par_iter()
-            .map(|text| self.detect_multiple_languages_of(text.clone()))
-            .collect()
-    }
-
     /// Computes confidence values for each language supported by this detector for the given
     /// input text. These values denote how likely it is that the given text has been written
     /// in any of the languages supported by this detector.
@@ -635,9 +553,8 @@ impl LanguageDetector {
     /// of 0.0.
     ///
     /// This method operates in a single thread. If you want to classify
-    /// a very large set of texts, you will probably want to use method
-    /// [`compute_language_confidence_values_in_parallel`](#method.compute_language_confidence_values_in_parallel)
-    /// instead.
+    /// a very large set of texts, you will probably want to use use [`rayon`]
+    /// to call this from multiple threads.
     ///
     /// ```
     /// use lingua::Language::{English, French, German, Spanish};
@@ -667,84 +584,13 @@ impl LanguageDetector {
     ///     ]
     /// );
     /// ```
-    pub fn compute_language_confidence_values<T: Into<String>>(
-        &self,
-        text: T,
-    ) -> Vec<(Language, f64)> {
+    pub fn compute_language_confidence_values(&self, text: &str) -> Vec<(Language, f64)> {
         self.compute_language_confidence_values_for_languages(text, &self.languages)
     }
 
-    /// Computes confidence values for each language supported by this detector for all the given
-    /// input texts. The confidence values denote how likely it is that the given text has been written
-    /// in any of the languages supported by this detector.
-    ///
-    /// This method is a good fit if you want to classify a very large set of texts.
-    /// It potentially operates in multiple threads, depending on how many idle CPU
-    /// cores are available and how many texts are passed to this method.
-    ///
-    /// If you do not want or need parallel execution, use method
-    /// [`compute_language_confidence_values`](#method.compute_language_confidence_values)
-    /// instead.
-    ///
-    /// ```
-    /// use lingua::Language::{English, French, German, Spanish};
-    /// use lingua::LanguageDetectorBuilder;
-    ///
-    /// let detector = LanguageDetectorBuilder::from_languages(&[
-    ///     English,
-    ///     French,
-    ///     German,
-    ///     Spanish
-    /// ])
-    /// .build();
-    ///
-    /// let confidence_values = detector
-    ///     .compute_language_confidence_values_in_parallel(&[
-    ///         "languages are awesome",
-    ///         "Sprachen sind großartig"
-    ///     ])
-    ///     .into_iter()
-    ///     .map(|vector| {
-    ///         vector
-    ///             .into_iter()
-    ///             .map(|(language, confidence)| {
-    ///                 (language, (confidence * 100.0).round() / 100.0)
-    ///             })
-    ///             .collect::<Vec<_>>()
-    ///     })
-    ///     .collect::<Vec<_>>();
-    ///
-    /// assert_eq!(
-    ///     confidence_values,
-    ///     vec![
-    ///         vec![
-    ///             (English, 0.93),
-    ///             (French, 0.04),
-    ///             (German, 0.02),
-    ///             (Spanish, 0.01)
-    ///         ],
-    ///         vec![
-    ///             (German, 0.99),
-    ///             (Spanish, 0.01),
-    ///             (English, 0.0),
-    ///             (French, 0.0)
-    ///         ]
-    ///     ]
-    /// );
-    #[cfg(not(target_family = "wasm"))]
-    pub fn compute_language_confidence_values_in_parallel<T: Into<String> + Clone + Send + Sync>(
+    fn compute_language_confidence_values_for_languages(
         &self,
-        texts: &[T],
-    ) -> Vec<Vec<(Language, f64)>> {
-        texts
-            .into_par_iter()
-            .map(|text| self.compute_language_confidence_values(text.clone()))
-            .collect()
-    }
-
-    fn compute_language_confidence_values_for_languages<T: Into<String>>(
-        &self,
-        text: T,
+        text: &str,
         languages: &HashSet<Language>,
     ) -> Vec<(Language, f64)> {
         let mut values = Vec::with_capacity(languages.len());
@@ -753,8 +599,7 @@ impl LanguageDetector {
             values.push((*language, 0.0));
         }
 
-        let text_str = text.into();
-        let words = split_text_into_words(&text_str);
+        let words = split_text_into_words(&text);
 
         if words.is_empty() {
             return values;
@@ -837,9 +682,8 @@ impl LanguageDetector {
     /// always be returned.
     ///
     /// This method operates in a single thread. If you want to classify
-    /// a very large set of texts, you will probably want to use method
-    /// [`compute_language_confidence_in_parallel`](#method.compute_language_confidence_in_parallel)
-    /// instead.
+    /// a very large set of texts, you will probably want to use [`rayon`]
+    /// to call this from multiple threads.
     ///
     /// ```
     /// use lingua::Language::{English, French, German, Spanish};
@@ -858,76 +702,12 @@ impl LanguageDetector {
     ///
     /// assert_eq!(rounded_confidence, 0.04);
     /// ```
-    pub fn compute_language_confidence<T: Into<String>>(&self, text: T, language: Language) -> f64 {
+    pub fn compute_language_confidence(&self, text: &str, language: Language) -> f64 {
         self.compute_language_confidence_values(text)
             .iter()
             .find(|(lang, _)| *lang == language)
             .map(|(_, confidence)| *confidence)
             .unwrap_or(0.0)
-    }
-
-    /// Computes the confidence values of all input texts for the given language.
-    /// A confidence value denotes how likely it is that a given text has been
-    /// written in a given language.
-    ///
-    /// The values that this method computes are numbers between 0.0 and 1.0. If the language is
-    /// unambiguously identified by the rule engine, the value 1.0 will always be returned.
-    /// If the given language is not supported by this detector instance, the value 0.0 will
-    /// always be returned.
-    ///
-    /// This method is a good fit if you want to classify a very large set of texts.
-    /// It potentially operates in multiple threads, depending on how many idle CPU
-    /// cores are available and how many texts are passed to this method.
-    ///
-    /// If you do not want or need parallel execution, use method
-    /// [`compute_language_confidence`](#method.compute_language_confidence)
-    /// instead.
-    ///
-    /// ```
-    /// use lingua::Language::{English, French, German, Spanish};
-    /// use lingua::LanguageDetectorBuilder;
-    ///
-    /// let detector = LanguageDetectorBuilder::from_languages(&[
-    ///     English,
-    ///     French,
-    ///     German,
-    ///     Spanish
-    /// ])
-    /// .build();
-    ///
-    /// let confidence_values = detector.compute_language_confidence_in_parallel(
-    ///     &[
-    ///         "languages are awesome",
-    ///         "Sprachen sind großartig",
-    ///         "des langues sont géniales",
-    ///         "los idiomas son geniales"
-    ///     ],
-    ///     French
-    /// )
-    /// .into_iter()
-    /// .map(|confidence| (confidence * 100.0).round() / 100.0)
-    /// .collect::<Vec<_>>();
-    ///
-    /// assert_eq!(
-    ///     confidence_values,
-    ///     vec![
-    ///         0.04,
-    ///         0.0,
-    ///         0.92,
-    ///         0.07
-    ///     ]
-    /// );
-    /// ```
-    #[cfg(not(target_family = "wasm"))]
-    pub fn compute_language_confidence_in_parallel<T: Into<String> + Clone + Send + Sync>(
-        &self,
-        texts: &[T],
-        language: Language,
-    ) -> Vec<f64> {
-        texts
-            .into_par_iter()
-            .map(|text| self.compute_language_confidence(text.clone(), language))
-            .collect()
     }
 
     fn detect_language_with_unique_and_common_ngrams(&self, words: &[String]) -> Option<Language> {

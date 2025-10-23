@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua"
-version = "1.7.2"
+version = "1.8.0"
 authors = ["Peter M. Stahl <pemistahl@gmail.com>"]
 description = """
 An accurate natural language detection library, suitable for short text and mixed-language text
@@ -68,18 +68,18 @@ harness = false
 required-features = ["benchmark"]
 
 [dependencies]
-brotli = "8.0.1"
+brotli = "8.0.2"
 compact_str = "0.9.0"
 dashmap = "6.1.0"
 fraction = "0.15.3"
 include_dir = "0.7.4"
 itertools = "0.14.0"
 maplit = "1.0.2"
-regex = "1.11.1"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
-strum = "0.27.1"
-strum_macros = "0.27.1"
+regex = "1.12.2"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+strum = "0.27.2"
+strum_macros = "0.27.2"
 lingua-afrikaans-language-model = { path = "language-models/af", version = "1.2.0", optional = true }
 lingua-albanian-language-model = { path = "language-models/sq", version = "1.2.0", optional = true }
 lingua-arabic-language-model = { path = "language-models/ar", version = "1.2.0", optional = true }
@@ -158,36 +158,36 @@ lingua-zulu-language-model = { path = "language-models/zu", version = "1.2.0", o
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 ahash = "0.8.12"
-clap = { version = "4.5.40", optional = true, features = ["derive"] }
+clap = { version = "4.5.50", optional = true, features = ["derive"] }
 cld2 = { version = "1.0.2", optional = true }
-indoc = { version = "2.0.6", optional = true }
-polars = { version = "0.48.1", optional = true, features = ["csv", "lazy"] }
-pyo3 = { version = "0.25.0", optional = true }
-rayon = "1.10.0"
+indoc = { version = "2.0.7", optional = true }
+polars = { version = "0.51.0", optional = true, features = ["csv", "lazy"] }
+pyo3 = { version = "0.27.1", optional = true }
+rayon = "1.11.0"
 serde-pickle = { version = "1.2.0", optional = true }
 titlecase = { version = "3.6.0", optional = true }
-whatlang = { version = "0.16.4", optional = true }
+whatlang = { version = "0.18.0", optional = true }
 whichlang = { version = "0.1.1", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-ahash = { version = "0.8.11", default-features = false, features = ["std", "compile-time-rng"] }
+ahash = { version = "0.8.12", default-features = false, features = ["std", "compile-time-rng"] }
 serde-wasm-bindgen = "0.6.5"
-wasm-bindgen = "0.2.100"
+wasm-bindgen = "0.2.104"
 
 [workspace.dependencies]
 include_dir = "0.7.4"
 
 [dev-dependencies]
 float-cmp = "0.10.0"
-indoc = "2.0.6"
-rstest = "0.25.0"
-tempfile = "3.20.0"
+indoc = "2.0.7"
+rstest = "0.26.1"
+tempfile = "3.23.0"
 
 [target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
-criterion = "0.6.0"
+criterion = "0.7.0"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
-wasm-bindgen-test = "0.3.50"
+wasm-bindgen-test = "0.3.54"
 
 [features]
 default = [

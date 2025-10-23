@@ -18,7 +18,7 @@ name: Release
 on:
   push:
     tags:
-      - v1.7.*
+      - v1.8.*
 
 jobs:
   python-linux-release-build:
@@ -39,7 +39,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist -i 3.10 3.11 3.12 3.13 pypy3.10 pypy3.11
+          args: --release --out dist -i 3.12 3.13 3.14 pypy3.11
           sccache: 'true'
           manylinux: ${{ matrix.linux }}
 
@@ -66,7 +66,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist -i 3.10 3.11 3.12 3.13
+          args: --release --out dist -i 3.12 3.13 3.14
           sccache: 'true'
 
       - name: Upload wheels
@@ -92,7 +92,7 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out dist -i 3.10 3.11 3.12 3.13 pypy3.10 pypy3.11
+          args: --release --out dist -i 3.12 3.13 3.14 pypy3.11
           sccache: 'true'
 
       - name: Upload wheels
@@ -136,4 +136,4 @@ jobs:
         uses: katyo/publish-crates@v2
         with:
           registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-          publish-delay: 45000
+          publish-delay: 60000

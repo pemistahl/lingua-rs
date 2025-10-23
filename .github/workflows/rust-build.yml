@@ -115,10 +115,8 @@ jobs:
       - name: Run WASM integration tests in Firefox
         run: wasm-pack test --headless --firefox
 
-      # Safari WASM tests not working, reason unclear
-      # https://github.com/pemistahl/lingua-rs/actions/runs/11589770729/job/32266301968#step:9:28
-      #- name: Run WASM integration tests in Safari
-      #  run: wasm-pack test --headless --safari
+      - name: Run WASM integration tests in Safari
+        run: wasm-pack test --headless --safari
 
   coverage-report:
     name: Coverage Report

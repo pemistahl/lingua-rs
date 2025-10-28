@@ -103,9 +103,6 @@ jobs:
           brew install --cask firefox
           brew install geckodriver
 
-      #- name: Enable Safari web driver
-      #  run: sudo safaridriver --enable
-
       - name: Run WASM integration tests on NodeJS
         run: wasm-pack test --node
 
@@ -116,7 +113,11 @@ jobs:
         run: wasm-pack test --headless --firefox
 
       - name: Run WASM integration tests in Safari
-        run: wasm-pack test --headless --safari
+        env:
+          CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER: wasm-bindgen-test-runner
+          WASM_BINDGEN_TEST_DRIVER_TIMEOUT: 10
+          SAFARIDRIVER: safaridriver
+        run: cargo test --target wasm32-unknown-unknown
 
   coverage-report:
     name: Coverage Report

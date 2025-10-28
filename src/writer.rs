@@ -20,7 +20,7 @@ use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
 use std::{fs, io};
 
-use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
+use crate::constant::{DIGITS_AT_BEGINNING, MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
 use crate::detector::split_text_into_words;
 use crate::file::read_test_data_file;
 use crate::model::{
@@ -32,6 +32,7 @@ use crate::Language;
 use brotli::CompressorWriter;
 use counter::Counter;
 use itertools::Itertools;
+use rand::Rng;
 use regex::Regex;
 use strum::IntoEnumIterator;
 
@@ -81,18 +82,18 @@ impl LanguageModelFilesWriter {
     pub fn create_and_write_language_model_files(
         input_file_path: &Path,
         output_directory_path: &Path,
-        language: &Language,
+        language: Language,
         char_class: &str,
     ) -> io::Result<()> {
         check_input_file_path(input_file_path);
         check_output_directory_path(output_directory_path);
 
         let unigram_model =
-            Self::create_language_model(input_file_path, language, 1, char_class, &hashmap!())?;
+            Self::create_language_model(input_file_path, &language, 1, char_class, &hashmap!())?;
 
         let bigram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             2,
             char_class,
             &unigram_model.absolute_frequencies,
@@ -100,7 +101,7 @@ impl LanguageModelFilesWriter {
 
         let trigram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             3,
             char_class,
             &bigram_model.absolute_frequencies,
@@ -108,7 +109,7 @@ impl LanguageModelFilesWriter {
 
         let quadrigram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             4,
             char_class,
             &trigram_model.absolute_frequencies,
@@ -116,7 +117,7 @@ impl LanguageModelFilesWriter {
 
         let fivegram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             5,
             char_class,
             &quadrigram_model.absolute_frequencies,
@@ -247,17 +248,34 @@ impl TestDataFilesWriter {
             remove_file(&sentences_file_path)?;
         }
 
-        let input_file = File::open(input_file_path)?;
-        let input_lines = BufReader::new(input_file).lines().map(|line| line.unwrap());
+        let input_lines_count = BufReader::new(File::open(input_file_path)?).lines().count();
+        let input_lines = BufReader::new(File::open(input_file_path)?)
+            .lines()
+            .map(|line| line.unwrap());
 
         let sentences_file = File::create(sentences_file_path)?;
         let mut sentences_writer = LineWriter::new(sentences_file);
 
         let mut line_counter = 0;
+        let mut rng = rand::rng();
+        let mut random_line_numbers = HashSet::new();
 
-        for line in input_lines {
+        loop {
+            let n = rng.random_range(0..input_lines_count);
+            random_line_numbers.insert(n);
+            if random_line_numbers.len() as u32 == maximum_lines {
+                break;
+            }
+        }
+
+        for (i, line) in input_lines.enumerate() {
+            if !random_line_numbers.contains(&i) {
+                continue;
+            }
+
             let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&line, " ");
-            let removed_quotes = normalized_whitespace.replace('\"', "");
+            let removed_sentence_numbers = DIGITS_AT_BEGINNING.replace(&normalized_whitespace, "");
+            let removed_quotes = removed_sentence_numbers.replace('\"', "");
 
             if line_counter < maximum_lines {
                 sentences_writer.write_all(removed_quotes.as_bytes())?;
@@ -721,7 +739,7 @@ mod tests {
             let result = LanguageModelFilesWriter::create_and_write_language_model_files(
                 input_file.path(),
                 output_directory.path(),
-                &Language::English,
+                Language::English,
                 "\\p{L}",
             );
             assert!(result.is_ok());

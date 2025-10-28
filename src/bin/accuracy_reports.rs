@@ -883,10 +883,30 @@ struct Cli {
 fn main() {
     let total_start = Instant::now();
     let cli = Cli::parse();
-    let language_names = cli.languages.iter().map(|it| it.to_string()).collect_vec();
+    let mut detector_names = cli.detectors.iter().cloned().collect_vec();
+    let language_names = cli
+        .languages
+        .iter()
+        .map(|it| it.to_string().to_lowercase())
+        .collect_vec();
     let mut all_statistics = HashMap::new();
+    let all_single_language_detectors_name = "lingua-all-single-language-detectors".to_string();
 
-    for detector_name in cli.detectors.iter() {
+    if detector_names.contains(&all_single_language_detectors_name) {
+        let idx = detector_names
+            .iter()
+            .position(|detector_name| detector_name == &all_single_language_detectors_name)
+            .unwrap();
+        detector_names.remove(idx);
+        for language_name in language_names.iter() {
+            let detector_name = format!("lingua-{language_name}-detector");
+            if !detector_names.contains(&detector_name) {
+                detector_names.push(detector_name);
+            }
+        }
+    }
+
+    for detector_name in detector_names.iter() {
         if let Some(detector) = create_detector_instance(detector_name, &cli.languages) {
             let start = Instant::now();
             let mut statistics = detector.collect_statistics();
@@ -916,7 +936,7 @@ fn main() {
             Err(_) => df!("language" => &language_names).unwrap(),
         };
 
-        for detector_name in cli.detectors.iter() {
+        for detector_name in detector_names.iter() {
             let statistics = all_statistics.get(detector_name).unwrap();
             let mut lazy_dataframe = dataframe.clone().lazy();
 

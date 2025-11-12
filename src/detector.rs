@@ -46,11 +46,8 @@ type ProbabilityMap = AHashMap<CompactString, f64>;
 type LanguageModelMap = DashMap<Language, ProbabilityMap>;
 type CountModelMap = DashMap<Language, HashSet<String>>;
 
-static UNIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static BIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static TRIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static QUADRIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static FIVEGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
+type FstMap = DashMap<Language, fst::Map<Vec<u8>>>;
+static NGRAM_MODELS: LazyLock<FstMap> = LazyLock::new(DashMap::new);
 
 static UNIQUE_UNIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
 static UNIQUE_BIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
@@ -83,11 +80,7 @@ pub struct LanguageDetector {
     is_built_from_one_language: bool,
     languages_with_unique_characters: HashSet<Language>,
     single_language_alphabets: HashMap<Alphabet, Language>,
-    unigram_language_models: &'static LanguageModelMap,
-    bigram_language_models: &'static LanguageModelMap,
-    trigram_language_models: &'static LanguageModelMap,
-    quadrigram_language_models: &'static LanguageModelMap,
-    fivegram_language_models: &'static LanguageModelMap,
+    ngram_models: &'static FstMap,
     unique_unigram_language_models: &'static CountModelMap,
     unique_bigram_language_models: &'static CountModelMap,
     unique_trigram_language_models: &'static CountModelMap,
@@ -115,11 +108,7 @@ impl LanguageDetector {
             is_built_from_one_language,
             languages_with_unique_characters: collect_languages_with_unique_characters(&languages),
             single_language_alphabets: collect_single_language_alphabets(&languages),
-            unigram_language_models: &UNIGRAM_MODELS,
-            bigram_language_models: &BIGRAM_MODELS,
-            trigram_language_models: &TRIGRAM_MODELS,
-            quadrigram_language_models: &QUADRIGRAM_MODELS,
-            fivegram_language_models: &FIVEGRAM_MODELS,
+            ngram_models: &NGRAM_MODELS,
             unique_unigram_language_models: &UNIQUE_UNIGRAM_MODELS,
             unique_bigram_language_models: &UNIQUE_BIGRAM_MODELS,
             unique_trigram_language_models: &UNIQUE_TRIGRAM_MODELS,
@@ -231,14 +220,7 @@ impl LanguageDetector {
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
-            load_probability_model(self.trigram_language_models, *language, 3);
-
-            if !self.is_low_accuracy_mode_enabled {
-                load_probability_model(self.unigram_language_models, *language, 1);
-                load_probability_model(self.bigram_language_models, *language, 2);
-                load_probability_model(self.quadrigram_language_models, *language, 4);
-                load_probability_model(self.fivegram_language_models, *language, 5);
-            }
+            load_probability_model(self.ngram_models, *language);
         });
     }
 
@@ -255,14 +237,7 @@ impl LanguageDetector {
         let languages_iter = self.languages.iter();
 
         languages_iter.for_each(|language| {
-            self.trigram_language_models.remove(language);
-
-            if !self.is_low_accuracy_mode_enabled {
-                self.unigram_language_models.remove(language);
-                self.bigram_language_models.remove(language);
-                self.quadrigram_language_models.remove(language);
-                self.fivegram_language_models.remove(language);
-            }
+            self.ngram_models.remove(language);
 
             if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
                 self.unique_unigram_language_models.remove(language);
@@ -278,14 +253,7 @@ impl LanguageDetector {
             }
         });
 
-        self.trigram_language_models.shrink_to_fit();
-
-        if !self.is_low_accuracy_mode_enabled {
-            self.unigram_language_models.shrink_to_fit();
-            self.bigram_language_models.shrink_to_fit();
-            self.quadrigram_language_models.shrink_to_fit();
-            self.fivegram_language_models.shrink_to_fit();
-        }
+        self.ngram_models.shrink_to_fit();
 
         if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
             self.unique_unigram_language_models.shrink_to_fit();
@@ -1260,6 +1228,7 @@ impl LanguageDetector {
     }
 
     fn look_up_ngram_probability(&self, language: Language, ngram: &NgramRef) -> Option<f64> {
+        /*
         let ngram_length = ngram.value.chars().count();
         let language_models = match ngram_length {
             5 => self.fivegram_language_models,
@@ -1270,16 +1239,17 @@ impl LanguageDetector {
             0 => panic!("zerogram detected"),
             _ => panic!("unsupported ngram length detected: {}", ngram_length),
         };
+        */
 
-        if !load_probability_model(language_models, language, ngram_length) {
+        if !load_probability_model(self.ngram_models, language) {
             return None;
         }
 
-        language_models
+        self.ngram_models
             .get(&language)
             .unwrap()
             .get(ngram.value)
-            .copied()
+            .map(f64::from_bits)
     }
 
     fn count_unigrams(
@@ -1332,28 +1302,28 @@ fn load_count_model(
     }
 }
 
-fn load_probability_model(
-    language_models: &'static LanguageModelMap,
-    language: Language,
-    ngram_length: usize,
-) -> bool {
+fn load_probability_model(language_models: &'static FstMap, language: Language) -> bool {
     if language_models.contains_key(&language) {
         return true;
     }
-    match load_ngram_probability_model(language, ngram_length) {
-        Some(model) => {
-            language_models.insert(
-                language,
-                model
-                    .ngrams
-                    .iter()
-                    .map(|(key, value)| (key.clone(), value.to_f64().unwrap().ln()))
-                    .collect(),
-            );
-            true
-        }
-        None => false,
-    }
+
+    let mut pairs = (1..=5)
+        .into_iter()
+        .map(|ngram_length| load_ngram_probability_model(language, ngram_length))
+        .filter(|model| model.is_some())
+        .flat_map(|model| model.unwrap().ngrams)
+        .map(|(ngram, probability)| (ngram, probability.to_f64().unwrap().ln().to_bits()))
+        .collect_vec();
+
+    pairs.sort_unstable_by(|(ngram1, _), (ngram2, _)| ngram1.cmp(ngram2));
+
+    let mut map_builder = fst::MapBuilder::memory();
+    map_builder.extend_iter(pairs).unwrap();
+
+    let fst_map = map_builder.into_map();
+    language_models.insert(language, fst_map);
+
+    true
 }
 
 fn search_unique_ngrams(

@@ -56,7 +56,7 @@ keywords = [
 opt-level = 1
 
 [profile.release]
-lto = "thin"
+debug = true
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -75,7 +75,7 @@ brotli = "8.0.2"
 compact_str = "0.9.0"
 dashmap = "6.1.0"
 fraction = "0.15.3"
-fst = "0.4.7"
+hashbrown = "0.16.0"
 include_dir = "0.7.4"
 itertools = "0.14.0"
 maplit = "1.0.2"

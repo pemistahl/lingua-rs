@@ -7,10 +7,10 @@
   [![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
   [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
   [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
-  [![dependency status](https://deps.rs/crate/lingua/1.7.1/status.svg)](https://deps.rs/crate/lingua/1.7.1)
+  [![dependency status](https://deps.rs/crate/lingua/1.7.2/status.svg)](https://deps.rs/crate/lingua/1.7.2)
   [![downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
   [![crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-  [![lib.rs](https://img.shields.io/badge/lib.rs-v1.7.1-blue)](https://lib.rs/crates/lingua)
+  [![lib.rs](https://img.shields.io/badge/lib.rs-v1.7.2-blue)](https://lib.rs/crates/lingua)
   [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 </div>
 
@@ -435,7 +435,7 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.7.1"
+lingua = "1.7.2"
 ```
 
 By default, this will download the language model dependencies for all 75 supported languages, 
@@ -445,7 +445,7 @@ separate features in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-lingua = { version = "1.7.1", default-features = false, features = ["french", "italian", "spanish"] }
+lingua = { version = "1.7.2", default-features = false, features = ["french", "italian", "spanish"] }
 ```
 
 ## 9. How to build?
@@ -636,12 +636,8 @@ or unlikely to occur.
 
 If you build a `LanguageDetector` from one language only it will operate in single-language mode.
 This means the detector will try to find out whether a given text has been written in the given language or not.
-If not, then `None` will be returned, otherwise the given language.
-
-In single-language mode, the detector decides based on a set of unique and most common n-grams which
-have been collected beforehand for every supported language. It turns out that unique and most common
-n-grams help to improve accuracy in low accuracy mode, so they are used for that mode as well. In high
-accuracy mode, however, they do not make a significant difference, that's why they are left out.
+If not, then `None` will be returned, otherwise the given language. In single-language mode, the detector decides based on a set of unique and most common n-grams which
+have been collected beforehand for every supported language.
 
 ### 10.7 Detection of multiple languages in mixed-language texts
 

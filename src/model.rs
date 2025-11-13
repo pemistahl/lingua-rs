@@ -215,7 +215,7 @@ impl TrainingDataLanguageModel {
     }
 }
 
-pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<NgramRef> {
+pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<NgramRef<'_>> {
     assert!(
         (1..6).contains(&ngram_length),
         "ngram length {ngram_length} is not in range 1..6"
@@ -246,7 +246,7 @@ pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<Ng
 pub(crate) fn create_lower_order_ngrams(
     words: &[String],
     ngram_length: usize,
-) -> Vec<Vec<NgramRef>> {
+) -> Vec<Vec<NgramRef<'_>>> {
     let ngrams = create_ngrams(words, ngram_length);
     let mut lower_order_ngrams = Vec::with_capacity(ngrams.len());
     for ngram in ngrams {

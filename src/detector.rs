@@ -138,9 +138,6 @@ impl LanguageDetector {
 
         if is_built_from_one_language || is_low_accuracy_mode_enabled {
             detector.preload_unique_ngram_models();
-        }
-
-        if is_built_from_one_language {
             detector.preload_most_common_ngram_models();
         }
 
@@ -268,14 +265,11 @@ impl LanguageDetector {
             }
 
             if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
-                self.unigram_language_models.remove(language);
+                self.unique_unigram_language_models.remove(language);
                 self.unique_bigram_language_models.remove(language);
                 self.unique_trigram_language_models.remove(language);
                 self.unique_quadrigram_language_models.remove(language);
                 self.unique_fivegram_language_models.remove(language);
-            }
-
-            if self.is_built_from_one_language {
                 self.most_common_unigram_language_models.remove(language);
                 self.most_common_bigram_language_models.remove(language);
                 self.most_common_trigram_language_models.remove(language);
@@ -294,14 +288,11 @@ impl LanguageDetector {
         }
 
         if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
-            self.unigram_language_models.shrink_to_fit();
+            self.unique_unigram_language_models.shrink_to_fit();
             self.unique_bigram_language_models.shrink_to_fit();
             self.unique_trigram_language_models.shrink_to_fit();
             self.unique_quadrigram_language_models.shrink_to_fit();
             self.unique_fivegram_language_models.shrink_to_fit();
-        }
-
-        if self.is_built_from_one_language {
             self.most_common_unigram_language_models.shrink_to_fit();
             self.most_common_bigram_language_models.shrink_to_fit();
             self.most_common_trigram_language_models.shrink_to_fit();
@@ -940,6 +931,7 @@ impl LanguageDetector {
     }
 
     fn detect_language_with_unique_and_common_ngrams(&self, words: &[String]) -> Option<Language> {
+        let mut filtered_languages = hashset!();
         for ngram_length in (1..6usize).rev() {
             let ngrams = create_ngrams(words, ngram_length);
             let mut optional_language: Option<Language> = None;
@@ -973,12 +965,16 @@ impl LanguageDetector {
                     optional_language =
                         self.search_unique_and_most_common_ngrams(*language, &ngrams, ngram_length);
                 }
-                if optional_language.is_some() {
-                    return optional_language;
+                if let Some(language) = optional_language {
+                    filtered_languages.insert(language);
                 }
             }
         }
-        None
+        if filtered_languages.len() == 1 {
+            filtered_languages.iter().next().copied()
+        } else {
+            None
+        }
     }
 
     fn search_unique_and_most_common_ngrams(

@@ -44,7 +44,7 @@ jobs:
           manylinux: ${{ matrix.linux }}
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: linux-${{ matrix.linux }}-${{ matrix.target }}-wheels
           path: dist
@@ -56,7 +56,7 @@ jobs:
 
     strategy:
       matrix:
-        target: [ x64 ]
+        target: [ x86_64, aarch64 ]
 
     steps:
       - name: Check out repository
@@ -70,7 +70,7 @@ jobs:
           sccache: 'true'
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: windows-${{ matrix.target }}-wheels
           path: dist
@@ -96,7 +96,7 @@ jobs:
           sccache: 'true'
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: macos-${{ matrix.target }}-wheels
           path: dist
@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: Download wheels from previous jobs
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           path: wheels
           merge-multiple: true

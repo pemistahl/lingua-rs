@@ -326,7 +326,7 @@ impl LanguageDetector {
     /// assert_eq!(detected_language, Some(English));
     /// ```
     pub fn detect_language_of<T: Into<String>>(&self, text: T) -> Option<Language> {
-        self.detect_language_from_languages(text, &self.languages)
+        self.detect_language_from_languages(&text.into(), &self.languages)
     }
 
     /// Detects the languages of all given input texts.
@@ -380,9 +380,9 @@ impl LanguageDetector {
             .collect()
     }
 
-    fn detect_language_from_languages<T: Into<String>>(
+    fn detect_language_from_languages(
         &self,
-        text: T,
+        text: &str,
         languages: &HashSet<Language>,
     ) -> Option<Language> {
         let confidence_values =
@@ -470,14 +470,16 @@ impl LanguageDetector {
     /// }
     /// ```
     pub fn detect_multiple_languages_of<T: Into<String>>(&self, text: T) -> Vec<DetectionResult> {
-        let text_str = text.into();
+        self.detect_multiple_languages_of_impl(&text.into())
+    }
 
-        if text_str.is_empty() {
+    fn detect_multiple_languages_of_impl(&self, text: &str) -> Vec<DetectionResult> {
+        if text.is_empty() {
             return vec![];
         }
 
         let tokens_without_whitespace = TOKENS_WITHOUT_WHITESPACE
-            .find_iter(&text_str)
+            .find_iter(&text)
             .map(|mat| mat.as_str())
             .collect_vec();
 
@@ -488,7 +490,7 @@ impl LanguageDetector {
         let mut results = vec![];
         let mut language_counts = HashMap::new();
 
-        let language = self.detect_language_of(&text_str);
+        let language = self.detect_language_from_languages(text, &self.languages);
         if let Some(lang) = language {
             increment_counter(&mut language_counts, lang, 1);
         }
@@ -497,7 +499,7 @@ impl LanguageDetector {
             if word.chars().count() < 5 {
                 continue;
             }
-            let language = self.detect_language_of(*word);
+            let language = self.detect_language_from_languages(word, &self.languages);
             if let Some(lang) = language {
                 increment_counter(&mut language_counts, lang, 1);
             }
@@ -511,7 +513,7 @@ impl LanguageDetector {
         if languages.len() == 1 {
             let result = DetectionResult {
                 start_index: 0,
-                end_index: text_str.len(),
+                end_index: text.len(),
                 word_count: tokens_without_whitespace.len(),
                 language: *languages.iter().next().unwrap(),
             };
@@ -522,8 +524,8 @@ impl LanguageDetector {
             let mut word_count = 0;
             let mut current_language = None;
 
-            let last_index = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text_str).count() - 1;
-            let token_matches = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text_str);
+            let last_index = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text).count() - 1;
+            let token_matches = TOKENS_WITH_OPTIONAL_WHITESPACE.find_iter(&text);
 
             for (i, token_match) in token_matches.enumerate() {
                 let word = token_match.as_str();
@@ -557,7 +559,7 @@ impl LanguageDetector {
                     if let Some(current_lang) = current_language {
                         let result = DetectionResult {
                             start_index: current_start_index,
-                            end_index: text_str.len(),
+                            end_index: text.len(),
                             word_count,
                             language: current_lang,
                         };
@@ -671,7 +673,7 @@ impl LanguageDetector {
         &self,
         text: T,
     ) -> Vec<(Language, f64)> {
-        self.compute_language_confidence_values_for_languages(text, &self.languages)
+        self.compute_language_confidence_values_for_languages(&text.into(), &self.languages)
     }
 
     /// Computes confidence values for each language supported by this detector for all the given
@@ -742,9 +744,9 @@ impl LanguageDetector {
             .collect()
     }
 
-    fn compute_language_confidence_values_for_languages<T: Into<String>>(
+    fn compute_language_confidence_values_for_languages(
         &self,
-        text: T,
+        text: &str,
         languages: &HashSet<Language>,
     ) -> Vec<(Language, f64)> {
         let mut values = Vec::with_capacity(languages.len());
@@ -753,8 +755,7 @@ impl LanguageDetector {
             values.push((*language, 0.0));
         }
 
-        let text_str = text.into();
-        let words = split_text_into_words(&text_str);
+        let words = split_text_into_words(text);
 
         if words.is_empty() {
             return values;

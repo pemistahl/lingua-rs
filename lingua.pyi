@@ -809,3 +809,25 @@ class TestDataFilesWriter:
                 point to an existing directory; if the character class cannot
                 be compiled to a valid regular expression
         """
+
+
+class UniqueNgramsWriter:
+    """This class determines ngrams being unique to any specific
+    language and writes them to a directory."""
+
+    @classmethod
+    def create_and_write_unique_ngram_files(
+        cls,
+        output_directory_path: Path,
+    ):
+        """Create unique ngram files from the current language
+        models and writes them to a directory.
+
+        Args:
+            output_directory_path: The path to an existing directory where
+                the unique ngram files are to be written.
+
+        Raises:
+            Exception: if the output directory path is not absolute or does not
+                point to an existing directory.
+        """

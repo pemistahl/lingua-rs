@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs::{remove_file, File};
-use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
+use std::{fs, io};
 
+use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
+use crate::model::{load_ngram_probability_model, TrainingDataLanguageModel};
+use crate::ngram::Ngram;
+use crate::Language;
 use brotli::CompressorWriter;
 use itertools::Itertools;
 use regex::Regex;
-
-use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
-use crate::model::TrainingDataLanguageModel;
-use crate::ngram::Ngram;
-use crate::Language;
+use serde_json::json;
+use strum::IntoEnumIterator;
 
 /// This struct creates language model files and writes them to a directory.
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
@@ -37,6 +38,11 @@ pub struct LanguageModelFilesWriter;
 /// and writes them to a directory.
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct TestDataFilesWriter;
+
+/// This struct determines ngrams being unique to any specific language
+/// and writes them to a directory.
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
+pub struct UniqueNgramsWriter;
 
 impl LanguageModelFilesWriter {
     /// Creates language model files and writes them to a directory.
@@ -334,6 +340,86 @@ impl TestDataFilesWriter {
     }
 }
 
+impl UniqueNgramsWriter {
+    /// Creates unique ngram files from the current language models and writes them to a directory.
+    ///
+    /// `output_directory_path`: The path to an existing directory where the unique ngram files
+    /// are to be written.
+    ///
+    /// ⚠ Panics if the output directory path is not absolute or does not point to an existing directory.
+    pub fn create_and_write_unique_ngram_files(output_directory_path: &Path) -> io::Result<()> {
+        check_output_directory_path(output_directory_path);
+        for ngram_length in 1..6 {
+            let ngrams = Self::load_ngrams(ngram_length);
+            let unique_ngrams = Self::identify_unique_ngrams(ngrams);
+            Self::store_unique_ngrams(unique_ngrams, ngram_length, output_directory_path)?;
+        }
+        Ok(())
+    }
+
+    fn load_ngrams(ngram_length: usize) -> HashMap<Language, HashSet<String>> {
+        let mut result = HashMap::new();
+        for language in Language::iter() {
+            if let Some(model) = load_ngram_probability_model(language, ngram_length) {
+                let ngrams = model.ngrams.keys().map(|key| key.to_string()).collect();
+                result.insert(language, ngrams);
+            }
+        }
+        result
+    }
+
+    fn identify_unique_ngrams(
+        ngrams: HashMap<Language, HashSet<String>>,
+    ) -> HashMap<Language, HashSet<String>> {
+        let mut unique_ngrams = HashSet::new();
+        for ngrams_i in ngrams.values() {
+            let mut current = ngrams_i.clone();
+            for ngrams_j in ngrams.values() {
+                if ngrams_j != ngrams_i {
+                    current = &current - ngrams_j;
+                }
+            }
+            unique_ngrams = unique_ngrams.union(&current).cloned().collect();
+        }
+        let mut result = HashMap::new();
+        for unique_ngram in unique_ngrams {
+            for (language, ngrams_set) in ngrams.iter() {
+                if ngrams_set.contains(&unique_ngram) {
+                    if !result.contains_key(language) {
+                        result.insert(*language, HashSet::new());
+                    }
+                    result.get_mut(language).unwrap().insert(unique_ngram);
+                    break;
+                }
+            }
+        }
+        result
+    }
+
+    fn store_unique_ngrams(
+        unique_ngrams: HashMap<Language, HashSet<String>>,
+        ngram_length: usize,
+        output_directory_path: &Path,
+    ) -> io::Result<()> {
+        let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
+        let file_name = format!("unique_{ngram_name}s.json.br");
+        for (language, ngrams) in unique_ngrams {
+            let language_dir_path =
+                output_directory_path.join(language.iso_code_639_1().to_string());
+            if !language_dir_path.exists() {
+                fs::create_dir(language_dir_path.as_path())?;
+            }
+            let file_path = language_dir_path.join(&file_name);
+            let file = File::create(file_path)?;
+            let mut compressed_file = CompressorWriter::new(file, 4096, 11, 22);
+            let sorted_ngrams = ngrams.into_iter().sorted().collect_vec();
+            let obj = json!({"language": language, "ngrams": sorted_ngrams});
+            compressed_file.write_all(obj.to_string().as_bytes())?;
+        }
+        Ok(())
+    }
+}
+
 fn check_input_file_path(input_file_path: &Path) {
     if !input_file_path.is_absolute() {
         panic!(
@@ -375,13 +461,13 @@ fn check_output_directory_path(output_directory_path: &Path) {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use crate::minify;
+    use brotli::Decompressor;
     use std::fs::read_dir;
     use std::io::Read;
     use std::path::PathBuf;
-
     use tempfile::{tempdir, NamedTempFile};
-
-    use super::*;
 
     fn create_temp_input_file(content: &str) -> NamedTempFile {
         let mut input_file = NamedTempFile::new().unwrap();
@@ -401,11 +487,27 @@ mod tests {
         files
     }
 
+    fn assert_file_content(
+        file_path: &Path,
+        expected_file_name: &str,
+        expected_file_content: &str,
+    ) {
+        assert!(file_path.is_file());
+
+        let file_name = file_path.file_name().unwrap();
+        assert_eq!(file_name, expected_file_name);
+
+        let compressed_file = File::open(file_path).unwrap();
+        let mut uncompressed_file = Decompressor::new(compressed_file, 4096);
+        let mut uncompressed_file_content = String::new();
+        uncompressed_file
+            .read_to_string(&mut uncompressed_file_content)
+            .unwrap();
+
+        assert_eq!(uncompressed_file_content, minify(expected_file_content));
+    }
+
     mod language_model_files {
-        use brotli::Decompressor;
-
-        use crate::minify;
-
         use super::*;
 
         const TEXT: &str = "
@@ -511,39 +613,37 @@ mod tests {
             let quadrigrams_file_path = files.get(2).unwrap();
             let fivegrams_file_path = files.get(1).unwrap();
 
-            assert_file_names(unigrams_file_path, "unigrams.json.br");
-            assert_file_names(bigrams_file_path, "bigrams.json.br");
-            assert_file_names(trigrams_file_path, "trigrams.json.br");
-            assert_file_names(quadrigrams_file_path, "quadrigrams.json.br");
-            assert_file_names(fivegrams_file_path, "fivegrams.json.br");
+            assert_file_content(
+                unigrams_file_path,
+                "unigrams.json.br",
+                EXPECTED_UNIGRAM_MODEL,
+            );
 
-            assert_file_content(unigrams_file_path, EXPECTED_UNIGRAM_MODEL);
-            assert_file_content(bigrams_file_path, EXPECTED_BIGRAM_MODEL);
-            assert_file_content(trigrams_file_path, EXPECTED_TRIGRAM_MODEL);
-            assert_file_content(quadrigrams_file_path, EXPECTED_QUADRIGRAM_MODEL);
-            assert_file_content(fivegrams_file_path, EXPECTED_FIVEGRAM_MODEL);
-        }
+            assert_file_content(bigrams_file_path, "bigrams.json.br", EXPECTED_BIGRAM_MODEL);
 
-        fn assert_file_names(file_path: &Path, expected_file_name: &str) {
-            assert_eq!(file_path.file_name().unwrap(), expected_file_name);
-        }
+            assert_file_content(
+                trigrams_file_path,
+                "trigrams.json.br",
+                EXPECTED_TRIGRAM_MODEL,
+            );
 
-        fn assert_file_content(file_path: &Path, expected_file_content: &str) {
-            let compressed_file = File::open(file_path).unwrap();
-            let mut uncompressed_file = Decompressor::new(compressed_file, 4096);
-            let mut uncompressed_file_content = String::new();
-            uncompressed_file
-                .read_to_string(&mut uncompressed_file_content)
-                .unwrap();
+            assert_file_content(
+                quadrigrams_file_path,
+                "quadrigrams.json.br",
+                EXPECTED_QUADRIGRAM_MODEL,
+            );
 
-            assert_eq!(uncompressed_file_content, minify(expected_file_content));
+            assert_file_content(
+                fivegrams_file_path,
+                "fivegrams.json.br",
+                EXPECTED_FIVEGRAM_MODEL,
+            );
         }
     }
 
     mod test_data_files {
-        use indoc::indoc;
-
         use super::*;
+        use indoc::indoc;
 
         const TEXT: &str = indoc! {r#"
             There are many attributes associated with good software.
@@ -627,6 +727,68 @@ mod tests {
                 .read_to_string(&mut test_data_file_content)
                 .unwrap();
             assert_eq!(test_data_file_content, expected_file_content);
+        }
+    }
+
+    mod unique_ngrams_writer {
+        use super::*;
+        use rstest::{fixture, rstest};
+
+        #[fixture]
+        fn unique_ngrams() -> HashMap<Language, HashSet<String>> {
+            hashmap!(
+                Language::English => to_string(hashset!("th")),
+                Language::German => to_string(hashset!("rz", "äu"))
+            )
+        }
+
+        #[rstest]
+        fn test_store_unique_ngrams(unique_ngrams: HashMap<Language, HashSet<String>>) {
+            let output_directory = tempdir().expect("Temporary directory could not be created");
+            let result =
+                UniqueNgramsWriter::store_unique_ngrams(unique_ngrams, 2, output_directory.path());
+            assert!(result.is_ok());
+
+            let english_dir_path = output_directory
+                .path()
+                .join(Language::English.iso_code_639_1().to_string());
+            assert!(english_dir_path.exists());
+
+            let english_unique_ngram_files = read_directory_content(&english_dir_path);
+            assert_eq!(english_unique_ngram_files.len(), 1);
+            assert_file_content(
+                &english_unique_ngram_files[0],
+                "unique_bigrams.json.br",
+                r#"{"language":"ENGLISH","ngrams":["th"]}"#,
+            );
+
+            let german_dir_path = output_directory
+                .path()
+                .join(Language::German.iso_code_639_1().to_string());
+            assert!(german_dir_path.exists());
+
+            let german_unique_ngram_files = read_directory_content(&german_dir_path);
+            assert_eq!(german_unique_ngram_files.len(), 1);
+            assert_file_content(
+                &german_unique_ngram_files[0],
+                "unique_bigrams.json.br",
+                r#"{"language":"GERMAN","ngrams":["rz","äu"]}"#,
+            );
+        }
+
+        #[rstest]
+        fn test_identify_unique_ngrams(unique_ngrams: HashMap<Language, HashSet<String>>) {
+            let ngrams = hashmap!(
+                Language::English => to_string(hashset!("th", "en", "es")),
+                Language::German => to_string(hashset!("äu", "en", "rz")),
+                Language::Spanish => to_string(hashset!("es", "en"))
+            );
+            let actual_unique_ngrams = UniqueNgramsWriter::identify_unique_ngrams(ngrams);
+            assert_eq!(actual_unique_ngrams, unique_ngrams);
+        }
+
+        fn to_string(ngrams: HashSet<&str>) -> HashSet<String> {
+            ngrams.into_iter().map(|ngram| ngram.to_string()).collect()
         }
     }
 }

@@ -33,7 +33,7 @@ use crate::detector::LanguageDetector;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
 use crate::result::DetectionResult;
-use crate::writer::{LanguageModelFilesWriter, TestDataFilesWriter};
+use crate::writer::{LanguageModelFilesWriter, TestDataFilesWriter, UniqueNgramsWriter};
 
 const ENUM_MEMBER_NOT_FOUND_MESSAGE: &str = "Matching enum member not found";
 
@@ -48,6 +48,7 @@ fn lingua(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<LanguageDetector>()?;
     m.add_class::<LanguageModelFilesWriter>()?;
     m.add_class::<TestDataFilesWriter>()?;
+    m.add_class::<UniqueNgramsWriter>()?;
     Ok(())
 }
 
@@ -978,8 +979,32 @@ impl TestDataFilesWriter {
     }
 }
 
+#[pymethods]
+impl UniqueNgramsWriter {
+    /// Create unique ngram files from the current language models
+    /// and writes them to a directory.
+    ///
+    /// Args:
+    ///     output_directory_path: The path to an existing directory where
+    ///         the test data files are to be written.
+    ///
+    /// Raises:
+    ///     Exception: if the output directory path is not absolute or does not
+    ///         point to an existing directory.
+    #[pyo3(name = "create_and_write_unique_ngram_files")]
+    #[classmethod]
+    fn py_create_and_write_unique_ngram_files(
+        _cls: &Bound<PyType>,
+        output_directory_path: PathBuf,
+    ) -> PyResult<()> {
+        convert_io_result_to_py_result(panic::catch_unwind(|| {
+            Self::create_and_write_unique_ngram_files(output_directory_path.as_path())
+        }))
+    }
+}
+
 fn convert_io_result_to_py_result(
-    io_result: Result<Result<(), io::Error>, Box<(dyn Any + Send + 'static)>>,
+    io_result: Result<Result<(), io::Error>, Box<dyn Any + Send + 'static>>,
 ) -> PyResult<()> {
     match io_result {
         Ok(_) => Ok(()),

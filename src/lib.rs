@@ -418,7 +418,7 @@ pub use wasm::{
     ConfidenceValue, DetectionResult as WasmDetectionResult,
     LanguageDetectorBuilder as WasmLanguageDetectorBuilder,
 };
-pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter};
+pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter, UniqueNgramsWriter};
 
 mod alphabet;
 mod builder;

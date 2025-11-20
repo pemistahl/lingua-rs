@@ -413,7 +413,7 @@ pub use detector::LanguageDetector;
 pub use isocode::{IsoCode639_1, IsoCode639_3};
 pub use language::Language;
 pub use result::DetectionResult;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm-bindgen"))]
 pub use wasm::{
     ConfidenceValue, DetectionResult as WasmDetectionResult,
     LanguageDetectorBuilder as WasmLanguageDetectorBuilder,
@@ -436,7 +436,7 @@ mod writer;
 #[cfg(feature = "python")]
 mod python;
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm-bindgen"))]
 mod wasm;
 
 #[cfg(any(target_family = "wasm", feature = "python"))]

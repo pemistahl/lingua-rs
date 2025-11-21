@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -60,7 +60,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Upload release to crates.io
         uses: katyo/publish-crates@v2

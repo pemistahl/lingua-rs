@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Store or retrieve cargo caches
         uses: actions/cache@v4
@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
@@ -137,7 +137,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Generate coverage report
         run: cargo +nightly tarpaulin --lib --ignore-config --ignore-panics --ignore-tests --exclude-files src/python.rs src/script.rs src/wasm.rs src/bin/accuracy_reports.rs --verbose --timeout 120 --out xml

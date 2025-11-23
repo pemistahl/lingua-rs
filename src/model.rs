@@ -24,7 +24,7 @@ use itertools::Itertools;
 use regex::Regex;
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
@@ -216,18 +216,29 @@ impl TrainingDataLanguageModel {
 }
 
 pub(crate) fn create_ngrams(words: &[String], ngram_length: usize) -> HashSet<NgramRef<'_>> {
-    if !(1..6).contains(&ngram_length) {
-        panic!("ngram length {ngram_length} is not in range 1..6");
-    }
+    assert!(
+        (1..6).contains(&ngram_length),
+        "ngram length {ngram_length} is not in range 1..6"
+    );
     let mut ngrams = hashset!();
+    let mut offsets = VecDeque::with_capacity(ngram_length);
     for word in words.iter() {
-        let chars_count = word.chars().count();
-        if chars_count >= ngram_length {
-            for i in 0..=chars_count - ngram_length {
-                let slice = get_utf8_slice(word, i, i + ngram_length);
-                ngrams.insert(NgramRef::new(slice));
-            }
+        let mut indices = word.char_indices().map(|(index, _)| index);
+
+        offsets.clear();
+        offsets.extend(indices.by_ref().take(ngram_length));
+        if offsets.len() < ngram_length {
+            continue;
         }
+
+        for index in indices {
+            let offset = offsets.pop_front().unwrap();
+            offsets.push_back(index);
+            ngrams.insert(NgramRef::new(&word[offset..index]));
+        }
+
+        let offset = offsets.pop_front().unwrap();
+        ngrams.insert(NgramRef::new(&word[offset..]));
     }
     ngrams
 }
@@ -242,22 +253,6 @@ pub(crate) fn create_lower_order_ngrams(
         lower_order_ngrams.push(ngram.range_of_lower_order_ngrams().collect_vec());
     }
     lower_order_ngrams
-}
-
-fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
-    string
-        .char_indices()
-        .nth(start)
-        .map(|(start_pos, _)| {
-            string[start_pos..]
-                .char_indices()
-                .nth(end - start)
-                .map_or_else(
-                    || &string[start_pos..],
-                    |(end_pos, _)| &string[start_pos..start_pos + end_pos],
-                )
-        })
-        .unwrap()
 }
 
 #[cfg(test)]

@@ -19,14 +19,19 @@ use crate::language::Language;
 use crate::ngram::{Ngram, NgramRef};
 use ahash::AHashMap;
 use compact_str::CompactString;
-use fraction::Fraction;
+use fraction::{Fraction, ToPrimitive};
+use hashbrown::{DefaultHashBuilder, HashTable};
 use itertools::Itertools;
+use memmap2::Mmap;
 use regex::Regex;
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::fs::{exists, File};
+use std::hash::{BuildHasher, Hash, Hasher};
+use std::io::{self, Write};
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub(crate) struct NgramProbabilityModel {
@@ -127,7 +132,7 @@ fn deserialize_ngram_probabilities<'de, D: Deserializer<'de>>(
 
 pub(crate) struct TrainingDataLanguageModel {
     pub(crate) absolute_frequencies: HashMap<Ngram, u32>,
-    ngram_probability_model: NgramProbabilityModel,
+    pub(crate) ngram_probability_model: NgramProbabilityModel,
 }
 
 impl TrainingDataLanguageModel {
@@ -258,6 +263,183 @@ fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
                 )
         })
         .unwrap()
+}
+
+pub(crate) struct UnifiedNgramModel {
+    #[allow(dead_code)]
+    file: File,
+    mmap: Mmap,
+    hash_builder: DefaultHashBuilder,
+    hash_table: HashTable<usize>,
+}
+
+impl<'a> UnifiedNgramModel {
+    pub(crate) const PROBABILITY: u8 = 0;
+    pub(crate) const UNIQUE: u8 = 1;
+    pub(crate) const MOST_COMMON: u8 = 2;
+
+    pub(crate) fn load(language: Language) -> io::Result<Self> {
+        let file_name = format!("{language:?}.fst");
+
+        if !exists(&file_name)? {
+            eprintln!("Writing unified model {file_name}...");
+
+            let mut buffer = Vec::new();
+
+            for ngram_length in [1, 2, 3, 4, 5] {
+                if let Some(ngram_probability_model) =
+                    load_ngram_probability_model(language, ngram_length)
+                {
+                    for (ngram, probability) in &ngram_probability_model.ngrams {
+                        let key = UnifiedNgramKey::new(ngram, Self::PROBABILITY);
+                        buffer.extend(key.as_ref());
+
+                        let probability = probability.to_f64().unwrap().ln().to_le_bytes();
+                        buffer.extend(&probability);
+                    }
+                }
+
+                if let Some(unique) =
+                    load_ngram_count_model(language, ngram_length, NgramModelType::Unique)
+                {
+                    for ngram in &unique.ngrams {
+                        let key = UnifiedNgramKey::new(ngram, Self::UNIQUE);
+                        buffer.extend(key.as_ref());
+                    }
+                }
+
+                if let Some(most_common) =
+                    load_ngram_count_model(language, ngram_length, NgramModelType::MostCommon)
+                {
+                    for ngram in &most_common.ngrams {
+                        let key = UnifiedNgramKey::new(ngram, Self::MOST_COMMON);
+                        buffer.extend(key.as_ref());
+                    }
+                }
+            }
+
+            let mut file = File::create(&file_name)?;
+            file.write_all(&buffer)?;
+        }
+
+        let file = File::open(file_name)?;
+        let mmap = unsafe { Mmap::map(&file)? };
+
+        let hash_builder = DefaultHashBuilder::default();
+        let mut hash_table = HashTable::new();
+
+        let mut offset = 0;
+
+        while offset < mmap.len() {
+            let key = UnifiedNgramKey::read(&mmap[offset..]);
+
+            let hash = hash_builder.hash_one(&key);
+
+            let hasher = |&offset: &usize| {
+                let key = UnifiedNgramKey::read(&mmap[offset..]);
+
+                hash_builder.hash_one(&key)
+            };
+
+            hash_table.insert_unique(hash, offset, hasher);
+
+            offset += key.as_ref().len();
+            if key.kind() == Self::PROBABILITY {
+                offset += 8;
+            }
+        }
+
+        debug_assert_eq!(offset, mmap.len());
+
+        Ok(Self {
+            file,
+            mmap,
+            hash_builder,
+            hash_table,
+        })
+    }
+
+    pub(crate) fn get_probability(&self, ngram: &str) -> Option<f64> {
+        self.get(ngram, Self::PROBABILITY)
+            .map(|offset| f64::from_le_bytes(self.mmap[offset..offset + 8].try_into().unwrap()))
+    }
+
+    pub(crate) fn is_unique(&self, ngram: &str) -> bool {
+        self.get(ngram, Self::UNIQUE).is_some()
+    }
+
+    pub(crate) fn is_most_common(&self, ngram: &str) -> bool {
+        self.get(ngram, Self::MOST_COMMON).is_some()
+    }
+
+    fn get(&self, ngram: &str, kind: u8) -> Option<usize> {
+        let key = UnifiedNgramKey::new(ngram, kind);
+
+        let hash = self.hash_builder.hash_one(key);
+
+        let eq = |&offset: &usize| UnifiedNgramKey::read(&self.mmap[offset..]) == key;
+
+        self.hash_table
+            .find(hash, eq)
+            .map(|&offset| offset + key.as_ref().len())
+    }
+}
+
+#[derive(Clone, Copy)]
+pub(crate) struct UnifiedNgramKey {
+    key: [u8; Self::MAX_LEN],
+}
+
+impl UnifiedNgramKey {
+    // Length byte, kind byte and maximum UTF-8-encoded length of fivegrams.
+    const MAX_LEN: usize = 1 + 1 + 5 * 4;
+
+    fn new(ngram: &str, kind: u8) -> Self {
+        let len = ngram.len();
+
+        let mut key = [0; Self::MAX_LEN];
+        key[0] = len as u8;
+        key[1] = kind;
+        key[2..len + 2].copy_from_slice(ngram.as_bytes());
+
+        Self { key }
+    }
+
+    fn read(bytes: &[u8]) -> Self {
+        let len = bytes[0] as usize;
+
+        let mut key = [0; Self::MAX_LEN];
+        key[..len + 2].copy_from_slice(&bytes[..len + 2]);
+
+        Self { key }
+    }
+
+    fn kind(&self) -> u8 {
+        self.key[1]
+    }
+}
+
+impl PartialEq for UnifiedNgramKey {
+    fn eq(&self, other: &Self) -> bool {
+        self.key == other.key
+    }
+}
+
+impl Eq for UnifiedNgramKey {}
+
+impl Hash for UnifiedNgramKey {
+    fn hash<H>(&self, hasher: &mut H)
+    where
+        H: Hasher,
+    {
+        hasher.write(&self.key);
+    }
+}
+
+impl AsRef<[u8]> for UnifiedNgramKey {
+    fn as_ref(&self) -> &[u8] {
+        &self.key[..self.key[0] as usize + 2]
+    }
 }
 
 #[cfg(test)]

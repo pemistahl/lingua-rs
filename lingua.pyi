@@ -15,7 +15,7 @@
 
 from enum import Enum
 from pathlib import Path
-from typing import FrozenSet, Optional, List
+from typing import FrozenSet, Optional, List, Set
 
 
 class ConfidenceValue:
@@ -830,4 +830,31 @@ class UniqueNgramsWriter:
         Raises:
             Exception: if the output directory path is not absolute or does not
                 point to an existing directory.
+        """
+
+
+class MostCommonNgramsWriter:
+    """This class determines the most common ngrams for each supported
+    language and writes them to a directory."""
+
+    @classmethod
+    def create_and_write_most_common_ngram_files(
+        cls,
+        output_directory_path: Path,
+        languages: Set["Language"],
+        most_common: int,
+    ):
+        """Create most common ngram files from the current language
+        models and writes them to a directory.
+
+        Args:
+            output_directory_path: The path to an existing directory where
+                the most common ngram files are to be written.
+            languages: The languages to determine the most common ngrams for.
+            most_common: The amount of most common ngrams to be identified.
+
+        Raises:
+            Exception: if the output directory path is not absolute or does not
+                point to an existing directory.
+            ValueError: if `languages` is empty or `most_common` is less than or equal to zero
         """

@@ -21,14 +21,24 @@ use std::path::Path;
 use std::{fs, io};
 
 use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
-use crate::model::{load_ngram_probability_model, TrainingDataLanguageModel};
+use crate::detector::split_text_into_words;
+use crate::file::read_test_data_file;
+use crate::model::{
+    get_utf8_slice, load_ngram_probability_model, NgramCountModel, NgramModelType,
+    TrainingDataLanguageModel,
+};
 use crate::ngram::Ngram;
 use crate::Language;
 use brotli::CompressorWriter;
+use counter::Counter;
 use itertools::Itertools;
 use regex::Regex;
-use serde_json::json;
 use strum::IntoEnumIterator;
+
+pub(crate) const LANGUAGES_MESSAGE: &str = "Set of languages must not be empty";
+
+pub(crate) const MOST_COMMON_NGRAMS_MESSAGE: &str =
+    "Amount of most common ngrams must be greater than zero";
 
 /// This struct creates language model files and writes them to a directory.
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
@@ -43,6 +53,11 @@ pub struct TestDataFilesWriter;
 /// and writes them to a directory.
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
 pub struct UniqueNgramsWriter;
+
+/// This struct determines the most common ngrams for each supported language
+/// and writes them to a directory.
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(module = "lingua"))]
+pub struct MostCommonNgramsWriter;
 
 impl LanguageModelFilesWriter {
     /// Creates language model files and writes them to a directory.
@@ -368,9 +383,7 @@ impl UniqueNgramsWriter {
         result
     }
 
-    fn identify_unique_ngrams(
-        ngrams: HashMap<Language, HashSet<String>>,
-    ) -> HashMap<Language, HashSet<String>> {
+    fn identify_unique_ngrams(ngrams: HashMap<Language, HashSet<String>>) -> Vec<NgramCountModel> {
         let mut unique_ngrams = HashSet::new();
         for ngrams_i in ngrams.values() {
             let mut current = ngrams_i.clone();
@@ -394,30 +407,141 @@ impl UniqueNgramsWriter {
             }
         }
         result
+            .into_iter()
+            .map(|(language, ngrams)| NgramCountModel { language, ngrams })
+            .sorted_by_key(|model| model.language)
+            .collect()
     }
 
     fn store_unique_ngrams(
-        unique_ngrams: HashMap<Language, HashSet<String>>,
+        unique_ngrams: Vec<NgramCountModel>,
         ngram_length: usize,
         output_directory_path: &Path,
     ) -> io::Result<()> {
-        let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
-        let file_name = format!("unique_{ngram_name}s.json.br");
-        for (language, ngrams) in unique_ngrams {
-            let language_dir_path =
-                output_directory_path.join(language.iso_code_639_1().to_string());
-            if !language_dir_path.exists() {
-                fs::create_dir(language_dir_path.as_path())?;
+        store_ngram_count_models(
+            unique_ngrams,
+            ngram_length,
+            output_directory_path,
+            NgramModelType::Unique,
+        )
+    }
+}
+
+impl MostCommonNgramsWriter {
+    /// Creates most common ngram files from the current language models and writes them to a directory.
+    ///
+    /// `output_directory_path`: The path to an existing directory where the most common ngram files
+    /// are to be written.
+    ///
+    /// `languages`: The languages to determine the most common ngrams for.
+    ///
+    /// `most_common`: The amount of most common ngrams to be identified.
+    ///
+    /// ⚠ Panics if:
+    /// - the output directory path is not absolute or does not point to an existing directory
+    /// - `languages` is empty
+    /// - `most_common` is zero
+    pub fn create_and_write_most_common_ngram_files(
+        output_directory_path: &Path,
+        languages: &HashSet<Language>,
+        most_common: u32,
+    ) -> io::Result<()> {
+        check_output_directory_path(output_directory_path);
+        if languages.is_empty() {
+            panic!("{LANGUAGES_MESSAGE}");
+        }
+        if most_common == 0 {
+            panic!("{MOST_COMMON_NGRAMS_MESSAGE}");
+        }
+        for ngram_length in 1..6 {
+            let mut most_common_ngrams = vec![];
+            for language in languages.iter() {
+                let ngrams = Self::identify_most_common_ngrams(
+                    *language,
+                    ngram_length,
+                    most_common as usize,
+                );
+                most_common_ngrams.push(ngrams);
             }
-            let file_path = language_dir_path.join(&file_name);
-            let file = File::create(file_path)?;
-            let mut compressed_file = CompressorWriter::new(file, 4096, 11, 22);
-            let sorted_ngrams = ngrams.into_iter().sorted().collect_vec();
-            let obj = json!({"language": language, "ngrams": sorted_ngrams});
-            compressed_file.write_all(obj.to_string().as_bytes())?;
+            Self::store_most_common_ngrams(
+                most_common_ngrams,
+                ngram_length,
+                output_directory_path,
+            )?;
         }
         Ok(())
     }
+
+    fn identify_most_common_ngrams(
+        language: Language,
+        ngram_length: usize,
+        most_common: usize,
+    ) -> NgramCountModel {
+        let sentences = read_test_data_file(language, "sentences.txt").unwrap();
+        let words = split_text_into_words(sentences);
+        let mut counter = Counter::<&str>::new();
+
+        for word in words.iter() {
+            let chars_count = word.chars().count();
+            if chars_count >= ngram_length {
+                for i in 0..=chars_count - ngram_length {
+                    let slice = get_utf8_slice(word, i, i + ngram_length);
+                    for alphabet in language.alphabets() {
+                        if alphabet.matches(slice) {
+                            counter[&slice] += 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        let most_common_ngrams = counter
+            .k_most_common_ordered(most_common)
+            .iter()
+            .map(|(ngram, _)| ngram.to_string())
+            .collect();
+
+        NgramCountModel {
+            language,
+            ngrams: most_common_ngrams,
+        }
+    }
+
+    fn store_most_common_ngrams(
+        most_common_ngrams: Vec<NgramCountModel>,
+        ngram_length: usize,
+        output_directory_path: &Path,
+    ) -> io::Result<()> {
+        store_ngram_count_models(
+            most_common_ngrams,
+            ngram_length,
+            output_directory_path,
+            NgramModelType::MostCommon,
+        )
+    }
+}
+
+fn store_ngram_count_models(
+    ngram_count_models: Vec<NgramCountModel>,
+    ngram_length: usize,
+    output_directory_path: &Path,
+    model_type: NgramModelType,
+) -> io::Result<()> {
+    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
+    let file_name = format!("{model_type}_{ngram_name}s.json.br");
+    for model in ngram_count_models {
+        let language_dir_path =
+            output_directory_path.join(model.language.iso_code_639_1().to_string());
+        if !language_dir_path.exists() {
+            fs::create_dir(language_dir_path.as_path())?;
+        }
+        let file_path = language_dir_path.join(&file_name);
+        let file = File::create(file_path)?;
+        let mut compressed_file = CompressorWriter::new(file, 4096, 11, 22);
+        let json_str = serde_json::to_string(&model)?;
+        compressed_file.write_all(json_str.as_bytes())?;
+    }
+    Ok(())
 }
 
 fn check_input_file_path(input_file_path: &Path) {
@@ -487,11 +611,7 @@ mod tests {
         files
     }
 
-    fn assert_file_content(
-        file_path: &Path,
-        expected_file_name: &str,
-        expected_file_content: &str,
-    ) {
+    fn check_brotli_file(file_path: &Path, expected_file_name: &str, expected_file_content: &str) {
         assert!(file_path.is_file());
 
         let file_name = file_path.file_name().unwrap();
@@ -505,6 +625,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(uncompressed_file_content, minify(expected_file_content));
+    }
+
+    fn to_string(ngrams: HashSet<&str>) -> HashSet<String> {
+        ngrams.into_iter().map(|ngram| ngram.to_string()).collect()
     }
 
     mod language_model_files {
@@ -600,44 +724,16 @@ mod tests {
                 &Language::English,
                 "\\p{L}",
             );
-
             assert!(result.is_ok());
 
             let files = read_directory_content(output_directory.path());
-
             assert_eq!(files.len(), 5);
 
-            let unigrams_file_path = files.get(4).unwrap();
-            let bigrams_file_path = files.get(0).unwrap();
-            let trigrams_file_path = files.get(3).unwrap();
-            let quadrigrams_file_path = files.get(2).unwrap();
-            let fivegrams_file_path = files.get(1).unwrap();
-
-            assert_file_content(
-                unigrams_file_path,
-                "unigrams.json.br",
-                EXPECTED_UNIGRAM_MODEL,
-            );
-
-            assert_file_content(bigrams_file_path, "bigrams.json.br", EXPECTED_BIGRAM_MODEL);
-
-            assert_file_content(
-                trigrams_file_path,
-                "trigrams.json.br",
-                EXPECTED_TRIGRAM_MODEL,
-            );
-
-            assert_file_content(
-                quadrigrams_file_path,
-                "quadrigrams.json.br",
-                EXPECTED_QUADRIGRAM_MODEL,
-            );
-
-            assert_file_content(
-                fivegrams_file_path,
-                "fivegrams.json.br",
-                EXPECTED_FIVEGRAM_MODEL,
-            );
+            check_brotli_file(&files[0], "bigrams.json.br", EXPECTED_BIGRAM_MODEL);
+            check_brotli_file(&files[1], "fivegrams.json.br", EXPECTED_FIVEGRAM_MODEL);
+            check_brotli_file(&files[2], "quadrigrams.json.br", EXPECTED_QUADRIGRAM_MODEL);
+            check_brotli_file(&files[3], "trigrams.json.br", EXPECTED_TRIGRAM_MODEL);
+            check_brotli_file(&files[4], "unigrams.json.br", EXPECTED_UNIGRAM_MODEL);
         }
     }
 
@@ -685,33 +781,29 @@ mod tests {
                 "\\p{L}",
                 4,
             );
-
             assert!(result.is_ok());
 
             let test_data_files = read_directory_content(output_directory.path());
-
             assert_eq!(test_data_files.len(), 3);
 
-            assert_file_content(
+            check_test_data_file(
                 &test_data_files[0],
                 "sentences.txt",
                 EXPECTED_SENTENCES_FILE_CONTENT,
             );
-
-            assert_file_content(
+            check_test_data_file(
                 &test_data_files[1],
                 "single-words.txt",
                 EXPECTED_SINGLE_WORDS_FILE_CONTENT,
             );
-
-            assert_file_content(
+            check_test_data_file(
                 &test_data_files[2],
                 "word-pairs.txt",
                 EXPECTED_WORD_PAIRS_FILE_CONTENT,
             );
         }
 
-        fn assert_file_content(
+        fn check_test_data_file(
             file_path: &Path,
             expected_file_name: &str,
             expected_file_content: &str,
@@ -732,18 +824,45 @@ mod tests {
 
     mod unique_ngrams_writer {
         use super::*;
+        use crate::Language::{English, German, Spanish};
         use rstest::{fixture, rstest};
 
         #[fixture]
-        fn unique_ngrams() -> HashMap<Language, HashSet<String>> {
-            hashmap!(
-                Language::English => to_string(hashset!("th")),
-                Language::German => to_string(hashset!("rz", "äu"))
-            )
+        fn unique_ngrams() -> Vec<NgramCountModel> {
+            vec![
+                NgramCountModel {
+                    language: English,
+                    ngrams: to_string(hashset!("th")),
+                },
+                NgramCountModel {
+                    language: German,
+                    ngrams: to_string(hashset!("rz", "äu")),
+                },
+            ]
+        }
+
+        #[test]
+        #[cfg_attr(target_os = "windows", ignore)]
+        #[should_panic(expected = "Output directory path 'some/relative/path' is not absolute")]
+        fn test_unique_ngrams_writer_with_relative_output_directory_path() {
+            let relative_output_directory_path = PathBuf::from("some/relative/path");
+            let _ = UniqueNgramsWriter::create_and_write_unique_ngram_files(
+                relative_output_directory_path.as_path(),
+            );
+        }
+
+        #[test]
+        #[cfg_attr(target_os = "windows", ignore)]
+        #[should_panic(expected = "Output directory path '/some/absolute/path' does not exist")]
+        fn test_unique_ngrams_writer_with_non_existing_output_directory_path() {
+            let relative_output_directory_path = PathBuf::from("/some/absolute/path");
+            let _ = UniqueNgramsWriter::create_and_write_unique_ngram_files(
+                relative_output_directory_path.as_path(),
+            );
         }
 
         #[rstest]
-        fn test_store_unique_ngrams(unique_ngrams: HashMap<Language, HashSet<String>>) {
+        fn test_store_unique_ngrams(unique_ngrams: Vec<NgramCountModel>) {
             let output_directory = tempdir().expect("Temporary directory could not be created");
             let result =
                 UniqueNgramsWriter::store_unique_ngrams(unique_ngrams, 2, output_directory.path());
@@ -751,12 +870,12 @@ mod tests {
 
             let english_dir_path = output_directory
                 .path()
-                .join(Language::English.iso_code_639_1().to_string());
+                .join(English.iso_code_639_1().to_string());
             assert!(english_dir_path.exists());
 
             let english_unique_ngram_files = read_directory_content(&english_dir_path);
             assert_eq!(english_unique_ngram_files.len(), 1);
-            assert_file_content(
+            check_brotli_file(
                 &english_unique_ngram_files[0],
                 "unique_bigrams.json.br",
                 r#"{"language":"ENGLISH","ngrams":["th"]}"#,
@@ -764,12 +883,12 @@ mod tests {
 
             let german_dir_path = output_directory
                 .path()
-                .join(Language::German.iso_code_639_1().to_string());
+                .join(German.iso_code_639_1().to_string());
             assert!(german_dir_path.exists());
 
             let german_unique_ngram_files = read_directory_content(&german_dir_path);
             assert_eq!(german_unique_ngram_files.len(), 1);
-            assert_file_content(
+            check_brotli_file(
                 &german_unique_ngram_files[0],
                 "unique_bigrams.json.br",
                 r#"{"language":"GERMAN","ngrams":["rz","äu"]}"#,
@@ -777,18 +896,165 @@ mod tests {
         }
 
         #[rstest]
-        fn test_identify_unique_ngrams(unique_ngrams: HashMap<Language, HashSet<String>>) {
+        fn test_identify_unique_ngrams(unique_ngrams: Vec<NgramCountModel>) {
             let ngrams = hashmap!(
-                Language::English => to_string(hashset!("th", "en", "es")),
-                Language::German => to_string(hashset!("äu", "en", "rz")),
-                Language::Spanish => to_string(hashset!("es", "en"))
+                English => to_string(hashset!("th", "en", "es")),
+                German => to_string(hashset!("äu", "en", "rz")),
+                Spanish => to_string(hashset!("es", "en"))
             );
             let actual_unique_ngrams = UniqueNgramsWriter::identify_unique_ngrams(ngrams);
             assert_eq!(actual_unique_ngrams, unique_ngrams);
         }
+    }
 
-        fn to_string(ngrams: HashSet<&str>) -> HashSet<String> {
-            ngrams.into_iter().map(|ngram| ngram.to_string()).collect()
+    mod most_common_ngrams_writer {
+        use super::*;
+        use crate::Language::{English, German};
+        use rstest::{fixture, rstest};
+
+        #[fixture]
+        fn most_common_german_trigrams() -> NgramCountModel {
+            NgramCountModel {
+                language: German,
+                ngrams: to_string(hashset!("der", "die", "ein", "ich", "sch")),
+            }
+        }
+
+        #[test]
+        fn test_most_common_ngrams_writer() {
+            let output_directory = tempdir().expect("Temporary directory could not be created");
+            let result = MostCommonNgramsWriter::create_and_write_most_common_ngram_files(
+                output_directory.path(),
+                &hashset!(English, German),
+                5,
+            );
+            assert!(result.is_ok());
+
+            let subdirectories = read_directory_content(output_directory.path());
+            assert_eq!(subdirectories.len(), 2);
+
+            let german_dir_name = German.iso_code_639_1().to_string();
+            let german_dir_path = output_directory.path().join(german_dir_name);
+
+            let english_dir_name = English.iso_code_639_1().to_string();
+            let english_dir_path = output_directory.path().join(english_dir_name);
+
+            assert_eq!(subdirectories[0].as_path(), german_dir_path);
+            assert_eq!(subdirectories[1].as_path(), english_dir_path);
+
+            assert!(german_dir_path.is_dir());
+            assert!(english_dir_path.is_dir());
+
+            let german_most_common_ngram_files = read_directory_content(&german_dir_path);
+            assert_eq!(german_most_common_ngram_files.len(), 5);
+
+            check_brotli_file(
+                &german_most_common_ngram_files[0],
+                "mostcommon_bigrams.json.br",
+                r#"{"language":"GERMAN","ngrams":["ch","de","ei","en","er"]}"#,
+            );
+            check_brotli_file(
+                &german_most_common_ngram_files[1],
+                "mostcommon_fivegrams.json.br",
+                r#"{"language":"GERMAN","ngrams":["diese","ische","nicht","schen","ungen"]}"#,
+            );
+            check_brotli_file(
+                &german_most_common_ngram_files[2],
+                "mostcommon_quadrigrams.json.br",
+                r#"{"language":"GERMAN","ngrams":["chen","eine","icht","lich","sche"]}"#,
+            );
+            check_brotli_file(
+                &german_most_common_ngram_files[3],
+                "mostcommon_trigrams.json.br",
+                r#"{"language":"GERMAN","ngrams":["der","die","ein","ich","sch"]}"#,
+            );
+            check_brotli_file(
+                &german_most_common_ngram_files[4],
+                "mostcommon_unigrams.json.br",
+                r#"{"language":"GERMAN","ngrams":["e","i","n","r","s"]}"#,
+            );
+
+            let english_most_common_ngram_files = read_directory_content(&english_dir_path);
+            assert_eq!(english_most_common_ngram_files.len(), 5);
+
+            check_brotli_file(
+                &english_most_common_ngram_files[0],
+                "mostcommon_bigrams.json.br",
+                r#"{"language":"ENGLISH","ngrams":["an","he","in","re","th"]}"#,
+            );
+            check_brotli_file(
+                &english_most_common_ngram_files[1],
+                "mostcommon_fivegrams.json.br",
+                r#"{"language":"ENGLISH","ngrams":["ation","canad","ction","ement","tions"]}"#,
+            );
+            check_brotli_file(
+                &english_most_common_ngram_files[2],
+                "mostcommon_quadrigrams.json.br",
+                r#"{"language":"ENGLISH","ngrams":["atio","ment","that","tion","with"]}"#,
+            );
+            check_brotli_file(
+                &english_most_common_ngram_files[3],
+                "mostcommon_trigrams.json.br",
+                r#"{"language":"ENGLISH","ngrams":["and","ing","ion","the","tio"]}"#,
+            );
+            check_brotli_file(
+                &english_most_common_ngram_files[4],
+                "mostcommon_unigrams.json.br",
+                r#"{"language":"ENGLISH","ngrams":["a","e","i","o","t"]}"#,
+            );
+        }
+
+        #[test]
+        #[cfg_attr(target_os = "windows", ignore)]
+        #[should_panic(expected = "Output directory path 'some/relative/path' is not absolute")]
+        fn test_most_common_ngrams_writer_with_relative_output_directory_path() {
+            let relative_output_directory_path = PathBuf::from("some/relative/path");
+            let _ = MostCommonNgramsWriter::create_and_write_most_common_ngram_files(
+                relative_output_directory_path.as_path(),
+                &hashset!(English, German),
+                5,
+            );
+        }
+
+        #[test]
+        #[cfg_attr(target_os = "windows", ignore)]
+        #[should_panic(expected = "Output directory path '/some/absolute/path' does not exist")]
+        fn test_most_common_ngrams_writer_with_non_existing_output_directory_path() {
+            let relative_output_directory_path = PathBuf::from("/some/absolute/path");
+            let _ = MostCommonNgramsWriter::create_and_write_most_common_ngram_files(
+                relative_output_directory_path.as_path(),
+                &hashset!(English, German),
+                5,
+            );
+        }
+
+        #[test]
+        #[should_panic(expected = "Set of languages must not be empty")]
+        fn test_most_common_ngrams_writer_without_languages() {
+            let output_directory = tempdir().expect("Temporary directory could not be created");
+            let _ = MostCommonNgramsWriter::create_and_write_most_common_ngram_files(
+                output_directory.path(),
+                &hashset!(),
+                5,
+            );
+        }
+
+        #[test]
+        #[should_panic(expected = "Amount of most common ngrams must be greater than zero")]
+        fn test_most_common_ngrams_writer_without_most_common() {
+            let output_directory = tempdir().expect("Temporary directory could not be created");
+            let _ = MostCommonNgramsWriter::create_and_write_most_common_ngram_files(
+                output_directory.path(),
+                &hashset!(English, German),
+                0,
+            );
+        }
+
+        #[rstest]
+        fn test_identify_most_common_ngrams(most_common_german_trigrams: NgramCountModel) {
+            let actual_most_common_trigrams =
+                MostCommonNgramsWriter::identify_most_common_ngrams(German, 3, 5);
+            assert_eq!(actual_most_common_trigrams, most_common_german_trigrams);
         }
     }
 }

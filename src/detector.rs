@@ -16,12 +16,12 @@
 
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
-use std::hash::Hash;
 use std::str::FromStr;
 use std::sync::LazyLock;
 
 use ahash::AHashMap;
 use compact_str::CompactString;
+use counter::Counter;
 use dashmap::DashMap;
 use fraction::{ToPrimitive, Zero};
 use itertools::Itertools;
@@ -486,11 +486,11 @@ impl LanguageDetector {
         }
 
         let mut results = vec![];
-        let mut language_counts = HashMap::new();
+        let mut languages = HashSet::new();
 
         let language = self.detect_language_of(&text_str);
         if let Some(lang) = language {
-            increment_counter(&mut language_counts, lang, 1);
+            languages.insert(lang);
         }
 
         for word in tokens_without_whitespace.iter() {
@@ -499,14 +499,9 @@ impl LanguageDetector {
             }
             let language = self.detect_language_of(*word);
             if let Some(lang) = language {
-                increment_counter(&mut language_counts, lang, 1);
+                languages.insert(lang);
             }
         }
-
-        let languages = language_counts
-            .keys()
-            .cloned()
-            .collect::<HashSet<Language>>();
 
         if languages.len() == 1 {
             let result = DetectionResult {
@@ -800,14 +795,14 @@ impl LanguageDetector {
             1..6usize
         };
 
-        let mut unigram_counts: Option<HashMap<Language, u32>> = None;
+        let mut unigram_counter: Option<Counter<Language>> = None;
         let mut all_probabilities: Vec<HashMap<Language, f64>> = vec![];
 
         for ngram_length in ngram_length_range {
             if character_count >= ngram_length {
                 let ngram_model = create_lower_order_ngrams(&words, ngram_length);
                 if ngram_length == 1 {
-                    unigram_counts = Some(self.count_unigrams(&ngram_model, &filtered_languages))
+                    unigram_counter = Some(self.count_unigrams(&ngram_model, &filtered_languages))
                 }
                 let probabilities =
                     self.compute_language_probabilities(&ngram_model, &filtered_languages);
@@ -816,7 +811,7 @@ impl LanguageDetector {
         }
 
         let summed_up_probabilities =
-            sum_up_probabilities(&all_probabilities, &unigram_counts, filtered_languages);
+            sum_up_probabilities(&all_probabilities, &unigram_counter, filtered_languages);
 
         if summed_up_probabilities.is_empty() {
             values.sort_by(confidence_values_comparator);
@@ -1022,18 +1017,18 @@ impl LanguageDetector {
         words: &[String],
         languages: &HashSet<Language>,
     ) -> Option<Language> {
-        let mut total_language_counts = HashMap::<Option<Language>, u32>::new();
+        let mut total_language_counter = Counter::<Option<Language>>::new();
         let half_word_count = (words.len() as f64) * 0.5;
 
         for word in words {
-            let mut word_language_counts = HashMap::<Language, u32>::new();
+            let mut word_language_counter = Counter::<Language>::new();
 
             for character in word.chars() {
                 let mut is_match = false;
 
                 for (alphabet, language) in self.single_language_alphabets.iter() {
                     if alphabet.matches_char(character) {
-                        increment_counter(&mut word_language_counts, *language, 1);
+                        word_language_counter[language] += 1;
                         is_match = true;
                         break;
                     }
@@ -1041,87 +1036,69 @@ impl LanguageDetector {
 
                 if !is_match {
                     if cfg!(feature = "chinese") && Alphabet::Han.matches_char(character) {
-                        increment_counter(
-                            &mut word_language_counts,
-                            Language::from_str("Chinese").unwrap(),
-                            1,
-                        );
+                        word_language_counter[&Language::from_str("Chinese").unwrap()] += 1;
                     } else if cfg!(feature = "japanese")
                         && JAPANESE_CHARACTER_SET.is_char_match(character)
                     {
-                        increment_counter(
-                            &mut word_language_counts,
-                            Language::from_str("Japanese").unwrap(),
-                            1,
-                        );
+                        word_language_counter[&Language::from_str("Japanese").unwrap()] += 1;
                     } else if Alphabet::Latin.matches_char(character)
                         || Alphabet::Cyrillic.matches_char(character)
                         || Alphabet::Devanagari.matches_char(character)
                     {
                         self.languages_with_unique_characters
                             .iter()
-                            .filter(|it| it.unique_characters().unwrap().contains(character))
-                            .for_each(|it| increment_counter(&mut word_language_counts, *it, 1));
+                            .filter(|lang| lang.unique_characters().unwrap().contains(character))
+                            .for_each(|lang| word_language_counter[lang] += 1);
                     }
                 }
             }
 
-            if word_language_counts.is_empty() {
-                increment_counter(&mut total_language_counts, None, 1);
-            } else if word_language_counts.len() == 1 {
-                let counted_languages = word_language_counts.keys().collect_vec();
+            if word_language_counter.is_empty() {
+                total_language_counter[&None] += 1;
+            } else if word_language_counter.len() == 1 {
+                let counted_languages = word_language_counter.keys().collect_vec();
                 let language = *counted_languages.first().unwrap();
                 if languages.contains(language) {
-                    increment_counter(&mut total_language_counts, Some(*language), 1);
+                    total_language_counter[&Some(*language)] += 1;
                 } else {
-                    increment_counter(&mut total_language_counts, None, 1);
+                    total_language_counter[&None] += 1;
                 }
             } else if cfg!(feature = "chinese")
                 && cfg!(feature = "japanese")
-                && word_language_counts.contains_key(&Language::from_str("Chinese").unwrap())
-                && word_language_counts.contains_key(&Language::from_str("Japanese").unwrap())
+                && word_language_counter.contains_key(&Language::from_str("Chinese").unwrap())
+                && word_language_counter.contains_key(&Language::from_str("Japanese").unwrap())
             {
-                increment_counter(
-                    &mut total_language_counts,
-                    Some(Language::from_str("Japanese").unwrap()),
-                    1,
-                );
+                total_language_counter[&Some(Language::from_str("Japanese").unwrap())] += 1;
             } else {
-                let sorted_word_language_counts = word_language_counts
-                    .into_iter()
-                    .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
-                    .collect_vec();
-                let (most_frequent_language, first_count) = &sorted_word_language_counts[0];
-                let (_, second_count) = &sorted_word_language_counts[1];
+                let top2_language_counts = word_language_counter.k_most_common_ordered(2);
+                let (most_frequent_language, first_count) = &top2_language_counts[0];
+                let (_, second_count) = &top2_language_counts[1];
 
                 if first_count > second_count && languages.contains(most_frequent_language) {
-                    increment_counter(&mut total_language_counts, Some(*most_frequent_language), 1);
+                    total_language_counter[&Some(*most_frequent_language)] += 1;
                 } else {
-                    increment_counter(&mut total_language_counts, None, 1);
+                    total_language_counter[&None] += 1;
                 }
             }
         }
 
-        let unknown_language_count = *total_language_counts.get(&None).unwrap_or(&0) as f64;
+        let unknown_language_count = *total_language_counter.get(&None).unwrap_or(&0) as f64;
 
         if unknown_language_count < half_word_count {
-            total_language_counts.remove(&None);
+            total_language_counter.remove(&None);
         }
 
-        if total_language_counts.is_empty() {
+        if total_language_counter.is_empty() {
             return None;
         }
 
-        if total_language_counts.len() == 1 {
-            return *total_language_counts.iter().next().unwrap().0;
+        if total_language_counter.len() == 1 {
+            return *total_language_counter.iter().next().unwrap().0;
         }
 
-        let sorted_total_language_counts = total_language_counts
-            .into_iter()
-            .sorted_by(|(_, first_count), (_, second_count)| second_count.cmp(first_count))
-            .collect_vec();
-        let (most_frequent_language, first_count) = sorted_total_language_counts[0];
-        let (second_frequent_language, second_count) = sorted_total_language_counts[1];
+        let top2_language_counts = total_language_counter.k_most_common_ordered(2);
+        let (most_frequent_language, first_count) = top2_language_counts[0];
+        let (second_frequent_language, second_count) = top2_language_counts[1];
         if cfg!(feature = "chinese")
             && cfg!(feature = "japanese")
             && hashset!(most_frequent_language, second_frequent_language)
@@ -1145,58 +1122,40 @@ impl LanguageDetector {
         words: &[String],
         languages: &HashSet<Language>,
     ) -> HashSet<Language> {
-        let mut detected_alphabets = HashMap::<Alphabet, u32>::new();
+        let mut alphabet_counter = Counter::<Alphabet>::new();
         let half_word_count = (words.len() as f64) * 0.5;
 
         for word in words.iter() {
             for alphabet in Alphabet::iter() {
                 if alphabet.matches(word) {
-                    increment_counter(
-                        &mut detected_alphabets,
-                        alphabet,
-                        word.chars().count() as u32,
-                    );
+                    alphabet_counter[&alphabet] += word.chars().count();
                     break;
                 }
             }
         }
 
-        if detected_alphabets.is_empty() {
+        if alphabet_counter.is_empty() {
             return languages.clone();
         }
 
-        if detected_alphabets.len() > 1 {
+        if alphabet_counter.len() > 1 {
             let mut distinct_alphabets = hashset!();
-            for count in detected_alphabets.values() {
-                distinct_alphabets.insert(count);
+            for count in alphabet_counter.values() {
+                distinct_alphabets.insert(*count);
             }
             if distinct_alphabets.len() == 1 {
                 return languages.clone();
             }
         }
 
-        let most_frequent_alphabet = detected_alphabets
-            .into_iter()
-            .sorted_by(
-                |(first_alphabet, first_count), (second_alphabet, second_count)| {
-                    let ordering = second_count.cmp(first_count);
-                    match ordering {
-                        Ordering::Equal => first_alphabet.cmp(second_alphabet),
-                        _ => ordering,
-                    }
-                },
-            )
-            .next()
-            .unwrap()
-            .0;
-
+        let most_frequent_alphabet = alphabet_counter.k_most_common_ordered(1).first().unwrap().0;
         let filtered_languages = languages
             .iter()
             .cloned()
             .filter(|it| it.alphabets().contains(&most_frequent_alphabet))
             .collect::<HashSet<_>>();
 
-        let mut language_counts = HashMap::<&Language, u32>::new();
+        let mut language_counter = Counter::<Language>::new();
 
         for (characters, langs) in CHARS_TO_LANGUAGES_MAPPING.iter() {
             let relevant_languages = filtered_languages
@@ -1207,17 +1166,17 @@ impl LanguageDetector {
                 for character in characters.chars() {
                     if word.contains(character) {
                         for language in relevant_languages.iter() {
-                            increment_counter(&mut language_counts, language, 1);
+                            language_counter[*language] += 1;
                         }
                     }
                 }
             }
         }
 
-        let languages_subset = language_counts
+        let languages_subset = language_counter
             .into_iter()
             .filter(|(_, count)| (*count as f64) >= half_word_count)
-            .map(|(language, _)| *language)
+            .map(|(language, _)| language)
             .collect::<HashSet<_>>();
 
         if !languages_subset.is_empty() {
@@ -1286,19 +1245,19 @@ impl LanguageDetector {
         &self,
         unigram_model: &[Vec<NgramRef>],
         filtered_languages: &HashSet<Language>,
-    ) -> HashMap<Language, u32> {
-        let mut unigram_counts = HashMap::new();
+    ) -> Counter<Language> {
+        let mut unigram_counter = Counter::<Language>::new();
         for language in filtered_languages.iter() {
             for unigrams in unigram_model.iter() {
                 if self
                     .look_up_ngram_probability(*language, unigrams.first().unwrap())
                     .is_some()
                 {
-                    increment_counter(&mut unigram_counts, *language, 1);
+                    unigram_counter[language] += 1;
                 }
             }
         }
-        unigram_counts
+        unigram_counter
     }
 }
 
@@ -1307,11 +1266,6 @@ pub(crate) fn split_text_into_words(text: &str) -> Vec<String> {
         .find_iter(&text.trim().to_lowercase())
         .map(|mat| mat.as_str().to_string())
         .collect()
-}
-
-fn increment_counter<T: Eq + Hash>(counts: &mut HashMap<T, u32>, key: T, value: u32) {
-    let counter = counts.entry(key).or_insert(0);
-    *counter += value;
 }
 
 fn load_count_model(
@@ -1390,7 +1344,7 @@ fn search_most_common_ngrams(
 
 fn sum_up_probabilities(
     probability_maps: &[HashMap<Language, f64>],
-    unigram_counts: &Option<HashMap<Language, u32>>,
+    unigram_counter: &Option<Counter<Language>>,
     filtered_languages: HashSet<Language>,
 ) -> HashMap<Language, f64> {
     let mut summed_up_probabilities = hashmap!();
@@ -1403,9 +1357,9 @@ fn sum_up_probabilities(
             })
             .sum();
 
-        if let Some(counts) = unigram_counts {
-            if counts.contains_key(language) {
-                sum /= *counts.get(language).unwrap() as f64;
+        if let Some(counter) = unigram_counter {
+            if counter.contains_key(language) {
+                sum /= *counter.get(language).unwrap() as f64;
             }
         }
 
@@ -1757,7 +1711,7 @@ mod tests {
     // TEST DATA MODELS
     // ##############################
 
-    #[fixture(strs=vec![])]
+    #[fixture(strs = vec![])]
     fn ngram_model(strs: Vec<Vec<&'static str>>) -> Vec<Vec<NgramRef<'static>>> {
         strs.iter()
             .map(|ngram_strs| {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::json::load_json;
+use crate::file::read_model_data_file;
 use crate::language::Language;
 use crate::ngram::{Ngram, NgramRef};
 use ahash::AHashMap;
@@ -38,9 +38,10 @@ pub(crate) struct NgramProbabilityModel {
     pub(crate) ngrams: AHashMap<CompactString, Fraction>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub(crate) struct NgramCountModel {
-    language: Language,
+    pub(crate) language: Language,
+    #[serde(serialize_with = "serialize_ngrams")]
     pub(crate) ngrams: HashSet<String>,
 }
 
@@ -63,7 +64,7 @@ pub(crate) fn load_ngram_probability_model(
 ) -> Option<NgramProbabilityModel> {
     let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
     let file_name = format!("{ngram_name}s.json.br");
-    match load_json(language, &file_name) {
+    match read_model_data_file(language, &file_name) {
         Ok(json) => Some(serde_json::from_str::<NgramProbabilityModel>(&json).unwrap()),
         Err(_) => None,
     }
@@ -76,7 +77,7 @@ pub(crate) fn load_ngram_count_model(
 ) -> Option<NgramCountModel> {
     let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
     let file_name = format!("{model_type}_{ngram_name}s.json.br");
-    match load_json(language, &file_name) {
+    match read_model_data_file(language, &file_name) {
         Ok(json) => Some(serde_json::from_str::<NgramCountModel>(&json).unwrap()),
         Err(_) => None,
     }
@@ -123,6 +124,13 @@ fn deserialize_ngram_probabilities<'de, D: Deserializer<'de>>(
         }
     }
     Ok(target)
+}
+
+fn serialize_ngrams<S: Serializer>(
+    source: &HashSet<String>,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    source.iter().sorted().collect_vec().serialize(serializer)
 }
 
 pub(crate) struct TrainingDataLanguageModel {
@@ -244,7 +252,7 @@ pub(crate) fn create_lower_order_ngrams(
     lower_order_ngrams
 }
 
-fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
+pub(crate) fn get_utf8_slice(string: &str, start: usize, end: usize) -> &str {
     string
         .char_indices()
         .nth(start)

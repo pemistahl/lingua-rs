@@ -104,7 +104,7 @@ homepage = "https://github.com/pemistahl/lingua-py"
 repository = "https://github.com/pemistahl/lingua-py"
 
 [project.optional-dependencies]
-test = ["pytest == 9.0.1"]
+test = ["pytest == 9.0.1", "brotli == 1.2.0"]
 
 [tool.maturin]
 module-name = "lingua"

@@ -418,14 +418,16 @@ pub use wasm::{
     ConfidenceValue, DetectionResult as WasmDetectionResult,
     LanguageDetectorBuilder as WasmLanguageDetectorBuilder,
 };
-pub use writer::{LanguageModelFilesWriter, TestDataFilesWriter, UniqueNgramsWriter};
+pub use writer::{
+    LanguageModelFilesWriter, MostCommonNgramsWriter, TestDataFilesWriter, UniqueNgramsWriter,
+};
 
 mod alphabet;
 mod builder;
 mod constant;
 mod detector;
+mod file;
 mod isocode;
-mod json;
 mod language;
 mod model;
 mod ngram;

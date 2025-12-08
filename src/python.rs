@@ -33,7 +33,10 @@ use crate::detector::LanguageDetector;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
 use crate::result::DetectionResult;
-use crate::writer::{LanguageModelFilesWriter, TestDataFilesWriter, UniqueNgramsWriter};
+use crate::writer::{
+    LanguageModelFilesWriter, MostCommonNgramsWriter, TestDataFilesWriter, UniqueNgramsWriter,
+    LANGUAGES_MESSAGE, MOST_COMMON_NGRAMS_MESSAGE,
+};
 
 const ENUM_MEMBER_NOT_FOUND_MESSAGE: &str = "Matching enum member not found";
 
@@ -49,6 +52,7 @@ fn lingua(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<LanguageModelFilesWriter>()?;
     m.add_class::<TestDataFilesWriter>()?;
     m.add_class::<UniqueNgramsWriter>()?;
+    m.add_class::<MostCommonNgramsWriter>()?;
     Ok(())
 }
 
@@ -986,7 +990,7 @@ impl UniqueNgramsWriter {
     ///
     /// Args:
     ///     output_directory_path: The path to an existing directory where
-    ///         the test data files are to be written.
+    ///         the unique ngram files are to be written.
     ///
     /// Raises:
     ///     Exception: if the output directory path is not absolute or does not
@@ -1000,6 +1004,45 @@ impl UniqueNgramsWriter {
         convert_io_result_to_py_result(panic::catch_unwind(|| {
             Self::create_and_write_unique_ngram_files(output_directory_path.as_path())
         }))
+    }
+}
+
+#[pymethods]
+impl MostCommonNgramsWriter {
+    /// Create most common ngram files from the current language models
+    /// and writes them to a directory.
+    ///
+    /// Args:
+    ///     output_directory_path: The path to an existing directory where
+    ///         the most common ngram files are to be written.
+    ///     languages: The languages to determine the most common ngrams for.
+    ///     most_common: The amount of most common ngrams to be identified.
+    ///
+    /// Raises:
+    ///     Exception: if the output directory path is not absolute or does not
+    ///         point to an existing directory
+    ///     ValueError: if languages is empty or most_common is less than or equal to zero
+    #[pyo3(name = "create_and_write_most_common_ngram_files")]
+    #[classmethod]
+    fn py_create_and_write_most_common_ngram_files(
+        _cls: &Bound<PyType>,
+        output_directory_path: PathBuf,
+        languages: HashSet<Language>,
+        most_common: i32,
+    ) -> PyResult<()> {
+        if languages.is_empty() {
+            Err(PyValueError::new_err(LANGUAGES_MESSAGE))
+        } else if most_common <= 0 {
+            Err(PyValueError::new_err(MOST_COMMON_NGRAMS_MESSAGE))
+        } else {
+            convert_io_result_to_py_result(panic::catch_unwind(|| {
+                Self::create_and_write_most_common_ngram_files(
+                    output_directory_path.as_path(),
+                    &languages,
+                    most_common as u32,
+                )
+            }))
+        }
     }
 }
 

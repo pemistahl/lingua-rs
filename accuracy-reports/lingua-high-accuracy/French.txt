@@ -8,7 +8,7 @@ Erroneously classified as Latin: 3.70%, Catalan: 2.70%, Romanian: 2.10%, English
 
 >> Detection of 1000 word pairs (average length: 17 chars)
 Accuracy: 94.50%
-Erroneously classified as Latin: 1.10%, English: 0.80%, Romanian: 0.50%, Italian: 0.40%, Catalan: 0.30%, Portuguese: 0.30%, Swahili: 0.30%, Finnish: 0.20%, German: 0.20%, Swedish: 0.20%, Welsh: 0.20%, Yoruba: 0.20%, Afrikaans: 0.10%, Bokmal: 0.10%, Dutch: 0.10%, Esperanto: 0.10%, Nynorsk: 0.10%, Shona: 0.10%, Slovene: 0.10%, Tswana: 0.10%
+Erroneously classified as Latin: 1.10%, English: 0.90%, Romanian: 0.50%, Italian: 0.40%, Catalan: 0.30%, Portuguese: 0.30%, Swahili: 0.30%, Finnish: 0.20%, German: 0.20%, Swedish: 0.20%, Yoruba: 0.20%, Afrikaans: 0.10%, Bokmal: 0.10%, Dutch: 0.10%, Esperanto: 0.10%, Nynorsk: 0.10%, Shona: 0.10%, Slovene: 0.10%, Tswana: 0.10%, Welsh: 0.10%
 
 >> Detection of 1000 sentences (average length: 112 chars)
 Accuracy: 99.20%

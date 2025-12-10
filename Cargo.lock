@@ -2124,7 +2124,7 @@ dependencies = [
 
 [[package]]
 name = "lingua-welsh-language-model"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "include_dir",
 ]

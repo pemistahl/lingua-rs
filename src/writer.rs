@@ -15,10 +15,10 @@
  */
 
 use std::collections::{HashMap, HashSet};
-use std::fs::{remove_file, File};
+use std::fs::{create_dir, remove_file, File};
+use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
-use std::{fs, io};
 
 use crate::constant::{DIGITS_AT_BEGINNING, MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
 use crate::detector::split_text_into_words;
@@ -551,7 +551,7 @@ fn store_ngram_count_models(
         let language_dir_path =
             output_directory_path.join(model.language.iso_code_639_1().to_string());
         if !language_dir_path.exists() {
-            fs::create_dir(language_dir_path.as_path())?;
+            create_dir(language_dir_path.as_path())?;
         }
         let file_path = language_dir_path.join(&file_name);
         let file = File::create(file_path)?;
@@ -758,6 +758,7 @@ mod tests {
     mod test_data_files {
         use super::*;
         use indoc::indoc;
+        use std::fs::read_to_string;
 
         const TEXT: &str = indoc! {r#"
             There are many attributes associated with good software.
@@ -766,13 +767,6 @@ mod tests {
             Furthermore, he notes that programmers will generally aim to achieve any explicit goals which may be set, probably at the expense of any other quality attributes.
             Sommerville has identified four generalised attributes which are not concerned with what a program does, but how well the program does it:
             Maintainability, Dependability, Efficiency, Usability
-        "#};
-
-        const EXPECTED_SENTENCES_FILE_CONTENT: &str = indoc! {r#"
-            There are many attributes associated with good software.
-            Some of these can be mutually contradictory, and different customers and participants may have different priorities.
-            Weinberg provides an example of how different goals can have a dramatic effect on both effort required and efficiency.
-            Furthermore, he notes that programmers will generally aim to achieve any explicit goals which may be set, probably at the expense of any other quality attributes.
         "#};
 
         const EXPECTED_SINGLE_WORDS_FILE_CONTENT: &str = indoc! {r#"
@@ -804,11 +798,7 @@ mod tests {
             let test_data_files = read_directory_content(output_directory.path());
             assert_eq!(test_data_files.len(), 3);
 
-            check_test_data_file(
-                &test_data_files[0],
-                "sentences.txt",
-                EXPECTED_SENTENCES_FILE_CONTENT,
-            );
+            check_test_data_sentences_file(&test_data_files[0], "sentences.txt");
             check_test_data_file(
                 &test_data_files[1],
                 "single-words.txt",
@@ -821,22 +811,32 @@ mod tests {
             );
         }
 
+        fn check_test_data_sentences_file(file_path: &Path, expected_file_name: &str) {
+            check_file_name(file_path, expected_file_name);
+            let sentences_file_content = read_to_string(file_path).unwrap();
+            assert_eq!(sentences_file_content.lines().count(), 4);
+            // Sentences are chosen randomly, so we just check
+            // if the chosen sentences are part of the original text
+            let text_lines = TEXT.lines().collect_vec();
+            for line in sentences_file_content.lines() {
+                assert!(text_lines.contains(&line));
+            }
+        }
+
         fn check_test_data_file(
             file_path: &Path,
             expected_file_name: &str,
             expected_file_content: &str,
         ) {
-            assert!(file_path.is_file());
+            check_file_name(file_path, expected_file_name);
+            let test_data_file_content = read_to_string(file_path).unwrap();
+            assert_eq!(test_data_file_content, expected_file_content);
+        }
 
+        fn check_file_name(file_path: &Path, expected_file_name: &str) {
+            assert!(file_path.is_file());
             let file_name = file_path.file_name().unwrap();
             assert_eq!(file_name, expected_file_name);
-
-            let mut test_data_file = File::open(file_path).unwrap();
-            let mut test_data_file_content = String::new();
-            test_data_file
-                .read_to_string(&mut test_data_file_content)
-                .unwrap();
-            assert_eq!(test_data_file_content, expected_file_content);
         }
     }
 

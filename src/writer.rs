@@ -32,7 +32,6 @@ use crate::Language;
 use brotli::CompressorWriter;
 use counter::Counter;
 use itertools::Itertools;
-use rand::Rng;
 use regex::Regex;
 use strum::IntoEnumIterator;
 
@@ -257,11 +256,10 @@ impl TestDataFilesWriter {
         let mut sentences_writer = LineWriter::new(sentences_file);
 
         let mut line_counter = 0;
-        let mut rng = rand::rng();
         let mut random_line_numbers = HashSet::new();
 
         loop {
-            let n = rng.random_range(0..input_lines_count);
+            let n = fastrand::usize(0..input_lines_count);
             random_line_numbers.insert(n);
             if random_line_numbers.len() as u32 == maximum_lines {
                 break;

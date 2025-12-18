@@ -928,7 +928,7 @@ impl LanguageModelFilesWriter {
         _cls: &Bound<PyType>,
         input_file_path: PathBuf,
         output_directory_path: PathBuf,
-        language: &Language,
+        language: Language,
         char_class: &str,
     ) -> PyResult<()> {
         convert_io_result_to_py_result(panic::catch_unwind(|| {

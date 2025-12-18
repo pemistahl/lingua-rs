@@ -15,12 +15,12 @@
  */
 
 use std::collections::{HashMap, HashSet};
-use std::fs::{remove_file, File};
+use std::fs::{create_dir, remove_file, File};
+use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
-use std::{fs, io};
 
-use crate::constant::{MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
+use crate::constant::{DIGITS_AT_BEGINNING, MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
 use crate::detector::split_text_into_words;
 use crate::file::read_test_data_file;
 use crate::model::{
@@ -81,18 +81,18 @@ impl LanguageModelFilesWriter {
     pub fn create_and_write_language_model_files(
         input_file_path: &Path,
         output_directory_path: &Path,
-        language: &Language,
+        language: Language,
         char_class: &str,
     ) -> io::Result<()> {
         check_input_file_path(input_file_path);
         check_output_directory_path(output_directory_path);
 
         let unigram_model =
-            Self::create_language_model(input_file_path, language, 1, char_class, &hashmap!())?;
+            Self::create_language_model(input_file_path, &language, 1, char_class, &hashmap!())?;
 
         let bigram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             2,
             char_class,
             &unigram_model.absolute_frequencies,
@@ -100,7 +100,7 @@ impl LanguageModelFilesWriter {
 
         let trigram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             3,
             char_class,
             &bigram_model.absolute_frequencies,
@@ -108,7 +108,7 @@ impl LanguageModelFilesWriter {
 
         let quadrigram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             4,
             char_class,
             &trigram_model.absolute_frequencies,
@@ -116,7 +116,7 @@ impl LanguageModelFilesWriter {
 
         let fivegram_model = Self::create_language_model(
             input_file_path,
-            language,
+            &language,
             5,
             char_class,
             &quadrigram_model.absolute_frequencies,
@@ -247,17 +247,33 @@ impl TestDataFilesWriter {
             remove_file(&sentences_file_path)?;
         }
 
-        let input_file = File::open(input_file_path)?;
-        let input_lines = BufReader::new(input_file).lines().map(|line| line.unwrap());
+        let input_lines_count = BufReader::new(File::open(input_file_path)?).lines().count();
+        let input_lines = BufReader::new(File::open(input_file_path)?)
+            .lines()
+            .map(|line| line.unwrap());
 
         let sentences_file = File::create(sentences_file_path)?;
         let mut sentences_writer = LineWriter::new(sentences_file);
 
         let mut line_counter = 0;
+        let mut random_line_numbers = HashSet::new();
 
-        for line in input_lines {
+        loop {
+            let n = fastrand::usize(0..input_lines_count);
+            random_line_numbers.insert(n);
+            if random_line_numbers.len() as u32 == maximum_lines {
+                break;
+            }
+        }
+
+        for (i, line) in input_lines.enumerate() {
+            if !random_line_numbers.contains(&i) {
+                continue;
+            }
+
             let normalized_whitespace = MULTIPLE_WHITESPACE.replace_all(&line, " ");
-            let removed_quotes = normalized_whitespace.replace('\"', "");
+            let removed_sentence_numbers = DIGITS_AT_BEGINNING.replace(&normalized_whitespace, "");
+            let removed_quotes = removed_sentence_numbers.replace('\"', "");
 
             if line_counter < maximum_lines {
                 sentences_writer.write_all(removed_quotes.as_bytes())?;
@@ -533,7 +549,7 @@ fn store_ngram_count_models(
         let language_dir_path =
             output_directory_path.join(model.language.iso_code_639_1().to_string());
         if !language_dir_path.exists() {
-            fs::create_dir(language_dir_path.as_path())?;
+            create_dir(language_dir_path.as_path())?;
         }
         let file_path = language_dir_path.join(&file_name);
         let file = File::create(file_path)?;
@@ -721,7 +737,7 @@ mod tests {
             let result = LanguageModelFilesWriter::create_and_write_language_model_files(
                 input_file.path(),
                 output_directory.path(),
-                &Language::English,
+                Language::English,
                 "\\p{L}",
             );
             assert!(result.is_ok());
@@ -740,6 +756,7 @@ mod tests {
     mod test_data_files {
         use super::*;
         use indoc::indoc;
+        use std::fs::read_to_string;
 
         const TEXT: &str = indoc! {r#"
             There are many attributes associated with good software.
@@ -748,13 +765,6 @@ mod tests {
             Furthermore, he notes that programmers will generally aim to achieve any explicit goals which may be set, probably at the expense of any other quality attributes.
             Sommerville has identified four generalised attributes which are not concerned with what a program does, but how well the program does it:
             Maintainability, Dependability, Efficiency, Usability
-        "#};
-
-        const EXPECTED_SENTENCES_FILE_CONTENT: &str = indoc! {r#"
-            There are many attributes associated with good software.
-            Some of these can be mutually contradictory, and different customers and participants may have different priorities.
-            Weinberg provides an example of how different goals can have a dramatic effect on both effort required and efficiency.
-            Furthermore, he notes that programmers will generally aim to achieve any explicit goals which may be set, probably at the expense of any other quality attributes.
         "#};
 
         const EXPECTED_SINGLE_WORDS_FILE_CONTENT: &str = indoc! {r#"
@@ -786,11 +796,7 @@ mod tests {
             let test_data_files = read_directory_content(output_directory.path());
             assert_eq!(test_data_files.len(), 3);
 
-            check_test_data_file(
-                &test_data_files[0],
-                "sentences.txt",
-                EXPECTED_SENTENCES_FILE_CONTENT,
-            );
+            check_test_data_sentences_file(&test_data_files[0], "sentences.txt");
             check_test_data_file(
                 &test_data_files[1],
                 "single-words.txt",
@@ -803,22 +809,32 @@ mod tests {
             );
         }
 
+        fn check_test_data_sentences_file(file_path: &Path, expected_file_name: &str) {
+            check_file_name(file_path, expected_file_name);
+            let sentences_file_content = read_to_string(file_path).unwrap();
+            assert_eq!(sentences_file_content.lines().count(), 4);
+            // Sentences are chosen randomly, so we just check
+            // if the chosen sentences are part of the original text
+            let text_lines = TEXT.lines().collect_vec();
+            for line in sentences_file_content.lines() {
+                assert!(text_lines.contains(&line));
+            }
+        }
+
         fn check_test_data_file(
             file_path: &Path,
             expected_file_name: &str,
             expected_file_content: &str,
         ) {
-            assert!(file_path.is_file());
+            check_file_name(file_path, expected_file_name);
+            let test_data_file_content = read_to_string(file_path).unwrap();
+            assert_eq!(test_data_file_content, expected_file_content);
+        }
 
+        fn check_file_name(file_path: &Path, expected_file_name: &str) {
+            assert!(file_path.is_file());
             let file_name = file_path.file_name().unwrap();
             assert_eq!(file_name, expected_file_name);
-
-            let mut test_data_file = File::open(file_path).unwrap();
-            let mut test_data_file_content = String::new();
-            test_data_file
-                .read_to_string(&mut test_data_file_content)
-                .unwrap();
-            assert_eq!(test_data_file_content, expected_file_content);
         }
     }
 

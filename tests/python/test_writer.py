@@ -191,11 +191,11 @@ def test_language_model_files_writer(
     files = read_directory_content(output_directory_path)
     assert len(files) == 5
 
-    check_brotli_file(files[0],"bigrams.json.br", expected_bigram_model)
-    check_brotli_file(files[1],"fivegrams.json.br", expected_fivegram_model)
-    check_brotli_file(files[2],"quadrigrams.json.br", expected_quadrigram_model)
-    check_brotli_file(files[3],"trigrams.json.br", expected_trigram_model)
-    check_brotli_file(files[4],"unigrams.json.br", expected_unigram_model)
+    check_brotli_file(files[0], "bigrams.json.br", expected_bigram_model)
+    check_brotli_file(files[1], "fivegrams.json.br", expected_fivegram_model)
+    check_brotli_file(files[2], "quadrigrams.json.br", expected_quadrigram_model)
+    check_brotli_file(files[3], "trigrams.json.br", expected_trigram_model)
+    check_brotli_file(files[4], "unigrams.json.br", expected_unigram_model)
 
 
 def test_test_data_files_writer(
@@ -220,7 +220,7 @@ def test_test_data_files_writer(
     files = read_directory_content(output_directory_path)
     assert len(files) == 3
 
-    check_test_data_file(files[0], "sentences.txt", expected_sentences_file_content)
+    check_test_data_sentences_file(files[0], "sentences.txt", test_data_files_text)
     check_test_data_file(files[1], "single-words.txt", expected_single_words_file_content)
     check_test_data_file(files[2], "word-pairs.txt", expected_word_pairs_file_content)
 
@@ -558,11 +558,31 @@ def check_brotli_file(file_path: Path, expected_file_name: str, expected_file_co
         assert uncompressed_file_content == minify(expected_file_content)
 
 
+def check_test_data_sentences_file(
+    file_path: Path,
+    expected_file_name: str,
+    test_data_files_text: str
+):
+    check_file_name(file_path, expected_file_name)
+    with file_path.open() as sentences_file:
+        sentences = [sentence.strip() for sentence in sentences_file.readlines()]
+        assert len(sentences) == 4
+        # Sentences are chosen randomly, so we just check
+        # if the chosen sentences are part of the original text
+        original_sentences = test_data_files_text.split("\n")
+        for sentence in sentences:
+            assert sentence in original_sentences
+
+
 def check_test_data_file(file_path: Path, expected_file_name: str, expected_file_content: str):
-    assert file_path.is_file()
-    assert file_path.name == expected_file_name
+    check_file_name(file_path, expected_file_name)
     with file_path.open() as txt_file:
         assert txt_file.read() == expected_file_content
+
+
+def check_file_name(file_path: Path, expected_file_name: str):
+    assert file_path.is_file()
+    assert file_path.name == expected_file_name
 
 
 def minify(json: str):

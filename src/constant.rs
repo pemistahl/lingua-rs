@@ -28,6 +28,8 @@ pub(crate) static JAPANESE_CHARACTER_SET: LazyLock<CharSet> =
 pub(crate) static MULTIPLE_WHITESPACE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new("\\s+").unwrap());
 pub(crate) static NUMBERS: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\p{N}").unwrap());
+pub(crate) static DIGITS_AT_BEGINNING: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new("^\\d+\\s+").unwrap());
 pub(crate) static PUNCTUATION: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\p{P}").unwrap());
 pub(crate) static TOKENS_WITHOUT_WHITESPACE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(

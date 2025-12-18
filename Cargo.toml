@@ -72,6 +72,7 @@ brotli = "8.0.2"
 compact_str = "0.9.0"
 counter = "0.7.0"
 dashmap = "6.1.0"
+fastrand = { version = "2.3.0", features = ["js"] }
 fraction = "0.15.3"
 include_dir = "0.7.4"
 itertools = "0.14.0"
@@ -118,7 +119,7 @@ lingua-italian-language-model = { path = "language-models/it", version = "1.2.0"
 lingua-japanese-language-model = { path = "language-models/ja", version = "1.2.0", optional = true }
 lingua-kazakh-language-model = { path = "language-models/kk", version = "1.2.0", optional = true }
 lingua-korean-language-model = { path = "language-models/ko", version = "1.2.0", optional = true }
-lingua-latin-language-model = { path = "language-models/la", version = "1.2.0", optional = true }
+lingua-latin-language-model = { path = "language-models/la", version = "1.2.1", optional = true }
 lingua-latvian-language-model = { path = "language-models/lv", version = "1.2.0", optional = true }
 lingua-lithuanian-language-model = { path = "language-models/lt", version = "1.2.0", optional = true }
 lingua-macedonian-language-model = { path = "language-models/mk", version = "1.2.0", optional = true }
@@ -152,7 +153,7 @@ lingua-turkish-language-model = { path = "language-models/tr", version = "1.2.0"
 lingua-ukrainian-language-model = { path = "language-models/uk", version = "1.2.0", optional = true }
 lingua-urdu-language-model = { path = "language-models/ur", version = "1.2.0", optional = true }
 lingua-vietnamese-language-model = { path = "language-models/vi", version = "1.2.0", optional = true }
-lingua-welsh-language-model = { path = "language-models/cy", version = "1.2.0", optional = true }
+lingua-welsh-language-model = { path = "language-models/cy", version = "1.2.1", optional = true }
 lingua-xhosa-language-model = { path = "language-models/xh", version = "1.2.0", optional = true }
 lingua-yoruba-language-model = { path = "language-models/yo", version = "1.2.0", optional = true }
 lingua-zulu-language-model = { path = "language-models/zu", version = "1.2.0", optional = true }

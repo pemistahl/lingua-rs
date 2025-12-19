@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 use clap::Parser;
-use cld2::{detect_language as cld2_detect_language, Format, Lang as CLD2Language};
+use cld2::{Format, Lang as CLD2Language, detect_language as cld2_detect_language};
 use fraction::Zero;
 use include_dir::Dir;
 use indoc::formatdoc;
@@ -31,7 +31,7 @@ use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use titlecase::titlecase;
 use whatlang::{Detector, Lang as WhatlangLanguage};
-use whichlang::{detect_language as whichlang_detect_language, Lang as WhichlangLanguage};
+use whichlang::{Lang as WhichlangLanguage, detect_language as whichlang_detect_language};
 
 use lingua::{Language, LanguageDetector, LanguageDetectorBuilder};
 use lingua_afrikaans_language_model::AFRIKAANS_TESTDATA_DIRECTORY;
@@ -329,7 +329,7 @@ impl Statistic {
             .iter()
             .filter(|(lang, _)| lang.as_ref() != language.as_ref())
             .sorted_by(
-                |(first_lang, &first_accuracy), (second_lang, &second_accuracy)| {
+                |&(first_lang, &first_accuracy), &(second_lang, &second_accuracy)| {
                     let sorted_by_accuracy = second_accuracy.partial_cmp(&first_accuracy).unwrap();
                     let sorted_by_language = first_lang.partial_cmp(second_lang).unwrap();
                     sorted_by_accuracy.then(sorted_by_language)

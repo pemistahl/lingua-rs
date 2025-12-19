@@ -31,13 +31,13 @@ use strum::IntoEnumIterator;
 
 use crate::alphabet::Alphabet;
 use crate::constant::{
-    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, TOKENS_WITHOUT_WHITESPACE,
-    TOKENS_WITH_OPTIONAL_WHITESPACE,
+    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, TOKENS_WITH_OPTIONAL_WHITESPACE,
+    TOKENS_WITHOUT_WHITESPACE,
 };
 use crate::language::Language;
 use crate::model::{
-    create_lower_order_ngrams, create_ngrams, load_ngram_count_model, load_ngram_probability_model,
-    NgramModelType,
+    NgramModelType, create_lower_order_ngrams, create_ngrams, load_ngram_count_model,
+    load_ngram_probability_model,
 };
 use crate::ngram::NgramRef;
 use crate::result::DetectionResult;
@@ -528,36 +528,35 @@ impl LanguageDetector {
                     current_language = language;
                 }
 
-                if let Some(lang) = language {
-                    if let Some(current_lang) = current_language {
-                        if lang != current_lang {
-                            let result = DetectionResult {
-                                start_index: current_start_index,
-                                end_index: current_end_index,
-                                word_count,
-                                language: current_lang,
-                            };
-                            results.push(result);
-                            current_start_index = current_end_index;
-                            current_language = Some(lang);
-                            word_count = 0;
-                        }
-                    }
+                if let Some(lang) = language
+                    && let Some(current_lang) = current_language
+                    && lang != current_lang
+                {
+                    let result = DetectionResult {
+                        start_index: current_start_index,
+                        end_index: current_end_index,
+                        word_count,
+                        language: current_lang,
+                    };
+                    results.push(result);
+                    current_start_index = current_end_index;
+                    current_language = Some(lang);
+                    word_count = 0;
                 }
 
                 current_end_index = token_match.end();
                 word_count += 1;
 
-                if i == last_index {
-                    if let Some(current_lang) = current_language {
-                        let result = DetectionResult {
-                            start_index: current_start_index,
-                            end_index: text_str.len(),
-                            word_count,
-                            language: current_lang,
-                        };
-                        results.push(result);
-                    }
+                if i == last_index
+                    && let Some(current_lang) = current_language
+                {
+                    let result = DetectionResult {
+                        start_index: current_start_index,
+                        end_index: text_str.len(),
+                        word_count,
+                        language: current_lang,
+                    };
+                    results.push(result);
                 }
             }
 
@@ -755,12 +754,12 @@ impl LanguageDetector {
             return values;
         }
 
-        if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
-            if let Some(language) = self.detect_language_with_unique_and_common_ngrams(&words) {
-                update_confidence_values(&mut values, language, 1.0);
-                values.sort_by(confidence_values_comparator);
-                return values;
-            }
+        if (self.is_built_from_one_language || self.is_low_accuracy_mode_enabled)
+            && let Some(language) = self.detect_language_with_unique_and_common_ngrams(&words)
+        {
+            update_confidence_values(&mut values, language, 1.0);
+            values.sort_by(confidence_values_comparator);
+            return values;
         }
 
         if let Some(language) = self.detect_language_with_rules(&words, languages) {
@@ -1357,10 +1356,10 @@ fn sum_up_probabilities(
             })
             .sum();
 
-        if let Some(counter) = unigram_counter {
-            if counter.contains_key(language) {
-                sum /= *counter.get(language).unwrap() as f64;
-            }
+        if let Some(counter) = unigram_counter
+            && counter.contains_key(language)
+        {
+            sum /= *counter.get(language).unwrap() as f64;
         }
 
         if sum != 0.0 {
@@ -2054,9 +2053,11 @@ mod tests {
     fn test_detect_multiple_languages_for_empty_string(
         detector_for_all_languages: LanguageDetector,
     ) {
-        assert!(detector_for_all_languages
-            .detect_multiple_languages_of("")
-            .is_empty());
+        assert!(
+            detector_for_all_languages
+                .detect_multiple_languages_of("")
+                .is_empty()
+        );
     }
 
     #[rstest(

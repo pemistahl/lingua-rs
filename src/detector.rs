@@ -2202,7 +2202,7 @@ mod tests {
                 Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Ganda, German, Hungarian,
                 Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay, Maori, Nynorsk,
                 Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho, Spanish, Swahili,
-                Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
+                Swedish, Tagalog, Tsonga, Tswana, Turkish, Venetian, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
             )
         ),
     )]

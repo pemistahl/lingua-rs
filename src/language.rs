@@ -264,6 +264,9 @@ pub enum Language {
     #[cfg(feature = "urdu")]
     Urdu,
 
+    #[cfg(feature = "venetian")]
+    Venetian,
+
     #[cfg(feature = "vietnamese")]
     Vietnamese,
 
@@ -574,6 +577,9 @@ impl Language {
             #[cfg(feature = "urdu")]
             Language::Urdu => IsoCode639_1::UR,
 
+            #[cfg(feature = "venetian")]
+            Language::Venetian => IsoCode639_1::ZZ, // Venetian has no ISO 639-1 code
+
             #[cfg(feature = "vietnamese")]
             Language::Vietnamese => IsoCode639_1::VI,
 
@@ -804,6 +810,9 @@ impl Language {
             #[cfg(feature = "urdu")]
             Language::Urdu => IsoCode639_3::URD,
 
+            #[cfg(feature = "venetian")]
+            Language::Venetian => IsoCode639_3::VEC,
+
             #[cfg(feature = "vietnamese")]
             Language::Vietnamese => IsoCode639_3::VIE,
 
@@ -955,6 +964,9 @@ impl Language {
             #[cfg(feature = "turkish")]
             Language::Turkish => hashset!(Alphabet::Latin),
 
+            #[cfg(feature = "venetian")]
+            Language::Venetian => hashset!(Alphabet::Latin),
+
             #[cfg(feature = "vietnamese")]
             Language::Vietnamese => hashset!(Alphabet::Latin),
 
@@ -1104,6 +1116,9 @@ impl Language {
             #[cfg(feature = "ukrainian")]
             Language::Ukrainian => Some("ҐґЄєЇї"),
 
+            #[cfg(feature = "venetian")]
+            Language::Venetian => None,
+
             #[cfg(feature = "vietnamese")]
             Language::Vietnamese => Some(
                 "ẰằẦầẲẳẨẩẴẵẪẫẮắẤấẠạẶặẬậỀềẺẻỂểẼẽỄễẾếỆệỈỉĨĩỊịƠơỒồỜờỎỏỔổỞởỖỗỠỡỐốỚớỘộỢợƯưỪừỦủỬửŨũỮữỨứỤụỰựỲỳỶỷỸỹỴỵ",
@@ -1211,6 +1226,7 @@ mod tests {
                 Turkish,
                 Ukrainian,
                 Urdu,
+                Venetian,
                 Vietnamese,
                 Welsh,
                 Xhosa,
@@ -1294,6 +1310,7 @@ mod tests {
                 Turkish,
                 Ukrainian,
                 Urdu,
+                Venetian,
                 Vietnamese,
                 Welsh,
                 Xhosa,
@@ -1378,6 +1395,7 @@ mod tests {
                 Tsonga,
                 Tswana,
                 Turkish,
+                Venetian,
                 Vietnamese,
                 Welsh,
                 Xhosa,

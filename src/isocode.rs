@@ -323,6 +323,11 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Urdu`](crate::language::Language::Urdu)
     UR,
 
+    #[cfg(feature = "venetian")]
+    /// Placeholder for [`Venetian`](crate::language::Language::Venetian)
+    /// Note: Venetian does not have an official ISO 639-1 code; ZZ is a reserved sentinel value
+    ZZ,
+
     #[cfg(feature = "vietnamese")]
     /// The ISO 639-1 code for [`Vietnamese`](crate::language::Language::Vietnamese)
     VI,
@@ -647,6 +652,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "urdu")]
     /// The ISO 639-3 code for [`Urdu`](crate::language::Language::Urdu)
     URD,
+
+    #[cfg(feature = "venetian")]
+    /// The ISO 639-3 code for [`Venetian`](crate::language::Language::Venetian)
+    VEC,
 
     #[cfg(feature = "vietnamese")]
     /// The ISO 639-3 code for [`Vietnamese`](crate::language::Language::Vietnamese)

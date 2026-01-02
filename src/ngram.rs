@@ -17,9 +17,6 @@
 use std::fmt;
 use std::fmt::Display;
 
-use serde::de::{Error, Visitor};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub(crate) struct Ngram {
     pub(crate) value: String,
@@ -35,48 +32,11 @@ impl Ngram {
             value: value.to_string(),
         }
     }
-
-    pub(crate) fn get_ngram_name_by_length(ngram_length: usize) -> &'static str {
-        match ngram_length {
-            1 => "unigram",
-            2 => "bigram",
-            3 => "trigram",
-            4 => "quadrigram",
-            5 => "fivegram",
-            _ => panic!("ngram length {ngram_length} is not in range 1..6"),
-        }
-    }
 }
 
 impl Display for Ngram {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value)
-    }
-}
-
-impl Serialize for Ngram {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.serialize_str(&self.value)
-    }
-}
-
-struct NgramVisitor;
-
-impl Visitor<'_> for NgramVisitor {
-    type Value = Ngram;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("a string with length between 1 and 5")
-    }
-
-    fn visit_str<E: Error>(self, v: &str) -> Result<Self::Value, E> {
-        Ok(Ngram::new(v))
-    }
-}
-
-impl<'de> Deserialize<'de> for Ngram {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        deserializer.deserialize_str(NgramVisitor)
     }
 }
 
@@ -119,19 +79,6 @@ impl<'a> Iterator for NgramRefRange<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_ngram_serializer() {
-        let ngram = Ngram::new("äbcde");
-        let serialized = serde_json::to_string(&ngram).unwrap();
-        assert_eq!(serialized, "\"äbcde\"");
-    }
-
-    #[test]
-    fn test_ngram_deserializer() {
-        let ngram = serde_json::from_str::<Ngram>("\"äbcde\"").unwrap();
-        assert_eq!(ngram, Ngram::new("äbcde"));
-    }
 
     #[test]
     fn test_ngram_iterator() {

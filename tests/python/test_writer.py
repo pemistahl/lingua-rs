@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import brotli
 import pytest
 import re
 
@@ -189,13 +188,10 @@ def test_language_model_files_writer(
     )
 
     files = read_directory_content(output_directory_path)
-    assert len(files) == 5
+    assert len(files) == 2
 
-    check_brotli_file(files[0], "bigrams.json.br", expected_bigram_model)
-    check_brotli_file(files[1], "fivegrams.json.br", expected_fivegram_model)
-    check_brotli_file(files[2], "quadrigrams.json.br", expected_quadrigram_model)
-    check_brotli_file(files[3], "trigrams.json.br", expected_trigram_model)
-    check_brotli_file(files[4], "unigrams.json.br", expected_unigram_model)
+    check_fst_file(files[0], "high-accuracy-model.fst")
+    check_fst_file(files[1], "low-accuracy-model.fst")
 
 
 def test_test_data_files_writer(
@@ -251,61 +247,19 @@ def test_most_common_ngrams_writer():
     assert english_dir_path.is_dir()
 
     german_most_common_ngram_files = read_directory_content(german_dir_path)
-    assert len(german_most_common_ngram_files) == 5
+    assert len(german_most_common_ngram_files) == 1
 
-    check_brotli_file(
+    check_fst_file(
         german_most_common_ngram_files[0],
-        "mostcommon_bigrams.json.br",
-        """{"language":"GERMAN","ngrams":["ch","de","ei","en","er"]}"""
-    )
-    check_brotli_file(
-        german_most_common_ngram_files[1],
-        "mostcommon_fivegrams.json.br",
-        """{"language":"GERMAN","ngrams":["diese","ische","nicht","schen","ungen"]}"""
-    )
-    check_brotli_file(
-        german_most_common_ngram_files[2],
-        "mostcommon_quadrigrams.json.br",
-        """{"language":"GERMAN","ngrams":["chen","eine","icht","lich","sche"]}"""
-    )
-    check_brotli_file(
-        german_most_common_ngram_files[3],
-        "mostcommon_trigrams.json.br",
-        """{"language":"GERMAN","ngrams":["der","die","ein","ich","sch"]}"""
-    )
-    check_brotli_file(
-        german_most_common_ngram_files[4],
-        "mostcommon_unigrams.json.br",
-        """{"language":"GERMAN","ngrams":["e","i","n","r","s"]}"""
+        "mostcommon-ngrams.fst"
     )
 
     english_most_common_ngram_files = read_directory_content(english_dir_path)
-    assert len(english_most_common_ngram_files) == 5
+    assert len(english_most_common_ngram_files) == 1
 
-    check_brotli_file(
+    check_fst_file(
         english_most_common_ngram_files[0],
-        "mostcommon_bigrams.json.br",
-        """{"language":"ENGLISH","ngrams":["an","he","in","re","th"]}"""
-    )
-    check_brotli_file(
-        english_most_common_ngram_files[1],
-        "mostcommon_fivegrams.json.br",
-        """{"language":"ENGLISH","ngrams":["ation","canad","ction","ement","tions"]}"""
-    )
-    check_brotli_file(
-        english_most_common_ngram_files[2],
-        "mostcommon_quadrigrams.json.br",
-        """{"language":"ENGLISH","ngrams":["atio","ment","that","tion","with"]}"""
-    )
-    check_brotli_file(
-        english_most_common_ngram_files[3],
-        "mostcommon_trigrams.json.br",
-        """{"language":"ENGLISH","ngrams":["and","ing","ion","the","tio"]}"""
-    )
-    check_brotli_file(
-        english_most_common_ngram_files[4],
-        "mostcommon_unigrams.json.br",
-        """{"language":"ENGLISH","ngrams":["a","e","i","o","t"]}"""
+        "mostcommon-ngrams.fst"
     )
 
 
@@ -550,12 +504,9 @@ def read_directory_content(directory: Path) -> list[Path]:
     return sorted([child for child in directory.iterdir()])
 
 
-def check_brotli_file(file_path: Path, expected_file_name: str, expected_file_content: str):
+def check_fst_file(file_path: Path, expected_file_name: str):
     assert file_path.is_file()
     assert file_path.name == expected_file_name
-    with open(file_path, mode="rb") as compressed_file:
-        uncompressed_file_content = brotli.decompress(compressed_file.read()).decode("utf-8")
-        assert uncompressed_file_content == minify(expected_file_content)
 
 
 def check_test_data_sentences_file(

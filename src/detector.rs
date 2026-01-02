@@ -19,11 +19,8 @@ use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 use std::sync::LazyLock;
 
-use ahash::AHashMap;
-use compact_str::CompactString;
 use counter::Counter;
 use dashmap::DashMap;
-use fraction::{ToPrimitive, Zero};
 use itertools::Itertools;
 #[cfg(not(target_family = "wasm"))]
 use rayon::prelude::*;
@@ -42,28 +39,12 @@ use crate::model::{
 use crate::ngram::NgramRef;
 use crate::result::DetectionResult;
 
-type ProbabilityMap = AHashMap<CompactString, f64>;
-type LanguageModelMap = DashMap<Language, ProbabilityMap>;
-type CountModelMap = DashMap<Language, HashSet<String>>;
+type LanguageModelMap = DashMap<Language, fst::Map<Vec<u8>>>;
+type CountModelMap = DashMap<Language, fst::Set<Vec<u8>>>;
 
-static UNIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static BIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static TRIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static QUADRIGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-static FIVEGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
-
-static UNIQUE_UNIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static UNIQUE_BIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static UNIQUE_TRIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static UNIQUE_QUADRIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static UNIQUE_FIVEGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-
-static MOST_COMMON_UNIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static MOST_COMMON_BIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static MOST_COMMON_TRIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static MOST_COMMON_QUADRIGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-static MOST_COMMON_FIVEGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
-
+static NGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
+static UNIQUE_NGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
+static MOST_COMMON_NGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
 static LANGUAGES_WITH_SINGLE_UNIQUE_SCRIPT: LazyLock<HashSet<Language>> =
     LazyLock::new(Language::all_with_single_unique_script);
 
@@ -83,21 +64,9 @@ pub struct LanguageDetector {
     is_built_from_one_language: bool,
     languages_with_unique_characters: HashSet<Language>,
     single_language_alphabets: HashMap<Alphabet, Language>,
-    unigram_language_models: &'static LanguageModelMap,
-    bigram_language_models: &'static LanguageModelMap,
-    trigram_language_models: &'static LanguageModelMap,
-    quadrigram_language_models: &'static LanguageModelMap,
-    fivegram_language_models: &'static LanguageModelMap,
-    unique_unigram_language_models: &'static CountModelMap,
-    unique_bigram_language_models: &'static CountModelMap,
-    unique_trigram_language_models: &'static CountModelMap,
-    unique_quadrigram_language_models: &'static CountModelMap,
-    unique_fivegram_language_models: &'static CountModelMap,
-    most_common_unigram_language_models: &'static CountModelMap,
-    most_common_bigram_language_models: &'static CountModelMap,
-    most_common_trigram_language_models: &'static CountModelMap,
-    most_common_quadrigram_language_models: &'static CountModelMap,
-    most_common_fivegram_language_models: &'static CountModelMap,
+    ngram_language_models: &'static LanguageModelMap,
+    unique_ngram_language_models: &'static CountModelMap,
+    most_common_ngram_language_models: &'static CountModelMap,
 }
 
 impl LanguageDetector {
@@ -115,21 +84,9 @@ impl LanguageDetector {
             is_built_from_one_language,
             languages_with_unique_characters: collect_languages_with_unique_characters(&languages),
             single_language_alphabets: collect_single_language_alphabets(&languages),
-            unigram_language_models: &UNIGRAM_MODELS,
-            bigram_language_models: &BIGRAM_MODELS,
-            trigram_language_models: &TRIGRAM_MODELS,
-            quadrigram_language_models: &QUADRIGRAM_MODELS,
-            fivegram_language_models: &FIVEGRAM_MODELS,
-            unique_unigram_language_models: &UNIQUE_UNIGRAM_MODELS,
-            unique_bigram_language_models: &UNIQUE_BIGRAM_MODELS,
-            unique_trigram_language_models: &UNIQUE_TRIGRAM_MODELS,
-            unique_quadrigram_language_models: &UNIQUE_QUADRIGRAM_MODELS,
-            unique_fivegram_language_models: &UNIQUE_FIVEGRAM_MODELS,
-            most_common_unigram_language_models: &MOST_COMMON_UNIGRAM_MODELS,
-            most_common_bigram_language_models: &MOST_COMMON_BIGRAM_MODELS,
-            most_common_trigram_language_models: &MOST_COMMON_TRIGRAM_MODELS,
-            most_common_quadrigram_language_models: &MOST_COMMON_QUADRIGRAM_MODELS,
-            most_common_fivegram_language_models: &MOST_COMMON_FIVEGRAM_MODELS,
+            ngram_language_models: &NGRAM_MODELS,
+            unique_ngram_language_models: &UNIQUE_NGRAM_MODELS,
+            most_common_ngram_language_models: &MOST_COMMON_NGRAM_MODELS,
         };
 
         if is_every_language_model_preloaded {
@@ -152,33 +109,8 @@ impl LanguageDetector {
 
         languages_iter.for_each(|language| {
             load_count_model(
-                self.unique_unigram_language_models,
+                self.unique_ngram_language_models,
                 *language,
-                1,
-                NgramModelType::Unique,
-            );
-            load_count_model(
-                self.unique_bigram_language_models,
-                *language,
-                2,
-                NgramModelType::Unique,
-            );
-            load_count_model(
-                self.unique_trigram_language_models,
-                *language,
-                3,
-                NgramModelType::Unique,
-            );
-            load_count_model(
-                self.unique_quadrigram_language_models,
-                *language,
-                4,
-                NgramModelType::Unique,
-            );
-            load_count_model(
-                self.unique_fivegram_language_models,
-                *language,
-                5,
                 NgramModelType::Unique,
             );
         });
@@ -192,33 +124,8 @@ impl LanguageDetector {
 
         languages_iter.for_each(|language| {
             load_count_model(
-                self.most_common_unigram_language_models,
+                self.most_common_ngram_language_models,
                 *language,
-                1,
-                NgramModelType::MostCommon,
-            );
-            load_count_model(
-                self.most_common_bigram_language_models,
-                *language,
-                2,
-                NgramModelType::MostCommon,
-            );
-            load_count_model(
-                self.most_common_trigram_language_models,
-                *language,
-                3,
-                NgramModelType::MostCommon,
-            );
-            load_count_model(
-                self.most_common_quadrigram_language_models,
-                *language,
-                4,
-                NgramModelType::MostCommon,
-            );
-            load_count_model(
-                self.most_common_fivegram_language_models,
-                *language,
-                5,
                 NgramModelType::MostCommon,
             );
         });
@@ -231,14 +138,11 @@ impl LanguageDetector {
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
-            load_probability_model(self.trigram_language_models, *language, 3);
-
-            if !self.is_low_accuracy_mode_enabled {
-                load_probability_model(self.unigram_language_models, *language, 1);
-                load_probability_model(self.bigram_language_models, *language, 2);
-                load_probability_model(self.quadrigram_language_models, *language, 4);
-                load_probability_model(self.fivegram_language_models, *language, 5);
-            }
+            load_probability_model(
+                self.ngram_language_models,
+                *language,
+                self.is_low_accuracy_mode_enabled,
+            );
         });
     }
 
@@ -255,49 +159,19 @@ impl LanguageDetector {
         let languages_iter = self.languages.iter();
 
         languages_iter.for_each(|language| {
-            self.trigram_language_models.remove(language);
-
-            if !self.is_low_accuracy_mode_enabled {
-                self.unigram_language_models.remove(language);
-                self.bigram_language_models.remove(language);
-                self.quadrigram_language_models.remove(language);
-                self.fivegram_language_models.remove(language);
-            }
+            self.ngram_language_models.remove(language);
 
             if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
-                self.unique_unigram_language_models.remove(language);
-                self.unique_bigram_language_models.remove(language);
-                self.unique_trigram_language_models.remove(language);
-                self.unique_quadrigram_language_models.remove(language);
-                self.unique_fivegram_language_models.remove(language);
-                self.most_common_unigram_language_models.remove(language);
-                self.most_common_bigram_language_models.remove(language);
-                self.most_common_trigram_language_models.remove(language);
-                self.most_common_quadrigram_language_models.remove(language);
-                self.most_common_fivegram_language_models.remove(language);
+                self.unique_ngram_language_models.remove(language);
+                self.most_common_ngram_language_models.remove(language);
             }
         });
 
-        self.trigram_language_models.shrink_to_fit();
-
-        if !self.is_low_accuracy_mode_enabled {
-            self.unigram_language_models.shrink_to_fit();
-            self.bigram_language_models.shrink_to_fit();
-            self.quadrigram_language_models.shrink_to_fit();
-            self.fivegram_language_models.shrink_to_fit();
-        }
+        self.ngram_language_models.shrink_to_fit();
 
         if self.is_built_from_one_language || self.is_low_accuracy_mode_enabled {
-            self.unique_unigram_language_models.shrink_to_fit();
-            self.unique_bigram_language_models.shrink_to_fit();
-            self.unique_trigram_language_models.shrink_to_fit();
-            self.unique_quadrigram_language_models.shrink_to_fit();
-            self.unique_fivegram_language_models.shrink_to_fit();
-            self.most_common_unigram_language_models.shrink_to_fit();
-            self.most_common_bigram_language_models.shrink_to_fit();
-            self.most_common_trigram_language_models.shrink_to_fit();
-            self.most_common_quadrigram_language_models.shrink_to_fit();
-            self.most_common_fivegram_language_models.shrink_to_fit();
+            self.unique_ngram_language_models.shrink_to_fit();
+            self.most_common_ngram_language_models.shrink_to_fit();
         }
     }
 
@@ -396,7 +270,7 @@ impl LanguageDetector {
             &confidence_values.first().unwrap();
 
         if confidence_values.len() == 1 {
-            if most_likely_language_probability.is_zero() {
+            if most_likely_language_probability == &0.0 {
                 return None;
             }
             return Some(*most_likely_language);
@@ -943,21 +817,15 @@ impl LanguageDetector {
                         || (is_japanese && self.is_built_from_one_language)
                         || LANGUAGES_WITH_SINGLE_UNIQUE_SCRIPT.contains(language)
                     {
-                        optional_language = self.search_unique_and_most_common_ngrams(
-                            *language,
-                            &ngrams,
-                            ngram_length,
-                        );
+                        optional_language =
+                            self.search_unique_and_most_common_ngrams(*language, &ngrams);
                     }
                 } else if ngram_length == 2 {
-                    optional_language = search_unique_ngrams(
-                        self.unique_bigram_language_models,
-                        *language,
-                        &ngrams,
-                    );
+                    optional_language =
+                        search_unique_ngrams(self.unique_ngram_language_models, *language, &ngrams);
                 } else {
                     optional_language =
-                        self.search_unique_and_most_common_ngrams(*language, &ngrams, ngram_length);
+                        self.search_unique_and_most_common_ngrams(*language, &ngrams);
                 }
                 if let Some(language) = optional_language {
                     filtered_languages.insert(language);
@@ -975,40 +843,15 @@ impl LanguageDetector {
         &self,
         language: Language,
         ngrams: &HashSet<NgramRef>,
-        ngram_length: usize,
     ) -> Option<Language> {
-        let (unique_language_models, most_common_language_models) = match ngram_length {
-            5 => (
-                self.unique_fivegram_language_models,
-                self.most_common_fivegram_language_models,
-            ),
-            4 => (
-                self.unique_quadrigram_language_models,
-                self.most_common_quadrigram_language_models,
-            ),
-            3 => (
-                self.unique_trigram_language_models,
-                self.most_common_trigram_language_models,
-            ),
-            2 => (
-                self.unique_bigram_language_models,
-                self.most_common_bigram_language_models,
-            ),
-            1 => (
-                self.unique_unigram_language_models,
-                self.most_common_unigram_language_models,
-            ),
-            _ => panic!("unsupported ngram length detected: {}", ngram_length),
-        };
-        match search_unique_ngrams(unique_language_models, language, ngrams) {
-            Some(language) => Some(language),
-            None => search_most_common_ngrams(
-                most_common_language_models,
+        search_unique_ngrams(self.unique_ngram_language_models, language, ngrams).or_else(|| {
+            search_most_common_ngrams(
+                self.most_common_ngram_language_models,
                 language,
                 ngrams,
                 self.is_built_from_one_language,
-            ),
-        }
+            )
+        })
     }
 
     fn detect_language_with_rules(
@@ -1218,26 +1061,18 @@ impl LanguageDetector {
     }
 
     fn look_up_ngram_probability(&self, language: Language, ngram: &NgramRef) -> Option<f64> {
-        let ngram_length = ngram.value.chars().count();
-        let language_models = match ngram_length {
-            5 => self.fivegram_language_models,
-            4 => self.quadrigram_language_models,
-            3 => self.trigram_language_models,
-            2 => self.bigram_language_models,
-            1 => self.unigram_language_models,
-            0 => panic!("zerogram detected"),
-            _ => panic!("unsupported ngram length detected: {}", ngram_length),
-        };
-
-        if !load_probability_model(language_models, language, ngram_length) {
+        if !load_probability_model(
+            self.ngram_language_models,
+            language,
+            self.is_low_accuracy_mode_enabled,
+        ) {
             return None;
         }
-
-        language_models
+        self.ngram_language_models
             .get(&language)
             .unwrap()
-            .get(ngram.value)
-            .copied()
+            .get(ngram.value.as_bytes())
+            .map(f64::from_bits)
     }
 
     fn count_unigrams(
@@ -1270,13 +1105,12 @@ pub(crate) fn split_text_into_words(text: &str) -> Vec<String> {
 fn load_count_model(
     language_models: &'static CountModelMap,
     language: Language,
-    ngram_length: usize,
     model_type: NgramModelType,
 ) -> bool {
     if language_models.contains_key(&language) {
         return true;
     }
-    match load_ngram_count_model(language, ngram_length, model_type) {
+    match load_ngram_count_model(language, model_type) {
         Some(model) => {
             language_models.insert(language, model.ngrams);
             true
@@ -1288,21 +1122,14 @@ fn load_count_model(
 fn load_probability_model(
     language_models: &'static LanguageModelMap,
     language: Language,
-    ngram_length: usize,
+    is_low_accuracy_mode_enabled: bool,
 ) -> bool {
     if language_models.contains_key(&language) {
         return true;
     }
-    match load_ngram_probability_model(language, ngram_length) {
+    match load_ngram_probability_model(language, is_low_accuracy_mode_enabled) {
         Some(model) => {
-            language_models.insert(
-                language,
-                model
-                    .ngrams
-                    .iter()
-                    .map(|(key, value)| (key.clone(), value.to_f64().unwrap().ln()))
-                    .collect(),
-            );
+            language_models.insert(language, model.ngrams);
             true
         }
         None => false,
@@ -1401,7 +1228,7 @@ fn compute_confidence_values(
     // log probabilities is too large to be computed for very long input strings.
     // So we simply set the probability of the most likely language to 1.0 and
     // leave the other languages at 0.0.
-    if denominator.is_zero() {
+    if denominator == 0.0 {
         // For very long inputs, only trigrams are used, so we safely access them at index 0.
         let probability_map = &probability_maps[0];
         let most_likely_language = *probability_map
@@ -1484,6 +1311,7 @@ mod tests {
 
     use crate::builder::LanguageDetectorBuilder;
     use crate::language::Language::*;
+    use crate::model::create_fst_map;
     use crate::ngram::NgramRef;
 
     use super::*;
@@ -1498,212 +1326,119 @@ mod tests {
     // HELPER FUNCTIONS
     // ##############################
 
-    fn create_probability_map(data: HashMap<&'static str, f64>) -> ProbabilityMap {
-        data.iter()
-            .map(|(&k, &v)| (CompactString::new(k), v))
-            .collect()
+    fn create_fst_map_from_test_data(data: HashMap<&'static str, f64>) -> fst::Map<Vec<u8>> {
+        let fst_data = data
+            .iter()
+            .map(|(&key, &value)| (key.as_bytes().to_vec(), value.ln().to_bits()))
+            .collect_vec();
+
+        create_fst_map(fst_data)
     }
 
     fn round_to_two_decimal_places(value: f64) -> f64 {
         (value * 100.0).round() / 100.0
     }
 
-    // ##############################
-    // LANGUAGE MODELS FOR ENGLISH
-    // ##############################
-
     #[fixture]
-    fn unigram_language_model_for_english() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "a" => 0.01_f64.ln(),
-            "l" => 0.02_f64.ln(),
-            "t" => 0.03_f64.ln(),
-            "e" => 0.04_f64.ln(),
-            "r" => 0.05_f64.ln(),
+    fn language_model_for_english() -> fst::Map<Vec<u8>> {
+        create_fst_map_from_test_data(hashmap!(
+            // unigrams
+            "a" => 0.01,
+            "l" => 0.02,
+            "t" => 0.03,
+            "e" => 0.04,
+            "r" => 0.05,
             // unknown unigrams
-            // "w" => 0.0
-        ))
-    }
+            // "w" => 0.0,
 
-    #[fixture]
-    fn bigram_language_model_for_english() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "al" => 0.11_f64.ln(),
-            "lt" => 0.12_f64.ln(),
-            "te" => 0.13_f64.ln(),
-            "er" => 0.14_f64.ln(),
+            // bigrams
+            "al" => 0.11,
+            "lt" => 0.12,
+            "te" => 0.13,
+            "er" => 0.14,
             // unknown bigrams
             // "aq" => 0.0,
-            // "wx" => 0.0
-        ))
-    }
+            // "wx" => 0.0,
 
-    #[fixture]
-    fn trigram_language_model_for_english() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "alt" => 0.19_f64.ln(),
-            "lte" => 0.2_f64.ln(),
-            "ter" => 0.21_f64.ln(),
+            // trigrams
+            "alt" => 0.19,
+            "lte" => 0.2,
+            "ter" => 0.21,
             // unknown trigrams
             // "aqu" => 0.0,
             // "tez" => 0.0,
-            // "wxy" => 0.0
-        ))
-    }
+            // "wxy" => 0.0,
 
-    #[fixture]
-    fn quadrigram_language_model_for_english() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "alte" => 0.25_f64.ln(),
-            "lter" => 0.26_f64.ln(),
+            // quadrigrams
+            "alte" => 0.25,
+            "lter" => 0.26,
             // unknown quadrigrams
             // "aqua" => 0.0,
-            // "wxyz" => 0.0
-        ))
-    }
+            // "wxyz" => 0.0,
 
-    #[fixture]
-    fn fivegram_language_model_for_english() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "alter" => 0.29_f64.ln(),
+            // fivegrams
+            "alter" => 0.29,
             // unknown fivegrams
             // "aquas" => 0.0
         ))
     }
 
-    // ##############################
-    // LANGUAGE MODELS FOR GERMAN
-    // ##############################
-
     #[fixture]
-    fn unigram_language_model_for_german() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "a" => 0.06_f64.ln(),
-            "l" => 0.07_f64.ln(),
-            "t" => 0.08_f64.ln(),
-            "e" => 0.09_f64.ln(),
-            "r" => 0.1_f64.ln(),
+    fn language_model_for_german() -> fst::Map<Vec<u8>> {
+        create_fst_map_from_test_data(hashmap!(
+            // unigrams
+            "a" => 0.06,
+            "l" => 0.07,
+            "t" => 0.08,
+            "e" => 0.09,
+            "r" => 0.1,
             // unknown unigrams
-            // "w" => 0.0
-        ))
-    }
+            // "w" => 0.0,
 
-    #[fixture]
-    fn bigram_language_model_for_german() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "al" => 0.15_f64.ln(),
-            "lt" => 0.16_f64.ln(),
-            "te" => 0.17_f64.ln(),
-            "er" => 0.18_f64.ln(),
+            // bigrams
+            "al" => 0.15,
+            "lt" => 0.16,
+            "te" => 0.17,
+            "er" => 0.18,
             // unknown bigrams
-            // "wx" => 0.0
-        ))
-    }
+            // "wx" => 0.0,
 
-    #[fixture]
-    fn trigram_language_model_for_german() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "alt" => 0.22_f64.ln(),
-            "lte" => 0.23_f64.ln(),
-            "ter" => 0.24_f64.ln(),
+            // trigrams
+            "alt" => 0.22,
+            "lte" => 0.23,
+            "ter" => 0.24,
             // unknown trigrams
-            // "wxy" => 0.0
-        ))
-    }
+            // "wxy" => 0.0,
 
-    #[fixture]
-    fn quadrigram_language_model_for_german() -> ProbabilityMap {
-        create_probability_map(hashmap!(
-            "alte" => 0.27_f64.ln(),
-            "lter" => 0.28_f64.ln(),
+            // quadrigrams
+            "alte" => 0.27,
+            "lter" => 0.28,
             // unknown quadrigrams
-            // "wxyz" => 0.0
+            // "wxyz" => 0.0,
+
+            // fivegrams
+            "alter" => 0.3
         ))
     }
 
     #[fixture]
-    fn fivegram_language_model_for_german() -> ProbabilityMap {
-        create_probability_map(hashmap!("alter" => 0.3_f64.ln()))
-    }
-
-    // ##############################
-    // NGRAM MODELS
-    // ##############################
-
-    #[fixture]
-    fn unigram_language_models(
-        unigram_language_model_for_english: ProbabilityMap,
-        unigram_language_model_for_german: ProbabilityMap,
+    fn ngram_language_models(
+        language_model_for_english: fst::Map<Vec<u8>>,
+        language_model_for_german: fst::Map<Vec<u8>>,
     ) -> &'static LanguageModelMap {
-        static UNIGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
-        UNIGRAM_MODELS_FIXTURE.get_or_init(|| {
+        static NGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
+        NGRAM_MODELS_FIXTURE.get_or_init(|| {
             let map = DashMap::new();
-            map.insert(English, unigram_language_model_for_english);
-            map.insert(German, unigram_language_model_for_german);
+            map.insert(English, language_model_for_english);
+            map.insert(German, language_model_for_german);
             map
         })
     }
 
     #[fixture]
-    fn bigram_language_models(
-        bigram_language_model_for_english: ProbabilityMap,
-        bigram_language_model_for_german: ProbabilityMap,
-    ) -> &'static LanguageModelMap {
-        static BIGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
-        BIGRAM_MODELS_FIXTURE.get_or_init(|| {
-            let map = DashMap::new();
-            map.insert(English, bigram_language_model_for_english);
-            map.insert(German, bigram_language_model_for_german);
-            map
-        })
-    }
-
-    #[fixture]
-    fn trigram_language_models(
-        trigram_language_model_for_english: ProbabilityMap,
-        trigram_language_model_for_german: ProbabilityMap,
-    ) -> &'static LanguageModelMap {
-        static TRIGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
-        TRIGRAM_MODELS_FIXTURE.get_or_init(|| {
-            let map = DashMap::new();
-            map.insert(English, trigram_language_model_for_english);
-            map.insert(German, trigram_language_model_for_german);
-            map
-        })
-    }
-
-    #[fixture]
-    fn quadrigram_language_models(
-        quadrigram_language_model_for_english: ProbabilityMap,
-        quadrigram_language_model_for_german: ProbabilityMap,
-    ) -> &'static LanguageModelMap {
-        static QUADRIGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
-        QUADRIGRAM_MODELS_FIXTURE.get_or_init(|| {
-            let map = DashMap::new();
-            map.insert(English, quadrigram_language_model_for_english);
-            map.insert(German, quadrigram_language_model_for_german);
-            map
-        })
-    }
-
-    #[fixture]
-    fn fivegram_language_models(
-        fivegram_language_model_for_english: ProbabilityMap,
-        fivegram_language_model_for_german: ProbabilityMap,
-    ) -> &'static LanguageModelMap {
-        static FIVEGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
-        FIVEGRAM_MODELS_FIXTURE.get_or_init(|| {
-            let map = DashMap::new();
-            map.insert(English, fivegram_language_model_for_english);
-            map.insert(German, fivegram_language_model_for_german);
-            map
-        })
-    }
-
-    #[fixture]
-    fn unique_most_common_language_models() -> &'static CountModelMap {
-        static UNIQUE_MOST_COMMON_MODELS_FIXTURE: OnceLock<CountModelMap> = OnceLock::new();
-        UNIQUE_MOST_COMMON_MODELS_FIXTURE.get_or_init(|| DashMap::new())
+    fn ngram_count_models() -> &'static CountModelMap {
+        static NGRAM_COUNT_MODELS_FIXTURE: OnceLock<CountModelMap> = OnceLock::new();
+        NGRAM_COUNT_MODELS_FIXTURE.get_or_init(|| DashMap::new())
     }
 
     // ##############################
@@ -1728,12 +1463,8 @@ mod tests {
 
     #[fixture]
     fn detector_for_english_and_german(
-        unigram_language_models: &'static LanguageModelMap,
-        bigram_language_models: &'static LanguageModelMap,
-        trigram_language_models: &'static LanguageModelMap,
-        quadrigram_language_models: &'static LanguageModelMap,
-        fivegram_language_models: &'static LanguageModelMap,
-        unique_most_common_language_models: &'static CountModelMap,
+        ngram_language_models: &'static LanguageModelMap,
+        ngram_count_models: &'static CountModelMap,
     ) -> LanguageDetector {
         let languages = hashset!(English, German);
         let languages_with_unique_characters = collect_languages_with_unique_characters(&languages);
@@ -1746,21 +1477,9 @@ mod tests {
             is_built_from_one_language: false,
             languages_with_unique_characters,
             single_language_alphabets,
-            unigram_language_models,
-            bigram_language_models,
-            trigram_language_models,
-            quadrigram_language_models,
-            fivegram_language_models,
-            unique_unigram_language_models: unique_most_common_language_models,
-            unique_bigram_language_models: unique_most_common_language_models,
-            unique_trigram_language_models: unique_most_common_language_models,
-            unique_quadrigram_language_models: unique_most_common_language_models,
-            unique_fivegram_language_models: unique_most_common_language_models,
-            most_common_unigram_language_models: unique_most_common_language_models,
-            most_common_bigram_language_models: unique_most_common_language_models,
-            most_common_trigram_language_models: unique_most_common_language_models,
-            most_common_quadrigram_language_models: unique_most_common_language_models,
-            most_common_fivegram_language_models: unique_most_common_language_models,
+            ngram_language_models,
+            unique_ngram_language_models: ngram_count_models,
+            most_common_ngram_language_models: ngram_count_models,
         }
     }
 

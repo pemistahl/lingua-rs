@@ -1106,7 +1106,9 @@ impl Language {
             Language::Ukrainian => Some("ҐґЄєЇї"),
 
             #[cfg(feature = "vietnamese")]
-            Language::Vietnamese => Some("ẰằẦầẲẳẨẩẴẵẪẫẮắẤấẠạẶặẬậỀềẺẻỂểẼẽỄễẾếỆệỈỉĨĩỊịƠơỒồỜờỎỏỔổỞởỖỗỠỡỐốỚớỘộỢợƯưỪừỦủỬửŨũỮữỨứỤụỰựỲỳỶỷỸỹỴỵ"),
+            Language::Vietnamese => Some(
+                "ẰằẦầẲẳẨẩẴẵẪẫẮắẤấẠạẶặẬậỀềẺẻỂểẼẽỄễẾếỆệỈỉĨĩỊịƠơỒồỜờỎỏỔổỞởỖỗỠỡỐốỚớỘộỢợƯưỪừỦủỬửŨũỮữỨứỤụỰựỲỳỶỷỸỹỴỵ",
+            ),
 
             #[cfg(feature = "yoruba")]
             Language::Yoruba => Some("Ṣṣ"),
@@ -1127,18 +1129,6 @@ mod tests {
     #[test]
     fn assert_language_string_representation_is_correct() {
         assert_eq!(English.to_string(), "English");
-    }
-
-    #[test]
-    fn test_language_serializer() {
-        let serialized = serde_json::to_string(&English).unwrap();
-        assert_eq!(serialized, "\"ENGLISH\"");
-    }
-
-    #[test]
-    fn test_language_deserializer() {
-        let deserialized = serde_json::from_str::<Language>("\"ENGLISH\"").unwrap();
-        assert_eq!(deserialized, English);
     }
 
     #[test]

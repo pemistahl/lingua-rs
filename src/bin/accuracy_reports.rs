@@ -15,7 +15,6 @@
  */
 use clap::Parser;
 use cld2::{Format, Lang as CLD2Language, detect_language as cld2_detect_language};
-use fraction::Zero;
 use include_dir::Dir;
 use indoc::formatdoc;
 use itertools::Itertools;
@@ -219,7 +218,7 @@ impl DetectorStatistics {
         self.average_accuracy =
             (single_word_accuracy + word_pair_accuracy + sentence_accuracy) / 3.0;
 
-        if self.average_accuracy.is_zero() {
+        if self.average_accuracy == 0.0 {
             return None;
         }
 

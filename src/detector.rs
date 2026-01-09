@@ -1071,7 +1071,7 @@ impl LanguageDetector {
         self.ngram_language_models
             .get(&language)
             .unwrap()
-            .get(ngram.value.as_bytes())
+            .get(ngram.value)
             .map(f64::from_bits)
     }
 

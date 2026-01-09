@@ -31,8 +31,8 @@ pub(crate) struct NgramProbabilityModel {
 
 impl PartialEq for NgramProbabilityModel {
     fn eq(&self, other: &Self) -> bool {
-        let ngrams = self.ngrams.as_fst().to_vec();
-        let other_ngrams = other.ngrams.as_fst().to_vec();
+        let ngrams = self.ngrams.as_fst().as_bytes();
+        let other_ngrams = other.ngrams.as_fst().as_bytes();
         self.language == other.language && ngrams == other_ngrams
     }
 }
@@ -45,8 +45,8 @@ pub(crate) struct NgramCountModel {
 
 impl PartialEq for NgramCountModel {
     fn eq(&self, other: &Self) -> bool {
-        let ngrams = self.ngrams.as_fst().to_vec();
-        let other_ngrams = other.ngrams.as_fst().to_vec();
+        let ngrams = self.ngrams.as_fst().as_bytes();
+        let other_ngrams = other.ngrams.as_fst().as_bytes();
         self.language == other.language && ngrams == other_ngrams
     }
 }
@@ -93,21 +93,13 @@ pub(crate) fn load_ngram_count_model(
 pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> fst::Map<Vec<u8>> {
     data.sort_unstable_by(|(first, _), (second, _)| first.cmp(second));
 
-    let mut fst_builder = fst::MapBuilder::memory();
-    fst_builder.extend_iter(data).unwrap();
-
-    let bytes = fst_builder.into_inner().unwrap();
-    fst::Map::new(bytes).unwrap()
+    fst::Map::from_iter(data).unwrap()
 }
 
 pub(crate) fn create_fst_set(mut data: Vec<Vec<u8>>) -> fst::Set<Vec<u8>> {
     data.sort_unstable();
 
-    let mut fst_builder = fst::SetBuilder::memory();
-    fst_builder.extend_iter(data).unwrap();
-
-    let bytes = fst_builder.into_inner().unwrap();
-    fst::Set::new(bytes).unwrap()
+    fst::Set::from_iter(data).unwrap()
 }
 
 pub(crate) struct TrainingDataLanguageModel {

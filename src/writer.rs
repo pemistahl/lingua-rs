@@ -15,7 +15,7 @@
  */
 
 use std::collections::{HashMap, HashSet};
-use std::fs::{File, create_dir, remove_file};
+use std::fs::{File, create_dir, remove_file, self};
 use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
@@ -183,11 +183,10 @@ impl LanguageModelFilesWriter {
         }
 
         let fst_map = create_fst_map(kvs);
-        let bytes = fst_map.as_fst().to_vec();
+        let bytes = fst_map.as_fst().as_bytes();
 
         let file_path = output_directory_path.join(file_name);
-        let mut file = File::create(file_path)?;
-        file.write_all(&bytes)?;
+        fs::write(file_path, bytes)?;
 
         Ok(())
     }

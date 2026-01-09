@@ -181,24 +181,25 @@ use lingua_yoruba_language_model::{YORUBA_MODELS_DIRECTORY, YORUBA_TESTDATA_DIRE
 #[cfg(feature = "zulu")]
 use lingua_zulu_language_model::{ZULU_MODELS_DIRECTORY, ZULU_TESTDATA_DIRECTORY};
 use std::io::ErrorKind;
+use std::borrow::Cow;
 
 pub(crate) fn read_probability_model_data_file(
     language: Language,
     file_name: &str,
-) -> std::io::Result<fst::Map<Vec<u8>>> {
+) -> std::io::Result<fst::Map<Cow<'static, [u8]>>> {
     let directory = get_language_models_directory(language);
     let fst_file = directory.get_file(file_name).ok_or(ErrorKind::NotFound)?;
-    let fst_map = fst::Map::new(fst_file.contents().to_vec()).unwrap();
+    let fst_map = fst::Map::new(Cow::Borrowed(fst_file.contents())).unwrap();
     Ok(fst_map)
 }
 
 pub(crate) fn read_count_model_data_file(
     language: Language,
     file_name: &str,
-) -> std::io::Result<fst::Set<Vec<u8>>> {
+) -> std::io::Result<fst::Set<Cow<'static, [u8]>>> {
     let directory = get_language_models_directory(language);
     let fst_file = directory.get_file(file_name).ok_or(ErrorKind::NotFound)?;
-    let fst_set = fst::Set::new(fst_file.contents().to_vec()).unwrap();
+    let fst_set = fst::Set::new(Cow::Borrowed(fst_file.contents())).unwrap();
     Ok(fst_set)
 }
 

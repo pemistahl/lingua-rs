@@ -595,6 +595,7 @@ mod tests {
     use fst::IntoStreamer;
     use std::fs;
     use std::path::PathBuf;
+    use std::borrow::Cow;
     use tempfile::{NamedTempFile, tempdir};
 
     fn create_temp_input_file(content: &str) -> NamedTempFile {
@@ -615,7 +616,7 @@ mod tests {
         files
     }
 
-    fn create_fst_set_from_test_data(data: HashSet<&'static str>) -> fst::Set<Vec<u8>> {
+    fn create_fst_set_from_test_data(data: HashSet<&'static str>) -> fst::Set<Cow<'static, [u8]>> {
         let fst_data = data
             .iter()
             .map(|&value| value.as_bytes().to_vec())

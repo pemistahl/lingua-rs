@@ -18,6 +18,7 @@ use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 use std::sync::LazyLock;
+use std::borrow::Cow;
 
 use counter::Counter;
 use dashmap::DashMap;
@@ -39,8 +40,8 @@ use crate::model::{
 use crate::ngram::NgramRef;
 use crate::result::DetectionResult;
 
-type LanguageModelMap = DashMap<Language, fst::Map<Vec<u8>>>;
-type CountModelMap = DashMap<Language, fst::Set<Vec<u8>>>;
+type LanguageModelMap = DashMap<Language, fst::Map<Cow<'static, [u8]>>>;
+type CountModelMap = DashMap<Language, fst::Set<Cow<'static, [u8]>>>;
 
 static NGRAM_MODELS: LazyLock<LanguageModelMap> = LazyLock::new(DashMap::new);
 static UNIQUE_NGRAM_MODELS: LazyLock<CountModelMap> = LazyLock::new(DashMap::new);
@@ -1326,7 +1327,7 @@ mod tests {
     // HELPER FUNCTIONS
     // ##############################
 
-    fn create_fst_map_from_test_data(data: HashMap<&'static str, f64>) -> fst::Map<Vec<u8>> {
+    fn create_fst_map_from_test_data(data: HashMap<&'static str, f64>) -> fst::Map<Cow<'static, [u8]>> {
         let fst_data = data
             .iter()
             .map(|(&key, &value)| (key.as_bytes().to_vec(), value.ln().to_bits()))
@@ -1340,7 +1341,7 @@ mod tests {
     }
 
     #[fixture]
-    fn language_model_for_english() -> fst::Map<Vec<u8>> {
+    fn language_model_for_english() -> fst::Map<Cow<'static, [u8]>> {
         create_fst_map_from_test_data(hashmap!(
             // unigrams
             "a" => 0.01,
@@ -1384,7 +1385,7 @@ mod tests {
     }
 
     #[fixture]
-    fn language_model_for_german() -> fst::Map<Vec<u8>> {
+    fn language_model_for_german() -> fst::Map<Cow<'static, [u8]>> {
         create_fst_map_from_test_data(hashmap!(
             // unigrams
             "a" => 0.06,
@@ -1423,8 +1424,8 @@ mod tests {
 
     #[fixture]
     fn ngram_language_models(
-        language_model_for_english: fst::Map<Vec<u8>>,
-        language_model_for_german: fst::Map<Vec<u8>>,
+        language_model_for_english: fst::Map<Cow<'static, [u8]>>,
+        language_model_for_german: fst::Map<Cow<'static, [u8]>>,
     ) -> &'static LanguageModelMap {
         static NGRAM_MODELS_FIXTURE: OnceLock<LanguageModelMap> = OnceLock::new();
         NGRAM_MODELS_FIXTURE.get_or_init(|| {

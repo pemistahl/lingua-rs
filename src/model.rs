@@ -22,11 +22,12 @@ use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::borrow::Cow;
 
 #[derive(Debug)]
 pub(crate) struct NgramProbabilityModel {
     language: Language,
-    pub(crate) ngrams: fst::Map<Vec<u8>>,
+    pub(crate) ngrams: fst::Map<Cow<'static, [u8]>>,
 }
 
 impl PartialEq for NgramProbabilityModel {
@@ -40,7 +41,7 @@ impl PartialEq for NgramProbabilityModel {
 #[derive(Debug)]
 pub(crate) struct NgramCountModel {
     pub(crate) language: Language,
-    pub(crate) ngrams: fst::Set<Vec<u8>>,
+    pub(crate) ngrams: fst::Set<Cow<'static, [u8]>>,
 }
 
 impl PartialEq for NgramCountModel {
@@ -90,16 +91,24 @@ pub(crate) fn load_ngram_count_model(
     }
 }
 
-pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> fst::Map<Vec<u8>> {
+pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> fst::Map<Cow<'static, [u8]>> {
     data.sort_unstable_by(|(first, _), (second, _)| first.cmp(second));
 
-    fst::Map::from_iter(data).unwrap()
+    let mut fst_builder = fst::MapBuilder::memory();
+    fst_builder.extend_iter(data).unwrap();
+
+    let bytes = fst_builder.into_inner().unwrap();
+    fst::Map::new(Cow::Owned(bytes)).unwrap()
 }
 
-pub(crate) fn create_fst_set(mut data: Vec<Vec<u8>>) -> fst::Set<Vec<u8>> {
+pub(crate) fn create_fst_set(mut data: Vec<Vec<u8>>) -> fst::Set<Cow<'static, [u8]>> {
     data.sort_unstable();
 
-    fst::Set::from_iter(data).unwrap()
+    let mut fst_builder = fst::SetBuilder::memory();
+    fst_builder.extend_iter(data).unwrap();
+
+    let bytes = fst_builder.into_inner().unwrap();
+    fst::Set::new(Cow::Owned(bytes)).unwrap()
 }
 
 pub(crate) struct TrainingDataLanguageModel {

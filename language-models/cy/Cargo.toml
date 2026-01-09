@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua-welsh-language-model"
-version = "1.2.1"
+version = { workspace = true }
 authors = { workspace = true }
 description = """
 The Welsh language model for Lingua, an accurate natural language detection library

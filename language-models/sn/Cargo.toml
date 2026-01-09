@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua-shona-language-model"
-version = "1.2.0"
+version = { workspace = true }
 authors = { workspace = true }
 description = """
 The Shona language model for Lingua, an accurate natural language detection library

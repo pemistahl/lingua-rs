@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
-use ahash::AHashSet;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
@@ -100,12 +99,12 @@ impl Alphabet {
 }
 
 pub(crate) struct CharSet {
-    characters: AHashSet<char>,
+    characters: HashSet<char>,
 }
 
 impl CharSet {
     pub fn from_char_classes(char_classes: &[&str]) -> Self {
-        let mut characters = AHashSet::new();
+        let mut characters = HashSet::new();
 
         for char_class in char_classes {
             let table = crate::script::BY_NAME

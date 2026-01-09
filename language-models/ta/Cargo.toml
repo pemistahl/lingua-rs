@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua-tamil-language-model"
-version = "1.2.0"
+version = { workspace = true }
 authors = { workspace = true }
 description = """
 The Tamil language model for Lingua, an accurate natural language detection library

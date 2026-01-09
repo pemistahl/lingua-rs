@@ -15,10 +15,9 @@
  */
 
 use std::collections::{HashMap, HashSet};
-use std::fs::{File, create_dir, remove_file};
-use std::io;
 use std::io::{BufRead, BufReader, LineWriter, Write};
 use std::path::Path;
+use std::{fs, io};
 
 use crate::Language;
 use crate::constant::{DIGITS_AT_BEGINNING, MULTIPLE_WHITESPACE, NUMBERS, PUNCTUATION};
@@ -150,7 +149,7 @@ impl LanguageModelFilesWriter {
         char_class: &str,
         lower_ngram_absolute_frequencies: &HashMap<Ngram, u32>,
     ) -> io::Result<TrainingDataLanguageModel> {
-        let file = File::open(input_file_path)?;
+        let file = fs::File::open(input_file_path)?;
         let reader = BufReader::new(file);
         let lines = reader
             .lines()
@@ -183,11 +182,9 @@ impl LanguageModelFilesWriter {
         }
 
         let fst_map = create_fst_map(kvs);
-        let bytes = fst_map.as_fst().to_vec();
-
         let file_path = output_directory_path.join(file_name);
-        let mut file = File::create(file_path)?;
-        file.write_all(&bytes)?;
+
+        fs::write(file_path, fst_map.as_fst().as_bytes())?;
 
         Ok(())
     }
@@ -247,15 +244,17 @@ impl TestDataFilesWriter {
         let sentences_file_path = output_directory_path.join("sentences.txt");
 
         if sentences_file_path.is_file() {
-            remove_file(&sentences_file_path)?;
+            fs::remove_file(&sentences_file_path)?;
         }
 
-        let input_lines_count = BufReader::new(File::open(input_file_path)?).lines().count();
-        let input_lines = BufReader::new(File::open(input_file_path)?)
+        let input_lines_count = BufReader::new(fs::File::open(input_file_path)?)
+            .lines()
+            .count();
+        let input_lines = BufReader::new(fs::File::open(input_file_path)?)
             .lines()
             .map(|line| line.unwrap());
 
-        let sentences_file = File::create(sentences_file_path)?;
+        let sentences_file = fs::File::create(sentences_file_path)?;
         let mut sentences_writer = LineWriter::new(sentences_file);
 
         let mut line_counter = 0;
@@ -301,13 +300,13 @@ impl TestDataFilesWriter {
         let mut words = vec![];
 
         if single_words_file_path.is_file() {
-            remove_file(&single_words_file_path)?;
+            fs::remove_file(&single_words_file_path)?;
         }
 
-        let input_file = File::open(input_file_path)?;
+        let input_file = fs::File::open(input_file_path)?;
         let input_lines = BufReader::new(input_file).lines().map(|line| line.unwrap());
 
-        let single_words_file = File::create(single_words_file_path)?;
+        let single_words_file = fs::File::create(single_words_file_path)?;
         let mut single_words_writer = LineWriter::new(single_words_file);
 
         let mut line_counter = 0;
@@ -348,7 +347,7 @@ impl TestDataFilesWriter {
         let mut word_pairs = Vec::<String>::new();
 
         if word_pairs_file_path.is_file() {
-            remove_file(&word_pairs_file_path)?;
+            fs::remove_file(&word_pairs_file_path)?;
         }
 
         for i in (0..=(words.len() - 2)).step_by(2) {
@@ -356,7 +355,7 @@ impl TestDataFilesWriter {
             word_pairs.push(slice.join(" "));
         }
 
-        let word_pairs_file = File::create(word_pairs_file_path)?;
+        let word_pairs_file = fs::File::create(word_pairs_file_path)?;
         let mut word_pairs_writer = LineWriter::new(word_pairs_file);
         let mut line_counter = 0;
 
@@ -429,12 +428,9 @@ impl UniqueNgramsWriter {
         }
         result
             .into_iter()
-            .map(|(language, ngrams)| {
-                let fst_data = ngrams.into_iter().collect_vec();
-                NgramCountModel {
-                    language,
-                    ngrams: create_fst_set(fst_data),
-                }
+            .map(|(language, ngrams)| NgramCountModel {
+                language,
+                ngrams: create_fst_set(ngrams.into_iter().collect_vec()),
             })
             .sorted_by_key(|model| model.language)
             .collect()
@@ -542,10 +538,10 @@ fn store_ngram_count_models(
         let language_dir_path =
             output_directory_path.join(model.language.iso_code_639_1().to_string());
         if !language_dir_path.exists() {
-            create_dir(language_dir_path.as_path())?;
+            fs::create_dir(language_dir_path.as_path())?;
         }
         let file_path = language_dir_path.join(&file_name);
-        let mut file = File::create(file_path)?;
+        let mut file = fs::File::create(file_path)?;
         file.write_all(model.ngrams.into_fst().as_bytes())?;
     }
     Ok(())
@@ -593,6 +589,7 @@ fn check_output_directory_path(output_directory_path: &Path) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::detector::CountModelFst;
     use fst::IntoStreamer;
     use std::fs;
     use std::path::PathBuf;
@@ -616,7 +613,7 @@ mod tests {
         files
     }
 
-    fn create_fst_set_from_test_data(data: HashSet<&'static str>) -> fst::Set<Vec<u8>> {
+    fn count_model_fst(data: HashSet<&'static str>) -> CountModelFst {
         let fst_data = data
             .iter()
             .map(|&value| value.as_bytes().to_vec())
@@ -625,7 +622,7 @@ mod tests {
         create_fst_set(fst_data)
     }
 
-    fn create_bytes_set(data: HashSet<&'static str>) -> HashSet<Vec<u8>> {
+    fn bytes_set(data: HashSet<&'static str>) -> HashSet<Vec<u8>> {
         data.into_iter()
             .map(|value| value.as_bytes().to_vec())
             .collect()
@@ -1021,11 +1018,11 @@ mod tests {
             vec![
                 NgramCountModel {
                     language: English,
-                    ngrams: create_fst_set_from_test_data(hashset!("th")),
+                    ngrams: count_model_fst(hashset!("th")),
                 },
                 NgramCountModel {
                     language: German,
-                    ngrams: create_fst_set_from_test_data(hashset!("rz", "äu")),
+                    ngrams: count_model_fst(hashset!("rz", "äu")),
                 },
             ]
         }
@@ -1089,9 +1086,9 @@ mod tests {
         #[rstest]
         fn test_identify_unique_ngrams(expected_unique_ngrams: Vec<NgramCountModel>) {
             let ngrams = hashmap!(
-                English => create_bytes_set(hashset!("th", "en", "es")),
-                German => create_bytes_set(hashset!("äu", "en", "rz")),
-                Spanish => create_bytes_set(hashset!("es", "en"))
+                English => bytes_set(hashset!("th", "en", "es")),
+                German => bytes_set(hashset!("äu", "en", "rz")),
+                Spanish => bytes_set(hashset!("es", "en"))
             );
             let actual_unique_ngrams = UniqueNgramsWriter::identify_unique_ngrams(ngrams);
             assert_eq!(actual_unique_ngrams, expected_unique_ngrams);
@@ -1107,7 +1104,7 @@ mod tests {
         fn most_common_german_ngrams() -> NgramCountModel {
             NgramCountModel {
                 language: German,
-                ngrams: create_fst_set_from_test_data(hashset!(
+                ngrams: count_model_fst(hashset!(
                     "ch", "chen", "de", "der", "die", "diese", "e", "ei", "ein", "eine", "en",
                     "er", "i", "ich", "icht", "ische", "lich", "n", "nicht", "r", "s", "sch",
                     "sche", "schen", "ungen"

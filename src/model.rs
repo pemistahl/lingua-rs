@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
+use crate::detector::{CountModelFst, LanguageModelFst};
 use crate::file::{read_count_model_data_file, read_probability_model_data_file};
 use crate::language::Language;
 use crate::ngram::{Ngram, NgramRef};
 use itertools::Itertools;
 use regex::Regex;
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use std::borrow::Cow;
 
 #[derive(Debug)]
 pub(crate) struct NgramProbabilityModel {
     language: Language,
-    pub(crate) ngrams: fst::Map<Cow<'static, [u8]>>,
+    pub(crate) ngrams: LanguageModelFst,
 }
 
 impl PartialEq for NgramProbabilityModel {
@@ -41,7 +42,7 @@ impl PartialEq for NgramProbabilityModel {
 #[derive(Debug)]
 pub(crate) struct NgramCountModel {
     pub(crate) language: Language,
-    pub(crate) ngrams: fst::Set<Cow<'static, [u8]>>,
+    pub(crate) ngrams: CountModelFst,
 }
 
 impl PartialEq for NgramCountModel {
@@ -91,7 +92,7 @@ pub(crate) fn load_ngram_count_model(
     }
 }
 
-pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> fst::Map<Cow<'static, [u8]>> {
+pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> LanguageModelFst {
     data.sort_unstable_by(|(first, _), (second, _)| first.cmp(second));
 
     let mut fst_builder = fst::MapBuilder::memory();
@@ -101,7 +102,7 @@ pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> fst::Map<Cow<'sta
     fst::Map::new(Cow::Owned(bytes)).unwrap()
 }
 
-pub(crate) fn create_fst_set(mut data: Vec<Vec<u8>>) -> fst::Set<Cow<'static, [u8]>> {
+pub(crate) fn create_fst_set(mut data: Vec<Vec<u8>>) -> CountModelFst {
     data.sort_unstable();
 
     let mut fst_builder = fst::SetBuilder::memory();

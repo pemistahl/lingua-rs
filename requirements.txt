@@ -1,3 +1,2 @@
-brotli == 1.2.0
-maturin == 1.10.1
-pytest == 9.0.1
+maturin == 1.11.5
+pytest == 9.0.2

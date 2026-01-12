@@ -156,11 +156,11 @@ lingua-yoruba-language-model = { path = "language-models/yo", version = "1.3.0",
 lingua-zulu-language-model = { path = "language-models/zu", version = "1.3.0", optional = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-clap = { version = "4.5.50", optional = true, features = ["derive"] }
+clap = { version = "4.5.54", optional = true, features = ["derive"] }
 cld2 = { version = "1.0.2", optional = true }
 indoc = { version = "2.0.7", optional = true }
 polars = { version = "0.51.0", optional = true, features = ["csv", "lazy"] }
-pyo3 = { version = "0.27.1", optional = true }
+pyo3 = { version = "0.27.2", optional = true }
 rayon = "1.11.0"
 serde-pickle = { version = "1.2.0", optional = true }
 titlecase = { version = "3.6.0", optional = true }
@@ -169,7 +169,7 @@ whichlang = { version = "0.1.1", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 serde-wasm-bindgen = "0.6.5"
-wasm-bindgen = "0.2.104"
+wasm-bindgen = "0.2.106"
 
 [workspace.dependencies]
 include_dir = "0.7.4"
@@ -178,13 +178,13 @@ include_dir = "0.7.4"
 float-cmp = "0.10.0"
 indoc = "2.0.7"
 rstest = "0.26.1"
-tempfile = "3.23.0"
+tempfile = "3.24.0"
 
 [target.'cfg(not(target_family = "wasm"))'.dev-dependencies]
-criterion = "0.7.0"
+criterion = "0.8.1"
 
 [target.'cfg(target_family = "wasm")'.dev-dependencies]
-wasm-bindgen-test = "0.3.54"
+wasm-bindgen-test = "0.3.56"
 
 [features]
 default = [

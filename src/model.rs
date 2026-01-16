@@ -25,6 +25,8 @@ use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
+pub(crate) static NGRAM_PROBABILITY_MODEL_FILE_NAME: &str = "ngrams.fst";
+
 #[derive(Debug)]
 pub(crate) struct NgramProbabilityModel {
     language: Language,
@@ -54,28 +56,26 @@ impl PartialEq for NgramCountModel {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub(crate) enum NgramModelType {
+pub(crate) enum NgramCountModelType {
     Unique,
     MostCommon,
 }
 
-impl Display for NgramModelType {
+impl NgramCountModelType {
+    pub(crate) fn file_name(&self) -> String {
+        format!("{}-ngrams.fst", self)
+    }
+}
+
+impl Display for NgramCountModelType {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let debug_repr = format!("{self:?}");
         write!(f, "{}", debug_repr.to_lowercase())
     }
 }
 
-pub(crate) fn load_ngram_probability_model(
-    language: Language,
-    is_low_accuracy_mode_enabled: bool,
-) -> Option<NgramProbabilityModel> {
-    let file_name = if is_low_accuracy_mode_enabled {
-        "low-accuracy-model.fst"
-    } else {
-        "high-accuracy-model.fst"
-    };
-    match read_probability_model_data_file(language, file_name) {
+pub(crate) fn load_ngram_probability_model(language: Language) -> Option<NgramProbabilityModel> {
+    match read_probability_model_data_file(language, NGRAM_PROBABILITY_MODEL_FILE_NAME) {
         Ok(ngrams) => Some(NgramProbabilityModel { language, ngrams }),
         Err(_) => None,
     }
@@ -83,10 +83,9 @@ pub(crate) fn load_ngram_probability_model(
 
 pub(crate) fn load_ngram_count_model(
     language: Language,
-    model_type: NgramModelType,
+    model_type: NgramCountModelType,
 ) -> Option<NgramCountModel> {
-    let file_name = format!("{model_type}-ngrams.fst");
-    match read_count_model_data_file(language, &file_name) {
+    match read_count_model_data_file(language, &model_type.file_name()) {
         Ok(ngrams) => Some(NgramCountModel { language, ngrams }),
         Err(_) => None,
     }
@@ -260,7 +259,7 @@ mod tests {
 
     #[test]
     fn test_load_ngram_probability_model() {
-        let optional_ngram_model = load_ngram_probability_model(Language::English, false);
+        let optional_ngram_model = load_ngram_probability_model(Language::English);
         assert!(optional_ngram_model.is_some());
 
         let ngram_model = optional_ngram_model.unwrap();
@@ -275,7 +274,7 @@ mod tests {
     #[test]
     fn test_load_unique_ngram_model() {
         let optional_unique_ngram_model =
-            load_ngram_count_model(Language::English, NgramModelType::Unique);
+            load_ngram_count_model(Language::English, NgramCountModelType::Unique);
         assert!(optional_unique_ngram_model.is_some());
 
         let unique_ngram_model = optional_unique_ngram_model.unwrap();
@@ -291,7 +290,7 @@ mod tests {
     #[test]
     fn test_load_most_common_ngram_model() {
         let optional_most_common_ngram_model =
-            load_ngram_count_model(Language::English, NgramModelType::MostCommon);
+            load_ngram_count_model(Language::English, NgramCountModelType::MostCommon);
         assert!(optional_most_common_ngram_model.is_some());
 
         let most_common_ngram_model = optional_most_common_ngram_model.unwrap();

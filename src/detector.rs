@@ -34,7 +34,7 @@ use crate::constant::{
 };
 use crate::language::Language;
 use crate::model::{
-    NgramModelType, create_lower_order_ngrams, create_ngrams, load_ngram_count_model,
+    NgramCountModelType, create_lower_order_ngrams, create_ngrams, load_ngram_count_model,
     load_ngram_probability_model,
 };
 use crate::ngram::NgramRef;
@@ -115,7 +115,7 @@ impl LanguageDetector {
             load_count_model(
                 self.unique_ngram_language_models,
                 *language,
-                NgramModelType::Unique,
+                NgramCountModelType::Unique,
             );
         });
     }
@@ -130,7 +130,7 @@ impl LanguageDetector {
             load_count_model(
                 self.most_common_ngram_language_models,
                 *language,
-                NgramModelType::MostCommon,
+                NgramCountModelType::MostCommon,
             );
         });
     }
@@ -142,11 +142,7 @@ impl LanguageDetector {
         let languages_iter = languages.iter();
 
         languages_iter.for_each(|language| {
-            load_probability_model(
-                self.ngram_language_models,
-                *language,
-                self.is_low_accuracy_mode_enabled,
-            );
+            load_probability_model(self.ngram_language_models, *language);
         });
     }
 
@@ -1065,11 +1061,7 @@ impl LanguageDetector {
     }
 
     fn look_up_ngram_probability(&self, language: Language, ngram: &NgramRef) -> Option<f64> {
-        if !load_probability_model(
-            self.ngram_language_models,
-            language,
-            self.is_low_accuracy_mode_enabled,
-        ) {
+        if !load_probability_model(self.ngram_language_models, language) {
             return None;
         }
         self.ngram_language_models
@@ -1109,7 +1101,7 @@ pub(crate) fn split_text_into_words(text: &str) -> Vec<String> {
 fn load_count_model(
     language_models: &'static CountModelMap,
     language: Language,
-    model_type: NgramModelType,
+    model_type: NgramCountModelType,
 ) -> bool {
     if language_models.contains_key(&language) {
         return true;
@@ -1123,15 +1115,11 @@ fn load_count_model(
     }
 }
 
-fn load_probability_model(
-    language_models: &'static LanguageModelMap,
-    language: Language,
-    is_low_accuracy_mode_enabled: bool,
-) -> bool {
+fn load_probability_model(language_models: &'static LanguageModelMap, language: Language) -> bool {
     if language_models.contains_key(&language) {
         return true;
     }
-    match load_ngram_probability_model(language, is_low_accuracy_mode_enabled) {
+    match load_ngram_probability_model(language) {
         Some(model) => {
             language_models.insert(language, model.ngrams);
             true

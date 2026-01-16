@@ -405,9 +405,6 @@
 #[macro_use]
 extern crate maplit;
 
-#[cfg(test)]
-use regex::Regex;
-
 pub use builder::LanguageDetectorBuilder;
 pub use detector::LanguageDetector;
 pub use isocode::{IsoCode639_1, IsoCode639_3};
@@ -466,10 +463,4 @@ pub(crate) fn convert_byte_indices_to_char_indices(
     }
 
     converted_results
-}
-
-#[cfg(test)]
-pub(crate) fn minify(json: &str) -> String {
-    let re = Regex::new("\n\\s*").unwrap();
-    re.replace_all(json, "").to_string()
 }

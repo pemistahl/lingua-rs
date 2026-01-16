@@ -1147,18 +1147,6 @@ mod tests {
     }
 
     #[test]
-    fn test_language_serializer() {
-        let serialized = serde_json::to_string(&English).unwrap();
-        assert_eq!(serialized, "\"ENGLISH\"");
-    }
-
-    #[test]
-    fn test_language_deserializer() {
-        let deserialized = serde_json::from_str::<Language>("\"ENGLISH\"").unwrap();
-        assert_eq!(deserialized, English);
-    }
-
-    #[test]
     fn test_from_str() {
         assert_eq!(Language::from_str("english"), Ok(English));
         assert_eq!(Language::from_str("foo"), Err(VariantNotFound));

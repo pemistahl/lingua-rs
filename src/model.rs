@@ -14,38 +14,46 @@
  * limitations under the License.
  */
 
-use crate::file::read_model_data_file;
+use crate::detector::{CountModelFst, LanguageModelFst};
+use crate::file::{read_count_model_data_file, read_probability_model_data_file};
 use crate::language::Language;
 use crate::ngram::{Ngram, NgramRef};
-use ahash::AHashMap;
-use compact_str::CompactString;
-use fraction::Fraction;
 use itertools::Itertools;
 use regex::Regex;
-use serde::ser::SerializeMap;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug)]
 pub(crate) struct NgramProbabilityModel {
     language: Language,
-    #[serde(
-        serialize_with = "serialize_ngram_probabilities",
-        deserialize_with = "deserialize_ngram_probabilities"
-    )]
-    pub(crate) ngrams: AHashMap<CompactString, Fraction>,
+    pub(crate) ngrams: LanguageModelFst,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub(crate) struct NgramCountModel {
-    pub(crate) language: Language,
-    #[serde(serialize_with = "serialize_ngrams")]
-    pub(crate) ngrams: HashSet<String>,
+impl PartialEq for NgramProbabilityModel {
+    fn eq(&self, other: &Self) -> bool {
+        let ngrams = self.ngrams.as_fst().as_bytes();
+        let other_ngrams = other.ngrams.as_fst().as_bytes();
+        self.language == other.language && ngrams == other_ngrams
+    }
 }
 
 #[derive(Debug)]
+pub(crate) struct NgramCountModel {
+    pub(crate) language: Language,
+    pub(crate) ngrams: CountModelFst,
+}
+
+impl PartialEq for NgramCountModel {
+    fn eq(&self, other: &Self) -> bool {
+        let ngrams = self.ngrams.as_fst().as_bytes();
+        let other_ngrams = other.ngrams.as_fst().as_bytes();
+        self.language == other.language && ngrams == other_ngrams
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
 pub(crate) enum NgramModelType {
     Unique,
     MostCommon,
@@ -60,82 +68,53 @@ impl Display for NgramModelType {
 
 pub(crate) fn load_ngram_probability_model(
     language: Language,
-    ngram_length: usize,
+    is_low_accuracy_mode_enabled: bool,
 ) -> Option<NgramProbabilityModel> {
-    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
-    let file_name = format!("{ngram_name}s.json.br");
-    match read_model_data_file(language, &file_name) {
-        Ok(json) => Some(serde_json::from_str::<NgramProbabilityModel>(&json).unwrap()),
+    let file_name = if is_low_accuracy_mode_enabled {
+        "low-accuracy-model.fst"
+    } else {
+        "high-accuracy-model.fst"
+    };
+    match read_probability_model_data_file(language, file_name) {
+        Ok(ngrams) => Some(NgramProbabilityModel { language, ngrams }),
         Err(_) => None,
     }
 }
 
 pub(crate) fn load_ngram_count_model(
     language: Language,
-    ngram_length: usize,
     model_type: NgramModelType,
 ) -> Option<NgramCountModel> {
-    let ngram_name = Ngram::get_ngram_name_by_length(ngram_length);
-    let file_name = format!("{model_type}_{ngram_name}s.json.br");
-    match read_model_data_file(language, &file_name) {
-        Ok(json) => Some(serde_json::from_str::<NgramCountModel>(&json).unwrap()),
+    let file_name = format!("{model_type}-ngrams.fst");
+    match read_count_model_data_file(language, &file_name) {
+        Ok(ngrams) => Some(NgramCountModel { language, ngrams }),
         Err(_) => None,
     }
 }
 
-fn serialize_ngram_probabilities<S: Serializer>(
-    source: &AHashMap<CompactString, Fraction>,
-    serializer: S,
-) -> Result<S::Ok, S::Error> {
-    let mut fractions_to_ngrams = btreemap!();
-    for (ngram, fraction) in source {
-        let serialized_fraction = format!(
-            "{}/{}",
-            fraction.numer().unwrap(),
-            fraction.denom().unwrap()
-        );
-        let ngrams = fractions_to_ngrams
-            .entry(serialized_fraction)
-            .or_insert_with(Vec::new);
-        ngrams.push(ngram);
-    }
-    let mut target = serializer.serialize_map(None)?;
-    for (fraction, ngrams) in fractions_to_ngrams {
-        let joined_ngrams = ngrams.iter().sorted().join(" ");
-        target.serialize_entry(&fraction, &joined_ngrams)?;
-    }
-    target.end()
+pub(crate) fn create_fst_map(mut data: Vec<(Vec<u8>, u64)>) -> LanguageModelFst {
+    data.sort_unstable_by(|(first, _), (second, _)| first.cmp(second));
+
+    let mut fst_builder = fst::MapBuilder::memory();
+    fst_builder.extend_iter(data).unwrap();
+
+    let bytes = fst_builder.into_inner().unwrap();
+    fst::Map::new(Cow::Owned(bytes)).unwrap()
 }
 
-fn deserialize_ngram_probabilities<'de, D: Deserializer<'de>>(
-    deserializer: D,
-) -> Result<AHashMap<CompactString, Fraction>, D::Error> {
-    let source = HashMap::<String, String>::deserialize(deserializer)?;
-    let mut target = AHashMap::<CompactString, Fraction>::new();
-    for (key, value) in source {
-        let (numerator, denominator) = key.split('/').collect_tuple().unwrap();
-        let parsed_numerator = numerator.parse::<u32>().unwrap();
-        let parsed_denominator = denominator.parse::<u32>().unwrap();
-        for ngram in value.split(' ') {
-            target.insert(
-                CompactString::new(ngram),
-                Fraction::new(parsed_numerator, parsed_denominator),
-            );
-        }
-    }
-    Ok(target)
-}
+pub(crate) fn create_fst_set(mut data: Vec<Vec<u8>>) -> CountModelFst {
+    data.sort_unstable();
 
-fn serialize_ngrams<S: Serializer>(
-    source: &HashSet<String>,
-    serializer: S,
-) -> Result<S::Ok, S::Error> {
-    source.iter().sorted().collect_vec().serialize(serializer)
+    let mut fst_builder = fst::SetBuilder::memory();
+    fst_builder.extend_iter(data).unwrap();
+
+    let bytes = fst_builder.into_inner().unwrap();
+    fst::Set::new(Cow::Owned(bytes)).unwrap()
 }
 
 pub(crate) struct TrainingDataLanguageModel {
     pub(crate) absolute_frequencies: HashMap<Ngram, u32>,
-    ngram_probability_model: NgramProbabilityModel,
+    pub(crate) ngram_probability_model: NgramProbabilityModel,
 }
 
 impl TrainingDataLanguageModel {
@@ -160,10 +139,6 @@ impl TrainingDataLanguageModel {
             absolute_frequencies,
             ngram_probability_model: relative_frequencies,
         }
-    }
-
-    pub(crate) fn to_json(&self) -> String {
-        serde_json::to_string(&self.ngram_probability_model).unwrap()
     }
 
     fn compute_absolute_frequencies(
@@ -200,7 +175,7 @@ impl TrainingDataLanguageModel {
         absolute_frequencies: &HashMap<Ngram, u32>,
         lower_ngram_absolute_frequencies: &HashMap<Ngram, u32>,
     ) -> NgramProbabilityModel {
-        let mut ngrams = AHashMap::<CompactString, Fraction>::new();
+        let mut fst_data = vec![];
         let total_ngram_frequency = absolute_frequencies.values().sum::<u32>();
 
         for (ngram, frequency) in absolute_frequencies {
@@ -213,13 +188,15 @@ impl TrainingDataLanguageModel {
                     .get(&Ngram::new(slice))
                     .unwrap()
             };
-            ngrams.insert(
-                CompactString::new(&ngram.value),
-                Fraction::new(*frequency, denominator),
-            );
+            let key = ngram.value.as_bytes().to_vec();
+            let value = (*frequency as f64 / denominator as f64).ln().to_bits();
+            fst_data.push((key, value));
         }
 
-        NgramProbabilityModel { language, ngrams }
+        NgramProbabilityModel {
+            language,
+            ngrams: create_fst_map(fst_data),
+        }
     }
 }
 
@@ -281,81 +258,69 @@ mod tests {
         By the way, they consist of 23 words in total.
     ";
 
-    fn map_strs_to_strings(strs: HashSet<&str>) -> HashSet<String> {
-        strs.iter().map(|it| it.to_string()).collect()
-    }
-
-    #[test]
-    fn test_ngram_probability_model_serializer_and_deserializer() {
-        let mut ngrams = AHashMap::new();
-        ngrams.insert(CompactString::new("a"), Fraction::new(1u32, 2u32));
-        ngrams.insert(CompactString::new("b"), Fraction::new(1u32, 2u32));
-        ngrams.insert(CompactString::new("c"), Fraction::new(7u32, 10u32));
-
-        let model = NgramProbabilityModel {
-            language: Language::English,
-            ngrams,
-        };
-
-        let serialized_result = serde_json::to_string(&model);
-        assert!(serialized_result.is_ok());
-
-        let serialized = serialized_result.unwrap();
-        assert_eq!(
-            serialized,
-            r#"{"language":"ENGLISH","ngrams":{"1/2":"a b","7/10":"c"}}"#
-        );
-
-        let deserialized_result = serde_json::from_str::<NgramProbabilityModel>(&serialized);
-        assert!(deserialized_result.is_ok());
-
-        let deserialized = deserialized_result.unwrap();
-        assert_eq!(deserialized, model);
-    }
-
     #[test]
     fn test_load_ngram_probability_model() {
-        let optional_ngram_model = load_ngram_probability_model(Language::English, 1);
+        let optional_ngram_model = load_ngram_probability_model(Language::English, false);
         assert!(optional_ngram_model.is_some());
 
         let ngram_model = optional_ngram_model.unwrap();
         assert_eq!(ngram_model.language, Language::English);
-        assert!(ngram_model.ngrams.contains_key("a"));
+        assert!(ngram_model.ngrams.contains_key(b"a".to_vec()));
 
-        let expected_fraction = Fraction::new(7915445u32, 93616591u32);
-        let actual_fraction = *ngram_model.ngrams.get("a").unwrap();
-        assert_eq!(actual_fraction, expected_fraction);
+        let expected_value = (7915445f64 / 93616591f64).ln().to_bits();
+        let actual_value = ngram_model.ngrams.get(b"a".to_vec()).unwrap();
+        assert_eq!(actual_value, expected_value);
     }
 
     #[test]
     fn test_load_unique_ngram_model() {
         let optional_unique_ngram_model =
-            load_ngram_count_model(Language::English, 1, NgramModelType::Unique);
+            load_ngram_count_model(Language::English, NgramModelType::Unique);
         assert!(optional_unique_ngram_model.is_some());
 
         let unique_ngram_model = optional_unique_ngram_model.unwrap();
         assert_eq!(unique_ngram_model.language, Language::English);
-        assert_eq!(
-            unique_ngram_model.ngrams,
-            map_strs_to_strings(hashset!("ɦ", "ƅ", "ﬀ", "ƴ", "ｍ", "ȼ"))
-        );
+        assert!(unique_ngram_model.ngrams.contains("ɦ".as_bytes().to_vec()));
+        assert!(unique_ngram_model.ngrams.contains("ƅ".as_bytes().to_vec()));
+        assert!(unique_ngram_model.ngrams.contains("ﬀ".as_bytes().to_vec()));
+        assert!(unique_ngram_model.ngrams.contains("ƴ".as_bytes().to_vec()));
+        assert!(unique_ngram_model.ngrams.contains("ｍ".as_bytes().to_vec()));
+        assert!(unique_ngram_model.ngrams.contains("ȼ".as_bytes().to_vec()));
     }
 
     #[test]
     fn test_load_most_common_ngram_model() {
         let optional_most_common_ngram_model =
-            load_ngram_count_model(Language::English, 1, NgramModelType::MostCommon);
+            load_ngram_count_model(Language::English, NgramModelType::MostCommon);
         assert!(optional_most_common_ngram_model.is_some());
 
         let most_common_ngram_model = optional_most_common_ngram_model.unwrap();
         assert_eq!(most_common_ngram_model.language, Language::English);
-        assert_eq!(
-            most_common_ngram_model.ngrams,
-            map_strs_to_strings(hashset!(
-                "e", "t", "a", "o", "i", "n", "r", "s", "l", "h", "d", "c", "u", "m", "p", "f",
-                "g", "y", "w", "b", "v", "k", "x", "j", "q"
-            ))
-        )
+        assert!(most_common_ngram_model.ngrams.contains(b"e".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"t".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"a".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"o".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"i".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"n".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"r".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"s".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"l".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"h".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"d".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"c".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"u".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"m".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"p".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"f".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"g".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"y".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"w".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"b".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"v".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"k".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"x".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"j".to_vec()));
+        assert!(most_common_ngram_model.ngrams.contains(b"q".to_vec()));
     }
 
     mod training_data {
@@ -371,19 +336,23 @@ mod tests {
             language: Language,
             map: HashMap<&str, &str>,
         ) -> NgramProbabilityModel {
-            let mut ngrams = AHashMap::<CompactString, Fraction>::new();
-            for (key, value) in map {
-                let (numerator, denominator) = value
+            let mut fst_data = vec![];
+
+            for (ngram, fraction) in map {
+                let (numerator, denominator) = fraction
                     .split('/')
                     .map(|it| it.parse::<u32>().unwrap())
                     .collect_tuple()
                     .unwrap();
-                ngrams.insert(
-                    CompactString::new(key),
-                    Fraction::new(numerator, denominator),
-                );
+                let key = ngram.as_bytes().to_vec();
+                let value = (numerator as f64 / denominator as f64).ln().to_bits();
+                fst_data.push((key, value));
             }
-            NgramProbabilityModel { language, ngrams }
+
+            NgramProbabilityModel {
+                language,
+                ngrams: create_fst_map(fst_data),
+            }
         }
 
         #[fixture]

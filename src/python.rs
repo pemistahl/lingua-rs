@@ -34,8 +34,8 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
 use crate::language::Language;
 use crate::result::DetectionResult;
 use crate::writer::{
-    LanguageModelFilesWriter, MostCommonNgramsWriter, TestDataFilesWriter, UniqueNgramsWriter,
-    LANGUAGES_MESSAGE, MOST_COMMON_NGRAMS_MESSAGE,
+    LANGUAGES_MESSAGE, LanguageModelFilesWriter, MOST_COMMON_NGRAMS_MESSAGE,
+    MostCommonNgramsWriter, TestDataFilesWriter, UniqueNgramsWriter,
 };
 
 const ENUM_MEMBER_NOT_FOUND_MESSAGE: &str = "Matching enum member not found";

@@ -14,7 +14,7 @@
 
 [package]
 name = "lingua-venetian-language-model"
-version = { workspace = true }
+version = "1.0.0"
 authors = { workspace = true }
 description = """
 The Venetian language model for Lingua, an accurate natural language detection library

@@ -14,9 +14,10 @@
 # limitations under the License.
 
 import pickle
+from copy import copy, deepcopy
+
 import pytest
 
-from copy import copy, deepcopy
 from lingua import IsoCode639_1, IsoCode639_3, Language
 
 
@@ -130,6 +131,7 @@ def test_all_languages_are_available():
             Language.TURKISH,
             Language.UKRAINIAN,
             Language.URDU,
+            Language.VENETIAN,
             Language.VIETNAMESE,
             Language.WELSH,
             Language.XHOSA,
@@ -211,6 +213,7 @@ def test_all_spoken_languages_are_available():
             Language.TURKISH,
             Language.UKRAINIAN,
             Language.URDU,
+            Language.VENETIAN,
             Language.VIETNAMESE,
             Language.WELSH,
             Language.XHOSA,
@@ -294,6 +297,7 @@ def test_languages_support_latin_script():
             Language.TSONGA,
             Language.TSWANA,
             Language.TURKISH,
+            Language.VENETIAN,
             Language.VIETNAMESE,
             Language.WELSH,
             Language.XHOSA,

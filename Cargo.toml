@@ -149,6 +149,7 @@ lingua-tswana-language-model = { path = "language-models/tn", version = "1.3.0",
 lingua-turkish-language-model = { path = "language-models/tr", version = "1.3.0", optional = true }
 lingua-ukrainian-language-model = { path = "language-models/uk", version = "1.3.0", optional = true }
 lingua-urdu-language-model = { path = "language-models/ur", version = "1.3.0", optional = true }
+lingua-venetian-language-model = { path = "language-models/vec", version = "1.0.0", optional = true }
 lingua-vietnamese-language-model = { path = "language-models/vi", version = "1.3.0", optional = true }
 lingua-welsh-language-model = { path = "language-models/cy", version = "1.3.0", optional = true }
 lingua-xhosa-language-model = { path = "language-models/xh", version = "1.3.0", optional = true }
@@ -198,8 +199,8 @@ default = [
     "nynorsk", "persian", "polish", "portuguese", "punjabi", "romanian",
     "russian", "serbian", "shona", "slovak", "slovene", "somali", "sotho",
     "spanish", "swahili", "swedish", "tagalog", "tamil", "telugu", "thai",
-    "tsonga", "tswana", "turkish", "ukrainian", "urdu", "vietnamese",
-    "welsh", "xhosa", "yoruba", "zulu"
+    "tsonga", "tswana", "turkish", "ukrainian", "urdu", "venetian",
+    "vietnamese", "welsh", "xhosa", "yoruba", "zulu"
 ]
 accuracy-reports = ["clap", "cld2", "indoc", "polars", "titlecase", "whatlang", "whichlang"]
 benchmark = ["cld2", "whatlang", "whichlang"]
@@ -274,6 +275,7 @@ tswana = ["lingua-tswana-language-model"]
 turkish = ["lingua-turkish-language-model"]
 ukrainian = ["lingua-ukrainian-language-model"]
 urdu = ["lingua-urdu-language-model"]
+venetian = ["lingua-venetian-language-model"]
 vietnamese = ["lingua-vietnamese-language-model"]
 welsh = ["lingua-welsh-language-model"]
 xhosa = ["lingua-xhosa-language-model"]

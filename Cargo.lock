@@ -1538,6 +1538,7 @@ dependencies = [
  "lingua-turkish-language-model",
  "lingua-ukrainian-language-model",
  "lingua-urdu-language-model",
+ "lingua-venetian-language-model",
  "lingua-vietnamese-language-model",
  "lingua-welsh-language-model",
  "lingua-xhosa-language-model",
@@ -2048,6 +2049,13 @@ dependencies = [
 [[package]]
 name = "lingua-urdu-language-model"
 version = "1.3.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-venetian-language-model"
+version = "1.0.0"
 dependencies = [
  "include_dir",
 ]

@@ -169,6 +169,8 @@ use lingua_turkish_language_model::{TURKISH_MODELS_DIRECTORY, TURKISH_TESTDATA_D
 use lingua_ukrainian_language_model::{UKRAINIAN_MODELS_DIRECTORY, UKRAINIAN_TESTDATA_DIRECTORY};
 #[cfg(feature = "urdu")]
 use lingua_urdu_language_model::{URDU_MODELS_DIRECTORY, URDU_TESTDATA_DIRECTORY};
+#[cfg(feature = "venetian")]
+use lingua_venetian_language_model::{VENETIAN_MODELS_DIRECTORY, VENETIAN_TESTDATA_DIRECTORY};
 #[cfg(feature = "vietnamese")]
 use lingua_vietnamese_language_model::{
     VIETNAMESE_MODELS_DIRECTORY, VIETNAMESE_TESTDATA_DIRECTORY,
@@ -422,6 +424,9 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
         #[cfg(feature = "urdu")]
         Language::Urdu => URDU_MODELS_DIRECTORY,
 
+        #[cfg(feature = "venetian")]
+        Language::Venetian => VENETIAN_MODELS_DIRECTORY,
+
         #[cfg(feature = "vietnamese")]
         Language::Vietnamese => VIETNAMESE_MODELS_DIRECTORY,
 
@@ -650,6 +655,9 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "urdu")]
         Language::Urdu => URDU_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "venetian")]
+        Language::Venetian => VENETIAN_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "vietnamese")]
         Language::Vietnamese => VIETNAMESE_TESTDATA_DIRECTORY,

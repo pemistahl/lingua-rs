@@ -103,6 +103,7 @@ use lingua_tswana_language_model::TSWANA_TESTDATA_DIRECTORY;
 use lingua_turkish_language_model::TURKISH_TESTDATA_DIRECTORY;
 use lingua_ukrainian_language_model::UKRAINIAN_TESTDATA_DIRECTORY;
 use lingua_urdu_language_model::URDU_TESTDATA_DIRECTORY;
+use lingua_venetian_language_model::VENETIAN_TESTDATA_DIRECTORY;
 use lingua_vietnamese_language_model::VIETNAMESE_TESTDATA_DIRECTORY;
 use lingua_welsh_language_model::WELSH_TESTDATA_DIRECTORY;
 use lingua_xhosa_language_model::XHOSA_TESTDATA_DIRECTORY;
@@ -1049,6 +1050,7 @@ fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Turkish => TURKISH_TESTDATA_DIRECTORY,
         Language::Ukrainian => UKRAINIAN_TESTDATA_DIRECTORY,
         Language::Urdu => URDU_TESTDATA_DIRECTORY,
+        Language::Venetian => VENETIAN_TESTDATA_DIRECTORY,
         Language::Vietnamese => VIETNAMESE_TESTDATA_DIRECTORY,
         Language::Welsh => WELSH_TESTDATA_DIRECTORY,
         Language::Xhosa => XHOSA_TESTDATA_DIRECTORY,

@@ -679,13 +679,24 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::model::{NGRAM_PROBABILITY_MODEL_FILE_NAME, NgramCountModelType};
 
     #[test]
-    fn test_load_json() {
-        let result = read_probability_model_data_file(Language::English, "high-accuracy-model.fst");
+    fn test_read_probability_model_data_file() {
+        let result =
+            read_probability_model_data_file(Language::English, NGRAM_PROBABILITY_MODEL_FILE_NAME);
         assert!(result.is_ok());
 
         let fst_map = result.unwrap();
         assert!(fst_map.contains_key(b"that".to_vec()));
+    }
+
+    #[test]
+    fn test_read_count_model_data_file() {
+        let result = read_count_model_data_file(
+            Language::English,
+            &NgramCountModelType::MostCommon.file_name(),
+        );
+        assert!(result.is_ok());
     }
 }

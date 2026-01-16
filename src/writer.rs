@@ -24,8 +24,9 @@ use crate::constant::{DIGITS_AT_BEGINNING, MULTIPLE_WHITESPACE, NUMBERS, PUNCTUA
 use crate::detector::split_text_into_words;
 use crate::file::read_test_data_file;
 use crate::model::{
-    NgramCountModel, NgramModelType, TrainingDataLanguageModel, create_fst_map, create_fst_set,
-    get_utf8_slice, load_ngram_probability_model,
+    NGRAM_PROBABILITY_MODEL_FILE_NAME, NgramCountModel, NgramCountModelType,
+    TrainingDataLanguageModel, create_fst_map, create_fst_set, get_utf8_slice,
+    load_ngram_probability_model,
 };
 use crate::ngram::Ngram;
 use counter::Counter;
@@ -122,12 +123,6 @@ impl LanguageModelFilesWriter {
         )?;
 
         Self::write_language_models(
-            &[&unigram_model, &bigram_model, &trigram_model],
-            output_directory_path,
-            "low-accuracy-model.fst",
-        )?;
-
-        Self::write_language_models(
             &[
                 &unigram_model,
                 &bigram_model,
@@ -136,7 +131,7 @@ impl LanguageModelFilesWriter {
                 &fivegram_model,
             ],
             output_directory_path,
-            "high-accuracy-model.fst",
+            NGRAM_PROBABILITY_MODEL_FILE_NAME,
         )?;
 
         Ok(())
@@ -391,7 +386,7 @@ impl UniqueNgramsWriter {
     fn load_ngrams() -> HashMap<Language, HashSet<Vec<u8>>> {
         let mut result = HashMap::new();
         for language in Language::iter() {
-            if let Some(model) = load_ngram_probability_model(language, false) {
+            if let Some(model) = load_ngram_probability_model(language) {
                 let mut stream = model.ngrams.keys();
                 let mut ngrams = HashSet::new();
                 while let Some(key) = stream.next() {
@@ -440,7 +435,11 @@ impl UniqueNgramsWriter {
         unique_ngrams: Vec<NgramCountModel>,
         output_directory_path: &Path,
     ) -> io::Result<()> {
-        store_ngram_count_models(unique_ngrams, output_directory_path, NgramModelType::Unique)
+        store_ngram_count_models(
+            unique_ngrams,
+            output_directory_path,
+            NgramCountModelType::Unique,
+        )
     }
 }
 
@@ -523,7 +522,7 @@ impl MostCommonNgramsWriter {
         store_ngram_count_models(
             most_common_ngrams,
             output_directory_path,
-            NgramModelType::MostCommon,
+            NgramCountModelType::MostCommon,
         )
     }
 }
@@ -531,16 +530,15 @@ impl MostCommonNgramsWriter {
 fn store_ngram_count_models(
     ngram_count_models: Vec<NgramCountModel>,
     output_directory_path: &Path,
-    model_type: NgramModelType,
+    model_type: NgramCountModelType,
 ) -> io::Result<()> {
-    let file_name = format!("{model_type}-ngrams.fst");
     for model in ngram_count_models {
         let language_dir_path =
             output_directory_path.join(model.language.iso_code_639_1().to_string());
         if !language_dir_path.exists() {
             fs::create_dir(language_dir_path.as_path())?;
         }
-        let file_path = language_dir_path.join(&file_name);
+        let file_path = language_dir_path.join(model_type.file_name());
         let mut file = fs::File::create(file_path)?;
         file.write_all(model.ngrams.into_fst().as_bytes())?;
     }
@@ -904,7 +902,6 @@ mod tests {
         fn test_language_model_files_writer(
             text: &'static str,
             high_accuracy_model: HashMap<String, f64>,
-            low_accuracy_model: HashMap<String, f64>,
         ) {
             let input_file = create_temp_input_file(text);
             let output_directory = tempdir().expect("Temporary directory could not be created");
@@ -917,10 +914,13 @@ mod tests {
             assert!(result.is_ok());
 
             let files = read_directory_content(output_directory.path());
-            assert_eq!(files.len(), 2);
+            assert_eq!(files.len(), 1);
 
-            check_fst_map_file(&files[0], "high-accuracy-model.fst", high_accuracy_model);
-            check_fst_map_file(&files[1], "low-accuracy-model.fst", low_accuracy_model);
+            check_fst_map_file(
+                &files[0],
+                NGRAM_PROBABILITY_MODEL_FILE_NAME,
+                high_accuracy_model,
+            );
         }
     }
 

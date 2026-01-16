@@ -188,10 +188,9 @@ def test_language_model_files_writer(
     )
 
     files = read_directory_content(output_directory_path)
-    assert len(files) == 2
+    assert len(files) == 1
 
-    check_fst_file(files[0], "high-accuracy-model.fst")
-    check_fst_file(files[1], "low-accuracy-model.fst")
+    check_fst_file(files[0], "ngrams.fst")
 
 
 def test_test_data_files_writer(

@@ -39,7 +39,6 @@ use crate::isocode::{IsoCode639_1, IsoCode639_3};
     Ord,
     PartialOrd,
 )]
-#[serde(rename_all(serialize = "UPPERCASE", deserialize = "UPPERCASE"))]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(feature = "accuracy-reports", derive(clap::ValueEnum))]
 #[cfg_attr(

@@ -91,18 +91,14 @@ fn main() {
     let total_start = Instant::now();
     let cli = Cli::parse();
     let mut detector_options = cli.detectors.iter().cloned().collect::<HashSet<_>>();
-    let language_names = cli
-        .languages
-        .iter()
-        .map(|it| it.to_string().to_lowercase())
-        .collect_vec();
+    let language_names = cli.languages.iter().map(|it| it.to_string()).collect_vec();
     let mut all_statistics = HashMap::new();
 
     if detector_options.contains(&DetectorOption::LinguaAllSingleLanguageDetectors) {
         detector_options.remove(&DetectorOption::LinguaAllSingleLanguageDetectors);
 
         for language_name in language_names.iter() {
-            let detector_name = format!("lingua-{language_name}-detector");
+            let detector_name = format!("lingua-{}-detector", language_name.to_lowercase());
             let detector_option = DetectorOption::from_str(&detector_name, true).unwrap();
 
             if !detector_options.contains(&detector_option) {

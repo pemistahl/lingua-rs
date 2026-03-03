@@ -1,3 +1,36 @@
+## Lingua 1.8.0 (released on 4 Mar 2026)
+
+### Improvements
+
+- The language model files have been converted into a new storage format.
+  They are now stored as finite-state transducers (FSTs) which reduces memory
+  consumption drastically at the cost of a slightly slower runtime performance.
+  FSTs allow to be searched on disk without actually reading them entirely into
+  memory which requires only a few dozen megabytes of memory even when loading
+  all languages. The former hashmap-based approach required at least hundreds
+  of megabytes of memory. (#528)
+
+- The language model files are not compressed by the Brotli algorithm anymore.
+  This means that they can be loaded into memory much faster and thereby avoid
+  latency issues in e.g. web services nearly entirely. The new FST storage helps
+  in this regard as well. The only downside is that the language model files have
+  grown in size on disk. They now consume approximately 300 MB altogether instead
+  of 110 MB as before. The file size of the WASM module is also affected by that.
+
+- The unique and most common ngrams for each language now improve
+  language detection accuracy a bit when the low-accuracy mode is enabled.
+  In previous releases, unique and most common ngrams were only taken into
+  consideration when the single-language mode was active.
+
+### Bug Fixes
+
+- The test data files for Latin and Welsh contained broken characters which resulted
+  in inaccurate accuracy reports for these languages. This has been fixed. (#376)
+
+### Miscellaneous
+
+- All dependencies have been updated to their latest versions.
+
 ## Lingua 1.7.2 (released on 27 May 2025)
 
 ### Bug Fixes
@@ -72,7 +105,7 @@
 - The method `LanguageDetector.detect_multiple_languages_of` returns byte indices.
   For creating string slices in Python and JavaScript, character indices are needed
   but were not provided. This resulted in incorrect `DetectionResult`s for Python
-  and JavaScript. This has been fixed now by converting the byte indices to 
+  and JavaScript. This has been fixed now by converting the byte indices to
   character indices.
 
 - Some minor bugs in the WASM module have been fixed to prepare the first release
@@ -82,7 +115,7 @@
 
 ### Features
 
-- Python bindings are now available for the library. 
+- Python bindings are now available for the library.
   These bindings replace the pure Python implementation of Lingua in order to
   benefit from Rust's performance in any Python software. (#262)
 
@@ -116,7 +149,7 @@
 ### Improvements
 
 - The computation of the confidence values has been revised and the softmax function
-  is now applied to the values, making them better comparable by behaving more like 
+  is now applied to the values, making them better comparable by behaving more like
   real probabilities. (#120)
 
 - The WASM API has been revised. Now it makes use of the same builder pattern
@@ -125,8 +158,8 @@
 - The language model files are now compressed with the Brotli algorithm which
   reduces the file size by 15 %, on average. (#189)
 
-- The language model ngrams are now stored in a `CompactString` type which 
-  reduces the amount of consumed memory by 20 %. (#198) 
+- The language model ngrams are now stored in a `CompactString` type which
+  reduces the amount of consumed memory by 20 %. (#198)
 
 - Several performance optimizations have been applied which makes the library
   nearly twice as fast as the previous version. Big thanks go out to @serega
@@ -185,7 +218,7 @@
 
 ### Bug Fixes
 
-- In very rare cases, the language returned by the detector was non-deterministic. 
+- In very rare cases, the language returned by the detector was non-deterministic.
   This has been fixed. Big thanks to @asg0451 for identifying this problem. (#17)
 
 ## Lingua 1.2.2 (released on 2 Jun 2021)
@@ -196,7 +229,7 @@
   [`std::str::FromStr`](https://doc.rust-lang.org/std/str/trait.FromStr.html)
   in order to instantiate enum variants by string values. This comes in
   handy for JavaScript bindings and the like. (#15)
-  
+
 ### Improvements
 
 - The performance of preloading the language models has been improved.
@@ -218,7 +251,7 @@
   is now split at each logogram and not only at whitespace. This
   provides for more reliable language detection for sentences that
   include multi-language content.
-  
+
 ### Bug Fixes
 
 - Errors in the rule engine for the Latvian language have been resolved.
@@ -229,35 +262,35 @@
 ### Features
 
 - A `LanguageDetector` can now be built with lazy-loading required language models
-on demand (default) or with preloading all language models at once by calling
-`LanguageDetectorBuilder.with_preloaded_language_models()`. (#10)  
+  on demand (default) or with preloading all language models at once by calling
+  `LanguageDetectorBuilder.with_preloaded_language_models()`. (#10)
 
 ## Lingua 1.1.0 (released on 31 Jan 2021)
 
 ### Languages
 
 - The Maori language is now supported.
-Thanks to @eekkaiia for the contribution. (#5)
+  Thanks to @eekkaiia for the contribution. (#5)
 
 ### Performance
 
 - Loading and searching the language models has been quite slow so far.
-Using parallel iterators from the [Rayon](https://github.com/rayon-rs/rayon)
-library, this process is now at least 50% faster, depending on how many
-CPU cores are available. (#8)
-  
+  Using parallel iterators from the [Rayon](https://github.com/rayon-rs/rayon)
+  library, this process is now at least 50% faster, depending on how many
+  CPU cores are available. (#8)
+
 ### Accuracy Reports
 
 - Accuracy reports are now also generated for the [*CLD2*](https://github.com/emk/rust-cld2)
-library and included in the language detector comparison plots. (#6)
-  
+  library and included in the language detector comparison plots. (#6)
+
 ## Lingua 1.0.3 (released on 15 Jan 2021)
 
 ### Bug Fixes
 
 - Lingua could not be used within other projects because of a private
-serde module that was accidentally tried to be exposed.
-Thanks to @luananama for reporting this bug. (#9)  
+  serde module that was accidentally tried to be exposed.
+  Thanks to @luananama for reporting this bug. (#9)
 
 ## Lingua 1.0.2 (released on 22 Nov 2020)
 
@@ -270,11 +303,11 @@ Thanks to @luananama for reporting this bug. (#9)
 ### Bug Fixes
 
 - When trying to create new language models, the `LanguageModelFilesWriter` panicked
-when it recognized characters in a text corpus that consist of multiple bytes.
-Thanks to @eekkaiia for reporting this bug. (#3)
+  when it recognized characters in a text corpus that consist of multiple bytes.
+  Thanks to @eekkaiia for reporting this bug. (#3)
 
 ## Lingua 1.0.0 (released on 21 Nov 2020)
 
-This is the very first release of Lingua for Rust. 
-Took me 5 months of hard work in my free time. 
+This is the very first release of Lingua for Rust.
+Took me 5 months of hard work in my free time.
 Hope you find it useful. :)

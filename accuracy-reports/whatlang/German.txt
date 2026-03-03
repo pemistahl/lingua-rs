@@ -1,10 +1,10 @@
 ##### German #####
 
->>> Accuracy on average: 69.63%
+>>> Accuracy on average: 69.57%
 
 >> Detection of 1000 single words (average length: 9 chars)
-Accuracy: 44.30%
-Erroneously classified as Unknown: 6.20%, Danish: 5.70%, Dutch: 4.10%, French: 3.60%, Bokmal: 3.20%, Swedish: 3.10%, Afrikaans: 2.80%, English: 2.80%, Spanish: 2.60%, Latin: 2.40%, Estonian: 2.30%, Turkish: 2.00%, Catalan: 1.60%, Hungarian: 1.60%, Finnish: 1.50%, Italian: 1.50%, Zulu: 1.20%, Indonesian: 1.10%, Romanian: 1.10%, Esperanto: 0.90%, Shona: 0.80%, Lithuanian: 0.70%, Portuguese: 0.70%, Slovak: 0.50%, Polish: 0.40%, Croatian: 0.30%, Latvian: 0.30%, Slovene: 0.30%, Czech: 0.20%, Azerbaijani: 0.10%, Vietnamese: 0.10%
+Accuracy: 44.10%
+Erroneously classified as Unknown: 7.10%, Danish: 5.70%, Dutch: 4.10%, French: 3.60%, Bokmal: 3.20%, Swedish: 3.00%, Afrikaans: 2.80%, English: 2.80%, Spanish: 2.60%, Latin: 2.40%, Estonian: 2.10%, Turkish: 2.00%, Catalan: 1.50%, Finnish: 1.50%, Hungarian: 1.50%, Italian: 1.50%, Indonesian: 1.10%, Romanian: 1.10%, Zulu: 1.10%, Esperanto: 0.90%, Shona: 0.80%, Lithuanian: 0.70%, Portuguese: 0.70%, Slovak: 0.50%, Polish: 0.40%, Croatian: 0.30%, Slovene: 0.30%, Czech: 0.20%, Latvian: 0.20%, Azerbaijani: 0.10%, Vietnamese: 0.10%
 
 >> Detection of 1000 word pairs (average length: 18 chars)
 Accuracy: 66.60%

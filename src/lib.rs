@@ -102,23 +102,28 @@
 //! process. The filtering mechanism of the rule-based engine is quite good, however, filtering
 //! based on your own knowledge of the input text is always preferable.
 //!
+//! Even when taking all language models into account, the library uses only a few dozen megabytes
+//! of memory during runtime. This is because the models are stored as finite-state transducers (FSTs).
+//! FSTs allow to be searched on disk without actually reading them entirely into memory, making the
+//! library suitable for low-resource environments.
+//!
 //! ## 6. How to add it to your project?
 //!
 //! Add *Lingua* to your `Cargo.toml` file like so:
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = "1.7.1"
+//! lingua = "1.8.0"
 //! ```
 //!
 //! By default, this will download the language model dependencies for all 75 supported languages,
-//! a total of approximately 110 MB. If your bandwidth or hard drive space is limited, or you simply
+//! a total of approximately 300 MB. If your bandwidth or hard drive space is limited, or you simply
 //! do not need all languages, you can specify a subset of the language models to be downloaded as
 //! separate features in your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
-//! lingua = { version = "1.7.1", default-features = false, features = ["french", "italian", "spanish"] }
+//! lingua = { version = "1.8.0", default-features = false, features = ["french", "italian", "spanish"] }
 //! ```
 //!
 //! ## 7. How to use?
@@ -239,8 +244,7 @@
 //! ### 7.5 Low accuracy mode versus high accuracy mode
 //!
 //! *Lingua's* high detection accuracy comes at the cost of being noticeably slower
-//! than other language detectors. The large language models also consume significant
-//! amounts of memory. These requirements might not be feasible for systems running low
+//! than other language detectors. This requirement might not be feasible for systems running low
 //! on resources. If you want to classify mostly long texts or need to save resources,
 //! you can enable a *low accuracy mode* that loads only a small subset of the language
 //! models into memory:
@@ -255,12 +259,7 @@
 //! of less than 120 characters will drop significantly. However, detection accuracy for
 //! texts which are longer than 120 characters will remain mostly unaffected.
 //!
-//! In high accuracy mode (the default), the language detector consumes approximately
-//! 1 GB of memory if all language models are loaded. In low accuracy mode, memory
-//! consumption is reduced to approximately 100 MB. The goal is to further reduce memory
-//! consumption in later releases.
-//!
-//! An alternative for a smaller memory footprint and faster performance is to reduce the set
+//! An alternative for a faster performance is to reduce the set
 //! of languages when building the language detector. In most cases, it is not advisable to
 //! build the detector from all supported languages. When you have knowledge about
 //! the texts you want to classify you can almost always rule out certain languages as impossible
@@ -389,7 +388,7 @@
 //! ```
 //!
 //! By default, all 75 supported languages are included in the compiled wasm file which has a size
-//! of 96 MB, approximately. If you only need a subset of certain languages, you can tell `wasm-pack`
+//! of 288 MB, approximately. If you only need a subset of certain languages, you can tell `wasm-pack`
 //! which ones to include:
 //!
 //! ```shell

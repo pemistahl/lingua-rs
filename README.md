@@ -1,17 +1,17 @@
 <div align="center">
 
-  ![lingua](https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/logo.png)
+![lingua](https://raw.githubusercontent.com/pemistahl/lingua-rs/main/images/logo.png)
 
-  [![rust build status](https://github.com/pemistahl/lingua-rs/actions/workflows/rust-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/rust-build.yml)
-  [![python build status](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml)
-  [![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
-  [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
-  [![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
-  [![dependency status](https://deps.rs/crate/lingua/1.7.2/status.svg)](https://deps.rs/crate/lingua/1.7.2)
-  [![downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
-  [![crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
-  [![lib.rs](https://img.shields.io/badge/lib.rs-v1.7.2-blue)](https://lib.rs/crates/lingua)
-  [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![rust build status](https://github.com/pemistahl/lingua-rs/actions/workflows/rust-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/rust-build.yml)
+[![python build status](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml)
+[![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
+[![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
+[![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
+[![dependency status](https://deps.rs/crate/lingua/1.8.0/status.svg)](https://deps.rs/crate/lingua/1.8.0)
+[![downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
+[![crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
+[![lib.rs](https://img.shields.io/badge/lib.rs-v1.8.0-blue)](https://lib.rs/crates/lingua)
+[![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 </div>
 
 <br>
@@ -352,25 +352,25 @@ Whichlang has the shortest processing time, Lingua the longest.
 
 | Detector                                      | Single Thread | Multiple Threads |
 |-----------------------------------------------|--------------:|-----------------:|
-| Whichlang                                     |       2.68 ms |        408.37 µs |
-| CLD 2                                         |       9.31 ms |          1.32 ms |
-| Whatlang (common languages)                   |      47.41 ms |          5.79 ms |
-| Whatlang (all languages)                      |     121.00 ms |         14.19 ms |
-| Lingua (low accuracy mode, common languages)  |     170.82 ms |         22.75 ms |
-| Lingua (high accuracy mode, common languages) |     361.54 ms |         47.91 ms |
-| Lingua (low accuracy mode, all languages)     |     434.61 ms |         53.05 ms |
-| Lingua (high accuracy mode, all languages)    |     1.6021  s |        183.82 ms |
+| Whichlang                                     |       4.47 ms |        651.89 µs |
+| CLD 2                                         |      23.92 ms |          4.81 ms |
+| Whatlang (common languages)                   |      36.24 ms |          4.67 ms |
+| Whatlang (all languages)                      |      89.11 ms |         10.68 ms |
+| Lingua (low accuracy mode, common languages)  |     492.50 ms |         62.01 ms |
+| Lingua (high accuracy mode, common languages) |     640.30 ms |        109.43 ms |
+| Lingua (low accuracy mode, all languages)     |     2.0448  s |        229.23 ms |
+| Lingua (high accuracy mode, all languages)    |     3.1243  s |        407.69 ms |
 
 The accuracy reporter script measures the time each language detector needs
 to classify 3000 input texts for each of the supported 75 languages.
 
-| Detector                                     |      Time |
-|----------------------------------------------|----------:|
-| Whichlang                                    |  0.13 sec |
-| CLD 2                                        |  1.67 sec |
-| Lingua (low accuracy mode, multi-threaded)   |  4.33 sec |
-| Lingua (high accuracy mode, multi-threaded)  |  9.84 sec |
-| Whatlang                                     | 11.58 sec |
+| Detector                                    |      Time |
+|---------------------------------------------|----------:|
+| Whichlang                                   |  0.28 sec |
+| CLD 2                                       |  1.70 sec |
+| Whatlang                                    |  7.84 sec |
+| Lingua (low accuracy mode, multi-threaded)  | 11.81 sec |
+| Lingua (high accuracy mode, multi-threaded) | 21.13 sec |
 
 ## 6. Why is it better than other libraries?
 
@@ -392,6 +392,10 @@ In general, it is always a good idea to restrict the set of languages to be cons
 using the respective api methods. If you know beforehand that certain languages are
 never to occur in an input text, do not let those take part in the classifcation process. The filtering mechanism
 of the rule-based engine is quite good, however, filtering based on your own knowledge of the input text is always preferable.
+
+Even when taking all language models into account, the library uses only a few dozen megabytes of memory during runtime.
+This is because the models are stored as finite-state transducers (FSTs). FSTs allow to be searched on disk without
+actually reading them entirely into memory, making the library suitable for low-resource environments.
 
 ## 7. How to reproduce the accuracy results?
 
@@ -435,17 +439,17 @@ Add *Lingua* to your `Cargo.toml` file like so:
 
 ```toml
 [dependencies]
-lingua = "1.7.2"
+lingua = "1.8.0"
 ```
 
-By default, this will download the language model dependencies for all 75 supported languages, 
-a total of approximately 110 MB. If your bandwidth or hard drive space is limited, or you simply 
-do not need all languages, you can specify a subset of the language models to be downloaded as 
+By default, this will download the language model dependencies for all 75 supported languages,
+a total of approximately 300 MB. If your bandwidth or hard drive space is limited, or you simply
+do not need all languages, you can specify a subset of the language models to be downloaded as
 separate features in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-lingua = { version = "1.7.2", default-features = false, features = ["french", "italian", "spanish"] }
+lingua = { version = "1.8.0", default-features = false, features = ["french", "italian", "spanish"] }
 ```
 
 ## 9. How to build?
@@ -607,8 +611,7 @@ accessed asynchronously by the instances.
 ### 10.5 Low accuracy mode versus high accuracy mode
 
 *Lingua's* high detection accuracy comes at the cost of being noticeably slower
-than other language detectors. The large language models also consume significant
-amounts of memory. These requirements might not be feasible for systems running low
+than other language detectors. This requirement might not be feasible for systems running low
 on resources. If you want to classify mostly long texts or need to save resources,
 you can enable a *low accuracy mode* that loads only a small subset of the language
 models into memory:
@@ -621,12 +624,7 @@ The downside of this approach is that detection accuracy for short texts consist
 of less than 120 characters will drop significantly. However, detection accuracy for
 texts which are longer than 120 characters will remain mostly unaffected.
 
-In high accuracy mode (the default), the language detector consumes approximately
-1 GB of memory if all language models are loaded. In low accuracy mode, memory
-consumption is reduced to approximately 100 MB. The goal is to further reduce memory
-consumption in later releases.
-
-An alternative for a smaller memory footprint and faster performance is to reduce the set
+An alternative for a faster performance is to reduce the set
 of languages when building the language detector. In most cases, it is not advisable to
 build the detector from all supported languages. When you have knowledge about
 the texts you want to classify you can almost always rule out certain languages as impossible
@@ -748,7 +746,7 @@ you can, for instance, build the library with the web target so that it can be d
 
     wasm-pack build --target web
 
-By default, all 75 supported languages are included in the compiled wasm file which has a size of 96 MB, approximately. 
+By default, all 75 supported languages are included in the compiled wasm file which has a size of 288 MB, approximately.
 If you only need a subset of certain languages, you can tell `wasm-pack` which ones to include:
 
     wasm-pack build --target web -- --no-default-features --features "french,italian,spanish"
@@ -777,12 +775,12 @@ allows to add further JavaScript-related configuration, tests and documentation.
 [npm registry](https://www.npmjs.com) as well, allowing for an easy download and installation within every JavaScript 
 or TypeScript project.
 
-## 12. What's next for version 1.8.0?
+## 12. What's next for version 1.9.0?
 
-Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/10).
+Take a look at the [planned issues](https://github.com/pemistahl/lingua-rs/milestone/11).
 
 ## 13. Contributions
 
 - [Josh Rotenberg](https://github.com/joshrotenberg) has written a [wrapper](https://github.com/joshrotenberg/lingua_ex)
-for using *Lingua* with the [Elixir programming language](https://elixir-lang.org/).
+  for using *Lingua* with the [Elixir programming language](https://elixir-lang.org/).
   

@@ -1,4 +1,4 @@
-## Lingua 1.8.0 (released on 4 Mar 2026)
+## Lingua 1.8.0 (released on 9 Mar 2026)
 
 ### Improvements
 

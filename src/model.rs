@@ -155,6 +155,11 @@ impl TrainingDataLanguageModel {
         for line in text.iter() {
             let chars = line.to_lowercase().chars().collect_vec();
 
+            assert!(
+                chars.len() >= ngram_length,
+                "input text must be at least {} chars",
+                ngram_length
+            );
             for i in 0..=chars.len() - ngram_length {
                 let slice = &chars[i..i + ngram_length].iter().collect::<String>();
 
@@ -569,6 +574,18 @@ mod tests {
 
             assert_eq!(model.absolute_frequencies, expected_absolute_frequencies);
             assert_eq!(model.ngram_probability_model, expected_probability_model);
+        }
+
+        #[test]
+        #[should_panic = "input text must be at least 5 chars"]
+        fn test_ngram_model_creation_panics_when_given_extremely_short_input() {
+            TrainingDataLanguageModel::from_text(
+                &["abcd"],
+                &Language::English,
+                5,
+                "\\p{L}&&\\p{Latin}",
+                &HashMap::new(),
+            );
         }
     }
 

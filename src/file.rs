@@ -65,6 +65,8 @@ use lingua_estonian_language_model::{ESTONIAN_MODELS_DIRECTORY, ESTONIAN_TESTDAT
 use lingua_finnish_language_model::{FINNISH_MODELS_DIRECTORY, FINNISH_TESTDATA_DIRECTORY};
 #[cfg(feature = "french")]
 use lingua_french_language_model::{FRENCH_MODELS_DIRECTORY, FRENCH_TESTDATA_DIRECTORY};
+#[cfg(feature = "galician")]
+use lingua_galician_language_model::{GALICIAN_MODELS_DIRECTORY, GALICIAN_TESTDATA_DIRECTORY};
 #[cfg(feature = "ganda")]
 use lingua_ganda_language_model::{GANDA_MODELS_DIRECTORY, GANDA_TESTDATA_DIRECTORY};
 #[cfg(feature = "georgian")]
@@ -277,6 +279,9 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "french")]
         Language::French => FRENCH_MODELS_DIRECTORY,
+
+        #[cfg(feature = "galician")]
+        Language::Galician => GALICIAN_MODELS_DIRECTORY,
 
         #[cfg(feature = "ganda")]
         Language::Ganda => GANDA_MODELS_DIRECTORY,
@@ -506,6 +511,9 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "french")]
         Language::French => FRENCH_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "galician")]
+        Language::Galician => GALICIAN_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "ganda")]
         Language::Ganda => GANDA_TESTDATA_DIRECTORY,

@@ -50,7 +50,7 @@
 //!
 //! Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*,
 //! that is, getting detection right for a small set of languages first before adding new ones.
-//! Currently, 75 languages are supported. They are listed as variants in the [Language] enum.
+//! Currently, 76 languages are supported. They are listed as variants in the [Language] enum.
 //!
 //! ## 4. How good is it?
 //!
@@ -69,7 +69,7 @@
 //! 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 //!
 //! Given the generated test data, I have compared the detection results of *Lingua*, *CLD2*,
-//! *Whatlang* and *Whichlang* running over the data of *Lingua's* supported 75 languages.
+//! *Whatlang* and *Whichlang* running over the data of *Lingua's* supported 76 languages.
 //! Languages that are not supported by the other classifiers are simply ignored for the
 //! respective library during the detection process.
 //!
@@ -116,7 +116,7 @@
 //! lingua = "1.8.0"
 //! ```
 //!
-//! By default, this will download the language model dependencies for all 75 supported languages,
+//! By default, this will download the language model dependencies for all 76 supported languages,
 //! a total of approximately 300 MB. If your bandwidth or hard drive space is limited, or you simply
 //! do not need all languages, you can specify a subset of the language models to be downloaded as
 //! separate features in your `Cargo.toml`:
@@ -387,7 +387,7 @@
 //! wasm-pack build --target web
 //! ```
 //!
-//! By default, all 75 supported languages are included in the compiled wasm file which has a size
+//! By default, all 76 supported languages are included in the compiled wasm file which has a size
 //! of 288 MB, approximately. If you only need a subset of certain languages, you can tell `wasm-pack`
 //! which ones to include:
 //!

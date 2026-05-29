@@ -99,11 +99,14 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             });
         }
 
-        if cfg!(feature = "basque") || cfg!(feature = "spanish") {
+        if cfg!(feature = "basque") || cfg!(feature = "galician") || cfg!(feature = "spanish") {
             mapping.insert("Ññ", {
                 let mut languages = hashset!();
                 if cfg!(feature = "basque") {
                     languages.insert(Language::from_str("Basque").unwrap());
+                }
+                if cfg!(feature = "galician") {
+                    languages.insert(Language::from_str("Galician").unwrap());
                 }
                 if cfg!(feature = "spanish") {
                     languages.insert(Language::from_str("Spanish").unwrap());
@@ -721,6 +724,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             if cfg!(feature = "azerbaijani")
                 || cfg!(feature = "catalan")
                 || cfg!(feature = "estonian")
+                || cfg!(feature = "galician")
                 || cfg!(feature = "german")
                 || cfg!(feature = "hungarian")
                 || cfg!(feature = "spanish")
@@ -736,6 +740,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                     }
                     if cfg!(feature = "estonian") {
                         languages.insert(Language::from_str("Estonian").unwrap());
+                    }
+                    if cfg!(feature = "galician") {
+                        languages.insert(Language::from_str("Galician").unwrap());
                     }
                     if cfg!(feature = "german") {
                         languages.insert(Language::from_str("German").unwrap());
@@ -863,6 +870,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             }
 
             if cfg!(feature = "catalan")
+                || cfg!(feature = "galician")
                 || cfg!(feature = "hungarian")
                 || cfg!(feature = "icelandic")
                 || cfg!(feature = "irish")
@@ -877,6 +885,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                     let mut languages = hashset!();
                     if cfg!(feature = "catalan") {
                         languages.insert(Language::from_str("Catalan").unwrap());
+                    }
+                    if cfg!(feature = "galician") {
+                        languages.insert(Language::from_str("Galician").unwrap());
                     }
                     if cfg!(feature = "hungarian") {
                         languages.insert(Language::from_str("Hungarian").unwrap());
@@ -911,6 +922,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
 
             if cfg!(feature = "catalan")
                 || cfg!(feature = "czech")
+                || cfg!(feature = "galician")
                 || cfg!(feature = "icelandic")
                 || cfg!(feature = "irish")
                 || cfg!(feature = "hungarian")
@@ -927,6 +939,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                     }
                     if cfg!(feature = "czech") {
                         languages.insert(Language::from_str("Czech").unwrap());
+                    }
+                    if cfg!(feature = "galician") {
+                        languages.insert(Language::from_str("Galician").unwrap());
                     }
                     if cfg!(feature = "icelandic") {
                         languages.insert(Language::from_str("Icelandic").unwrap());
@@ -959,6 +974,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             if cfg!(feature = "catalan")
                 || cfg!(feature = "czech")
                 || cfg!(feature = "french")
+                || cfg!(feature = "galician")
                 || cfg!(feature = "hungarian")
                 || cfg!(feature = "icelandic")
                 || cfg!(feature = "irish")
@@ -979,6 +995,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                     }
                     if cfg!(feature = "french") {
                         languages.insert(Language::from_str("French").unwrap());
+                    }
+                    if cfg!(feature = "galician") {
+                        languages.insert(Language::from_str("Galician").unwrap());
                     }
                     if cfg!(feature = "hungarian") {
                         languages.insert(Language::from_str("Hungarian").unwrap());

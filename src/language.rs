@@ -24,7 +24,7 @@ use strum_macros::{EnumIter, EnumString};
 use crate::alphabet::Alphabet;
 use crate::isocode::{IsoCode639_1, IsoCode639_3};
 
-/// This enum specifies the so far 75 supported languages which can be detected by *Lingua*.
+/// This enum specifies the so far 76 supported languages which can be detected by *Lingua*.
 #[derive(
     Clone,
     Copy,
@@ -119,6 +119,9 @@ pub enum Language {
 
     #[cfg(feature = "french")]
     French,
+
+    #[cfg(feature = "galician")]
+    Galician,
 
     #[cfg(feature = "ganda")]
     Ganda,
@@ -430,6 +433,9 @@ impl Language {
             #[cfg(feature = "french")]
             Language::French => IsoCode639_1::FR,
 
+            #[cfg(feature = "galician")]
+            Language::Galician => IsoCode639_1::GL,
+
             #[cfg(feature = "ganda")]
             Language::Ganda => IsoCode639_1::LG,
 
@@ -660,6 +666,9 @@ impl Language {
             #[cfg(feature = "french")]
             Language::French => IsoCode639_3::FRA,
 
+            #[cfg(feature = "galician")]
+            Language::Galician => IsoCode639_3::GLG,
+
             #[cfg(feature = "ganda")]
             Language::Ganda => IsoCode639_3::LUG,
 
@@ -870,6 +879,9 @@ impl Language {
 
             #[cfg(feature = "french")]
             Language::French => hashset!(Alphabet::Latin),
+
+            #[cfg(feature = "galician")]
+            Language::Galician => hashset!(Alphabet::Latin),
 
             #[cfg(feature = "ganda")]
             Language::Ganda => hashset!(Alphabet::Latin),
@@ -1163,6 +1175,7 @@ mod tests {
                 Estonian,
                 Finnish,
                 French,
+                Galician,
                 Ganda,
                 Georgian,
                 German,
@@ -1247,6 +1260,7 @@ mod tests {
                 Estonian,
                 Finnish,
                 French,
+                Galician,
                 Ganda,
                 Georgian,
                 German,
@@ -1350,6 +1364,7 @@ mod tests {
                 Estonian,
                 Finnish,
                 French,
+                Galician,
                 Ganda,
                 German,
                 Hungarian,

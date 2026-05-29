@@ -2123,7 +2123,7 @@ mod tests {
         case("kradzieżami", hashset!(Polish, Romanian)),
         case("înviat", hashset!(French, Romanian)),
         case("venerdì", hashset!(Italian, Vietnamese, Yoruba)),
-        case("años", hashset!(Basque, Spanish)),
+        case("años", hashset!(Basque, Galician, Spanish)),
         case("rozohňuje", hashset!(Czech, Slovak)),
         case("rtuť", hashset!(Czech, Slovak)),
         case("pregătire", hashset!(Romanian, Vietnamese)),
@@ -2145,7 +2145,7 @@ mod tests {
         case("pràctiques", hashset!(Catalan, French, Italian, Portuguese, Vietnamese)),
         case(
             "überrascht",
-            hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish)
+            hashset!(Azerbaijani, Catalan, Estonian, Galician, German, Hungarian, Spanish, Turkish)
         ),
         case("indebærer", hashset!(Bokmal, Danish, Icelandic, Nynorsk)),
         case("måned", hashset!(Bokmal, Danish, Nynorsk, Swedish)),
@@ -2163,46 +2163,47 @@ mod tests {
         case(
             "catedráticos",
             hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Catalan, Czech, Galician, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
                 Vietnamese, Yoruba
             )
         ),
         case(
             "política",
             hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Catalan, Czech, Galician, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
                 Vietnamese, Yoruba
             )
         ),
         case(
             "música",
             hashset!(
-                Catalan, Czech, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
+                Catalan, Czech, Galician, Icelandic, Irish, Hungarian, Portuguese, Slovak, Spanish,
                 Vietnamese, Yoruba
             )
         ),
         case(
             "contradicció",
             hashset!(
-                Catalan, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish,
+                Catalan, Galician, Hungarian, Icelandic, Irish, Polish, Portuguese, Slovak, Spanish,
                 Vietnamese, Yoruba
             )
         ),
         case(
             "només",
             hashset!(
-                Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
-                Spanish, Vietnamese, Yoruba
+                Catalan, Czech, French, Galician, Hungarian, Icelandic, Irish, Italian, Portuguese,
+                Slovak, Spanish, Vietnamese, Yoruba
             )
         ),
         case(
             "house",
             hashset!(
                 Afrikaans, Albanian, Azerbaijani, Basque, Bokmal, Bosnian, Catalan, Croatian, Czech,
-                Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Ganda, German, Hungarian,
-                Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay, Maori, Nynorsk,
-                Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho, Spanish, Swahili,
-                Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
+                Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Galician, Ganda, German,
+                Hungarian, Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay,
+                Maori, Nynorsk, Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho,
+                Spanish, Swahili, Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa,
+                Yoruba, Zulu
             )
         ),
     )]

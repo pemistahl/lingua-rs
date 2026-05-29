@@ -50,6 +50,7 @@ classifiers = [
     "Natural Language :: Esperanto",
     "Natural Language :: Finnish",
     "Natural Language :: French",
+    "Natural Language :: Galician",
     "Natural Language :: German",
     "Natural Language :: Greek",
     "Natural Language :: Hebrew",

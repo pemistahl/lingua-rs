@@ -4,7 +4,7 @@
 
 [![build status](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
-[![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#4-which-languages-are-supported)
+[![supported languages](https://img.shields.io/badge/supported%20languages-76-green.svg)](#4-which-languages-are-supported)
 ![supported Python versions](https://img.shields.io/badge/Python-%3E%3D%203.12-blue)
 [![pypi](https://img.shields.io/badge/PYPI-v2.2.0-blue)](https://pypi.org/project/lingua-language-detector)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
@@ -75,7 +75,7 @@ Both 1.* and 2.* versions will remain available on the Python package index (PyP
 
 Compared to other language detection libraries, *Lingua's* focus is on
 *quality over quantity*, that is, getting detection right for a small set of
-languages first before adding new ones. Currently, the following 75 languages
+languages first before adding new ones. Currently, the following 76 languages
 are supported:
 
 - A
@@ -107,6 +107,7 @@ are supported:
     - Finnish
     - French
 - G
+    - Galician
     - Ganda
     - Georgian
     - German
@@ -199,7 +200,7 @@ extracted, respectively.
 
 Given the generated test data, I have compared the detection results of
 *Lingua*, *Langdetect*, *Langid*, *Simplemma*, *CLD 2* and *CLD 3*
-running over the data of *Lingua's* supported 75 languages. Languages that are
+running over the data of *Lingua's* supported 76 languages. Languages that are
 not supported by the other detectors are simply ignored for them during the
 detection process.
 
@@ -293,7 +294,7 @@ show detailed statistics for each language and classifier including mean, median
 ## 6. How fast is it?
 
 The accuracy reporter script measures the time each language detector needs
-to classify 3000 input texts for each of the supported 75 languages. The results
+to classify 3000 input texts for each of the supported 76 languages. The results
 below have been produced on an iMac 3.6 Ghz 8-Core Intel Core i9 with 40 GB RAM.
 
 Lingua in [multi-threaded mode](https://github.com/pemistahl/lingua-py#117-single-threaded-versus-multi-threaded-language-detection)

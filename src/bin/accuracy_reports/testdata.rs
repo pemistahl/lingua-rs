@@ -38,6 +38,7 @@ use lingua_esperanto_language_model::ESPERANTO_TESTDATA_DIRECTORY;
 use lingua_estonian_language_model::ESTONIAN_TESTDATA_DIRECTORY;
 use lingua_finnish_language_model::FINNISH_TESTDATA_DIRECTORY;
 use lingua_french_language_model::FRENCH_TESTDATA_DIRECTORY;
+use lingua_galician_language_model::GALICIAN_TESTDATA_DIRECTORY;
 use lingua_ganda_language_model::GANDA_TESTDATA_DIRECTORY;
 use lingua_georgian_language_model::GEORGIAN_TESTDATA_DIRECTORY;
 use lingua_german_language_model::GERMAN_TESTDATA_DIRECTORY;
@@ -116,6 +117,7 @@ pub(crate) fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Estonian => ESTONIAN_TESTDATA_DIRECTORY,
         Language::Finnish => FINNISH_TESTDATA_DIRECTORY,
         Language::French => FRENCH_TESTDATA_DIRECTORY,
+        Language::Galician => GALICIAN_TESTDATA_DIRECTORY,
         Language::Ganda => GANDA_TESTDATA_DIRECTORY,
         Language::Georgian => GEORGIAN_TESTDATA_DIRECTORY,
         Language::German => GERMAN_TESTDATA_DIRECTORY,

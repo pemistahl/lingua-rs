@@ -1490,6 +1490,7 @@ dependencies = [
  "lingua-estonian-language-model",
  "lingua-finnish-language-model",
  "lingua-french-language-model",
+ "lingua-galician-language-model",
  "lingua-ganda-language-model",
  "lingua-georgian-language-model",
  "lingua-german-language-model",
@@ -1711,6 +1712,13 @@ dependencies = [
 
 [[package]]
 name = "lingua-french-language-model"
+version = "1.3.0"
+dependencies = [
+ "include_dir",
+]
+
+[[package]]
+name = "lingua-galician-language-model"
 version = "1.3.0"
 dependencies = [
  "include_dir",

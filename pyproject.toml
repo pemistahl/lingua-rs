@@ -15,7 +15,7 @@
 
 [project]
 name = "lingua-language-detector"
-version = "2.2.0"
+version = "2.2.1"
 authors = [{ name = "Peter M. Stahl", email = "pemistahl@gmail.com" }]
 description = "An accurate natural language detection library, suitable for short text and mixed-language text"
 readme = "README_PYPI.md"
@@ -34,7 +34,9 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: Afrikaans",
+    "Natural Language :: Amharic",
     "Natural Language :: Arabic",
+    "Natural Language :: Assamese",
     "Natural Language :: Basque",
     "Natural Language :: Bengali",
     "Natural Language :: Bosnian",
@@ -60,12 +62,16 @@ classifiers = [
     "Natural Language :: Irish",
     "Natural Language :: Italian",
     "Natural Language :: Japanese",
+    "Natural Language :: Kannada",
     "Natural Language :: Korean",
+    "Natural Language :: Kurdish",
+    "Natural Language :: Lao",
     "Natural Language :: Latin",
     "Natural Language :: Latvian",
     "Natural Language :: Lithuanian",
     "Natural Language :: Macedonian",
     "Natural Language :: Malay",
+    "Natural Language :: Malayalam",
     "Natural Language :: Marathi",
     "Natural Language :: Norwegian",
     "Natural Language :: Panjabi",
@@ -85,6 +91,7 @@ classifiers = [
     "Natural Language :: Turkish",
     "Natural Language :: Ukrainian",
     "Natural Language :: Urdu",
+    "Natural Language :: Uzbek",
     "Natural Language :: Vietnamese",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.12",

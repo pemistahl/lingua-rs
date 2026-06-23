@@ -1,0 +1,16 @@
+##### Somali #####
+
+>>> Accuracy on average: 78.83%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 93.10%
+Erroneously classified as Kurdish: 6.90%
+
+>> Detection of 1000 word pairs (average length: 15 chars)
+Accuracy: 88.00%
+Erroneously classified as Kurdish: 12.00%
+
+>> Detection of 1000 sentences (average length: 124 chars)
+Accuracy: 55.40%
+Erroneously classified as Kurdish: 44.60%
+

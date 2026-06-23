@@ -18,8 +18,10 @@ use include_dir::Dir;
 use lingua::Language;
 use lingua_afrikaans_language_model::AFRIKAANS_TESTDATA_DIRECTORY;
 use lingua_albanian_language_model::ALBANIAN_TESTDATA_DIRECTORY;
+use lingua_amharic_language_model::AMHARIC_TESTDATA_DIRECTORY;
 use lingua_arabic_language_model::ARABIC_TESTDATA_DIRECTORY;
 use lingua_armenian_language_model::ARMENIAN_TESTDATA_DIRECTORY;
+use lingua_assamese_language_model::ASSAMESE_TESTDATA_DIRECTORY;
 use lingua_azerbaijani_language_model::AZERBAIJANI_TESTDATA_DIRECTORY;
 use lingua_basque_language_model::BASQUE_TESTDATA_DIRECTORY;
 use lingua_belarusian_language_model::BELARUSIAN_TESTDATA_DIRECTORY;
@@ -51,13 +53,17 @@ use lingua_indonesian_language_model::INDONESIAN_TESTDATA_DIRECTORY;
 use lingua_irish_language_model::IRISH_TESTDATA_DIRECTORY;
 use lingua_italian_language_model::ITALIAN_TESTDATA_DIRECTORY;
 use lingua_japanese_language_model::JAPANESE_TESTDATA_DIRECTORY;
+use lingua_kannada_language_model::KANNADA_TESTDATA_DIRECTORY;
 use lingua_kazakh_language_model::KAZAKH_TESTDATA_DIRECTORY;
 use lingua_korean_language_model::KOREAN_TESTDATA_DIRECTORY;
+use lingua_kurdish_language_model::KURDISH_TESTDATA_DIRECTORY;
+use lingua_lao_language_model::LAO_TESTDATA_DIRECTORY;
 use lingua_latin_language_model::LATIN_TESTDATA_DIRECTORY;
 use lingua_latvian_language_model::LATVIAN_TESTDATA_DIRECTORY;
 use lingua_lithuanian_language_model::LITHUANIAN_TESTDATA_DIRECTORY;
 use lingua_macedonian_language_model::MACEDONIAN_TESTDATA_DIRECTORY;
 use lingua_malay_language_model::MALAY_TESTDATA_DIRECTORY;
+use lingua_malayalam_language_model::MALAYALAM_TESTDATA_DIRECTORY;
 use lingua_maori_language_model::MAORI_TESTDATA_DIRECTORY;
 use lingua_marathi_language_model::MARATHI_TESTDATA_DIRECTORY;
 use lingua_mongolian_language_model::MONGOLIAN_TESTDATA_DIRECTORY;
@@ -86,6 +92,7 @@ use lingua_tswana_language_model::TSWANA_TESTDATA_DIRECTORY;
 use lingua_turkish_language_model::TURKISH_TESTDATA_DIRECTORY;
 use lingua_ukrainian_language_model::UKRAINIAN_TESTDATA_DIRECTORY;
 use lingua_urdu_language_model::URDU_TESTDATA_DIRECTORY;
+use lingua_uzbek_language_model::UZBEK_TESTDATA_DIRECTORY;
 use lingua_vietnamese_language_model::VIETNAMESE_TESTDATA_DIRECTORY;
 use lingua_welsh_language_model::WELSH_TESTDATA_DIRECTORY;
 use lingua_xhosa_language_model::XHOSA_TESTDATA_DIRECTORY;
@@ -96,8 +103,10 @@ pub(crate) fn get_test_data_directory(language: &Language) -> Dir<'static> {
     match *language {
         Language::Afrikaans => AFRIKAANS_TESTDATA_DIRECTORY,
         Language::Albanian => ALBANIAN_TESTDATA_DIRECTORY,
+        Language::Amharic => AMHARIC_TESTDATA_DIRECTORY,
         Language::Arabic => ARABIC_TESTDATA_DIRECTORY,
         Language::Armenian => ARMENIAN_TESTDATA_DIRECTORY,
+        Language::Assamese => ASSAMESE_TESTDATA_DIRECTORY,
         Language::Azerbaijani => AZERBAIJANI_TESTDATA_DIRECTORY,
         Language::Basque => BASQUE_TESTDATA_DIRECTORY,
         Language::Belarusian => BELARUSIAN_TESTDATA_DIRECTORY,
@@ -129,13 +138,17 @@ pub(crate) fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Irish => IRISH_TESTDATA_DIRECTORY,
         Language::Italian => ITALIAN_TESTDATA_DIRECTORY,
         Language::Japanese => JAPANESE_TESTDATA_DIRECTORY,
+        Language::Kannada => KANNADA_TESTDATA_DIRECTORY,
         Language::Kazakh => KAZAKH_TESTDATA_DIRECTORY,
         Language::Korean => KOREAN_TESTDATA_DIRECTORY,
+        Language::Kurdish => KURDISH_TESTDATA_DIRECTORY,
+        Language::Lao => LAO_TESTDATA_DIRECTORY,
         Language::Latin => LATIN_TESTDATA_DIRECTORY,
         Language::Latvian => LATVIAN_TESTDATA_DIRECTORY,
         Language::Lithuanian => LITHUANIAN_TESTDATA_DIRECTORY,
         Language::Macedonian => MACEDONIAN_TESTDATA_DIRECTORY,
         Language::Malay => MALAY_TESTDATA_DIRECTORY,
+        Language::Malayalam => MALAYALAM_TESTDATA_DIRECTORY,
         Language::Maori => MAORI_TESTDATA_DIRECTORY,
         Language::Marathi => MARATHI_TESTDATA_DIRECTORY,
         Language::Mongolian => MONGOLIAN_TESTDATA_DIRECTORY,
@@ -164,6 +177,7 @@ pub(crate) fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Turkish => TURKISH_TESTDATA_DIRECTORY,
         Language::Ukrainian => UKRAINIAN_TESTDATA_DIRECTORY,
         Language::Urdu => URDU_TESTDATA_DIRECTORY,
+        Language::Uzbek => UZBEK_TESTDATA_DIRECTORY,
         Language::Vietnamese => VIETNAMESE_TESTDATA_DIRECTORY,
         Language::Welsh => WELSH_TESTDATA_DIRECTORY,
         Language::Xhosa => XHOSA_TESTDATA_DIRECTORY,

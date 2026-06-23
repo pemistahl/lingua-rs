@@ -966,6 +966,7 @@ impl LanguageDetector {
     ) -> HashSet<Language> {
         let mut alphabet_counter = Counter::<Alphabet>::new();
         let half_word_count = (words.len() as f64) * 0.5;
+        let total_char_count: usize = words.iter().map(|w| w.chars().count()).sum();
 
         for word in words.iter() {
             for alphabet in Alphabet::iter() {
@@ -976,8 +977,13 @@ impl LanguageDetector {
             }
         }
 
-        if alphabet_counter.is_empty() {
-            return languages.clone();
+        // Why: text uses a script lingua doesn't model (e.g. Tibetan, Sinhala),
+        // possibly with incidental Latin noise from HTML/punctuation. Without this
+        // guard, stray ASCII chars hijack detection and produce a high-confidence
+        // false positive. Require matched chars to cover at least half the input.
+        let matched_char_count: usize = alphabet_counter.values().sum();
+        if total_char_count > 0 && (matched_char_count as f64) < (total_char_count as f64) * 0.5 {
+            return HashSet::new();
         }
 
         if alphabet_counter.len() > 1 {
@@ -2058,7 +2064,6 @@ mod tests {
 
         // words with unique alphabet
         case("ունենա", Some(Armenian)),
-        case("জানাতে", Some(Bengali)),
         case("გარეუბან", Some(Georgian)),
         case("σταμάτησε", Some(Greek)),
         case("ઉપકરણોની", Some(Gujarati)),
@@ -2090,7 +2095,7 @@ mod tests {
     }
 
     #[rstest(word, expected_languages,
-        case("والموضوع", hashset!(Arabic, Persian, Urdu)),
+        case("والموضوع", hashset!(Arabic, Kurdish, Persian, Urdu)),
         case(
             "сопротивление",
             hashset!(
@@ -2119,9 +2124,9 @@ mod tests {
         case("wystąpią", hashset!(Lithuanian, Polish)),
         case("budowę", hashset!(Lithuanian, Polish)),
         case("nebūsime", hashset!(Latvian, Lithuanian, Maori, Yoruba)),
-        case("afişate", hashset!(Azerbaijani, Romanian, Turkish)),
+        case("afişate", hashset!(Azerbaijani, Kurdish, Romanian, Turkish)),
         case("kradzieżami", hashset!(Polish, Romanian)),
-        case("înviat", hashset!(French, Romanian)),
+        case("înviat", hashset!(French, Kurdish, Romanian)),
         case("venerdì", hashset!(Italian, Vietnamese, Yoruba)),
         case("años", hashset!(Basque, Spanish)),
         case("rozohňuje", hashset!(Czech, Slovak)),
@@ -2130,9 +2135,9 @@ mod tests {
         case("jeďte", hashset!(Czech, Romanian, Slovak)),
         case("minjaverðir", hashset!(Icelandic, Turkish)),
         case("þagnarskyldu", hashset!(Icelandic, Turkish)),
-        case("nebûtu", hashset!(French, Hungarian)),
+        case("nebûtu", hashset!(French, Hungarian, Kurdish)),
         case("hashemidëve", hashset!(Afrikaans, Albanian, Dutch, French)),
-        case("forêt", hashset!(Afrikaans, French, Portuguese, Vietnamese)),
+        case("forêt", hashset!(Afrikaans, French, Kurdish, Portuguese, Vietnamese)),
         case("succèdent", hashset!(French, Italian, Vietnamese, Yoruba)),
         case("où", hashset!(French, Italian, Vietnamese, Yoruba)),
         case("tõeliseks", hashset!(Estonian, Hungarian, Portuguese, Vietnamese)),
@@ -2154,7 +2159,7 @@ mod tests {
         case("navržen", hashset!(Bosnian, Czech, Croatian, Latvian, Lithuanian, Slovak, Slovene)),
         case(
             "façonnage",
-            hashset!(Albanian, Azerbaijani, Basque, Catalan, French, Portuguese, Turkish)
+            hashset!(Albanian, Azerbaijani, Basque, Catalan, French, Kurdish, Portuguese, Turkish)
         ),
         case(
             "höher",
@@ -2200,9 +2205,10 @@ mod tests {
             hashset!(
                 Afrikaans, Albanian, Azerbaijani, Basque, Bokmal, Bosnian, Catalan, Croatian, Czech,
                 Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Ganda, German, Hungarian,
-                Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay, Maori, Nynorsk,
-                Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho, Spanish, Swahili,
-                Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
+                Icelandic, Indonesian, Irish, Italian, Kurdish, Latin, Latvian, Lithuanian, Malay,
+                Maori, Nynorsk, Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho,
+                Spanish, Swahili, Swedish, Tagalog, Tsonga, Tswana, Turkish, Uzbek, Vietnamese, Welsh,
+                Xhosa, Yoruba, Zulu
             )
         ),
     )]

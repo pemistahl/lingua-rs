@@ -1,0 +1,16 @@
+##### Latvian #####
+
+>>> Accuracy on average: 86.03%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 96.50%
+Erroneously classified as Uzbek: 3.50%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 93.00%
+Erroneously classified as Uzbek: 7.00%
+
+>> Detection of 1000 sentences (average length: 109 chars)
+Accuracy: 68.60%
+Erroneously classified as Uzbek: 31.40%
+

@@ -6,7 +6,7 @@
 [![python build status](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml/badge.svg)](https://github.com/pemistahl/lingua-rs/actions/workflows/python-build.yml)
 [![docs.rs](https://docs.rs/lingua/badge.svg)](https://docs.rs/lingua)
 [![codecov](https://codecov.io/gh/pemistahl/lingua-rs/branch/main/graph/badge.svg)](https://codecov.io/gh/pemistahl/lingua-rs)
-[![supported languages](https://img.shields.io/badge/supported%20languages-75-green.svg)](#3-which-languages-are-supported)
+[![supported languages](https://img.shields.io/badge/supported%20languages-82-green.svg)](#3-which-languages-are-supported)
 [![dependency status](https://deps.rs/crate/lingua/1.8.0/status.svg)](https://deps.rs/crate/lingua/1.8.0)
 [![downloads](https://img.shields.io/crates/d/lingua.svg)](https://crates.io/crates/lingua)
 [![crates.io](https://img.shields.io/crates/v/lingua.svg)](https://crates.io/crates/lingua)
@@ -52,13 +52,15 @@ Once the library has been downloaded, it can be used completely offline.
 
 Compared to other language detection libraries, *Lingua's* focus is on *quality over quantity*, that is, 
 getting detection right for a small set of languages first before adding new ones. 
-Currently, the following 75 languages are supported:
+Currently, the following 82 languages are supported:
 
 - A
   - Afrikaans
   - Albanian
+  - Amharic
   - Arabic
   - Armenian
+  - Assamese
   - Azerbaijani
 - B
   - Basque
@@ -100,15 +102,19 @@ Currently, the following 75 languages are supported:
 - J
   - Japanese
 - K
+  - Kannada
   - Kazakh
   - Korean
+  - Kurdish
 - L
+  - Lao
   - Latin
   - Latvian
   - Lithuanian
 - M
   - Macedonian
   - Malay
+  - Malayalam
   - Maori
   - Marathi
   - Mongolian
@@ -143,6 +149,7 @@ Currently, the following 75 languages are supported:
 - U
   - Ukrainian
   - Urdu
+  - Uzbek
 - V
   - Vietnamese
 - W
@@ -171,7 +178,7 @@ each comprising ten thousand sentences. From each test corpus, a random unsorted
 1000 single words, 1000 word pairs and 1000 sentences has been extracted, respectively.
 
 Given the generated test data, I have compared the detection results of *Lingua*, *CLD2*, *Whatlang*
-and *Whichlang* running over the data of *Lingua's* supported 75 languages. Languages that are not supported
+and *Whichlang* running over the data of *Lingua's* supported 82 languages. Languages that are not supported
 by the other libraries are simply ignored for the respective library during the detection process.
 
 Each of the following sections contains five plots. The bar plots show the detailed accuracy
@@ -185,7 +192,7 @@ in each classifier, respectively. The last two plots are restricted to the commo
 of currently 16 languages that is supported by all compared classifiers. This distinction
 makes sense because the first box plot creates the impression that Whichlang is the most
 accurate classifier, but it is not. Whichlang supports only 16 languages whereas Lingua
-supports 75 languages. For the last box plot, the supported languages in Whatlang and
+supports 82 languages. For the last box plot, the supported languages in Whatlang and
 Lingua have been restricted to those 16 languages supported by Whichlang. This provides
 for a more accurate comparison and shows that overall, Lingua is the most accurate
 language detection library in this comparison.
@@ -362,7 +369,7 @@ Whichlang has the shortest processing time, Lingua the longest.
 | Lingua (high accuracy mode, all languages)    |     3.1243  s |        407.69 ms |
 
 The accuracy reporter script measures the time each language detector needs
-to classify 3000 input texts for each of the supported 75 languages.
+to classify 3000 input texts for each of the supported 82 languages.
 
 | Detector                                    |      Time |
 |---------------------------------------------|----------:|

@@ -86,11 +86,14 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             });
         }
 
-        if cfg!(feature = "french") || cfg!(feature = "romanian") {
+        if cfg!(feature = "french") || cfg!(feature = "kurdish") || cfg!(feature = "romanian") {
             mapping.insert("Îî", {
                 let mut languages = hashset!();
                 if cfg!(feature = "french") {
                     languages.insert(Language::from_str("French").unwrap());
+                }
+                if cfg!(feature = "kurdish") {
+                    languages.insert(Language::from_str("Kurdish").unwrap());
                 }
                 if cfg!(feature = "romanian") {
                     languages.insert(Language::from_str("Romanian").unwrap());
@@ -190,7 +193,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             });
         }
 
-        if cfg!(feature = "french") || cfg!(feature = "hungarian") {
+        if cfg!(feature = "french") || cfg!(feature = "hungarian") || cfg!(feature = "kurdish") {
             mapping.insert("Ûû", {
                 let mut languages = hashset!();
                 if cfg!(feature = "french") {
@@ -198,6 +201,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                 }
                 if cfg!(feature = "hungarian") {
                     languages.insert(Language::from_str("Hungarian").unwrap());
+                }
+                if cfg!(feature = "kurdish") {
+                    languages.insert(Language::from_str("Kurdish").unwrap());
                 }
                 languages
             });
@@ -245,12 +251,18 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
             });
         }
 
-        if cfg!(feature = "azerbaijani") || cfg!(feature = "romanian") || cfg!(feature = "turkish")
+        if cfg!(feature = "azerbaijani")
+            || cfg!(feature = "kurdish")
+            || cfg!(feature = "romanian")
+            || cfg!(feature = "turkish")
         {
             mapping.insert("Şş", {
                 let mut languages = hashset!();
                 if cfg!(feature = "azerbaijani") {
                     languages.insert(Language::from_str("Azerbaijani").unwrap());
+                }
+                if cfg!(feature = "kurdish") {
+                    languages.insert(Language::from_str("Kurdish").unwrap());
                 }
                 if cfg!(feature = "romanian") {
                     languages.insert(Language::from_str("Romanian").unwrap());
@@ -429,6 +441,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
 
         if cfg!(feature = "afrikaans")
             || cfg!(feature = "french")
+            || cfg!(feature = "kurdish")
             || cfg!(feature = "portuguese")
             || cfg!(feature = "vietnamese")
         {
@@ -439,6 +452,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                 }
                 if cfg!(feature = "french") {
                     languages.insert(Language::from_str("French").unwrap());
+                }
+                if cfg!(feature = "kurdish") {
+                    languages.insert(Language::from_str("Kurdish").unwrap());
                 }
                 if cfg!(feature = "portuguese") {
                     languages.insert(Language::from_str("Portuguese").unwrap());
@@ -793,6 +809,7 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                 || cfg!(feature = "basque")
                 || cfg!(feature = "catalan")
                 || cfg!(feature = "french")
+                || cfg!(feature = "kurdish")
                 || cfg!(feature = "portuguese")
                 || cfg!(feature = "turkish")
             {
@@ -812,6 +829,9 @@ pub(crate) static CHARS_TO_LANGUAGES_MAPPING: LazyLock<HashMap<&'static str, Has
                     }
                     if cfg!(feature = "french") {
                         languages.insert(Language::from_str("French").unwrap());
+                    }
+                    if cfg!(feature = "kurdish") {
+                        languages.insert(Language::from_str("Kurdish").unwrap());
                     }
                     if cfg!(feature = "portuguese") {
                         languages.insert(Language::from_str("Portuguese").unwrap());

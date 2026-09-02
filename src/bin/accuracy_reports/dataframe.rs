@@ -34,13 +34,7 @@ pub(crate) fn get_dataframe_detector_name(df: &DataFrame) -> String {
 }
 
 pub(crate) fn get_dataframe_probability(df: &DataFrame) -> f64 {
-    df.get_columns()
-        .get(1)
-        .unwrap()
-        .f64()
-        .unwrap()
-        .get(0)
-        .unwrap()
+    df.columns().get(1).unwrap().f64().unwrap().get(0).unwrap()
 }
 
 pub(crate) fn dataframe_contains_language(df: &DataFrame, language_name: &str) -> bool {
@@ -103,10 +97,10 @@ pub(crate) fn update_dataframe_with_new_probability(
 }
 
 pub(crate) fn sort_dataframe(df: DataFrame) -> DataFrame {
-    let sorted_columns = &mut df.get_column_names_str()[1..]
+    let sorted_columns = &mut df.get_column_names()[1..]
         .iter()
         .sorted()
-        .map(|&it| col(it))
+        .map(|&it| col(it.as_str()))
         .collect_vec();
 
     sorted_columns.insert(0, col("language"));

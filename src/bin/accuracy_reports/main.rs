@@ -163,7 +163,7 @@ fn main() {
             fs::File::create(&report_file_path).expect("CSV file could not be created");
 
         CsvWriter::new(&mut aggregated_report_file)
-            .with_null_value("NaN".to_string())
+            .with_null_value(PlSmallStr::from("NaN"))
             .finish(&mut dataframe)
             .expect("Data frame could not be written to CSV file");
     }

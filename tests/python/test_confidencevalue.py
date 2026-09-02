@@ -24,8 +24,7 @@ def test_confidence_value_copy():
     confidence_copy = copy(confidence)
     assert confidence_copy == confidence
     assert confidence_copy is not confidence
-    assert confidence_copy.language == confidence.language
-    assert confidence_copy.language is not confidence.language
+    assert confidence_copy.language is confidence.language
     assert confidence_copy.value == confidence.value
     assert confidence_copy.value is not confidence.value
 
@@ -35,8 +34,7 @@ def test_confidence_value_deepcopy():
     confidence_copy = deepcopy(confidence)
     assert confidence_copy == confidence
     assert confidence_copy is not confidence
-    assert confidence_copy.language == confidence.language
-    assert confidence_copy.language is not confidence.language
+    assert confidence_copy.language is confidence.language
     assert confidence_copy.value == confidence.value
     assert confidence_copy.value is not confidence.value
 
@@ -45,4 +43,4 @@ def test_confidence_value_pickle():
     confidence = ConfidenceValue(Language.ENGLISH, 0.95)
     serialized = pickle.dumps(confidence)
     deserialized = pickle.loads(serialized)
-    assert  deserialized == confidence
+    assert deserialized == confidence

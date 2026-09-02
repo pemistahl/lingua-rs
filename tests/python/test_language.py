@@ -41,14 +41,12 @@ def test_language_is_comparable():
 
 def test_language_copy():
     language_copy = copy(Language.ENGLISH)
-    assert language_copy == Language.ENGLISH
-    assert language_copy is not Language.ENGLISH
+    assert language_copy is Language.ENGLISH
 
 
 def test_language_deepcopy():
     language_copy = deepcopy(Language.ENGLISH)
-    assert language_copy == Language.ENGLISH
-    assert language_copy is not Language.ENGLISH
+    assert language_copy is Language.ENGLISH
 
 
 def test_language_pickle():

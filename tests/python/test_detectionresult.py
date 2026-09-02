@@ -29,14 +29,10 @@ def test_detection_result_copy():
     result_copy = copy(result)
     assert result_copy == result
     assert result_copy is not result
-    assert result_copy.start_index == result.start_index
     assert result_copy.start_index is result.start_index
-    assert result_copy.end_index == result.end_index
     assert result_copy.end_index is result.end_index
-    assert result_copy.word_count == result.word_count
     assert result_copy.word_count is result.word_count
-    assert result_copy.language == result.language
-    assert result_copy.language is not result.language
+    assert result_copy.language is result.language
 
 
 def test_detection_result_deepcopy():
@@ -49,14 +45,10 @@ def test_detection_result_deepcopy():
     result_copy = deepcopy(result)
     assert result_copy == result
     assert result_copy is not result
-    assert result_copy.start_index == result.start_index
     assert result_copy.start_index is result.start_index
-    assert result_copy.end_index == result.end_index
     assert result_copy.end_index is result.end_index
-    assert result_copy.word_count == result.word_count
     assert result_copy.word_count is result.word_count
-    assert result_copy.language == result.language
-    assert result_copy.language is not result.language
+    assert result_copy.language is result.language
 
 
 def test_detection_result_pickle():

@@ -1,2 +1,2 @@
-maturin == 1.11.5
-pytest == 9.0.2
+maturin == 1.15.0
+pytest == 9.1.1

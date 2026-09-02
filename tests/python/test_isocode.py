@@ -41,14 +41,12 @@ def test_iso_code_639_1_is_comparable():
 
 def test_iso_code_639_1_copy():
     iso_code_copy = copy(IsoCode639_1.EN)
-    assert iso_code_copy == IsoCode639_1.EN
-    assert iso_code_copy is not IsoCode639_1.EN
+    assert iso_code_copy is IsoCode639_1.EN
 
 
 def test_iso_code_639_1_deepcopy():
     iso_code_copy = deepcopy(IsoCode639_1.EN)
-    assert iso_code_copy == IsoCode639_1.EN
-    assert iso_code_copy is not IsoCode639_1.EN
+    assert iso_code_copy is IsoCode639_1.EN
 
 
 def test_iso_code_639_1_pickle():
@@ -78,14 +76,12 @@ def test_iso_code_639_3_is_comparable():
 
 def test_iso_code_639_3_copy():
     iso_code_copy = copy(IsoCode639_3.ENG)
-    assert iso_code_copy == IsoCode639_3.ENG
-    assert iso_code_copy is not IsoCode639_3.ENG
+    assert iso_code_copy is IsoCode639_3.ENG
 
 
 def test_iso_code_639_3_deepcopy():
     iso_code_copy = deepcopy(IsoCode639_3.ENG)
-    assert iso_code_copy == IsoCode639_3.ENG
-    assert iso_code_copy is not IsoCode639_3.ENG
+    assert iso_code_copy is IsoCode639_3.ENG
 
 
 def test_iso_code_639_3_pickle():

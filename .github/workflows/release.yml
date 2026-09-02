@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -44,7 +44,7 @@ jobs:
           manylinux: ${{ matrix.linux }}
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: linux-${{ matrix.linux }}-${{ matrix.target }}-wheels
           path: dist
@@ -60,7 +60,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -70,7 +70,7 @@ jobs:
           sccache: 'true'
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: windows-${{ matrix.target }}-wheels
           path: dist
@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -96,7 +96,7 @@ jobs:
           sccache: 'true'
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: macos-${{ matrix.target }}-wheels
           path: dist
@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: Download wheels from previous jobs
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           path: wheels
           merge-multiple: true
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Upload release to crates.io
         uses: katyo/publish-crates@v2

@@ -1,3 +1,10 @@
+## Lingua 1.9.0 (not yet released)
+
+### Languages
+
+- The Galician language is now supported. Thanks to its dedicated language
+  model, *Lingua* can now detect 76 languages in total.
+
 ## Lingua 1.8.0 (released on 9 Mar 2026)
 
 ### Improvements

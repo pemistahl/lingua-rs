@@ -131,6 +131,10 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Irish`](crate::language::Language::Irish)
     GA,
 
+    #[cfg(feature = "galician")]
+    /// The ISO 639-1 code for [`Galician`](crate::language::Language::Galician)
+    GL,
+
     #[cfg(feature = "gujarati")]
     /// The ISO 639-1 code for [`Gujarati`](crate::language::Language::Gujarati)
     GU,
@@ -451,6 +455,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "irish")]
     /// The ISO 639-3 code for [`Irish`](crate::language::Language::Irish)
     GLE,
+
+    #[cfg(feature = "galician")]
+    /// The ISO 639-3 code for [`Galician`](crate::language::Language::Galician)
+    GLG,
 
     #[cfg(feature = "gujarati")]
     /// The ISO 639-3 code for [`Gujarati`](crate::language::Language::Gujarati)

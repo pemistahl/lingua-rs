@@ -52,6 +52,34 @@ pub(crate) static JAPANESE_UNIQUE_KANJI: LazyLock<HashSet<char>> = LazyLock::new
     .chars()
     .collect()
 });
+
+/// Whole words that are valid, common vocabulary in *both* Chinese and
+/// Japanese, with the same meaning in each, so the word itself carries no
+/// signal for which language it is. 報酬 ("remuneration") is written
+/// identically in Japanese and in traditional Chinese (Taiwan, Hong Kong) and
+/// is ordinary vocabulary in both — unlike the entries in
+/// [`JAPANESE_UNIQUE_KANJI`], it cannot be resolved by looking at individual
+/// characters.
+///
+/// When the *entire* input matches one of these words, the detector reports
+/// no language rather than defaulting to Chinese, since there is nothing in
+/// the text itself to decide the question. Text that additionally contains
+/// hiragana, katakana or a character from [`JAPANESE_UNIQUE_KANJI`] is
+/// unaffected and continues to resolve to Japanese as before, e.g.
+/// "報酬を受け取る" ("to receive remuneration").
+///
+/// Note the simplified-Chinese spelling 报酬 is deliberately not listed here:
+/// it uses 报 (U+62A5), which Japanese does not use, so that spelling is
+/// unambiguously Chinese.
+///
+/// Keep this list to words that are confirmed common vocabulary in both
+/// languages. Each addition should be checked by hand; there is no
+/// language-model data this can be validated against, because the shipped
+/// Chinese and Japanese n-gram models only cover single characters (see
+/// `JAPANESE_UNIQUE_KANJI`'s doc comment), not whole words.
+pub(crate) static AMBIGUOUS_CJK_WORDS: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| hashset!("報酬"));
+
 pub(crate) static MULTIPLE_WHITESPACE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new("\\s+").unwrap());
 pub(crate) static NUMBERS: LazyLock<Regex> = LazyLock::new(|| Regex::new("\\p{N}").unwrap());

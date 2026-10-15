@@ -29,7 +29,7 @@ use strum::IntoEnumIterator;
 
 use crate::alphabet::Alphabet;
 use crate::constant::{
-    CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, JAPANESE_UNIQUE_KANJI,
+    AMBIGUOUS_CJK_WORDS, CHARS_TO_LANGUAGES_MAPPING, JAPANESE_CHARACTER_SET, JAPANESE_UNIQUE_KANJI,
     TOKENS_WITH_OPTIONAL_WHITESPACE, TOKENS_WITHOUT_WHITESPACE,
 };
 use crate::language::Language;
@@ -628,6 +628,17 @@ impl LanguageDetector {
             return values;
         }
 
+        // The whole input is a word that is common, identically-spelled
+        // vocabulary in both Chinese and Japanese (see AMBIGUOUS_CJK_WORDS):
+        // there is nothing in the text itself to decide between them, so
+        // report no language instead of defaulting to one. Checked before
+        // any other detection stage so no heuristic or statistical model
+        // gets a chance to still pick a winner.
+        if is_ambiguous_between_chinese_and_japanese(&words, languages) {
+            values.sort_by(confidence_values_comparator);
+            return values;
+        }
+
         if (self.is_built_from_one_language || self.is_low_accuracy_mode_enabled)
             && let Some(language) = self.detect_language_with_unique_and_common_ngrams(&words)
         {
@@ -1219,6 +1230,27 @@ fn collect_single_language_alphabets(languages: &HashSet<Language>) -> HashMap<A
         .into_iter()
         .filter(|(_, language)| languages.contains(language))
         .collect()
+}
+
+/// Checks whether the complete input, once tokenized, is nothing but one of
+/// the words in [`AMBIGUOUS_CJK_WORDS`] — common vocabulary spelled
+/// identically in Chinese and Japanese. The check only fires on the whole
+/// input, not a substring: `words` is tokenized one Han character per
+/// element (see `TOKENS_WITHOUT_WHITESPACE`), so concatenating every element
+/// back together reconstructs the original text exactly when it is Han-only.
+/// Text that also contains hiragana, katakana or any other evidence is
+/// unaffected, since those extra tokens stop the concatenation from matching
+/// an entry.
+fn is_ambiguous_between_chinese_and_japanese(
+    words: &[String],
+    languages: &HashSet<Language>,
+) -> bool {
+    cfg!(feature = "chinese")
+        && cfg!(feature = "japanese")
+        && languages.contains(&Language::from_str("Chinese").unwrap())
+        && languages.contains(&Language::from_str("Japanese").unwrap())
+        && words.iter().all(|word| Alphabet::Han.matches(word))
+        && AMBIGUOUS_CJK_WORDS.contains(words.concat().as_str())
 }
 
 fn confidence_values_comparator(first: &(Language, f64), second: &(Language, f64)) -> Ordering {
@@ -2125,6 +2157,69 @@ mod tests {
             detected_language, expected_language,
             "expected {:?} for word '{}', got {:?}",
             expected_language, word, detected_language
+        );
+    }
+
+    #[rstest(
+        text,
+        expected_language,
+        // 報酬 is common, identically-spelled vocabulary in both Japanese and
+        // traditional Chinese, so the whole input is ambiguous and no
+        // language is returned.
+        case("報酬", None),
+        // 报酬 uses the simplified-Chinese 报, which Japanese never uses, so
+        // it is unambiguously Chinese.
+        case("报酬", Some(Chinese)),
+        // Once the surrounding sentence contains kana, there is a signal
+        // again and Japanese wins as before.
+        case("報酬を受け取る", Some(Japanese)),
+        // A superset of the ambiguous word is not an exact match and keeps
+        // defaulting to Chinese.
+        case("報酬額", Some(Chinese)),
+        // Entries unaffected by this feature behave exactly as before.
+        case("携帯", Some(Japanese)),
+        case("自動車", Some(Chinese))
+    )]
+    fn assert_detect_language_of_resolves_ambiguous_cjk_words_correctly(
+        detector_for_all_languages: LanguageDetector,
+        text: &str,
+        expected_language: Option<Language>,
+    ) {
+        let detected_language = detector_for_all_languages.detect_language_of(text);
+        assert_eq!(
+            detected_language, expected_language,
+            "expected {:?} for text '{}', got {:?}",
+            expected_language, text, detected_language
+        );
+    }
+
+    #[rstest(
+        text,
+        languages,
+        expected,
+        // the whole input is the ambiguous word
+        case("報酬", hashset!(Chinese, Japanese), true),
+        // Chinese is not a candidate, so there is nothing to disambiguate
+        case("報酬", hashset!(Japanese, English), false),
+        // Japanese is not a candidate, so there is nothing to disambiguate
+        case("報酬", hashset!(Chinese, English), false),
+        // not an exact match for the whole input
+        case("報酬額", hashset!(Chinese, Japanese), false),
+        // contains non-Han evidence (kana) alongside the word
+        case("報酬を受け取る", hashset!(Chinese, Japanese), false),
+        // unlisted word, defaults to Chinese as before
+        case("自動車", hashset!(Chinese, Japanese), false)
+    )]
+    fn assert_is_ambiguous_between_chinese_and_japanese_works_correctly(
+        text: &str,
+        languages: HashSet<Language>,
+        expected: bool,
+    ) {
+        let words = split_text_into_words(text);
+        assert_eq!(
+            is_ambiguous_between_chinese_and_japanese(&words, &languages),
+            expected,
+            "expected {expected} for text '{text}' with languages {languages:?}"
         );
     }
 

@@ -19,6 +19,13 @@
   Japanese. Text written only in characters that Chinese and Japanese share,
   such as `自動車`, remains ambiguous and is still reported as Chinese.
 
+- Some words are common, identically-spelled vocabulary in both Chinese and
+  Japanese, such as `報酬` ("remuneration"), and carry no signal for either
+  language. When such a word is the entire input, the detector now reports no
+  language instead of defaulting to Chinese. Text that additionally contains
+  hiragana, katakana or a kanji exclusive to Japanese is unaffected, e.g.
+  `報酬を受け取る` still resolves to Japanese.
+
 ## Lingua 1.8.0 (released on 9 Mar 2026)
 
 ### Improvements

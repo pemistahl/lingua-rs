@@ -1,0 +1,16 @@
+##### Vietnamese #####
+
+>>> Accuracy on average: 92.14%
+
+>> Detection of 879 single words (average length: 4 chars)
+Accuracy: 98.86%
+Erroneously classified as Uzbek: 1.14%
+
+>> Detection of 957 word pairs (average length: 12 chars)
+Accuracy: 94.46%
+Erroneously classified as Uzbek: 5.54%
+
+>> Detection of 1000 sentences (average length: 120 chars)
+Accuracy: 83.10%
+Erroneously classified as Uzbek: 16.90%
+

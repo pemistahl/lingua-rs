@@ -1,0 +1,16 @@
+##### Uzbek #####
+
+>>> Accuracy on average: 83.83%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 68.10%
+Erroneously classified as Unknown: 31.90%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 87.30%
+Erroneously classified as Unknown: 12.70%
+
+>> Detection of 1000 sentences (average length: 151 chars)
+Accuracy: 96.10%
+Erroneously classified as Unknown: 3.90%
+

@@ -39,11 +39,17 @@ pub(crate) enum DetectorOption {
     #[strum(to_string = "lingua-albanian-detector")]
     LinguaAlbanianDetector,
 
+    #[strum(to_string = "lingua-amharic-detector")]
+    LinguaAmharicDetector,
+
     #[strum(to_string = "lingua-arabic-detector")]
     LinguaArabicDetector,
 
     #[strum(to_string = "lingua-armenian-detector")]
     LinguaArmenianDetector,
+
+    #[strum(to_string = "lingua-assamese-detector")]
+    LinguaAssameseDetector,
 
     #[strum(to_string = "lingua-azerbaijani-detector")]
     LinguaAzerbaijaniDetector,
@@ -138,11 +144,20 @@ pub(crate) enum DetectorOption {
     #[strum(to_string = "lingua-japanese-detector")]
     LinguaJapaneseDetector,
 
+    #[strum(to_string = "lingua-kannada-detector")]
+    LinguaKannadaDetector,
+
     #[strum(to_string = "lingua-kazakh-detector")]
     LinguaKazakhDetector,
 
     #[strum(to_string = "lingua-korean-detector")]
     LinguaKoreanDetector,
+
+    #[strum(to_string = "lingua-kurdish-detector")]
+    LinguaKurdishDetector,
+
+    #[strum(to_string = "lingua-lao-detector")]
+    LinguaLaoDetector,
 
     #[strum(to_string = "lingua-latin-detector")]
     LinguaLatinDetector,
@@ -158,6 +173,9 @@ pub(crate) enum DetectorOption {
 
     #[strum(to_string = "lingua-malay-detector")]
     LinguaMalayDetector,
+
+    #[strum(to_string = "lingua-malayalam-detector")]
+    LinguaMalayalamDetector,
 
     #[strum(to_string = "lingua-maori-detector")]
     LinguaMaoriDetector,
@@ -242,6 +260,9 @@ pub(crate) enum DetectorOption {
 
     #[strum(to_string = "lingua-urdu-detector")]
     LinguaUrduDetector,
+
+    #[strum(to_string = "lingua-uzbek-detector")]
+    LinguaUzbekDetector,
 
     #[strum(to_string = "lingua-vietnamese-detector")]
     LinguaVietnameseDetector,

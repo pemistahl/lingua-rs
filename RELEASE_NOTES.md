@@ -1,3 +1,31 @@
+## Lingua 1.9.0 (not yet released)
+
+### Languages
+
+- Six new languages are now supported: Amharic, Assamese, Kannada, Kurdish,
+  Lao, Malayalam, and Uzbek. Thanks to their dedicated language models,
+  *Lingua* can now detect 82 languages in total. (Note: Amharic and Assamese
+  use Ethiopic and Bengali scripts respectively; Kannada/Lao/Malayalam each
+  introduce new scripts; Kurdish (Kurmanji) and Uzbek use Latin script.)
+
+### Bug Fixes
+
+- Japanese text written entirely in kanji, such as `携帯` or `図書館`, was always
+  detected as Chinese with a confidence of 1.0. The rule-based stage of the
+  detector attributed every `Han` character to Chinese and returned before any
+  language model was consulted, so Japanese could only win if the text also
+  contained at least one hiragana or katakana character. Kanji that exist in
+  neither simplified nor traditional Chinese are now recognised as evidence for
+  Japanese. Text written only in characters that Chinese and Japanese share,
+  such as `自動車`, remains ambiguous and is still reported as Chinese.
+
+- Some words are common, identically-spelled vocabulary in both Chinese and
+  Japanese, such as `報酬` ("remuneration"), and carry no signal for either
+  language. When such a word is the entire input, the detector now reports no
+  language instead of defaulting to Chinese. Text that additionally contains
+  hiragana, katakana or a kanji exclusive to Japanese is unaffected, e.g.
+  `報酬を受け取る` still resolves to Japanese.
+
 ## Lingua 1.8.0 (released on 9 Mar 2026)
 
 ### Improvements

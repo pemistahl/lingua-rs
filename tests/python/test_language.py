@@ -60,8 +60,10 @@ def test_all_languages_are_available():
         [
             Language.AFRIKAANS,
             Language.ALBANIAN,
+            Language.AMHARIC,
             Language.ARABIC,
             Language.ARMENIAN,
+            Language.ASSAMESE,
             Language.AZERBAIJANI,
             Language.BASQUE,
             Language.BELARUSIAN,
@@ -93,13 +95,17 @@ def test_all_languages_are_available():
             Language.IRISH,
             Language.ITALIAN,
             Language.JAPANESE,
+            Language.KANNADA,
             Language.KAZAKH,
             Language.KOREAN,
+            Language.KURDISH,
+            Language.LAO,
             Language.LATIN,
             Language.LATVIAN,
             Language.LITHUANIAN,
             Language.MACEDONIAN,
             Language.MALAY,
+            Language.MALAYALAM,
             Language.MAORI,
             Language.MARATHI,
             Language.MONGOLIAN,
@@ -128,6 +134,7 @@ def test_all_languages_are_available():
             Language.TURKISH,
             Language.UKRAINIAN,
             Language.URDU,
+            Language.UZBEK,
             Language.VIETNAMESE,
             Language.WELSH,
             Language.XHOSA,
@@ -142,8 +149,10 @@ def test_all_spoken_languages_are_available():
         [
             Language.AFRIKAANS,
             Language.ALBANIAN,
+            Language.AMHARIC,
             Language.ARABIC,
             Language.ARMENIAN,
+            Language.ASSAMESE,
             Language.AZERBAIJANI,
             Language.BASQUE,
             Language.BELARUSIAN,
@@ -175,12 +184,16 @@ def test_all_spoken_languages_are_available():
             Language.IRISH,
             Language.ITALIAN,
             Language.JAPANESE,
+            Language.KANNADA,
             Language.KAZAKH,
             Language.KOREAN,
+            Language.KURDISH,
+            Language.LAO,
             Language.LATVIAN,
             Language.LITHUANIAN,
             Language.MACEDONIAN,
             Language.MALAY,
+            Language.MALAYALAM,
             Language.MAORI,
             Language.MARATHI,
             Language.MONGOLIAN,
@@ -209,6 +222,7 @@ def test_all_spoken_languages_are_available():
             Language.TURKISH,
             Language.UKRAINIAN,
             Language.URDU,
+            Language.UZBEK,
             Language.VIETNAMESE,
             Language.WELSH,
             Language.XHOSA,
@@ -220,7 +234,7 @@ def test_all_spoken_languages_are_available():
 
 def test_languages_support_arabic_script():
     assert Language.all_with_arabic_script() == frozenset(
-        [Language.ARABIC, Language.PERSIAN, Language.URDU]
+        [Language.ARABIC, Language.KURDISH, Language.PERSIAN, Language.URDU]
     )
 
 
@@ -271,6 +285,7 @@ def test_languages_support_latin_script():
             Language.INDONESIAN,
             Language.IRISH,
             Language.ITALIAN,
+            Language.KURDISH,
             Language.LATIN,
             Language.LATVIAN,
             Language.LITHUANIAN,
@@ -292,6 +307,7 @@ def test_languages_support_latin_script():
             Language.TSONGA,
             Language.TSWANA,
             Language.TURKISH,
+            Language.UZBEK,
             Language.VIETNAMESE,
             Language.WELSH,
             Language.XHOSA,

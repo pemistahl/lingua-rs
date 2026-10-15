@@ -21,10 +21,14 @@ use include_dir::Dir;
 use lingua_afrikaans_language_model::{AFRIKAANS_MODELS_DIRECTORY, AFRIKAANS_TESTDATA_DIRECTORY};
 #[cfg(feature = "albanian")]
 use lingua_albanian_language_model::{ALBANIAN_MODELS_DIRECTORY, ALBANIAN_TESTDATA_DIRECTORY};
+#[cfg(feature = "amharic")]
+use lingua_amharic_language_model::{AMHARIC_MODELS_DIRECTORY, AMHARIC_TESTDATA_DIRECTORY};
 #[cfg(feature = "arabic")]
 use lingua_arabic_language_model::{ARABIC_MODELS_DIRECTORY, ARABIC_TESTDATA_DIRECTORY};
 #[cfg(feature = "armenian")]
 use lingua_armenian_language_model::{ARMENIAN_MODELS_DIRECTORY, ARMENIAN_TESTDATA_DIRECTORY};
+#[cfg(feature = "assamese")]
+use lingua_assamese_language_model::{ASSAMESE_MODELS_DIRECTORY, ASSAMESE_TESTDATA_DIRECTORY};
 #[cfg(feature = "azerbaijani")]
 use lingua_azerbaijani_language_model::{
     AZERBAIJANI_MODELS_DIRECTORY, AZERBAIJANI_TESTDATA_DIRECTORY,
@@ -93,10 +97,16 @@ use lingua_irish_language_model::{IRISH_MODELS_DIRECTORY, IRISH_TESTDATA_DIRECTO
 use lingua_italian_language_model::{ITALIAN_MODELS_DIRECTORY, ITALIAN_TESTDATA_DIRECTORY};
 #[cfg(feature = "japanese")]
 use lingua_japanese_language_model::{JAPANESE_MODELS_DIRECTORY, JAPANESE_TESTDATA_DIRECTORY};
+#[cfg(feature = "kannada")]
+use lingua_kannada_language_model::{KANNADA_MODELS_DIRECTORY, KANNADA_TESTDATA_DIRECTORY};
 #[cfg(feature = "kazakh")]
 use lingua_kazakh_language_model::{KAZAKH_MODELS_DIRECTORY, KAZAKH_TESTDATA_DIRECTORY};
 #[cfg(feature = "korean")]
 use lingua_korean_language_model::{KOREAN_MODELS_DIRECTORY, KOREAN_TESTDATA_DIRECTORY};
+#[cfg(feature = "kurdish")]
+use lingua_kurdish_language_model::{KURDISH_MODELS_DIRECTORY, KURDISH_TESTDATA_DIRECTORY};
+#[cfg(feature = "lao")]
+use lingua_lao_language_model::{LAO_MODELS_DIRECTORY, LAO_TESTDATA_DIRECTORY};
 #[cfg(feature = "latin")]
 use lingua_latin_language_model::{LATIN_MODELS_DIRECTORY, LATIN_TESTDATA_DIRECTORY};
 #[cfg(feature = "latvian")]
@@ -111,6 +121,8 @@ use lingua_macedonian_language_model::{
 };
 #[cfg(feature = "malay")]
 use lingua_malay_language_model::{MALAY_MODELS_DIRECTORY, MALAY_TESTDATA_DIRECTORY};
+#[cfg(feature = "malayalam")]
+use lingua_malayalam_language_model::{MALAYALAM_MODELS_DIRECTORY, MALAYALAM_TESTDATA_DIRECTORY};
 #[cfg(feature = "maori")]
 use lingua_maori_language_model::{MAORI_MODELS_DIRECTORY, MAORI_TESTDATA_DIRECTORY};
 #[cfg(feature = "marathi")]
@@ -169,6 +181,8 @@ use lingua_turkish_language_model::{TURKISH_MODELS_DIRECTORY, TURKISH_TESTDATA_D
 use lingua_ukrainian_language_model::{UKRAINIAN_MODELS_DIRECTORY, UKRAINIAN_TESTDATA_DIRECTORY};
 #[cfg(feature = "urdu")]
 use lingua_urdu_language_model::{URDU_MODELS_DIRECTORY, URDU_TESTDATA_DIRECTORY};
+#[cfg(feature = "uzbek")]
+use lingua_uzbek_language_model::{UZBEK_MODELS_DIRECTORY, UZBEK_TESTDATA_DIRECTORY};
 #[cfg(feature = "vietnamese")]
 use lingua_vietnamese_language_model::{
     VIETNAMESE_MODELS_DIRECTORY, VIETNAMESE_TESTDATA_DIRECTORY,
@@ -218,11 +232,17 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
         #[cfg(feature = "albanian")]
         Language::Albanian => ALBANIAN_MODELS_DIRECTORY,
 
+        #[cfg(feature = "amharic")]
+        Language::Amharic => AMHARIC_MODELS_DIRECTORY,
+
         #[cfg(feature = "arabic")]
         Language::Arabic => ARABIC_MODELS_DIRECTORY,
 
         #[cfg(feature = "armenian")]
         Language::Armenian => ARMENIAN_MODELS_DIRECTORY,
+
+        #[cfg(feature = "assamese")]
+        Language::Assamese => ASSAMESE_MODELS_DIRECTORY,
 
         #[cfg(feature = "azerbaijani")]
         Language::Azerbaijani => AZERBAIJANI_MODELS_DIRECTORY,
@@ -317,11 +337,20 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
         #[cfg(feature = "japanese")]
         Language::Japanese => JAPANESE_MODELS_DIRECTORY,
 
+        #[cfg(feature = "kannada")]
+        Language::Kannada => KANNADA_MODELS_DIRECTORY,
+
         #[cfg(feature = "kazakh")]
         Language::Kazakh => KAZAKH_MODELS_DIRECTORY,
 
         #[cfg(feature = "korean")]
         Language::Korean => KOREAN_MODELS_DIRECTORY,
+
+        #[cfg(feature = "kurdish")]
+        Language::Kurdish => KURDISH_MODELS_DIRECTORY,
+
+        #[cfg(feature = "lao")]
+        Language::Lao => LAO_MODELS_DIRECTORY,
 
         #[cfg(feature = "latin")]
         Language::Latin => LATIN_MODELS_DIRECTORY,
@@ -337,6 +366,9 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "malay")]
         Language::Malay => MALAY_MODELS_DIRECTORY,
+
+        #[cfg(feature = "malayalam")]
+        Language::Malayalam => MALAYALAM_MODELS_DIRECTORY,
 
         #[cfg(feature = "maori")]
         Language::Maori => MAORI_MODELS_DIRECTORY,
@@ -422,6 +454,9 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
         #[cfg(feature = "urdu")]
         Language::Urdu => URDU_MODELS_DIRECTORY,
 
+        #[cfg(feature = "uzbek")]
+        Language::Uzbek => UZBEK_MODELS_DIRECTORY,
+
         #[cfg(feature = "vietnamese")]
         Language::Vietnamese => VIETNAMESE_MODELS_DIRECTORY,
 
@@ -447,11 +482,17 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
         #[cfg(feature = "albanian")]
         Language::Albanian => ALBANIAN_TESTDATA_DIRECTORY,
 
+        #[cfg(feature = "amharic")]
+        Language::Amharic => AMHARIC_TESTDATA_DIRECTORY,
+
         #[cfg(feature = "arabic")]
         Language::Arabic => ARABIC_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "armenian")]
         Language::Armenian => ARMENIAN_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "assamese")]
+        Language::Assamese => ASSAMESE_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "azerbaijani")]
         Language::Azerbaijani => AZERBAIJANI_TESTDATA_DIRECTORY,
@@ -546,11 +587,20 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
         #[cfg(feature = "japanese")]
         Language::Japanese => JAPANESE_TESTDATA_DIRECTORY,
 
+        #[cfg(feature = "kannada")]
+        Language::Kannada => KANNADA_TESTDATA_DIRECTORY,
+
         #[cfg(feature = "kazakh")]
         Language::Kazakh => KAZAKH_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "korean")]
         Language::Korean => KOREAN_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "kurdish")]
+        Language::Kurdish => KURDISH_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "lao")]
+        Language::Lao => LAO_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "latin")]
         Language::Latin => LATIN_TESTDATA_DIRECTORY,
@@ -566,6 +616,9 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "malay")]
         Language::Malay => MALAY_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "malayalam")]
+        Language::Malayalam => MALAYALAM_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "maori")]
         Language::Maori => MAORI_TESTDATA_DIRECTORY,
@@ -650,6 +703,9 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "urdu")]
         Language::Urdu => URDU_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "uzbek")]
+        Language::Uzbek => UZBEK_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "vietnamese")]
         Language::Vietnamese => VIETNAMESE_TESTDATA_DIRECTORY,

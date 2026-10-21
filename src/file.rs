@@ -105,6 +105,10 @@ use lingua_latvian_language_model::{LATVIAN_MODELS_DIRECTORY, LATVIAN_TESTDATA_D
 use lingua_lithuanian_language_model::{
     LITHUANIAN_MODELS_DIRECTORY, LITHUANIAN_TESTDATA_DIRECTORY,
 };
+#[cfg(feature = "luxembourgish")]
+use lingua_luxembourgish_language_model::{
+    LUXEMBOURGISH_MODELS_DIRECTORY, LUXEMBOURGISH_TESTDATA_DIRECTORY,
+};
 #[cfg(feature = "macedonian")]
 use lingua_macedonian_language_model::{
     MACEDONIAN_MODELS_DIRECTORY, MACEDONIAN_TESTDATA_DIRECTORY,
@@ -331,6 +335,9 @@ fn get_language_models_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "lithuanian")]
         Language::Lithuanian => LITHUANIAN_MODELS_DIRECTORY,
+
+        #[cfg(feature = "luxembourgish")]
+        Language::Luxembourgish => LUXEMBOURGISH_MODELS_DIRECTORY,
 
         #[cfg(feature = "macedonian")]
         Language::Macedonian => MACEDONIAN_MODELS_DIRECTORY,
@@ -560,6 +567,9 @@ fn get_test_data_directory(language: Language) -> Dir<'static> {
 
         #[cfg(feature = "lithuanian")]
         Language::Lithuanian => LITHUANIAN_TESTDATA_DIRECTORY,
+
+        #[cfg(feature = "luxembourgish")]
+        Language::Luxembourgish => LUXEMBOURGISH_TESTDATA_DIRECTORY,
 
         #[cfg(feature = "macedonian")]
         Language::Macedonian => MACEDONIAN_TESTDATA_DIRECTORY,

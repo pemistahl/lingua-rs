@@ -1,0 +1,16 @@
+##### Xhosa #####
+
+>>> Accuracy on average: 77.53%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 92.20%
+Erroneously classified as Luxembourgish: 7.80%
+
+>> Detection of 1000 word pairs (average length: 18 chars)
+Accuracy: 89.60%
+Erroneously classified as Luxembourgish: 10.40%
+
+>> Detection of 1000 sentences (average length: 127 chars)
+Accuracy: 50.80%
+Erroneously classified as Luxembourgish: 49.20%
+

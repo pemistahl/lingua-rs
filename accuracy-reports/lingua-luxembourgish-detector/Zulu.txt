@@ -1,0 +1,16 @@
+##### Zulu #####
+
+>>> Accuracy on average: 77.87%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 93.80%
+Erroneously classified as Luxembourgish: 6.20%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 87.40%
+Erroneously classified as Luxembourgish: 12.60%
+
+>> Detection of 1000 sentences (average length: 115 chars)
+Accuracy: 52.40%
+Erroneously classified as Luxembourgish: 47.60%
+

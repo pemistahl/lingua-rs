@@ -1,0 +1,16 @@
+##### Estonian #####
+
+>>> Accuracy on average: 81.00%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 94.30%
+Erroneously classified as Luxembourgish: 5.70%
+
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 89.20%
+Erroneously classified as Luxembourgish: 10.80%
+
+>> Detection of 1000 sentences (average length: 101 chars)
+Accuracy: 59.50%
+Erroneously classified as Luxembourgish: 40.50%
+

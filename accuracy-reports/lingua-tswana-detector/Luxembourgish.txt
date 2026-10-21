@@ -1,0 +1,16 @@
+##### Luxembourgish #####
+
+>>> Accuracy on average: 71.53%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 90.00%
+Erroneously classified as Tswana: 10.00%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 81.80%
+Erroneously classified as Tswana: 18.20%
+
+>> Detection of 1000 sentences (average length: 115 chars)
+Accuracy: 42.80%
+Erroneously classified as Tswana: 57.20%
+

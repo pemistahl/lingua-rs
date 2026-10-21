@@ -1,0 +1,16 @@
+##### Luxembourgish #####
+
+>>> Accuracy on average: 69.73%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 88.90%
+Erroneously classified as Icelandic: 11.10%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 81.30%
+Erroneously classified as Icelandic: 18.70%
+
+>> Detection of 1000 sentences (average length: 115 chars)
+Accuracy: 39.00%
+Erroneously classified as Icelandic: 61.00%
+

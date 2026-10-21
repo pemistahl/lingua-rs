@@ -23,9 +23,10 @@ on:
       - 'Cargo.lock'
       - 'Cargo.toml'
       - 'pyproject.toml'
+      - 'lingua.pyi'
       - 'requirements.txt'
       - 'src/**'
-      - 'tests/**'
+      - 'tests/python/**'
       - '**.yml'
   pull_request:
     branches:
@@ -34,9 +35,10 @@ on:
       - 'Cargo.lock'
       - 'Cargo.toml'
       - 'pyproject.toml'
+      - 'lingua.pyi'
       - 'requirements.txt'
       - 'src/**'
-      - 'tests/**'
+      - 'tests/python/**'
       - '**.yml'
 
 jobs:

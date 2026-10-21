@@ -1,0 +1,16 @@
+##### Czech #####
+
+>>> Accuracy on average: 80.37%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 95.40%
+Erroneously classified as Luxembourgish: 4.60%
+
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 85.90%
+Erroneously classified as Luxembourgish: 14.10%
+
+>> Detection of 1000 sentences (average length: 93 chars)
+Accuracy: 59.80%
+Erroneously classified as Luxembourgish: 40.20%
+

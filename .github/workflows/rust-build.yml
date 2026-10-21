@@ -24,6 +24,7 @@ on:
       - 'Cargo.toml'
       - 'src/**'
       - 'tests/**'
+      - '!tests/python/**'
       - '**.yml'
   pull_request:
     branches:
@@ -33,6 +34,7 @@ on:
       - 'Cargo.toml'
       - 'src/**'
       - 'tests/**'
+      - '!tests/python/**'
       - '**.yml'
 
 jobs:

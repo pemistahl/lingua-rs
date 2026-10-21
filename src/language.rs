@@ -174,6 +174,9 @@ pub enum Language {
     #[cfg(feature = "lithuanian")]
     Lithuanian,
 
+    #[cfg(feature = "luxembourgish")]
+    Luxembourgish,
+
     #[cfg(feature = "macedonian")]
     Macedonian,
 
@@ -484,6 +487,9 @@ impl Language {
             #[cfg(feature = "lithuanian")]
             Language::Lithuanian => IsoCode639_1::LT,
 
+            #[cfg(feature = "luxembourgish")]
+            Language::Luxembourgish => IsoCode639_1::LB,
+
             #[cfg(feature = "macedonian")]
             Language::Macedonian => IsoCode639_1::MK,
 
@@ -714,6 +720,9 @@ impl Language {
             #[cfg(feature = "lithuanian")]
             Language::Lithuanian => IsoCode639_3::LIT,
 
+            #[cfg(feature = "luxembourgish")]
+            Language::Luxembourgish => IsoCode639_3::LTZ,
+
             #[cfg(feature = "macedonian")]
             Language::Macedonian => IsoCode639_3::MKD,
 
@@ -900,6 +909,9 @@ impl Language {
 
             #[cfg(feature = "lithuanian")]
             Language::Lithuanian => hashset!(Alphabet::Latin),
+
+            #[cfg(feature = "luxembourgish")]
+            Language::Luxembourgish => hashset!(Alphabet::Latin),
 
             #[cfg(feature = "malay")]
             Language::Malay => hashset!(Alphabet::Latin),
@@ -1181,6 +1193,7 @@ mod tests {
                 Latin,
                 Latvian,
                 Lithuanian,
+                Luxembourgish,
                 Macedonian,
                 Malay,
                 Maori,
@@ -1264,6 +1277,7 @@ mod tests {
                 Korean,
                 Latvian,
                 Lithuanian,
+                Luxembourgish,
                 Macedonian,
                 Malay,
                 Maori,
@@ -1360,6 +1374,7 @@ mod tests {
                 Latin,
                 Latvian,
                 Lithuanian,
+                Luxembourgish,
                 Malay,
                 Maori,
                 Nynorsk,

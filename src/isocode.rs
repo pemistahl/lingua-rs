@@ -187,6 +187,10 @@ pub enum IsoCode639_1 {
     /// The ISO 639-1 code for [`Latin`](crate::language::Language::Latin)
     LA,
 
+    #[cfg(feature = "luxembourgish")]
+    /// The ISO 639-1 code for [`Luxembourgish`](crate::language::Language::Luxembourgish)
+    LB,
+
     #[cfg(feature = "ganda")]
     /// The ISO 639-1 code for [`Ganda`](crate::language::Language::Ganda)
     LG,
@@ -515,6 +519,10 @@ pub enum IsoCode639_3 {
     #[cfg(feature = "lithuanian")]
     /// The ISO 639-3 code for [`Lithuanian`](crate::language::Language::Lithuanian)
     LIT,
+
+    #[cfg(feature = "luxembourgish")]
+    /// The ISO 639-3 code for [`Luxembourgish`](crate::language::Language::Luxembourgish)
+    LTZ,
 
     #[cfg(feature = "ganda")]
     /// The ISO 639-3 code for [`Ganda`](crate::language::Language::Ganda)

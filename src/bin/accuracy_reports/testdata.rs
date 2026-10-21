@@ -56,6 +56,7 @@ use lingua_korean_language_model::KOREAN_TESTDATA_DIRECTORY;
 use lingua_latin_language_model::LATIN_TESTDATA_DIRECTORY;
 use lingua_latvian_language_model::LATVIAN_TESTDATA_DIRECTORY;
 use lingua_lithuanian_language_model::LITHUANIAN_TESTDATA_DIRECTORY;
+use lingua_luxembourgish_language_model::LUXEMBOURGISH_TESTDATA_DIRECTORY;
 use lingua_macedonian_language_model::MACEDONIAN_TESTDATA_DIRECTORY;
 use lingua_malay_language_model::MALAY_TESTDATA_DIRECTORY;
 use lingua_maori_language_model::MAORI_TESTDATA_DIRECTORY;
@@ -134,6 +135,7 @@ pub(crate) fn get_test_data_directory(language: &Language) -> Dir<'static> {
         Language::Latin => LATIN_TESTDATA_DIRECTORY,
         Language::Latvian => LATVIAN_TESTDATA_DIRECTORY,
         Language::Lithuanian => LITHUANIAN_TESTDATA_DIRECTORY,
+        Language::Luxembourgish => LUXEMBOURGISH_TESTDATA_DIRECTORY,
         Language::Macedonian => MACEDONIAN_TESTDATA_DIRECTORY,
         Language::Malay => MALAY_TESTDATA_DIRECTORY,
         Language::Maori => MAORI_TESTDATA_DIRECTORY,

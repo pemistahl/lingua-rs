@@ -2121,7 +2121,7 @@ mod tests {
         case("nebūsime", hashset!(Latvian, Lithuanian, Maori, Yoruba)),
         case("afişate", hashset!(Azerbaijani, Romanian, Turkish)),
         case("kradzieżami", hashset!(Polish, Romanian)),
-        case("înviat", hashset!(French, Romanian)),
+        case("înviat", hashset!(French, Luxembourgish, Romanian)),
         case("venerdì", hashset!(Italian, Vietnamese, Yoruba)),
         case("años", hashset!(Basque, Spanish)),
         case("rozohňuje", hashset!(Czech, Slovak)),
@@ -2130,22 +2130,22 @@ mod tests {
         case("jeďte", hashset!(Czech, Romanian, Slovak)),
         case("minjaverðir", hashset!(Icelandic, Turkish)),
         case("þagnarskyldu", hashset!(Icelandic, Turkish)),
-        case("nebûtu", hashset!(French, Hungarian)),
-        case("hashemidëve", hashset!(Afrikaans, Albanian, Dutch, French)),
-        case("forêt", hashset!(Afrikaans, French, Portuguese, Vietnamese)),
+        case("nebûtu", hashset!(French, Hungarian, Luxembourgish)),
+        case("hashemidëve", hashset!(Afrikaans, Albanian, Dutch, French, Luxembourgish)),
+        case("forêt", hashset!(Afrikaans, French, Luxembourgish, Portuguese, Vietnamese)),
         case("succèdent", hashset!(French, Italian, Vietnamese, Yoruba)),
         case("où", hashset!(French, Italian, Vietnamese, Yoruba)),
         case("tõeliseks", hashset!(Estonian, Hungarian, Portuguese, Vietnamese)),
         case("viòiem", hashset!(Catalan, Italian, Vietnamese, Yoruba)),
-        case("contrôle", hashset!(French, Portuguese, Slovak, Vietnamese)),
+        case("contrôle", hashset!(French, Luxembourgish, Portuguese, Slovak, Vietnamese)),
         case("direktør", hashset!(Bokmal, Danish, Nynorsk)),
         case("vývoj", hashset!(Czech, Icelandic, Slovak, Turkish, Vietnamese)),
-        case("päralt", hashset!(Estonian, Finnish, German, Slovak, Swedish)),
-        case("labâk", hashset!(French, Portuguese, Romanian, Turkish, Vietnamese)),
+        case("päralt", hashset!(Estonian, Finnish, German, Luxembourgish, Slovak, Swedish)),
+        case("labâk", hashset!(French, Luxembourgish, Portuguese, Romanian, Turkish, Vietnamese)),
         case("pràctiques", hashset!(Catalan, French, Italian, Portuguese, Vietnamese)),
         case(
             "überrascht",
-            hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Spanish, Turkish)
+            hashset!(Azerbaijani, Catalan, Estonian, German, Hungarian, Luxembourgish, Spanish, Turkish)
         ),
         case("indebærer", hashset!(Bokmal, Danish, Icelandic, Nynorsk)),
         case("måned", hashset!(Bokmal, Danish, Nynorsk, Swedish)),
@@ -2158,7 +2158,10 @@ mod tests {
         ),
         case(
             "höher",
-            hashset!(Azerbaijani, Estonian, Finnish, German, Hungarian, Icelandic, Swedish, Turkish)
+            hashset!(
+                Azerbaijani, Estonian, Finnish, German, Hungarian, Icelandic,
+                Luxembourgish, Swedish, Turkish
+            )
         ),
         case(
             "catedráticos",
@@ -2191,8 +2194,8 @@ mod tests {
         case(
             "només",
             hashset!(
-                Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Portuguese, Slovak,
-                Spanish, Vietnamese, Yoruba
+                Catalan, Czech, French, Hungarian, Icelandic, Irish, Italian, Luxembourgish,
+                Portuguese, Slovak, Spanish, Vietnamese, Yoruba
             )
         ),
         case(
@@ -2200,9 +2203,10 @@ mod tests {
             hashset!(
                 Afrikaans, Albanian, Azerbaijani, Basque, Bokmal, Bosnian, Catalan, Croatian, Czech,
                 Danish, Dutch, English, Esperanto, Estonian, Finnish, French, Ganda, German, Hungarian,
-                Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Malay, Maori, Nynorsk,
-                Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali, Sotho, Spanish, Swahili,
-                Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh, Xhosa, Yoruba, Zulu
+                Icelandic, Indonesian, Irish, Italian, Latin, Latvian, Lithuanian, Luxembourgish,
+                Malay, Maori, Nynorsk, Polish, Portuguese, Romanian, Shona, Slovak, Slovene, Somali,
+                Sotho, Spanish, Swahili, Swedish, Tagalog, Tsonga, Tswana, Turkish, Vietnamese, Welsh,
+                Xhosa, Yoruba, Zulu
             )
         ),
     )]

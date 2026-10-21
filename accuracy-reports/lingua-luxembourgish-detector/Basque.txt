@@ -1,0 +1,16 @@
+##### Basque #####
+
+>>> Accuracy on average: 57.03%
+
+>> Detection of 1000 single words (average length: 9 chars)
+Accuracy: 83.40%
+Erroneously classified as Luxembourgish: 16.60%
+
+>> Detection of 1000 word pairs (average length: 17 chars)
+Accuracy: 70.60%
+Erroneously classified as Luxembourgish: 29.40%
+
+>> Detection of 1000 sentences (average length: 102 chars)
+Accuracy: 17.10%
+Erroneously classified as Luxembourgish: 82.90%
+

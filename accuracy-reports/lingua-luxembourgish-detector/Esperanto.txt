@@ -1,0 +1,16 @@
+##### Esperanto #####
+
+>>> Accuracy on average: 78.90%
+
+>> Detection of 1000 single words (average length: 8 chars)
+Accuracy: 92.10%
+Erroneously classified as Luxembourgish: 7.90%
+
+>> Detection of 1000 word pairs (average length: 16 chars)
+Accuracy: 87.60%
+Erroneously classified as Luxembourgish: 12.40%
+
+>> Detection of 1000 sentences (average length: 101 chars)
+Accuracy: 57.00%
+Erroneously classified as Luxembourgish: 43.00%
+
